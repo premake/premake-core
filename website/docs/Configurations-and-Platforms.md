@@ -76,7 +76,7 @@ filter { "platforms:Xbox360" }
 
 Unlike build configurations, platforms are completely optional. If you don't need them, just don't call the platforms function at all and the toolset's default behavior will be used.
 
-Platforms are just another form of build configuration. You can use all of the same settings, and the same scoping rules apply. You can use the [`system`](system.md) and [`architecture`()`](architecture.md) settings without platforms, and you can use otherwise non-platform settings in a platform configuration. If you've ever done build configurations like "Debug Static", "Debug DLL", "Release Static", and "Release DLL", platforms can really simplify things.
+Platforms are just another form of build configuration. You can use all of the same settings, and the same scoping rules apply. You can use the [`system`](system.md) and [`architecture()`](architecture.md) settings without platforms, and you can use otherwise non-platform settings in a platform configuration. If you've ever done build configurations like "Debug Static", "Debug DLL", "Release Static", and "Release DLL", platforms can really simplify things.
 
 ```lua
 configurations { "Debug", "Release" }
