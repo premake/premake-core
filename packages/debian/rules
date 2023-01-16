@@ -5,7 +5,7 @@ CFLAGS = -Wall -g
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
 else
-	CFLAGS += -O2
+	CFLAGS += -O3
 endif
 
 configure: configure-stamp
@@ -15,7 +15,7 @@ configure-stamp:
 
 build: build-stamp
 
-build-stamp: configure-stamp 
+build-stamp: configure-stamp
 	dh_testdir
 
 	$(MAKE) CONFIG=Release
@@ -29,15 +29,15 @@ clean:
 
 	$(MAKE) CONFIG=Release clean
 
-	dh_clean 
+	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_prep
 	dh_installdirs
 
-	cp $(CURDIR)/bin/premake $(CURDIR)/debian/premake/usr/bin
+	cp $(CURDIR)/bin/release/premake5 $(CURDIR)/debian/premake/usr/bin
 
 binary-indep: build install
 

@@ -1,3 +1,9 @@
+premake5 (5.0.0-beta2) main; urgency=low
+
+  * Fixed debian packaging scripts
+
+ -- KOLANICH <KOLANICH@users.noreply.github.com>  Mon, 17 Jan 2023 00:00:00 +0300
+
 premake (3.5-0ubuntu1~dapper2) dapper; urgency=low
 
   * Initial release
