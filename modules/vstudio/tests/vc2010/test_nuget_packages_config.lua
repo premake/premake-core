@@ -44,7 +44,7 @@
 --
 
 	function suite.structureIsCorrect()
-		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3" }
+		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3", "WinPixEventRuntime:1.0.220810001", "Microsoft.Direct3D.D3D12:1.608.2" }
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="utf-8"?>
@@ -52,6 +52,8 @@
 	<package id="boost" version="1.59.0-b1" targetFramework="native" />
 	<package id="sdl2.v140" version="2.0.3" targetFramework="native" />
 	<package id="sdl2.v140.redist" version="2.0.3" targetFramework="native" />
+	<package id="WinPixEventRuntime" version="1.0.220810001" targetFramework="native" />
+	<package id="Microsoft.Direct3D.D3D12" version="1.608.2" targetFramework="native" />
 </packages>
 		]]
 	end

@@ -94,31 +94,30 @@
 					return
 				end
 
-				if p.project.isdotnet(prj) then
-					-- Using the local file listing for "packageEntries" might
-					-- not exactly match what we would get from the API but this
-					-- doesn't matter. At the moment of writing, we're only
-					-- interested in knowing what DLL files the package
-					-- contains.
+				-- Using the local file listing for "packageEntries" might
+				-- not exactly match what we would get from the API but this
+				-- doesn't matter. At the moment of writing, we're only
+				-- interested in knowing what DLL files the package
+				-- contains.
 
-					packageAPIInfo.packageEntries = {}
+				packageAPIInfo.packageEntries = {}
 
-					for _, file in ipairs(os.matchfiles(path.translate(path.join(versionPath, "**")))) do
-						local extension = path.getextension(file)
+				for _, file in ipairs(os.matchfiles(path.translate(path.join(versionPath, "**")))) do
+					local extension = path.getextension(file)
 
-						if extension ~= ".nupkg" and extension ~= ".sha512" then
-							table.insert(packageAPIInfo.packageEntries, path.translate(path.getrelative(versionPath, file)))
-						end
-					end
-
-					if #packageAPIInfo.packageEntries == 0 then
-						return
-					end
-
-					if nuspec:match("<frameworkAssemblies>(.+)</frameworkAssemblies>") then
-						p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
+					if extension ~= ".nupkg" and extension ~= ".sha512" then
+						table.insert(packageAPIInfo.packageEntries, path.translate(path.getrelative(versionPath, file)))
 					end
 				end
+
+				if #packageAPIInfo.packageEntries == 0 then
+					return
+				end
+
+				if nuspec:match("<frameworkAssemblies>(.+)</frameworkAssemblies>") then
+					p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
+				end
+
 
 				if nuspec:match("<dependencies>(.+)</dependencies>") then
 					p.warn("NuGet package '%s' may depend on other packages - package dependencies are currently unimplemented", id)
@@ -283,33 +282,30 @@
 					packageAPIInfo.verbatimVersion = response.verbatimVersion
 					packageAPIInfo.version = response.version
 
-					-- C++ packages don't have this, but C# packages have a
 					-- packageEntries field that lists all the files in the
 					-- package. We need to look at this to figure out what
 					-- DLLs to reference in the project file.
 
-					if prj.language == "C#" and not response.packageEntries then
+					if not response.packageEntries then
 						p.error("NuGet package '%s' version '%s' has no file listing. This package might be too old to be using this API or it might be a C++ package instead of a .NET Framework package.", id, response.version)
 					end
 
-					if prj.language == "C#" then
-						packageAPIInfo.packageEntries = {}
+					packageAPIInfo.packageEntries = {}
 
-						for _, item in ipairs(response.packageEntries) do
-							if not item.fullName then
-								p.error("Failed to understand NuGet API response (package '%s' version '%s' packageEntry has no fullName)", id, version)
-							end
-
-							table.insert(packageAPIInfo.packageEntries, path.translate(item.fullName))
+					for _, item in ipairs(response.packageEntries) do
+						if not item.fullName then
+							p.error("Failed to understand NuGet API response (package '%s' version '%s' packageEntry has no fullName)", id, version)
 						end
 
-						if #packageAPIInfo.packageEntries == 0 then
-							p.error("NuGet package '%s' file listing is empty", id)
-						end
+						table.insert(packageAPIInfo.packageEntries, path.translate(item.fullName))
+					end
 
-						if response.frameworkAssemblyGroup then
-							p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
-						end
+					if #packageAPIInfo.packageEntries == 0 then
+						p.error("NuGet package '%s' file listing is empty", id)
+					end
+
+					if response.frameworkAssemblyGroup then
+						p.warn("NuGet package '%s' may depend on .NET Framework assemblies - package dependencies are currently unimplemented", id)
 					end
 
 					if response.dependencyGroups then

@@ -65,13 +65,15 @@
 
 if _OPTIONS["test-all"] then
 	function suite.addsImport_onEachNuGetPackage()
-		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3" }
+		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3", "WinPixEventRuntime:1.0.220810001", "Microsoft.Direct3D.D3D12:1.608.2" }
 		prepare()
 		test.capture [[
 <ImportGroup Label="ExtensionTargets">
 	<Import Project="packages\boost.1.59.0-b1\build\native\boost.targets" Condition="Exists('packages\boost.1.59.0-b1\build\native\boost.targets')" />
 	<Import Project="packages\sdl2.v140.2.0.3\build\native\sdl2.v140.targets" Condition="Exists('packages\sdl2.v140.2.0.3\build\native\sdl2.v140.targets')" />
 	<Import Project="packages\sdl2.v140.redist.2.0.3\build\native\sdl2.v140.redist.targets" Condition="Exists('packages\sdl2.v140.redist.2.0.3\build\native\sdl2.v140.redist.targets')" />
+	<Import Project="packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets" Condition="Exists('packages\WinPixEventRuntime.1.0.220810001\build\WinPixEventRuntime.targets')" />
+	<Import Project="packages\Microsoft.Direct3D.D3D12.1.608.2\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('packages\Microsoft.Direct3D.D3D12.1.608.2\build\native\Microsoft.Direct3D.D3D12.targets')" />
 </ImportGroup>
 		]]
 	end
