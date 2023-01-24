@@ -89,6 +89,13 @@
 -- Check the translation of CXXFLAGS.
 --
 
+function suite.onSanitizeAddress()
+	sanitize { "Address" }
+	prepare()
+	test.contains({ "-fsanitize=address" }, clang.getcxxflags(cfg))
+	test.contains({ "-fsanitize=address" }, clang.getldflags(cfg))
+end
+
 function suite.cxxflags_onSanitizeFuzzer()
 	sanitize { "Fuzzer" }
 	prepare()
