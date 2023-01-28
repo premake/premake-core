@@ -4,8 +4,6 @@ Enables Unity Builds in Visual Studio, also known as Jumbo Builds
 enableUnityBuilds "value"
 ```
 
-If no toolset is specified for a configuration, the system or IDE default will be used.
-
 ### Parameters ###
 
 `value` is one of:
@@ -18,7 +16,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 and later. Versions are currently only implemented for Visual Studio 2019+.
+Premake 5.0 and later. Versions are currently only implemented for Visual Studio 2017+.
 
 ### Examples ###
 
