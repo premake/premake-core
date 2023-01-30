@@ -372,6 +372,7 @@
 		sanitize { "Address" }
 		prepare()
 		test.contains({ "-fsanitize=address" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=address" }, gcc.getldflags(cfg))
 	end
 
 --

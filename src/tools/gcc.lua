@@ -453,6 +453,9 @@
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
+		sanitize = {
+			Address = "-fsanitize=address",
+		},
 		system = {
 			wii = "$(MACHDEP)",
 		},
