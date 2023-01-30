@@ -296,10 +296,28 @@
 
 
 --
--- Decorate include file search paths for the GCC command line.
+-- Returns a list of include file search directories, decorated for
+-- the compiler command line.
+--
+-- @param cfg
+--    The project configuration.
+-- @param dirs
+--    An array of include file search directories; as an array of
+--    string values.
+-- @param extdirs
+--    An array of include file search directories for external includes;
+--    as an array of string values.
+-- @param frameworkdirs
+--    An array of file search directories for the framework includes;
+--    as an array of string vlaues
+-- @param includedirsafter
+--    An array of include file search directories for includes after system;
+--    as an array of string values.
+-- @return
+--    An array of symbols with the appropriate flag decorations.
 --
 
-	function gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs)
+	function gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
@@ -316,6 +334,11 @@
 		for _, dir in ipairs(extdirs or {}) do
 			dir = project.getrelative(cfg.project, dir)
 			table.insert(result, '-isystem ' .. p.quoted(dir))
+		end
+
+		for _, dir in ipairs(includedirsafter or {}) do
+			dir = project.getrelative(cfg.project, dir)
+			table.insert(result, '-idirafter ' .. p.quoted(dir))
 		end
 
 		return result

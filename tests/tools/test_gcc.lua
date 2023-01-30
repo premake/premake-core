@@ -644,7 +644,7 @@
 		includedirs { "../include", "src/include" }
 		externalincludedirs { "test/include" }
 		prepare()
-		test.isequal({ '-I../include', '-Isrc/include', '-isystem test/include' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({ '-I../include', '-Isrc/include', '-isystem test/include' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 
@@ -668,16 +668,25 @@
 		includedirs { "include files" }
 		externalincludedirs { "test include" }
 		prepare()
-		test.isequal({ '-I"include files"', '-isystem "test include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({ '-I"include files"', '-isystem "test include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 	function suite.includeDirs_onEnvVars()
 		includedirs { "$(IntDir)/includes" }
 		externalincludedirs { "$(BinDir)/include" }
 		prepare()
-		test.isequal({ '-I"$(IntDir)/includes"', '-isystem "$(BinDir)/include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({ '-I"$(IntDir)/includes"', '-isystem "$(BinDir)/include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
+--
+-- Include Directories After correctly take idirafter flag
+--
+
+	function suite.includeDirs_includeDirAfter()
+		includedirsafter { "after/path" }
+		prepare()
+		test.isequal({ '-idirafter after/path'}, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	end
 
 
 --

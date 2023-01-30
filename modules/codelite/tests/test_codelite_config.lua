@@ -86,6 +86,16 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_IncludeDirsAfter()
+		includedirsafter { "sysdir", "sysdir2/"}
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-idirafter sysdir;-idirafter sysdir2" C_Options="-idirafter sysdir;-idirafter sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlagsPolicy="1" PCHFlags="">
+      </Compiler>
+		]]
+	end
+
 
 	function suite.OnProjectCfg_Defines()
 		defines { "TEST", "DEF", "VAL=1", "ESCAPE=\"WITH SPACE\"" }

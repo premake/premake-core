@@ -1505,6 +1505,13 @@
 		}
 	}
 
+	api.register {
+		name = "includedirsafter",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true
+	}
+
 	api.register {   -- DEPRECATED 2021-11-16
 		name = "sysincludedirs",
 		scope = "config",

@@ -1521,14 +1521,15 @@
 		end
 		settings['USER_HEADER_SEARCH_PATHS'] = cfg.includedirs
 
-		local externalincludedirs = project.getrelative(cfg.project, cfg.externalincludedirs)
-		for i,v in ipairs(externalincludedirs) do
-			cfg.externalincludedirs[i] = p.quoted(v)
+		local systemincludedirs = project.getrelative(cfg.project, table.join(cfg.externalincludedirs or {}, cfg.includedirsafter or {}))
+		for i,v in ipairs(systemincludedirs) do
+			systemincludedirs[i] = p.quoted(v)
 		end
-		if not table.isempty(cfg.externalincludedirs) then
-			table.insert(cfg.externalincludedirs, "$(inherited)")
+		if not table.isempty(systemincludedirs) then
+			table.insert(systemincludedirs, "$(inherited)")
 		end
-		settings['SYSTEM_HEADER_SEARCH_PATHS'] = cfg.externalincludedirs
+
+		settings['SYSTEM_HEADER_SEARCH_PATHS'] = systemincludedirs
 
 		for i,v in ipairs(cfg.libdirs) do
 			cfg.libdirs[i] = p.project.getrelative(cfg.project, cfg.libdirs[i])

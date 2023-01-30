@@ -5,6 +5,7 @@ return {
 	"test_gmake2_clang.lua",
 	"test_gmake2_file_rules.lua",
 	"test_gmake2_flags.lua",
+	"test_gmake2_includes.lua",
 	"test_gmake2_ldflags.lua",
 	"test_gmake2_linking.lua",
 	"test_gmake2_makefile.lua",

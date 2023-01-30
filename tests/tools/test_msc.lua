@@ -308,6 +308,23 @@
 		test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
+--
+-- Check handling includedirsafter.
+--
+
+function suite.cflags_onIncludeDirsAfter()
+	includedirsafter { "/usr/local/include" }
+	prepare()
+	test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+end
+
+function suite.cflags_onVs2022IncludeDirsAfter()
+	p.action.set("vs2022")
+	includedirsafter { "/usr/local/include" }
+	prepare()
+	test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+end
+
 
 --
 -- Check handling of library search paths.
