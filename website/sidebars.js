@@ -275,6 +275,7 @@ module.exports = {
 						'toolsversion',
 						'transition',
 						'undefines',
+                        'unitybuilds',
 						'unsignedchar',
 						'usefullpaths',
 						'usestandardpreprocessor',
