@@ -1,7 +1,7 @@
 Enables Unity Builds in Visual Studio, also known as Jumbo Builds
 
 ```lua
-enableUnityBuilds "value"
+enableunitybuild "value"
 ```
 
 ### Parameters ###
@@ -23,5 +23,5 @@ Premake 5.0 and later. Versions are currently only implemented for Visual Studio
 Enable Unity Builds.
 
 ```lua
-enableUnityBuild "On"
+enableunitybuild "On"
 ```

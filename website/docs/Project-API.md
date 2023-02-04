@@ -71,8 +71,8 @@
 | [docname](docname.md)                                     |  |
 | [editandcontinue](editandcontinue.md)                     |  |
 | [editorintegration](editorintegration.md)                 | Enable or disable IDE integration |
+| [enableunitybuild](enableunitybuild.md)                   |  |
 | [enablewarnings](enablewarnings.md)                       |  |
-| [enableunitybuilds](unitybuilds.md)                       |  |
 | [endian](endian.md)                                       |  |
 | [entrypoint](entrypoint.md)                               | Specify the program entry point function |
 | [exceptionhandling](exceptionhandling.md)                 | Enable or disable exception handling |

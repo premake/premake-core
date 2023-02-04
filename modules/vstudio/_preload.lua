@@ -186,7 +186,7 @@
 	}
 
 	p.api.register {
-		name = "enableUnityBuild",
+		name = "enableunitybuild",
 		scope = { "config" },
 		kind = "string",
 		allowed = {
