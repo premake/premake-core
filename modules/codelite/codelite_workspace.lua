@@ -30,7 +30,7 @@
 
 		local tagsdb = ""
 --		local tagsdb = "./" .. wks.name .. ".tags"
-		p.push('<CodeLite_Workspace Name="%s" Database="%s" SWTLW="No">', wks.name, tagsdb)
+		p.push('<CodeLite_Workspace Name="%s" Database="%s" Version="10000">', wks.name, tagsdb)
 
 		--
 		-- Project list
@@ -102,4 +102,5 @@
 		p.pop('</BuildMatrix>')
 
 		p.pop('</CodeLite_Workspace>')
+		p.w('')
 	end

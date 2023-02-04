@@ -38,7 +38,7 @@
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
     </WorkspaceConfiguration>
@@ -53,7 +53,7 @@
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
@@ -72,7 +72,7 @@
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject.project"/>
   <Project Name="MyProject2" Path="MyProject2.project"/>
   <BuildMatrix>
@@ -99,7 +99,7 @@
 		prepare()
 		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject/MyProject.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
@@ -118,7 +118,7 @@
 		prepare()
 		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="../MyProject/MyProject.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
@@ -139,7 +139,7 @@
 		prepare()
 		test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
@@ -164,7 +164,7 @@
     prepare()
     test.capture([[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <VirtualDirectory Name="My">
     <VirtualDirectory Name="Nested">
       <VirtualDirectory Name="Group">
@@ -203,7 +203,7 @@
 		prepare()
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="MyWorkspace" Database="" SWTLW="No">
+<CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="x86_64-Debug" Selected="yes">

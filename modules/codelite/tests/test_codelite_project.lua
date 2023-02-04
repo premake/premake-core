@@ -33,7 +33,7 @@
 		codelite.project.header(prj)
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="MyProject" InternalType="Console">
+<CodeLite_Project Name="MyProject" InternalType="Console" Version="11000">
 		]]
 	end
 	function suite.OnProject_Header_Windowed()
@@ -42,7 +42,7 @@
 		codelite.project.header(prj)
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="MyProject" InternalType="Console">
+<CodeLite_Project Name="MyProject" InternalType="Console" Version="11000">
 		]]
 	end
 	function suite.OnProject_Header_Shared()
@@ -51,7 +51,7 @@
 		codelite.project.header(prj)
 		test.capture [[
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="MyProject" InternalType="Library">
+<CodeLite_Project Name="MyProject" InternalType="Library" Version="11000">
 		]]
 	end
 
@@ -59,7 +59,6 @@
 		prepare()
 		codelite.project.plugins(prj)
 		test.capture [[
-  <Plugins/>
 		]]
 	end
 
@@ -106,5 +105,16 @@
 		codelite.project.files(prj)
 		test.capture [[
   <VirtualDirectory Name="MyProject"/>
+		]]
+	end
+
+	function suite.OnProject_SourceFiles()
+		files { "a.cpp" }
+		prepare()
+		codelite.project.files(prj)
+		test.capture [[
+  <VirtualDirectory Name="MyProject">
+    <File Name="a.cpp"/>
+  </VirtualDirectory>
 		]]
 	end
