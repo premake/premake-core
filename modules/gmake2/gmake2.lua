@@ -129,10 +129,12 @@
 		_p('endif')
 	end
 
-	function gmake2.mkdirRules(dirname)
+	function gmake2.mkdirRules(dirname, before, after)
+		if before then _p(before) end
 		_p('%s:', dirname)
 		_p('\t@echo Creating %s', dirname)
 		gmake2.mkdir(dirname)
+		if after then _p(after) end
 		_p('')
 	end
 
@@ -327,7 +329,9 @@
 
 
 	function gmake2.objDirRules(cfg, toolset)
-		gmake2.mkdirRules("$(OBJDIR)")
+		local before = 'ifneq ($(OBJDIR),$(TARGETDIR))'
+		local after = 'endif'
+		gmake2.mkdirRules("$(OBJDIR)", before, after)
 	end
 
 
