@@ -259,8 +259,18 @@
 
 
 	function gmake2.shellType()
+		-- Determine whether the build rules
+		-- of the Makefile are being executed under
+		-- cmd.exe or sh.exe. GNU Make prefers using
+		-- `sh.exe`, if it is found on the PATH (see variable.c).
+		-- Therefore, the shell make is being executed from,
+		-- and the shell used to execute the build rules can be different
+		--
+		-- To determine this, use a "polyglot test" by executing
+		-- echo "test" in the shell. cmd.exe will write "test" with quotes
+		-- and sh will write test without quotes.
 		_p('SHELLTYPE := posix')
-		_p('ifeq (.exe,$(findstring .exe,$(ComSpec)))')
+		_p('ifeq ($(shell echo \"test\"), \"test\")')
 		_p('\tSHELLTYPE := msdos')
 		_p('endif')
 		_p('')
