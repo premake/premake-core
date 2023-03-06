@@ -134,6 +134,8 @@
 			Off = "-fno-omit-frame-pointer"
 		},
 		compileas = {
+			["C"] = "-x c",
+			["C++"] = "-x c++",
 			["Objective-C"] = "-x objective-c",
 			["Objective-C++"] = "-x objective-c++",
 		}
