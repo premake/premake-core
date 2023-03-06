@@ -1099,3 +1099,36 @@
 		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end
+
+--
+-- Test compileas.
+--
+
+	function suite.cxxflags_compileasC()
+		compileas "C"
+		prepare()
+		test.contains({ "-x c" }, gcc.getcflags(cfg))
+		test.contains({ "-x c" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_compileasCPP()
+		compileas "C++"
+		prepare()
+		test.contains({ "-x c++" }, gcc.getcflags(cfg))
+		test.contains({ "-x c++" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_compileasObjC()
+		compileas "Objective-C"
+		prepare()
+		test.contains({ "-x objective-c" }, gcc.getcflags(cfg))
+		test.contains({ "-x objective-c" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_compileasObjCPP()
+		compileas "Objective-C++"
+
+		prepare()
+		test.contains({ "-x objective-c++" }, gcc.getcflags(cfg))
+		test.contains({ "-x objective-c++" }, gcc.getcxxflags(cfg))
+	end
