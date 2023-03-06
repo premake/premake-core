@@ -196,9 +196,10 @@
 -- or nil if the object could not be found.
 --
 
-	function table.indexof(tbl, obj)
+	function table.indexof(tbl, obj, cmp)
+		cmp = cmp or function(lhs, rhs) return lhs == rhs end
 		for k, v in ipairs(tbl) do
-			if v == obj then
+			if cmp(v, obj) then
 				return k
 			end
 		end

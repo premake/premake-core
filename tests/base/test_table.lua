@@ -54,6 +54,10 @@
 		test.isequal(2, idx)
 	end
 
+	function suite.indexof_returnsIndexOfValueFoundWithCmp()
+		local idx = table.indexof({ "a", "bb", "ccc" }, "aa", function(lhs, rhs) return #lhs == #rhs end)
+		test.isequal(2, idx)
+	end
 
 --
 -- table.isempty() tests

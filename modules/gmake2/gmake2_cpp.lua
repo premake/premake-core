@@ -163,31 +163,19 @@
 
 		-- process custom build commands.
 		if fileconfig.hasCustomBuildRule(filecfg) then
-			local env = table.shallowcopy(filecfg.environ)
-			env.PathVars = {
-				["file.basename"]     = { absolute = false, token = node.basename },
-				["file.abspath"]      = { absolute = true,  token = node.abspath },
-				["file.relpath"]      = { absolute = false, token = node.relpath },
-				["file.name"]         = { absolute = false, token = node.name },
-				["file.objname"]      = { absolute = false, token = node.objname },
-				["file.path"]         = { absolute = true,  token = node.path },
-				["file.directory"]    = { absolute = true,  token = path.getdirectory(node.abspath) },
-				["file.reldirectory"] = { absolute = false, token = path.getdirectory(node.relpath) },
-			}
-
-			local shadowContext = p.context.extent(filecfg, env)
-
-			local buildoutputs = p.project.getrelative(cfg.project, shadowContext.buildoutputs)
+			local buildoutputs = p.project.getrelative(cfg.project, filecfg.buildoutputs)
 			if buildoutputs and #buildoutputs > 0 then
 				local file = {
 					buildoutputs  = buildoutputs,
 					source        = node.relpath,
-					buildmessage  = shadowContext.buildmessage,
-					buildcommands = shadowContext.buildcommands,
-					buildinputs   = p.project.getrelative(cfg.project, shadowContext.buildinputs)
+					buildmessage  = filecfg.buildmessage,
+					buildcommands = filecfg.buildcommands,
+					buildinputs   = p.project.getrelative(cfg.project, filecfg.buildinputs)
 				}
-				table.insert(cfg._gmake.fileRules, file)
-
+				local cmp = function(lhs, rhs) return lhs.buildoutputs[1] == rhs.buildoutputs[1] end
+				if table.indexof(cfg._gmake.fileRules, file, cmp) == nil then
+					table.insert(cfg._gmake.fileRules, file)
+				end
 				for _, output in ipairs(buildoutputs) do
 					cpp.addGeneratedFile(cfg, node, output)
 				end
@@ -247,12 +235,16 @@
 		end
 
 		local fileset = cfg._gmake.filesets[kind] or {}
-		table.insert(fileset, filename)
+		if not table.contains(fileset, filename) then
+			table.insert(fileset, filename)
+		end
 		cfg._gmake.filesets[kind] = fileset
 
 		local generatedKind = "GENERATED"
 		local generatedFileset = cfg._gmake.filesets[generatedKind] or {}
-		table.insert(generatedFileset, filename)
+		if not table.contains(generatedFileset, filename) then
+			table.insert(generatedFileset, filename)
+		end
 		cfg._gmake.filesets[generatedKind] = generatedFileset
 
 		-- recursively setup rules.
@@ -289,7 +281,10 @@
 					buildcommands = buildcommands,
 					buildinputs   = buildinputs
 				}
-				table.insert(cfg._gmake.fileRules, file)
+				local cmp = function(lhs, rhs) return lhs.buildoutputs[1] == rhs.buildoutputs[1] end
+				if table.indexof(cfg._gmake.fileRules, file, cmp) == nil then
+					table.insert(cfg._gmake.fileRules, file)
+				end
 
 				for _, output in ipairs(buildoutputs) do
 					cpp.addGeneratedFile(cfg, node, output)
