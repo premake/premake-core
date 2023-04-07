@@ -24,6 +24,7 @@ Premake 5.0.0 beta 1 or later.
 conformancemode(true)   -- better for cross-platform projects
 conformancemode(false)  -- has access to more platform-specific features
 
--- Parentheses are required in this case because Lua only supports omitting them if the parameter is a single string or table.
+-- Parentheses are required in this case because Lua only supports 
+-- omitting them if the parameter is a single string or table.
 ```
 
