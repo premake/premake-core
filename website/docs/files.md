@@ -50,3 +50,4 @@ filter "system:MacOSX"
 * [Adding Source Files](Adding-Source-Files.md)
 * [Removing Values](Removing-Values.md)
 * [vpaths](vpaths.md)
+* [includedirs](https://premake.github.io/docs/includedirs/) (Whereas `files` is used to determine which files are included in a generated project's view of what files are associated with that project, `includedirs` is used to determine *where to automatically search for source files* when including/importing them. Being aware of this distinction is important if you want to use a non-standard project folder structure.) 
