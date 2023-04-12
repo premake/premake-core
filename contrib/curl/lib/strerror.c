@@ -187,8 +187,10 @@ curl_easy_strerror(CURLcode error)
   case CURLE_TELNET_OPTION_SYNTAX :
     return "Malformed telnet option";
 
+#if LIBCURL_VERSION_NUM < 0x073e00
   case CURLE_PEER_FAILED_VERIFICATION:
     return "SSL peer certificate or SSH remote key was not OK";
+#endif
 
   case CURLE_GOT_NOTHING:
     return "Server returned nothing (no headers, no data)";
@@ -214,9 +216,11 @@ curl_easy_strerror(CURLcode error)
   case CURLE_SSL_CIPHER:
     return "Couldn't use specified SSL cipher";
 
+#if LIBCURL_VERSION_NUM >= 0x073e00
   case CURLE_SSL_CACERT:
     return "Peer certificate cannot be authenticated with given CA "
       "certificates";
+#endif
 
   case CURLE_SSL_CACERT_BADFILE:
     return "Problem with the SSL CA cert (path? access rights?)";
