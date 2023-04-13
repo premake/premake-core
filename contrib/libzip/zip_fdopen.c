@@ -35,6 +35,8 @@
 
 #include "zipint.h"
 
+#include <unistd.h>
+
 
 
 ZIP_EXTERN struct zip *
