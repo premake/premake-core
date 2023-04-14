@@ -196,6 +196,7 @@
 				m.clrSupport,
 				m.characterSet,
 				m.platformToolset,
+				m.enableUnityBuild,
 				m.sanitizers,
 				m.toolsVersion,
 				m.wholeProgramOptimization,
@@ -2577,6 +2578,12 @@
 			else
 				m.element("PlatformToolset", nil, version)
 			end
+		end
+	end
+
+	function m.enableUnityBuild(cfg)
+		if _ACTION >= "vs2017" and cfg.enableunitybuild then
+			m.element("EnableUnitySupport", nil, iif(cfg.enableunitybuild == "On", "true", "false"))
 		end
 	end
 

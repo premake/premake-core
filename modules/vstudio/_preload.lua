@@ -185,6 +185,15 @@
 		}
 	}
 
+	p.api.register {
+		name = "enableunitybuild",
+		scope = { "config" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
 
 --
 -- Decide when the full module should be loaded.

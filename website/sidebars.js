@@ -139,6 +139,7 @@ module.exports = {
 						'embed',
 						'embedandsign',
 						'enabledefaultcompileitems',
+						'enableunitybuild',
 						'enablewarnings',
 						'endian',
 						'entrypoint',
