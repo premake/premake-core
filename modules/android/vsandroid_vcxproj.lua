@@ -447,6 +447,7 @@
 		else
 			vc2010.element("AndroidAppLibName", nil, "$(RootNamespace)")
 		end
+		vc2010.element("AntTarget", nil, iif(premake.config.isDebugBuild(cfg), "debug", "release"))
 		p.pop('</AntPackage>')
 	end
 
