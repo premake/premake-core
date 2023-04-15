@@ -1,12 +1,12 @@
-shaderobjectfileoutput - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the output object of compiled HLSL files.
 
 ```lua
-shaderobjectfileoutput (value)
+shaderobjectfileoutput ("path")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`path` is the output path of HLSL files that have been compiled into Compiled Shader Objects.
 
 ## Applies To ###
 
@@ -18,7 +18,9 @@ Premake 5.0.0 alpha 14 or later.
 
 ### Examples ###
 
+This Visual Studio project will compile HLSL files to the shaders folder with a .cso extension.
+
 ```lua
-shaderobjectfileoutput (value)
+shaderobjectfileoutput "shaders/%%(Filename).cso"
 ```
 
