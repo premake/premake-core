@@ -99,3 +99,12 @@ RUNTIME SCRIPT LOADING
  able to find other, custom scripts, you can also set a search path with the
  PREMAKE_PATH environment variable. Set it just like you would set your
  system PATH variable.
+
+BUILDING deb BINARY PACKAGE
+
+ 0. sudo apt install devscripts
+ 1. bootstrap the premake
+ 2. ./bin/release/premake5 gmake2
+ 3. cp ./packages/debian ./debian
+ 4. debuild --no-lintian --no-sign
+ 5. the built package should appear in the parent dir.
