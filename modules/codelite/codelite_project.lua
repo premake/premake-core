@@ -96,7 +96,7 @@
 		_p('<?xml version="1.0" encoding="UTF-8"?>')
 
 		local type = m.internalTypeMap[prj.kind] or ""
-		_x('<CodeLite_Project Name="%s" InternalType="%s">', prj.name, type)
+		_x('<CodeLite_Project Name="%s" InternalType="%s" Version="11000">', prj.name, type)
 	end
 
 	function m.plugins(prj)
@@ -105,7 +105,7 @@
 			-- <Plugin Name="qmake">
 --		_p(1, '</Plugins>')
 
-		_p(1, '<Plugins/>')
+		-- _p(1, '<Plugins/>')
 	end
 
 	function m.description(prj)
@@ -124,10 +124,10 @@
 		tree.traverse(tr, {
 			-- folders are handled at the internal nodes
 			onbranchenter = function(node, depth)
-				_p(depth, '<VirtualDirectory Name="%s">', node.name)
+				_p(1 + depth, '<VirtualDirectory Name="%s">', node.name)
 			end,
 			onbranchexit = function(node, depth)
-				_p(depth, '</VirtualDirectory>')
+				_p(1 + depth, '</VirtualDirectory>')
 			end,
 			-- source files are handled at the leaves
 			onleaf = function(node, depth)
@@ -141,9 +141,9 @@
 				end
 
 				if #excludesFromBuild > 0 then
-					_p(depth, '<File Name="%s" ExcludeProjConfig="%s" />', node.relpath, table.concat(excludesFromBuild, ';'))
+					_p(1 + depth, '<File Name="%s" ExcludeProjConfig="%s" />', node.relpath, table.concat(excludesFromBuild, ';'))
 				else
-					_p(depth, '<File Name="%s"/>', node.relpath)
+					_p(1 + depth, '<File Name="%s"/>', node.relpath)
 				end
 			end,
 		}, true)
@@ -214,7 +214,7 @@
 			usepch = "no"
 		end
 
-		_x(3, '<Compiler Options="%s" C_Options="%s" Assembler="%s" Required="yes" PreCompiledHeader="%s" PCHInCommandLine="%s" PCHFlagsPolicy="1" PCHFlags="">', cxxflags, cflags, asmflags, pch, usepch)
+		_x(3, '<Compiler Options="%s" C_Options="%s" Assembler="%s" Required="yes" PreCompiledHeader="%s" PCHInCommandLine="%s" PCHFlags="" PCHFlagsPolicy="1">', cxxflags, cflags, asmflags, pch, usepch)
 
 		for _, includedir in ipairs(cfg.includedirs) do
 			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includedir))
@@ -234,7 +234,7 @@
 		local toolset = m.getcompiler(cfg)
 		local flags   = table.join(toolset.getldflags(cfg), toolset.getincludedirs(cfg, {}, nil, cfg.frameworkdirs), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), cfg.linkoptions, toolset.getlinks(cfg))
 
-		_x(3, '<Linker Required="yes" Options="%s">', table.concat(flags, ";"))
+		_x(3, '<Linker Options="%s" Required="yes">', table.concat(flags, ";"))
 
 		for _, libdir in ipairs(cfg.libdirs) do
 			_p(4, '<LibraryPath Value="%s"/>', project.getrelative(cfg.project, libdir))
@@ -283,6 +283,7 @@
 
 		_x(3, '<General OutputFile="%s" IntermediateDirectory="%s" Command="%s" CommandArguments="%s" UseSeparateDebugArgs="%s" DebugArguments="%s" WorkingDirectory="%s" PauseExecWhenProcTerminates="%s" IsGUIProgram="%s" IsEnabled="%s"/>',
 			targetname, objdir, command, cmdargs, useseparatedebugargs, debugargs, workingdir, pauseexec, isguiprogram, isenabled)
+		_x(3, '<BuildSystem Name="Default"/>')
 	end
 
 	function m.environment(cfg)
@@ -334,6 +335,8 @@
 			end
 			p.escaper(codelite.esc)
 			_p(3, '</PreBuild>')
+		else
+			_p(3, '<PreBuild/>')
 		end
 	end
 
@@ -351,12 +354,23 @@
 			end
 			p.escaper(codelite.esc)
 			_p(3, '</PostBuild>')
+		else
+			_p(3, '<PostBuild/>')
 		end
 	end
 
 	function m.customBuild(cfg)
 		if not configuration_iscustombuild(cfg) then
-			_p(3, '<CustomBuild Enabled="no"/>')
+			_p(3, '<CustomBuild Enabled="no">')
+			_p(4, '<RebuildCommand/>')
+			_p(4, '<CleanCommand/>')
+			_p(4, '<BuildCommand/>')
+			_p(4, '<PreprocessFileCommand/>')
+			_p(4, '<SingleFileCommand/>')
+			_p(4, '<MakefileGenerationCommand/>')
+			_p(4, '<ThirdPartyToolName/>')
+			_p(4, '<WorkingDirectory/>')
+			_p(3, '</CustomBuild>')
 			return
 		end
 
@@ -365,14 +379,14 @@
 		local rebuild = table.implode(cfg.rebuildcommands,"","","")
 
 		_p(3, '<CustomBuild Enabled="yes">')
-		_x(4, '<BuildCommand>%s</BuildCommand>', build)
-		_x(4, '<CleanCommand>%s</CleanCommand>', clean)
 		_x(4, '<RebuildCommand>%s</RebuildCommand>', rebuild)
-		_p(4, '<PreprocessFileCommand></PreprocessFileCommand>')
-		_p(4, '<SingleFileCommand></SingleFileCommand>')
-		_p(4, '<MakefileGenerationCommand></MakefileGenerationCommand>')
-		_p(4, '<ThirdPartyToolName></ThirdPartyToolName>')
-		_p(4, '<WorkingDirectory></WorkingDirectory>')
+		_x(4, '<CleanCommand>%s</CleanCommand>', clean)
+		_x(4, '<BuildCommand>%s</BuildCommand>', build)
+		_p(4, '<PreprocessFileCommand/>')
+		_p(4, '<SingleFileCommand/>')
+		_p(4, '<MakefileGenerationCommand/>')
+		_p(4, '<ThirdPartyToolName/>')
+		_p(4, '<WorkingDirectory/>')
 		_p(3, '</CustomBuild>')
 	end
 
@@ -534,4 +548,5 @@
 		p.callArray(m.elements.project, prj)
 
 		_p('</CodeLite_Project>')
+		_p('')
 	end
