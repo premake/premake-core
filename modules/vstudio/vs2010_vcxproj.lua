@@ -1645,6 +1645,10 @@
 		elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+			-- <OpenMPSupport>true</OpenMPSupport> is unfortunately ignored with clang toolset
+			if cfg.openmp == "On" then
+				table.insert(opts, 1, '/openmp')
+			end
 		end
 
 		if #opts > 0 then

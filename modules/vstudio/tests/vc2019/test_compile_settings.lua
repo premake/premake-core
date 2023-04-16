@@ -79,6 +79,20 @@
 		]]
 	end
 
+	function suite.openmpOnWithClang()
+		toolset "clang"
+		openmp "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<OpenMPSupport>true</OpenMPSupport>
+	<AdditionalOptions>/openmp %(AdditionalOptions)</AdditionalOptions>
+		]]
+	end
+
 --
 -- Check ClCompile for ScanForModuleDependencies
 --
