@@ -56,6 +56,7 @@
 		return {
 			m.projectHasLanguage,
 			m.actionSupportsLanguage,
+			m.actionSupportsToolset,
 			m.actionSupportsKind,
 			m.projectRulesExist,
 			m.projectValuesInScope,
@@ -170,6 +171,13 @@
 	function m.actionSupportsLanguage(prj)
 		if not p.action.supports(prj.language) then
 			p.warn("Unsupported language '%s' used for project '%s'", prj.language, prj.name)
+		end
+	end
+
+
+	function m.actionSupportsToolset(prj)
+		if not p.action.supportsToolset(prj.language, prj.toolset) then
+			p.warn("Unsupported toolset '%s' used for language '%s' for project '%s'", prj.toolset, prj.language, prj.name)
 		end
 	end
 
