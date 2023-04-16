@@ -255,7 +255,7 @@
 -- Decorate include file search paths for the MSVC command line.
 --
 
-	function msc.getincludedirs(cfg, dirs, extdirs, frameworkdirs)
+	function msc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = project.getrelative(cfg.project, dir)
@@ -263,6 +263,15 @@
 		end
 
 		for _, dir in ipairs(extdirs or {}) do
+			dir = project.getrelative(cfg.project, dir)
+			if cfg.toolset and cfg.toolset >= "msc-v142" then
+				table.insert(result, '/external:I' ..  p.quoted(dir))
+			else
+				table.insert(result, '-I' ..  p.quoted(dir))
+			end
+		end
+
+		for _, dir in ipairs(includedirsafter or {}) do
 			dir = project.getrelative(cfg.project, dir)
 			if cfg.toolset and cfg.toolset >= "msc-v142" then
 				table.insert(result, '/external:I' ..  p.quoted(dir))

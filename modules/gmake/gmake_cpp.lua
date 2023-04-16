@@ -521,7 +521,7 @@ end
 
 
 	function make.includes(cfg, toolset)
-		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs)
+		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter)
 		_p('  INCLUDES +=%s', make.list(includes))
 	end
 

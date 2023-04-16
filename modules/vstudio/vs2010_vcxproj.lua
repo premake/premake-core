@@ -2278,7 +2278,8 @@
 
 
 	function m.includePath(cfg)
-		local dirs = vstudio.path(cfg, cfg.externalincludedirs)
+		local externaldirs = table.join(cfg.externalincludedirs, cfg.includedirsafter)
+		local dirs = vstudio.path(cfg, externaldirs)
 		if #dirs > 0 then
 			if _ACTION < "vs2019" then
 				m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))

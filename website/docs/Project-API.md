@@ -109,6 +109,7 @@
 | [implibsuffix](implibsuffix.md)                           |  |
 | [include](include.md)                                     |  |
 | [includedirs](includedirs.md)                             |  |
+| [includedirsafter](includedirsafter.md)                   |  |
 | [includeexternal](includeexternal.md)                     |  |
 | [inlining](inlining.md)                                   | Tells the compiler when it should inline functions |
 | [intrinsics](intrinsics.md)                               |  |
