@@ -351,6 +351,31 @@ cmd2</StartupCommands>
 		]]
 	end
 
+	function suite.OnProjectCfg_PreLinkAfterPreBuild()
+		prebuildmessage "msg_prebuild"
+		prebuildcommands {
+			"cmd_prebuild1",
+			"cmd_prebuild2"
+		}
+		prelinkmessage "msg_prelink"
+		prelinkcommands {
+			"cmd_prelink1",
+			"cmd_prelink2"
+		}
+		prepare()
+		codelite.project.preBuild(prj)
+		test.capture [[
+      <PreBuild>
+        <Command Enabled="yes">@echo "msg_prebuild"</Command>
+        <Command Enabled="yes">cmd_prebuild1</Command>
+        <Command Enabled="yes">cmd_prebuild2</Command>
+        <Command Enabled="yes">@echo "msg_prelink"</Command>
+        <Command Enabled="yes">cmd_prelink1</Command>
+        <Command Enabled="yes">cmd_prelink2</Command>
+      </PreBuild>
+		]]
+	end
+
 	function suite.OnProjectCfg_PostBuild()
 		postbuildcommands { "cmd0", "cmd1" }
 		prepare()

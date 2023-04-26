@@ -325,7 +325,7 @@
 	end
 
 	function m.preBuild(cfg)
-		if #cfg.prebuildcommands > 0 or cfg.prebuildmessage then
+		if #cfg.prebuildcommands > 0 or cfg.prebuildmessage or #cfg.prelinkcommands > 0 or cfg.prelinkmessage then
 			_p(3, '<PreBuild>')
 			p.escaper(codelite.escElementText)
 			if cfg.prebuildmessage then
@@ -333,6 +333,17 @@
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
 			local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
+			for _, command in ipairs(commands) do
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			if #cfg.prelinkcommands then
+				p.warnOnce("codelite_prelink", "prelinkcommands is treated as prebuildcommands by Codelite")
+			end
+			if cfg.prelinkmessage then
+				local command = os.translateCommandsAndPaths("@{ECHO} " .. p.quote(cfg.prelinkmessage), cfg.project.basedir, cfg.project.location)
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			local commands = os.translateCommandsAndPaths(cfg.prelinkcommands, cfg.project.basedir, cfg.project.location)
 			for _, command in ipairs(commands) do
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
