@@ -1790,7 +1790,7 @@
 			{ "clang", "Clang (clang)" },
 			{ "gcc", "GNU GCC (gcc/g++)" },
 			{ "mingw", "MinGW GCC (gcc/g++)" },
-			{ "msc", "Microsoft compiler" }
+			{ "msc", "Microsoft compiler" },
 			{ "tcc", "Tiny C Compiler (tcc)" },
 		}
 	}

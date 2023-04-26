@@ -29,7 +29,9 @@
 		local flags = config.mapFlags(cfg, tcc.cppflags)
 		return flags
 	end
-
+	
+	-- alias
+	tcc.getcxxflags = tcc.getcppflags
 
 --
 -- Returns string to be appended to -g
@@ -96,7 +98,7 @@
 	function tcc.getcflags(cfg)
 		local shared_flags = config.mapFlags(cfg, tcc.shared)
 		local cflags = config.mapFlags(cfg, tcc.cflags)
-		local flags = table.join(shared_flags, cflags, tcc.getsystemversionflags(cfg))
+		local flags = table.join(shared_flags, cflags)
 		flags = table.join(flags, tcc.getwarnings(cfg))
 		return flags
 	end
