@@ -69,7 +69,7 @@ void term_doSetTextColor(int color)
 
 	s_currentColor = color;
 
-	const char* colorTable[] = 
+	const char* colorTable[] =
 	{
 		"\x1B[0;30m", // term.black       = 0
 		"\x1B[0;34m", // term.blue        = 1

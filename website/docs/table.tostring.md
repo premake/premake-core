@@ -6,7 +6,7 @@ table.tostring(tbl, recurse)
 
 ### Parameters ###
 
-- `tbl` is the table to be formatted. 
+- `tbl` is the table to be formatted.
 - *recurse* is an optional integer indicating the depth of recursion
 
 ### Return Value ###

@@ -58,7 +58,7 @@
 		if dotnetbase.isNewFormatProject(prj) then
 			if prj.flags.WPF then
 				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
-			else				
+			else
 				_p('<Project Sdk="Microsoft.NET.Sdk">')
 			end
 		else

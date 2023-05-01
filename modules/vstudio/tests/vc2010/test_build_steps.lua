@@ -49,7 +49,7 @@
 </CustomBuildStep>
 		]]
 	end
-	
+
 --
 -- Check a normal build step setup
 --
@@ -69,8 +69,8 @@
 </CustomBuildStep>
 		]]
 	end
-	
-	
+
+
 --
 -- Check a more complex build step setup
 --

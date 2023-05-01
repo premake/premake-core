@@ -27,7 +27,7 @@ Premake 5.0.0 beta 1 or later.
 ```lua
 embed {
 	"SDL2.dylib",
-	"bar.framework"   
+	"bar.framework"
 }
 ```
 

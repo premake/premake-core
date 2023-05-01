@@ -6,7 +6,7 @@ p = os.findheader("headerfile" [, additionalpaths])
 
 ### Parameters ###
 
-`headerfile` is a file name or a the end of a file path to locate. 
+`headerfile` is a file name or a the end of a file path to locate.
 
 `additionalpaths` is a string or a table of one or more additional search path.
 
@@ -15,7 +15,7 @@ p = os.findheader("headerfile" [, additionalpaths])
 The path containing the header file, if found. Otherwise, nil.
 
 ### Remarks ###
-`os.findheader` mostly use the same paths as [[os.findlib]] but replace `/lib` by `/include`.  
+`os.findheader` mostly use the same paths as [[os.findlib]] but replace `/lib` by `/include`.
 
 ### Availability ###
 

@@ -193,7 +193,7 @@
 	/>
 		]]
 	end
-  
+
 	function suite.categories_onStringWithCategory()
 		createVar { name="MyVar", kind="string", category="Custom Category" }
 		local r = test.getRule("MyRule")

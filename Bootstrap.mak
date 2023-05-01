@@ -42,7 +42,7 @@ HOST_PLATFORM= none
 
 .PHONY: default none clean nix-clean windows-clean \
 	mingw-clean mingw macosx macosx-clean osx-clean osx \
-	linux-clean linux bsd-clean bsd solaris-clean solaris \ 
+	linux-clean linux bsd-clean bsd solaris-clean solaris \
 	haiku-clean haiku windows-base windows windows-msbuild
 
 default: $(HOST_PLATFORM)
@@ -80,9 +80,9 @@ windows-clean:
 	$(SILENT) if exist .\bin rmdir /s /q .\bin
 	$(SILENT) if exist .\build rmdir /s /q .\build
 	$(SILENT) if exist .\obj rmdir /s /q .\obj
-	
+
 mingw-clean: nix-clean
-	
+
 mingw: mingw-clean
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lole32 -lversion

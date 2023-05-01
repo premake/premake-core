@@ -176,7 +176,7 @@
 				m.VCNMakeTool
 			}
 		end
-		
+
 		return {
 			m.VCPreBuildEventTool,
 			m.VCCustomBuildTool,
@@ -1010,7 +1010,7 @@
 			p.w('DebugInformationFormat="%s"', fmt)
 		end
 	end
-	
+
 
 
 	function m.detect64BitPortabilityProblems(cfg)
