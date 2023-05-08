@@ -1790,7 +1790,15 @@
 			{ "clang", "Clang (clang)" },
 			{ "gcc", "GNU GCC (gcc/g++)" },
 			{ "mingw", "MinGW GCC (gcc/g++)" },
-			{ "msc", "Microsoft compiler" }
+			{ "msc-v80", "Microsoft compiler (Visual Studio 2005)" },
+			{ "msc-v90", "Microsoft compiler (Visual Studio 2008)" },
+			{ "msc-v100", "Microsoft compiler (Visual Studio 2010)" },
+			{ "msc-v110", "Microsoft compiler (Visual Studio 2012)" },
+			{ "msc-v120", "Microsoft compiler (Visual Studio 2013)" },
+			{ "msc-v140", "Microsoft compiler (Visual Studio 2015)" },
+			{ "msc-v141", "Microsoft compiler (Visual Studio 2017)" },
+			{ "msc-v142", "Microsoft compiler (Visual Studio 2019)" },
+			{ "msc-v143", "Microsoft compiler (Visual Studio 2022)" },
 		}
 	}
 
