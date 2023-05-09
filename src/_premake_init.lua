@@ -1878,6 +1878,17 @@
 
 	newoption
 	{
+		trigger     = "shell",
+		value       = "VALUE",
+		description = "Select shell (for command token substitution)",
+		allowed = {
+			{ "cmd", "Windows command shell" },
+			{ "posix", "For posix shells" },
+		}
+	}
+
+	newoption
+	{
 		trigger     = "scripts",
 		value       = "PATH",
 		description = "Search for additional scripts on the given path"
