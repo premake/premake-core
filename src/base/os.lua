@@ -735,12 +735,12 @@
 -- Translate decorated command paths into their OS equivalents.
 ---
 	function os.translateCommandsAndPaths(cmds, basedir, location, map)
-		local translatedBaseDir = path.getrelative(location, basedir)
-
 		map = map or os.target()
+		location = path.getabsolute(location)
+		basedir = path.getabsolute(basedir)
 
 		local translateFunction = function(value)
-			local result = path.join(translatedBaseDir, value)
+			local result = path.getrelative(location, path.join(basedir, value))
 			result = os.translateCommandAndPath(result, map)
 			if value:endswith('/') or value:endswith('\\') or -- if original path ends with a slash then ensure the same
 			   value:endswith('/"') or value:endswith('\\"') then

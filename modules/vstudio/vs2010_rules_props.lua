@@ -150,7 +150,7 @@
 
 		-- write out the result.
 		if buildcommands and #buildcommands > 0 then
-			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
+			local cmds = os.translateCommandsAndPaths(buildcommands, r.basedir, r.location, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
 			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end

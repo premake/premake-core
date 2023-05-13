@@ -408,6 +408,9 @@
 		test.isequal('cmdtool "../foo/path1" "../foo/path2/"', os.translateCommandsAndPaths("cmdtool %[path1] %[path2/]", '../foo', '.', 'osx'))
 	end
 
+	function suite.translateCommandsAndPaths_RelativePath()
+		test.isequal('cmdtool "path1" "../bar/path2/"', os.translateCommandsAndPaths("cmdtool %[../foo/path1] %[path2/]", './bar', './foo', 'osx'))
+	end
 
 --
 -- Helpers
