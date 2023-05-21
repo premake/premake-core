@@ -25,7 +25,10 @@ end
 project "someOtherProject"
    kind "ConsoleApp"
    someLibrary { someFlag="true" }
+   -- Or, without arguments:
+   someLibrary {}
 ```
+Please note that relative paths in the function will be relative to where the function is *used*, not where it is *defined*!
 
 And for defining "classes" of projects:
 
