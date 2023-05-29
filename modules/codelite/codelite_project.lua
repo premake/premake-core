@@ -204,8 +204,9 @@
 		local toolset = m.getcompiler(cfg)
 		local externalincludedirs = toolset.getincludedirs(cfg, {}, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter)
 		local forceincludes = toolset.getforceincludes(cfg)
-		local cxxflags = table.concat(table.join(externalincludedirs, toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions), ";")
-		local cflags   = table.concat(table.join(externalincludedirs, toolset.getcflags(cfg), forceincludes, cfg.buildoptions), ";")
+		local defines = iif(#cfg.undefines > 0, table.join(toolset.getdefines(cfg.defines), toolset.getundefines(cfg.undefines)), {})
+		local cxxflags = table.concat(table.join(externalincludedirs, toolset.getcxxflags(cfg), forceincludes, cfg.buildoptions, defines), ";")
+		local cflags   = table.concat(table.join(externalincludedirs, toolset.getcflags(cfg), forceincludes, cfg.buildoptions, defines), ";")
 		local asmflags = ""
 		local pch      = p.tools.gcc.getpch(cfg)
 		local usepch   = "yes"
@@ -219,8 +220,12 @@
 		for _, includedir in ipairs(cfg.includedirs) do
 			_x(4, '<IncludePath Value="%s"/>', project.getrelative(cfg.project, includedir))
 		end
-		for _, define in ipairs(cfg.defines) do
-			_p(4, '<Preprocessor Value="%s"/>', p.esc(define):gsub(' ', '\\ '))
+		-- undefines should be placed *after* defines/buildoptions
+		-- Codelite places preprocessors after buildoptions...
+		if #cfg.undefines == 0 then
+			for _, define in ipairs(cfg.defines) do
+				_p(4, '<Preprocessor Value="%s"/>', p.esc(define):gsub(' ', '\\ '))
+			end
 		end
 		_p(3, '</Compiler>')
 	end
