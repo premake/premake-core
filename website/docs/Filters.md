@@ -17,7 +17,7 @@ workspace "MyWorkspace"
       defines { "NDEBUG" }
 ```
 
-Filters are always made up of two parts: a *prefix* that specifies which field is being filtered against, and a *pattern* that specifies which values of that field should be accepted. Here is another example that filters by the target action:
+Filters are always made up of two parts: a *prefix* that specifies which field is being filtered against, and a *pattern* that specifies which values of that field should be accepted.
 
 Filters follow Premake's pseudo-declarative style for its scripts: calling filter() makes that filter condition "active". All settings which subsequently appear in the script will be filtered by this condition until a new filter or container (workspace, project) is activated.
 
