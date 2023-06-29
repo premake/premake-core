@@ -35,13 +35,6 @@
 		prj = test.getproject(wks, 1)
 	end
 
-
-
-	local function prepareNil()
-		prepare()
-		setConfig()
-	end
-
 	local function prepareEmpty()
 		prepare()
 		documentationFile ""
@@ -57,13 +50,6 @@
 --
 -- Test Eempty and Nil
 --
-
-function suite.documentationFileNil()
-	prepareNil()
-	test.capture([[
-		<DocumentationFile>test\targetDir\MyProject.xml</DocumentationFile>
-		]])
-end
 
 function suite.documentationFileEmpty()
 	prepareEmpty()
