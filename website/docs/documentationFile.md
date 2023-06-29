@@ -19,7 +19,7 @@ documentationFile ""
 
 ## 2) Custom Directory ##
 
-when you put the following inside the project, the following filename/path will be generated:
+when you put the following inside the project the following filename/path will be generated:
 ```bin\test\%{prj.name}.xml```
 
 ```lua
