@@ -58,7 +58,7 @@
 		if dotnetbase.isNewFormatProject(prj) then
 			if prj.flags.WPF then
 				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
-			else				
+			else
 				_p('<Project Sdk="Microsoft.NET.Sdk">')
 			end
 		else
@@ -751,6 +751,14 @@
 	function dotnetbase.xmlDeclaration()
 		if _ACTION > "vs2008" then
 			p.xmlUtf8()
+		end
+	end
+
+	function dotnetbase.documentationFile(cfg)
+		if cfg.documentationFile and cfg.documentationFile ~= "" then
+			_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, cfg.documentationFile),cfg.project.name))
+		else
+			_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>',vstudio.path(cfg, cfg.targetdir),cfg.project.name))
 		end
 	end
 

@@ -81,7 +81,8 @@
 			dotnetbase.debugProps,
 			dotnetbase.outputProps,
 			dotnetbase.compilerProps,
-			dotnetbase.NoWarn
+			dotnetbase.NoWarn,
+			dotnetbase.documentationFile,
 		}
 	end
 
