@@ -25,6 +25,7 @@ when you put the following inside the project the following filename/path will b
 ```lua
 documentationFile "bin/test"
 ```
+<b>the path is rellative to the projects [location](https://premake.github.io/docs/location/)
 
 ### Applies To ###
 
