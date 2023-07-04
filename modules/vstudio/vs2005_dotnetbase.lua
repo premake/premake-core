@@ -754,7 +754,7 @@
 		end
 	end
 
-	function dotnetbase.documentationFile(cfg)
+	function dotnetbase.documentationfile(cfg)
 		if cfg.documentationFile and cfg.documentationFile ~= "" then
 			_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, cfg.documentationFile),cfg.project.name))
 		elseif cfg.documentationFile then

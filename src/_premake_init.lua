@@ -766,7 +766,7 @@
 	}
 
 	api.register {
-		name = "documentationFile",
+		name = "documentationfile",
 		scope = "project",
 		kind = "string",
 	}
