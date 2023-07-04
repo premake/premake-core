@@ -1,5 +1,5 @@
 ---
-title: documentationFile
+title: documentationfile
 ---
 
 Enable C# xmlDocumentationFile
