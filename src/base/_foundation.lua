@@ -56,6 +56,7 @@
 	premake.UTILITY     = "Utility"
 	premake.UWP         = "uwp"
 	premake.PACKAGING   = "Packaging"
+	premake.TCC         = "tcc"
 	premake.WINDOWEDAPP = "WindowedApp"
 	premake.WINDOWS     = "windows"
 	premake.X86         = "x86"
