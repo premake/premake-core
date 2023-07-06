@@ -59,6 +59,13 @@ function suite.documentationFilePath()
 		]]
 end
 
+function suite.documentationEmpty()
+	prepareEmpty()
+	test.capture [[
+		<DocumentationFile>test\targetDir\MyProject.xml</DocumentationFile>
+		]]
+end
+
 function suite.documentationNull()
 	prepareNull()
 	test.isemptycapture()

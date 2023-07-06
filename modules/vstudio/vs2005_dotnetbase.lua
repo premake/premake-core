@@ -755,10 +755,9 @@
 	end
 
 	function dotnetbase.documentationfile(cfg)
-		if cfg.documentationFile and cfg.documentationFile ~= "" then
-			_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, cfg.documentationFile),cfg.project.name))
-		elseif cfg.documentationFile then
-			_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>',vstudio.path(cfg, cfg.targetdir),cfg.project.name))
+		if cfg.documentationFile then
+			local documentationFile = iif(cfg.documentationFile ~= "", cfg.documentationFile, cfg.targetdir)
+        	_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, documentationFile),cfg.project.name))
 		end
 	end
 

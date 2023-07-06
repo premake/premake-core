@@ -26,7 +26,7 @@ when you put the following inside the project the following filename/path will b
 ```lua
 documentationfile "bin/test"
 ```
-<b>the path is rellative to the projects [location](https://premake.github.io/docs/location/)
+<b>the path is relative to the project [location](https://premake.github.io/docs/location/)
 
 ### Applies To ###
 
@@ -37,7 +37,7 @@ The `project` scope.
 Visual Studio 2005
 
 ## <b>NOTE !</b> ##
-it is recommended to use the default option because Visual Studio can only apply the DocumentationFile when it is placed dirrectly next to the corresponding dll.
+it is recommended to use the default option because Visual Studio can only apply the DocumentationFile when it is placed directly next to the corresponding dll.
 
 ## See Also ##
 more [info](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#create-xml-documentation-output)
