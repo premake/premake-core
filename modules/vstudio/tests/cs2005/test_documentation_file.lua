@@ -1,5 +1,5 @@
 --
--- tests/actions/vstudio/cs2005/test_debug_props.lua
+-- tests/actions/vstudio/cs2005/test_documentation_file.lua
 -- Test DocumentationFile feature Visual Studio 2005+ C# project.
 -- Copyright (c) 2012-2023 Jason Perkins and the Premake project
 --
@@ -56,6 +56,13 @@ function suite.documentationFilePath()
 	prepareDir()
 	test.capture [[
 		<DocumentationFile>test\MyProject.xml</DocumentationFile>
+		]]
+end
+
+function suite.documentationEmpty()
+	prepareEmpty()
+	test.capture [[
+		<DocumentationFile>test\targetDir\MyProject.xml</DocumentationFile>
 		]]
 end
 
