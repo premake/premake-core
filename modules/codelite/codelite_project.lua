@@ -428,6 +428,9 @@
 		p.tree.traverse(tr, {
 			onleaf = function(node, depth)
 				local filecfg = p.fileconfig.getconfig(node, cfg)
+				if not filecfg then
+					return
+				end
 				local prj = cfg.project
 				local rule = p.global.getRuleForFile(node.name, prj.rules)
 
