@@ -21,6 +21,9 @@
 		local elements = oldfn(prj)
 
 		if prj.system == p.LINUX then
+		
+			table.remove(elements, table.indexof(elements, vc2010.ignoreWarnDuplicateFilename))
+			
 			elements = table.join(elements, {
 				vslinux.linuxApplicationType
 			})
@@ -59,7 +62,7 @@
 
 		if cfg.system == p.LINUX and cfg.kind ~= p.UTILITY and cfg.kind ~= p.PACKAGING then
 			
-			table.remove(elements, table.indexof(elements, vc2010.characterSet))			
+			table.remove(elements, table.indexof(elements, vc2010.characterSet))
 			table.remove(elements, table.indexof(elements, vc2010.wholeProgramOptimization))
 			table.remove(elements, table.indexof(elements, vc2010.windowsSDKDesktopARMSupport))
 
@@ -265,6 +268,14 @@
 				opts = table.concat(opts, " ")
 				vc2010.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 			end
+		else
+			oldfn(cfg, condition)
+		end
+	end)
+
+	p.override(vc2010, "clCompilePreprocessorDefinitions", function(oldfn, cfg, condition)
+		if cfg.system == p.LINUX then
+			vc2010.preprocessorDefinitions(cfg, cfg.defines, false, condition)
 		else
 			oldfn(cfg, condition)
 		end

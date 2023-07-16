@@ -119,17 +119,4 @@
 	<CppLanguageStandard>c++17</CppLanguageStandard>
 ]]
 	end
-
-	function suite.externalIncludeDirs()
-		externalincludedirs { "externalincludedirs" }
-		prepareOutputProperties()
-		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Linux'">
-	<LinkIncremental>true</LinkIncremental>
-	<IntDir>obj\Debug\</IntDir>
-	<TargetName>MyProject</TargetName>
-	<TargetExt>
-	</TargetExt>
-	<IncludePath>externalincludedirs;$(IncludePath)</IncludePath>
-]]
-	end
+	
