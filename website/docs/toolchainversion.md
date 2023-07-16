@@ -8,6 +8,8 @@ toolchainversion ("value")
 
 `value` is one of:
 
+### Android Projects ###
+
 * `4.6`: GCC 4.6
 * `4.8`: GCC 4.8
 * `4.9`: GCC 4.9
@@ -17,13 +19,19 @@ toolchainversion ("value")
 * `3.8`: Clang 3.8
 * `5.0`: Clang 5.0
 
-## Applies To ###
+### Linux Projects ###
+
+* `Remote`: Remote Compilation and Debugging
+* `WSL`: Windows Subsystem for Linux
+* `WSL2`: Windows Subsystem for Linux 2
+
+### Applies To ###
 
 The `config` scope.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later, only applies to Android projects.
+Premake 5.0.0 alpha 14 or later, only applies to Android or Linux projects.
 
 ### Examples ###
 
