@@ -22,7 +22,7 @@
 	end
 
 	-- add system tags for linux.
-	os.systemTags[p.LINUX] = { "linux" }
+	os.systemTags[p.LINUX] = { "linux", "posix" }
 
 --
 -- Register Linux properties
