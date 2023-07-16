@@ -42,12 +42,6 @@
 		scope = "config",
 		kind = "string",
 	}
-	
-	api.register {
-		name = "remotemachine",
-		scope = "config",
-		kind = "string",
-	}
 
 	return function(cfg)
 		return (cfg.system == p.LINUX)
