@@ -9,8 +9,6 @@ if not p.modules.vslinux then
 	p.modules.vslinux = {}
 
 	include("vslinux_vcxproj.lua")
-	include("vslinux_sln2005.lua")
-	include("vslinux_vstudio.lua")
 end
 
 return p.modules.vslinux
