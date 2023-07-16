@@ -1,7 +1,7 @@
 Specifies the subdirectory on the remote machine to deploy each project's source code to.
 
 ```lua
-remoteprojectreldir ("path")
+remoteprojectrelativedir ("path")
 ```
 
 ### Parameters ###
@@ -19,6 +19,6 @@ Premake 5.0.0 alpha 14 or later, only applies to Linux projects.
 ### Examples ###
 
 ```lua
-remoteprojectreldir "%{prj.name}"
+remoteprojectrelativedir "%{prj.name}"
 ```
 
