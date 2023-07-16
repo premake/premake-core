@@ -21,9 +21,9 @@ toolchainversion ("value")
 
 ### Linux Projects ###
 
-* `Remote`: Remote Compilation and Debugging
-* `WSL`: Windows Subsystem for Linux
-* `WSL2`: Windows Subsystem for Linux 2
+* `remote`: Remote Compilation and Debugging
+* `wsl`: Windows Subsystem for Linux
+* `wsl2`: Windows Subsystem for Linux 2
 
 ### Applies To ###
 
