@@ -1799,6 +1799,10 @@
 			{ "msc-v141", "Microsoft compiler (Visual Studio 2017)" },
 			{ "msc-v142", "Microsoft compiler (Visual Studio 2019)" },
 			{ "msc-v143", "Microsoft compiler (Visual Studio 2022)" },
+			function (name)
+				local toolset, version = p.tools.canonical(name)
+				return toolset
+			end
 		}
 	}
 
