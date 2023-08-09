@@ -12,13 +12,13 @@ Simply add:
 ```lua
 language "D"
 ```
-to your project definition and populate with .d files.  
+to your project definition and populate with .d files.
 C and C++ projects that include .d files will also support some of the API below. Any API tagged with (D/C/C++) works in D and C/C++ projects. Any API tagged with (C/C++) only works for .d files in C/C++ projects.
 
 ### APIs ###
 
 * [flags](https://github.com/premake/premake-dlang/wiki/flags)
-  * AllInstantiate 
+  * AllInstantiate
   * CodeCoverage
   * Color
   * Documentation

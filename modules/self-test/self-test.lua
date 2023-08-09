@@ -15,7 +15,7 @@
 
 	m._VERSION = p._VERSION
 
-	
+
 
 	newaction {
 		trigger = "self-test",
@@ -48,10 +48,10 @@
 			if err then
 				error(err, 0)
 			end
-			
+
 			tests = table.join(tests, _tests)
 		end
-		
+
 		if #tests == 0 or _OPTIONS["test-only"] ~= nil then
 			local _tests, err = m.getTestsWithIdentifier(_OPTIONS["test-only"])
 			if err then
@@ -85,7 +85,7 @@
 			local manifest = manifests[i]
 
 			_TESTS_DIR = path.getdirectory(manifest)
-	
+
 			local files = dofile(manifest)
 			for i = 1, #files do
 				local filename = path.join(_TESTS_DIR, files[i])

@@ -5,10 +5,10 @@ defaultplatform ("platform_name")
 ```
 
 If `platform_name` has not been defined using [`platforms`](platforms.md) the default platform will not change from the generic one i.e. the first one passed to [`platforms`](platforms.md).
- 
+
 ### Parameters ###
 
-`platform_name` - Is the name of the platform you want to use as default. 
+`platform_name` - Is the name of the platform you want to use as default.
 
 ### Applies To ###
 
@@ -41,7 +41,7 @@ workspace "MyWorkspace"
   filter "platforms:Shared64"
     kind "SharedLib"
     architecture "x64"
-	
+
 ```
 ### See Also ###
 

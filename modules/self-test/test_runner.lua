@@ -132,7 +132,7 @@
 		local suitesKeys = {}
 		local suiteTestsKeys = {}
 		local totalTestCount = 0
-		
+
 		for i, filter in ipairs(filters) do
 			for suiteName, suite in pairs(suites) do
 				if not m.isSuppressed(suiteName) and suite ~= nil and (not filter.suiteName or filter.suiteName == suiteName) then

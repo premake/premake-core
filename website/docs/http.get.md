@@ -6,9 +6,9 @@ http.get(url, { options })
 
 ### Parameters ###
 
-`url` is the URL to be downloaded. 
+`url` is the URL to be downloaded.
 
-`options` is a [table of options](http-options-table.md) used for this HTTP request. 
+`options` is a [table of options](http-options-table.md) used for this HTTP request.
 
 ### Return Values ###
 
@@ -20,7 +20,7 @@ resource, result_str, response_code = http.get(url, { options })
 
  * `resource` is the content that was retrieved or nil if it could not be retrieved.
  * `result_str` is set to "OK" if successful or contains a description of the failure.
- * `result_code` is the HTTP [result code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) of the get. 
+ * `result_code` is the HTTP [result code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) of the get.
 
 ### Examples ###
 
@@ -38,7 +38,7 @@ end
 
 local resource, result_str, response_code = http.get("http://example.com/api.json", {
     progress = progress,
-    headers = { "From: Premake", "Referer: Premake" }, 
+    headers = { "From: Premake", "Referer: Premake" },
     userpwd = "username:password"
 })
 ```

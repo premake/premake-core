@@ -34,7 +34,7 @@ static const char* getTypeString(DWORD type)
 		case REG_RESOURCE_LIST:              return "REG_RESOURCE_LIST";
 		case REG_FULL_RESOURCE_DESCRIPTOR:   return "REG_FULL_RESOURCE_DESCRIPTOR";
 		case REG_RESOURCE_REQUIREMENTS_LIST: return "REG_RESOURCE_REQUIREMENTS_LIST";
-		case REG_QWORD:                      return "REG_QWORD";	
+		case REG_QWORD:                      return "REG_QWORD";
 		default:                             return NULL;
 	}
 }
@@ -55,7 +55,7 @@ static HKEY openKey(const char *path)
 	// skip the initial path separator
 	if (path[0] == '\\')
 		path++;
-	
+
 	// open the key for reading
 	if (RegOpenKeyExA(key, path, 0, KEY_READ, &subkey) != ERROR_SUCCESS)
 		subkey = NULL;
@@ -72,7 +72,7 @@ static int listNodes(HKEY key, ListCallback callback, void * user)
 	DWORD numSubkeys;
 	DWORD numValues;
 	DWORD length;
-	DWORD index;	
+	DWORD index;
 	char* name;
 	char* value;
 	int ok;
@@ -139,9 +139,9 @@ static void listCallback(const RegNodeInfo* info, void* user)
 {
 	lua_State* L = (lua_State*)user;
 	const char* typeString;
-	
+
 	// Insert key into the result table (keys are represented as empty tables)
-	if (info->value == NULL) {		
+	if (info->value == NULL) {
 		lua_createtable(L, 0, 0);
 		lua_setfield(L, -2, info->name);
 		return;
@@ -237,7 +237,7 @@ int os_listWindowsRegistry(lua_State* L)
 		lua_pushnil(L);
 	}
 
-	RegCloseKey(key); 
+	RegCloseKey(key);
 	return 1;
 }
 
