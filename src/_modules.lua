@@ -12,5 +12,4 @@
 		"gmake2",
 		"d",
 		"android",
-		"vslinux",
 	}
