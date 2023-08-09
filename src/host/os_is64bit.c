@@ -9,7 +9,7 @@
 int os_is64bit(lua_State* L)
 {
 	// If this code returns true, then the platform is 64-bit. If it
-	// returns false, the platform might still be 64-bit, but more 
+	// returns false, the platform might still be 64-bit, but more
 	// checking will need to be done on the Lua side of things.
 #if PLATFORM_WINDOWS
 	typedef BOOL (WINAPI* WowFuncSig)(HANDLE, PBOOL);

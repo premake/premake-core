@@ -112,7 +112,7 @@ void sha1_write(sha1nfo *s, const char *data, size_t len)
 	for (; len--;) sha1_writebyte(s, (uint8_t)*data++);
 }
 
-void sha1_pad(sha1nfo *s) 
+void sha1_pad(sha1nfo *s)
 {
 	// Implement SHA-1 padding (fips180-2 §5.1.1)
 
@@ -131,7 +131,7 @@ void sha1_pad(sha1nfo *s)
 	sha1_addUncounted(s, (uint8_t)(s->byteCount << 3));
 }
 
-uint8_t* sha1_result(sha1nfo *s) 
+uint8_t* sha1_result(sha1nfo *s)
 {
 	int i;
 
@@ -139,7 +139,7 @@ uint8_t* sha1_result(sha1nfo *s)
 	sha1_pad(s);
 
 	// Swap byte order back
-	for (i = 0; i < 5; i++) 
+	for (i = 0; i < 5; i++)
 	{
 		s->state[i] =
 			(((s->state[i]) << 24) & 0xff000000)

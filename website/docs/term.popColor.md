@@ -8,7 +8,7 @@ term.popColor()
 None
 
 ### Return Value ###
-* `nil` if the color stack is empty.  
+* `nil` if the color stack is empty.
 * The current color setting. One of the color values listed in [term.setTextColor](term.setTextColor.md)
 
 ### Example ###

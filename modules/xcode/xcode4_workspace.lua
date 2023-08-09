@@ -107,7 +107,7 @@
 				p.w('location = "container:"')
 				p.w('name = "%s">', n.name)
 			end,
-			
+
 			onbranchexit = function(n)
 				p.pop('</Group>')
 			end,

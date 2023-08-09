@@ -4,7 +4,7 @@ inheritdependencies
 inheritdependencies "value"
 ```
 
-For Visual Studio project files, this controls the generation of the `%(AdditionalDependencies)` entry in the list of libraries that a project links. 
+For Visual Studio project files, this controls the generation of the `%(AdditionalDependencies)` entry in the list of libraries that a project links.
 
 ### Parameters ###
 

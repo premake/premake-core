@@ -21,7 +21,7 @@ Premake 5.0 or later.
 Xcode project generation does not yet support `disablewarnings`. As a workaround, you can use [[xcodebuildsettings]] like this:
 
 ```lua
-xcodebuildsettings { 
+xcodebuildsettings {
     WARNING_CFLAGS = "-Wall -Wextra " ..
         "-Wno-missing-field-initializers " ..
         "-Wno-unknown-pragmas " ..

@@ -924,7 +924,7 @@
 </ItemGroup>
 		]]
 	end
-	
+
 --
 -- test consumewinrtextension set for a single file
 --

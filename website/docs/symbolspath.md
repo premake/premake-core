@@ -1,5 +1,5 @@
 Specify the target location of the debug symbols.
-For the Visual Studio action, this allows you to specify the location and name of the .pdb output. 
+For the Visual Studio action, this allows you to specify the location and name of the .pdb output.
 
 ```lua
 symbolspath "filename"

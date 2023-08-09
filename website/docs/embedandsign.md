@@ -27,7 +27,7 @@ Premake 5.0.0 beta 1 or later.
 ```lua
 embedAndSign {
 	"SDL2.framework",
-	"Another.framework"   
+	"Another.framework"
 }
 ```
 

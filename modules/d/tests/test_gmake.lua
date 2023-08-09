@@ -202,7 +202,7 @@ all: $(TARGETDIR) $(OBJDIR) prebuild prelink $(TARGET)
   DC = dmd
 		]]
 	end
-	
+
 	function suite.make_dTools_gdc()
 		toolset "gdc"
 
