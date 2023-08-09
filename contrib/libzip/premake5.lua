@@ -21,3 +21,4 @@ project "zip-lib"
 
 	filter "system:macosx"
 		defines { "HAVE_SSIZE_T_LIBZIP" }
+		forceincludes { "unistd.h" }
