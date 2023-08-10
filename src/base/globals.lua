@@ -48,7 +48,8 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		fname = premake.findProjectScript(fname)
+		local fullPath = premake.findProjectScript(fname)
+		fname = fullPath or fname
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
 			return dofile(fname)

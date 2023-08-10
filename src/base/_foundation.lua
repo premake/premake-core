@@ -238,15 +238,7 @@
 --
 
 	function premake.findProjectScript(fname)
-		local with_ext = fname .. ".lua"
-		local p5 = path.join(fname, "premake5.lua")
-		local p4 = path.join(fname, "premake4.lua")
-
-		local res = os.locate(fname, with_ext, p5, p4)
-		if res == nil then
-			premake.error("Cannot find either " .. table.implode({fname, with_ext, p5, p4}, "", "", " or "))
-		end
-		return res
+		return os.locate(fname, fname .. ".lua", path.join(fname, "premake5.lua"), path.join(fname, "premake4.lua"))
 	end
 
 
