@@ -31,7 +31,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 	end
 
 	function suite.http_get()
-		local result, err = safe_http_get("http://httpbin.org/user-agent")
+		local result, err = safe_http_get("http://httpbingo.org/user-agent")
 		if result then
 			p.out(result)
 			test.capture(
@@ -45,7 +45,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 	function suite.https_get()
 		-- sslverifypeer = 0, so we can test from within companies like here at Blizzard where all HTTPS traffic goes through
 		-- some strange black box that re-signs all traffic with a custom ssl certificate.
-		local result, err = safe_http_get("https://httpbin.org/user-agent", { sslverifypeer = 0 })
+		local result, err = safe_http_get("https://httpbingo.org/user-agent", { sslverifypeer = 0 })
 		if result then
 			p.out(result)
 			test.capture(
@@ -57,7 +57,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 	end
 
 	function suite.https_get_verify_peer()
-		local result, err = safe_http_get("https://httpbin.org/user-agent")
+		local result, err = safe_http_get("https://httpbingo.org/user-agent")
 		if result then
 			p.out(result)
 			test.capture(
@@ -69,7 +69,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 	end
 
 	function suite.http_responsecode()
-		local result, err, responseCode = safe_http_get("http://httpbin.org/status/418")
+		local result, err, responseCode = safe_http_get("http://httpbingo.org/status/418")
 		test.isequal(418, responseCode)
 	end
 
@@ -78,7 +78,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 
 	--[[
 	function suite.http_redirect()
-		local result, err, responseCode = safe_http_get("http://httpbin.org/redirect/3")
+		local result, err, responseCode = safe_http_get("http://httpbingo.org/redirect/3")
 		if result then
 			test.isequal(200, responseCode)
 		else
@@ -88,7 +88,7 @@ if http.get ~= nil and _OPTIONS["test-all"] then
 	]]
 
 	function suite.http_headers()
-		local result, err, responseCode = safe_http_get("http://httpbin.org/headers", {
+		local result, err, responseCode = safe_http_get("http://httpbingo.org/headers", {
 			headers = { 'X-Premake: premake' }
 		})
 
