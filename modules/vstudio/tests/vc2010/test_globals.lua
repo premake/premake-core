@@ -103,6 +103,12 @@
 		test.capture [[
 <PropertyGroup Label="Globals">
 	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Linux</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+	<ApplicationType>Linux</ApplicationType>
+	<TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+	<ApplicationTypeRevision>1.0</ApplicationTypeRevision>
 </PropertyGroup>
 		]]
 	end

@@ -125,9 +125,9 @@
 --
 
 	m.elements.globals = function(prj)
-		return {
+
+		local elements = {
 			m.projectGuid,
-			m.ignoreWarnDuplicateFilename,
 			m.keyword,
 			m.projectName,
 			m.preferredToolArchitecture,
@@ -135,15 +135,34 @@
 			m.windowsTargetPlatformVersion,
 			m.fastUpToDateCheck,
 			m.toolsVersion,
-			m.appContainerApplication,
+			m.appContainerApplication
 		}
+
+		if prj.system == p.LINUX then
+			elements = table.join(elements, {
+				m.linuxApplicationType
+			})
+		else
+			elements = table.join(elements, {
+				m.ignoreWarnDuplicateFilename
+			})
+		end
+
+		return elements
 	end
 
 	m.elements.globalsCondition = function(prj, cfg)
-		return {
-			m.windowsTargetPlatformVersion,
-			m.xpDeprecationWarning,
-		}
+
+		if cfg.system == p.LINUX and cfg.system ~= prj.system then
+			return {
+				m.linuxApplicationType
+			}
+		else
+			return {
+				m.windowsTargetPlatformVersion,
+				m.xpDeprecationWarning,
+			}
+		end
 	end
 
 	function m.globals(prj)
@@ -188,21 +207,41 @@
 				m.toolsVersion,
 			}
 		else
-			return {
+
+			local elements = {
 				m.configurationType,
 				m.useDebugLibraries,
 				m.useOfMfc,
 				m.useOfAtl,
 				m.clrSupport,
-				m.characterSet,
 				m.platformToolset,
 				m.enableUnityBuild,
 				m.sanitizers,
 				m.toolsVersion,
-				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
-				m.windowsSDKDesktopARMSupport,
+				m.wholeProgramOptimization,
 			}
+
+			if cfg.system == p.LINUX then
+
+				elements = table.join(elements, {
+					m.linuxStlType,
+					m.remoteRootDir,
+					m.remoteProjectRelDir,
+					m.remoteProjectDir,
+					m.remoteDeployDir
+				})
+
+			else
+
+				elements = table.join(elements, {
+					m.characterSet,
+					m.windowsSDKDesktopARMSupport,
+				})
+
+			end
+
+			return elements
 		end
 	end
 
@@ -358,7 +397,6 @@
 
 	m.elements.clCompile = function(cfg)
 		local calls = {
-			m.precompiledHeader,
 			m.warningLevel,
 			m.treatWarningAsError,
 			m.disableSpecificWarnings,
@@ -371,14 +409,9 @@
 			m.forceIncludes,
 			m.debugInformationFormat,
 			m.optimization,
-			m.functionLevelLinking,
-			m.intrinsicFunctions,
 			m.justMyCodeDebugging,
 			m.supportOpenMP,
-			m.minimalRebuild,
 			m.omitFramePointers,
-			m.stringPooling,
-			m.runtimeLibrary,
 			m.omitDefaultLib,
 			m.exceptionHandling,
 			m.runtimeTypeInfo,
@@ -386,7 +419,6 @@
 			m.treatWChar_tAsBuiltInType,
 			m.floatingPointModel,
 			m.floatingPointExceptions,
-			m.inlineFunctionExpansion,
 			m.enableEnhancedInstructionSet,
 			m.multiProcessorCompilation,
 			m.additionalCompileOptions,
@@ -399,11 +431,25 @@
 			m.useFullPaths,
 			m.removeUnreferencedCodeData,
 			m.compileAsWinRT,
-			m.externalWarningLevel,
 			m.externalAngleBrackets,
 			m.scanSourceForModuleDependencies,
 			m.useStandardPreprocessor,
 		}
+
+		if cfg.system ~= p.LINUX then
+
+			elements = table.join(elements, {
+				m.externalWarningLevel,
+				m.functionLevelLinking,
+				m.inlineFunctionExpansion,
+				m.intrinsicFunctions,
+				m.minimalRebuild,
+				m.precompiledHeader,
+				m.runtimeLibrary,
+				m.stringPooling,
+			})
+
+		end
 
 		if cfg.kind == p.STATICLIB then
 			table.insert(calls, m.programDatabaseFileName)
@@ -1541,26 +1587,71 @@
 
 
 	function m.languageStandard(cfg)
-		if _ACTION >= "vs2017" then
-			if (cfg.cppdialect == "C++14") then
-				m.element("LanguageStandard", nil, 'stdcpp14')
-			elseif (cfg.cppdialect == "C++17") then
-				m.element("LanguageStandard", nil, 'stdcpp17')
-			elseif (cfg.cppdialect == "C++20") then
-				m.element("LanguageStandard", nil, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
-			elseif (cfg.cppdialect == "C++latest") then
-				m.element("LanguageStandard", nil, 'stdcpplatest')
+
+		if cfg.system == p.LINUX then
+
+			local cpp_langmap = {
+				["C++98"]   = "c++98",
+				["C++03"]   = "c++98",
+				["C++11"]   = "c++11",
+				["C++14"]   = "c++14",
+				["C++17"]   = "c++17",
+				["C++2a"]   = "c++2a",
+				["C++20"]   = "c++20",
+				["C++latest"] = "c++2a",
+				["gnu++98"] = "gnu++98",
+				["gnu++03"] = "gnu++03",
+				["gnu++11"] = "gnu++11",
+				["gnu++14"] = "gnu++14",
+				["gnu++17"] = "gnu++17",
+				["gnu++17"] = "gnu++20",
+			}
+		
+			if cpp_langmap[cfg.cppdialect] ~= nil then
+				m.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
 			end
+
+		else
+
+			if _ACTION >= "vs2017" then
+				if (cfg.cppdialect == "C++14") then
+					m.element("LanguageStandard", nil, 'stdcpp14')
+				elseif (cfg.cppdialect == "C++17") then
+					m.element("LanguageStandard", nil, 'stdcpp17')
+				elseif (cfg.cppdialect == "C++20") then
+					m.element("LanguageStandard", nil, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
+				elseif (cfg.cppdialect == "C++latest") then
+					m.element("LanguageStandard", nil, 'stdcpplatest')
+				end
+			end
+
 		end
 	end
 
 
 	function m.languageStandardC(cfg)
-		if _ACTION >= "vs2019" then
-			if (cfg.cdialect == "C11") then
-				m.element("LanguageStandard_C", nil, 'stdc11')
-			elseif (cfg.cdialect == "C17") then
-				m.element("LanguageStandard_C", nil, 'stdc17')
+
+		if cfg.system == p.LINUX then
+
+			local c_langmap = {
+				["C89"]   = "c89",
+				["C99"]   = "c99",
+				["C11"]   = "c11",
+				["gnu99"] = "gnu99",
+				["gnu11"] = "gnu11",
+			}
+
+			if c_langmap[cfg.cdialect] ~= nil then
+				m.element("CLanguageStandard", nil, c_langmap[cfg.cdialect])
+			end
+
+		else
+			if _ACTION >= "vs2019" then
+				if (cfg.cdialect == "C11") then
+					m.element("LanguageStandard_C", nil, 'stdc11')
+				elseif (cfg.cdialect == "C17") then
+					m.element("LanguageStandard_C", nil, 'stdc17')
+				end
 			end
 		end
 	end
@@ -1626,29 +1717,49 @@
 	end
 
 	function m.additionalCompileOptions(cfg, condition)
-		local opts = cfg.buildoptions
-		if _ACTION == "vs2015" or vstudio.isMakefile(cfg) then
-			if (cfg.cppdialect == "C++14") then
-				table.insert(opts, "/std:c++14")
-			elseif (cfg.cppdialect == "C++17") then
-				table.insert(opts, "/std:c++17")
-			elseif (cfg.cppdialect == "C++20") then
-				table.insert(opts, "/std:c++latest")
-			elseif (cfg.cppdialect == "C++latest") then
-				table.insert(opts, "/std:c++latest")
-			end
-		end
 
-		if cfg.toolset and cfg.toolset:startswith("msc") then
-			local value = iif(cfg.unsignedchar, "On", "Off")
-			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
-		elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
-			local value = iif(cfg.unsignedchar, "On", "Off")
-			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
-			-- <OpenMPSupport>true</OpenMPSupport> is unfortunately ignored with clang toolset
-			if cfg.openmp == "On" then
-				table.insert(opts, 1, '/openmp')
+		local opts = cfg.buildoptions
+
+		-- Options are handled differently compared to MSVC because they follow the gcc/clang conventions
+		if cfg.system == p.LINUX then
+
+			if cfg.disablewarnings and #cfg.disablewarnings > 0 then
+				for _, warning in ipairs(cfg.disablewarnings) do
+					table.insert(opts, '-Wno-' .. warning)
+				end
 			end
+
+			-- -fvisibility=<>
+			if cfg.visibility ~= nil then
+				table.insert(opts, p.tools.gcc.cxxflags.visibility[cfg.visibility])
+			end
+
+		else
+
+			if _ACTION == "vs2015" or vstudio.isMakefile(cfg) then
+				if (cfg.cppdialect == "C++14") then
+					table.insert(opts, "/std:c++14")
+				elseif (cfg.cppdialect == "C++17") then
+					table.insert(opts, "/std:c++17")
+				elseif (cfg.cppdialect == "C++20") then
+					table.insert(opts, "/std:c++latest")
+				elseif (cfg.cppdialect == "C++latest") then
+					table.insert(opts, "/std:c++latest")
+				end
+			end
+
+			if cfg.toolset and cfg.toolset:startswith("msc") then
+				local value = iif(cfg.unsignedchar, "On", "Off")
+				table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+			elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
+				local value = iif(cfg.unsignedchar, "On", "Off")
+				table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+				-- <OpenMPSupport>true</OpenMPSupport> is unfortunately ignored with clang toolset
+				if cfg.openmp == "On" then
+					table.insert(opts, 1, '/openmp')
+				end
+			end
+
 		end
 
 		if #opts > 0 then
@@ -1763,7 +1874,11 @@
 
 	function m.wholeProgramOptimization(cfg)
 		if cfg.flags.LinkTimeOptimization then
-			m.element("WholeProgramOptimization", nil, "true")
+			if cfg.system == p.LINUX then
+				m.element("LinkTimeOptimization", nil, "true")
+			else
+				m.element("WholeProgramOptimization", nil, "true")
+			end
 		end
 	end
 
@@ -1844,20 +1959,34 @@
 		local value
 		local tool, toolVersion = p.config.toolset(cfg)
 		if (cfg.symbols == p.ON) or (cfg.symbols == "FastLink") or (cfg.symbols == "Full") then
-			if cfg.debugformat == "c7" then
-				value = "OldStyle"
-			elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
-				   cfg.clr ~= p.OFF or
-				   config.isOptimizedBuild(cfg) or
-				   cfg.editandcontinue == p.OFF or
-				   (toolVersion and toolVersion:startswith("LLVM-vs"))
-			then
-				value = "ProgramDatabase"
+
+			if cfg.system == p.LINUX then
+
+				if cfg.symbols == p.ON then
+					value = "Minimal"
+				else
+					value = "FullDebug"
+				end
+
 			else
-				value = "EditAndContinue"
+
+				if cfg.debugformat == "c7" then
+					value = "OldStyle"
+				elseif (cfg.architecture == "x86_64" and _ACTION < "vs2015") or
+					   cfg.clr ~= p.OFF or
+					   config.isOptimizedBuild(cfg) or
+					   cfg.editandcontinue == p.OFF or
+					   (toolVersion and toolVersion:startswith("LLVM-vs"))
+				then
+					value = "ProgramDatabase"
+				else
+					value = "EditAndContinue"
+				end
+
 			end
 
 			m.element("DebugInformationFormat", nil, value)
+
 		elseif cfg.symbols == p.OFF then
 			-- leave field blank for vs2013 and older to workaround bug
 			if _ACTION < "vs2015" then
@@ -1923,13 +2052,13 @@
 
 	function m.exceptionHandling(cfg, condition)
 		if cfg.exceptionhandling == p.OFF then
-			m.element("ExceptionHandling", condition, "false")
+			m.element("ExceptionHandling", condition, iif(cfg.system == p.LINUX, "Disabled", "false"))
 		elseif cfg.exceptionhandling == "SEH" then
-			m.element("ExceptionHandling", condition, "Async")
+			m.element("ExceptionHandling", condition, iif(cfg.system == p.LINUX, "Enabled", "Async"))
 		elseif cfg.exceptionhandling == "On" then
-			m.element("ExceptionHandling", condition, "Sync")
+			m.element("ExceptionHandling", condition,  iif(cfg.system == p.LINUX, "Enabled", "Sync"))
 		elseif cfg.exceptionhandling == "CThrow" then
-			m.element("ExceptionHandling", condition, "SyncCThrow")
+			m.element("ExceptionHandling", condition,  iif(cfg.system == p.LINUX, "Enabled", "SyncCThrow"))
 		end
 	end
 
@@ -1968,7 +2097,11 @@
 
 	function m.floatingPointModel(cfg)
 		if cfg.floatingpoint and cfg.floatingpoint ~= "Default" then
-			m.element("FloatingPointModel", nil, cfg.floatingpoint)
+			if cfg.system == p.LINUX then
+				m.element("RelaxIEEE", nil, iif(cfg.floatingpoint == p.OFF, "false", "true"))
+			else
+				m.element("FloatingPointModel", nil, cfg.floatingpoint)
+			end
 		end
 	end
 
@@ -2536,8 +2669,11 @@
 
 
 	function m.outDir(cfg)
-		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
-		m.element("OutDir", nil, "%s\\", outdir)
+		-- OutDir in some platforms breaks deployment
+		if cfg.system ~= p.LINUX then
+			local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+			m.element("OutDir", nil, "%s\\", outdir)
+		end
 	end
 
 
@@ -2564,6 +2700,7 @@
 
 
 	function m.platformToolset(cfg)
+
 		local tool, version = p.config.toolset(cfg)
 
 		if not version and _ACTION >= "vs2019" and cfg.toolset == "clang" then
@@ -2573,6 +2710,33 @@
 		if not version then
 			local value = p.action.current().toolset
 			tool, version = p.tools.canonical(value)
+		end
+
+		-- Select Linux toolset
+		if cfg.system == p.LINUX then
+
+			local gcc_map = {
+				["remote"] = "Remote_GCC_1_0",
+				["wsl"] = "WSL_1_0",
+				["wsl2"] = "WSL2_1_0",
+			}
+		
+			local clang_map = {
+				["remote"] = "Remote_Clang_1_0",
+				["wsl"] = "WSL_Clang_1_0",
+				["wsl2"] = "WSL2_Clang_1_0",
+			}
+
+			if cfg.toolchainversion ~= nil then
+
+				local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+				version  = map[cfg.toolchainversion]
+				if version == nil then
+					p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset)
+				end
+
+			end
+
 		end
 
 		if version then
@@ -2810,8 +2974,11 @@
 
 
 	function m.subSystem(cfg)
-		local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
-		m.element("SubSystem", nil, subsystem)
+		-- Some platforms don't work with subsystem set
+		if cfg.system ~= p.LINUX then
+			local subsystem = iif(cfg.kind == p.CONSOLEAPP, "Console", "Windows")
+			m.element("SubSystem", nil, subsystem)
+		end
 	end
 
 
@@ -2993,8 +3160,19 @@
 
 
 	function m.warningLevel(cfg)
-		local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
-		m.element("WarningLevel", nil, map[cfg.warnings] or "Level3")
+
+		if cfg.system == p.LINUX then
+
+			if cfg.warnings then
+				m.element("WarningLevel", nil, iif(cfg.warnings == p.OFF, "TurnOffAllWarnings", "EnableAllWarnings"))
+			end
+
+		else
+
+			local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "EnableAllWarnings" }
+			m.element("WarningLevel", nil, map[cfg.warnings] or "Level3")
+
+		end
 	end
 
 
@@ -3212,5 +3390,62 @@
 		else
 			local format = string.format('<%s>%s</%s>', name, value, name)
 			p.w(format, table.unpack(arg))
+		end
+	end
+
+	--
+	-- Linux project generation functions
+	--
+
+	function m.linuxApplicationType(prj, cfg)
+
+		m.element("Keyword", nil, "Linux")
+		m.element("RootNamespace", nil, "%s", cfg.project.name)
+		m.element("MinimumVisualStudioVersion", nil, "17.0")
+		m.element("ApplicationType", nil, "Linux")
+		m.element("TargetLinuxPlatform", nil, "Generic")
+		m.element("ApplicationTypeRevision", nil, "1.0")
+
+	end
+
+	function m.linuxStlType(cfg)
+		if cfg.staticruntime ~= nil then
+			m.element("UseOfStl", nil, iif(cfg.staticruntime == "On", "libstdc++_static", "libstdc++_shared"))
+		end
+	end
+	
+	function m.remoteRootDir(cfg)
+		if cfg.remoterootdir ~= nil and cfg.remoterootdir ~= "" then
+			m.element("RemoteRootDir", nil, cfg.remoterootdir)
+		end
+	end
+	
+	function m.remoteProjectRelDir(cfg)
+		if cfg.remoteprojectrelativedir ~= nil then
+			m.element("RemoteProjectRelDir", nil, cfg.remoteprojectrelativedir)
+		end
+	end
+
+	function m.remoteProjectDir(cfg)
+		if cfg.remoteprojectdir ~= nil then
+			m.element("RemoteProjectDir", nil, cfg.remoteprojectdir)
+		end
+	end
+
+	function m.remoteDeployDir(cfg)
+		if cfg.remotedeploydir ~= nil then
+			m.element("RemoteDeployDir", nil, cfg.remotedeploydir)
+		end
+	end
+
+	function m.linuxStrictAliasing(cfg)
+		if cfg.strictaliasing ~= nil then
+			m.element("StrictAliasing", nil, iif(cfg.strictaliasing == "Off", "false", "true"))
+		end
+	end
+
+	function m.linuxPIC(cfg)
+		if cfg.pic ~= nil then
+			m.element("PositionIndependentCode", nil, iif(cfg.pic == "On", "true", "false"))
 		end
 	end
