@@ -234,7 +234,7 @@
 -- @param fname
 --    The filename of the script to run.
 -- @return
---    The correct location and filename of the script to run.
+--    The correct of filename of the script to run, and the function to load the chunk.
 --
 
 	function premake.findProjectScript(fname)
@@ -243,10 +243,12 @@
 		local p4 = path.join(fname, "premake4.lua")
 
 		local res = os.locate(fname, with_ext, p5, p4)
-		if res == nil then
+		res = res or fname
+		local compiled_chunk = loadfile(res)
+		if compiled_chunk == nil then
 			premake.error("Cannot find either " .. table.implode({fname, with_ext, p5, p4}, "", "", " or "))
 		end
-		return res
+		return res, compiled_chunk
 	end
 
 
