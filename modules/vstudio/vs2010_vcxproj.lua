@@ -3432,7 +3432,7 @@
 
 	function m.linuxExceptionHandling(cfg, condition)
 		if cfg.exceptionhandling then
-			m.element("ExceptionHandling", condition,  iif(cfg.exceptionhandling == p.OFF, "Disabled", "Enabled"))
+			m.element("ExceptionHandling", condition, iif(cfg.exceptionhandling == p.OFF, "Disabled", "Enabled"))
 		end
 	end
 
