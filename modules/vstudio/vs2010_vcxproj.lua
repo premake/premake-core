@@ -3541,7 +3541,7 @@
 		if version then
 			m.element("PlatformToolset", nil, version)
 		else
-			p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset)
+			p.error('Invalid toolchainversion (%s) for the selected toolset (%s).', cfg.toolchainversion, cfg.toolset)
 		end
 	end
 
