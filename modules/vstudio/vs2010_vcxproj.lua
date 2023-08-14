@@ -3453,13 +3453,13 @@
 			["C++17"]   = "c++17",
 			["C++2a"]   = "c++2a",
 			["C++20"]   = "c++20",
-			["C++latest"] = "c++2a",
+			["C++latest"] = "c++20",
 			["gnu++98"] = "gnu++98",
 			["gnu++03"] = "gnu++03",
 			["gnu++11"] = "gnu++11",
 			["gnu++14"] = "gnu++14",
 			["gnu++17"] = "gnu++17",
-			["gnu++17"] = "gnu++20",
+			["gnu++20"] = "gnu++20",
 		}
 		
 		if cpp_langmap[cfg.cppdialect] ~= nil then
