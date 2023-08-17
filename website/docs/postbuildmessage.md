@@ -21,12 +21,13 @@ Premake 5.0 or later.
 
 ```lua
 project "MyProject"
-   postbuildcommands { "copy dependencies/*.lib bin" }
+   postbuildcommands { "{COPYFILE} %[dependencies/*.lib] %[bin]" }
    postbuildmessage "Copying dependencies..."
 ```
 
 ### See Also ###
 
+* [Tokens](Tokens.md)
 * [postbuildcommands](postbuildcommands.md)
 * [prebuildmessage](prebuildmessage.md)
 * [prelinkmessage](prelinkmessage.md)

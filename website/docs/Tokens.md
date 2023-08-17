@@ -16,7 +16,7 @@ Value tokens are expressions wrapped in a `%{}` sequence. Tokens have access to 
 %{cfg.targetdir}
 ```
 
-The contents of the %{} are run through loadstring() and executed at token-replacement time, so more complex replacements can be used. You can access any global value.
+The contents of the %{} are run through `loadstring()` and executed at token-replacement time, so more complex replacements can be used. You can access any global value.
 
 ```lua
 %{wks.name:gsub(' ', '_')}
@@ -70,13 +70,15 @@ file.extension -- (including '.'; eg ".cpp")
 [target].suffix
 ```
 
+The paths are expanded relative to premake script, to obtain absolute paths, you have to add `!` as in `%{!file.path}`.
+
 ## Command Tokens
 
 Command tokens represent a system level command in a platform-neutral way.
 
 ```lua
 postbuildcommands {
-	"{COPYFILE} file1.txt file2.txt"
+	"{COPYFILE} %[file1.txt] %[file2.txt]"
 }
 ```
 
@@ -115,6 +117,20 @@ The following tokens are deprecated:
 | Token      | DOS                                         | Posix           | Remarks                             |
 |------------|---------------------------------------------|-----------------|-------------------------------------|
 | {COPY}     | xcopy /Q /E /Y /I {args}                    | cp -rf {args}   | Use {COPYDIR} or {COPYFILE} instead |
+
+### Path in commands
+
+Paths in Premake should be relative to premake script in which they appears.
+
+When you specify a path inside a commands, you have to wrap path insice `%[]` to allow correct trnasformation for the generator.
+
+i.e.
+
+```lua
+buildcommands {
+	"{COPYFILE} %[%{!file.abspath}] %[%{!sln.location}/%{file.basename}]"
+}
+```
 
 ## Tokens and Filters
 
