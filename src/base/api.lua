@@ -81,10 +81,10 @@
 ---
 
 	function includeexternal(fname)
-		fname = p.findProjectScript(fname)
+		fname, compiled_chunk = p.findProjectScript(fname)
 		local wasIncludingExternal = api._isIncludingExternal
 		api._isIncludingExternal = true
-		dofile(fname)
+		compiled_chunk()
 		api._isIncludingExternal = wasIncludingExternal
 	end
 
