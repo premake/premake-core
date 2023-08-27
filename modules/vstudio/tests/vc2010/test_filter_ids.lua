@@ -97,11 +97,11 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
-	<Filter Include="Header Files">
-		<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
-	</Filter>
 	<Filter Include="Source Files">
 		<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Header Files">
+		<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
 	</Filter>
 </ItemGroup>
 		]]
