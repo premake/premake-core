@@ -15,11 +15,18 @@
 -- Generate a Visual Studio 201x C++ project, with support for the new platforms API.
 --
 
+	m.elements.filters = function(prj)
+		return {
+			m.xmlDeclaration,
+			m.filtersProject,
+			m.uniqueIdentifiers,
+			m.filterGroups,
+		}
+	end
+
 	function m.generateFilters(prj)
-		m.xmlDeclaration()
-		m.filtersProject()
-		m.uniqueIdentifiers(prj)
-		m.filterGroups(prj)
+		p.utf8()
+		p.callArray(m.elements.filters, prj)
 		p.out('</Project>')
 	end
 
