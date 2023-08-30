@@ -403,6 +403,8 @@
 			m.externalAngleBrackets,
 			m.scanSourceForModuleDependencies,
 			m.useStandardPreprocessor,
+			m.enableModules,
+			m.buildStlModules,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -3019,6 +3021,24 @@
 			if cfg.externalwarnings then
 				local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
 				m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
+			end
+		end
+	end
+
+
+	function m.enableModules(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.enablemodules then
+				m.element("EnableModules", nil, iif(cfg.enablemodules == "On", "true", "false"))
+			end
+		end
+	end
+
+
+	function m.buildStlModules(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.buildstlmodules then
+				m.element("BuildStlModules", nil, iif(cfg.buildstlmodules == "On", "true", "false"))
 			end
 		end
 	end

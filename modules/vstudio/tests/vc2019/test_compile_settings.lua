@@ -148,3 +148,29 @@
 	<UseStandardPreprocessor>false</UseStandardPreprocessor>
 		]]
 	end
+
+	function suite.enableModulesOff()
+		enablemodules 'Off'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<EnableModules>false</EnableModules>
+		]]
+	end
+
+	function suite.enableModulesOn()
+		enablemodules 'On'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<EnableModules>true</EnableModules>
+		]]
+	end
