@@ -1,16 +1,17 @@
----
-title: documentation file
----
-
 Enables C# xmlDocumentationFile
 
-# Usage (2) #
 The Documentation File is used for adding the [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/) added to functions/ variables, to a dll that has been packed inside a framework or other C# related project.
 This can then be referenced inside another project by placing it next to the corresponding dll.
 
 This feature sets the [Documentation File](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option inside csproj for each corresponding [configuration](https://premake.github.io/docs/configurations/)
 
-## 1) Default ##
+```lua
+documentationfile "targetdir"
+```
+### Parameters ###
+`targetdir` is the directory where the Documentation File should be placed after building the project using Visual Studio.
+
+### Examples ###
 
 When you put **documentationfile** inside the project configuration, the following filename/path will be generated:
 ```%{targetdir}/%{prj.name}.xml```
@@ -18,26 +19,24 @@ When you put **documentationfile** inside the project configuration, the followi
 documentationfile ""
 ```
 
-## 2) Custom Directory ##
-
 When you put the following inside the project configuration the following filename/path will be generated:
 ```bin\test\%{prj.name}.xml```
 
 ```lua
 documentationfile "bin/test"
 ```
-<b>The path is relative to the project [location](https://premake.github.io/docs/location/)
-
 ### Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Visual Studio 2005
+Premake 5.0 or later.
 
-## <b>NOTE !</b> ##
+Visual Studio 2005 C# is the only toolset currently supported.
+
+### Warning ###
 It is recommended to use the default option because Visual Studio can only apply the Documentation File when it is placed directly next to the corresponding DLL.
 
-## See Also ##
+### See Also ###
 More [info](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#create-xml-documentation-output)
