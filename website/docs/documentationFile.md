@@ -40,3 +40,6 @@ It is recommended to use the default option because Visual Studio can only apply
 
 ### See Also ###
 More [info](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#create-xml-documentation-output)
+[xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
+[Documentation File](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile)
+[configuration](https://premake.github.io/docs/configurations/)
