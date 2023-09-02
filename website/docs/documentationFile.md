@@ -23,7 +23,7 @@ When you put the following inside the project configuration the following filena
 ```bin\test\%{prj.name}.xml```
 
 ```lua
-documentationfile "bin/test"
+documentationfile "%{prj.location}/bin/test"
 ```
 ### Applies To ###
 
