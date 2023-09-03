@@ -465,6 +465,7 @@
 			m.clCompileAdditionalIncludeDirectories,
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
+			m.forceUsings,
 			m.debugInformationFormat,
 			m.optimization,
 			m.functionLevelLinking,
@@ -510,25 +511,15 @@
 
 	m.elements.linuxClCompile = function(cfg)
 		local calls = {
-			-- Common - TODO REVIEW LIST
 			m.treatWarningAsError,
-			m.disableSpecificWarnings,
-			m.treatSpecificWarningsAsErrors,
 			m.clCompilePreprocessorDefinitions,
 			m.clCompileUndefinePreprocessorDefinitions,
 			m.clCompileAdditionalIncludeDirectories,
-			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
-			m.optimization,
-			m.omitFramePointers,
-			m.omitDefaultLib,
 			m.runtimeTypeInfo,
-			m.enableEnhancedInstructionSet,
-			m.multiProcessorCompilation,
 			m.compileAs,
-			m.useFullPaths,
-			m.scanSourceForModuleDependencies,
-			m.useStandardPreprocessor,
+			m.omitFramePointers,
+			m.optimization,
 
 			-- Linux
 			m.linuxDebugInformationFormat,
@@ -963,6 +954,7 @@
 			m.clCompileUndefinePreprocessorDefinitions,
 			m.optimization,
 			m.forceIncludes,
+			m.forceUsings,
 			m.precompiledHeader,
 			m.enableEnhancedInstructionSet,
 			m.additionalCompileOptions,
@@ -991,7 +983,6 @@
 			m.clCompileUndefinePreprocessorDefinitions,
 			m.optimization,
 			m.forceIncludes,
-			--m.enableEnhancedInstructionSet,
 			m.additionalCompileOptions,
 			m.compileAs,
 			m.runtimeTypeInfo,
@@ -2191,7 +2182,10 @@
 			if #includes > 0 then
 				m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 			end
-		end
+		end		
+	end
+
+	function m.forceUsings(cfg, condition)
 		if #cfg.forceusings > 0 then
 			local usings = vstudio.path(cfg, cfg.forceusings)
 			if #usings > 0 then
@@ -2199,7 +2193,6 @@
 			end
 		end
 	end
-
 
 	function m.fullProgramDatabaseFile(cfg)
 		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
