@@ -533,6 +533,7 @@
 				m.largeAddressAware,
 				m.optimizeReferences,
 				m.enableCOMDATFolding,
+				m.userAccountControl,
 				m.entryPointSymbol,
 				m.importLibrary,
 				m.targetMachine,
@@ -1025,6 +1026,20 @@
 	function m.enableCOMDATFolding(cfg, toolset)
 		if config.isOptimizedBuild(cfg) and not toolset then
 			p.w('EnableCOMDATFolding="2"')
+		end
+	end
+
+
+
+	function m.userAccountControl(cfg)
+		if cfg.uacexecutionlevel and cfg.uacexecutionlevel ~= "Default" then
+			-- TODO
+		end
+
+		local map = { Off = "false", On = "true" }
+		local value = map[cfg.uacuiaccess]
+		if value then
+			-- TODO
 		end
 	end
 

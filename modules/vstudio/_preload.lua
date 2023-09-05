@@ -152,23 +152,6 @@
 		},
 	}
 
-	p.api.register {   -- DEPRECATED 2019-10-21
-		name = "debuggerflavor",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Local",
-			"Remote",
-			"WebBrowser",
-			"WebService"
-		}
-	}
-
-	p.api.deprecateField("debuggerflavor", 'Use `debugger` instead.',
-	function(value)
-		debugger('VisualStudio' .. value)
-	end)
-
 	p.api.register {
 		name = "scanformoduledependencies",
 		scope = "config",
@@ -194,6 +177,60 @@
 			"Off"
 		}
 	}
+
+	api.register {
+		name = "uacexecutionlevel",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"AsInvoker",
+			"HighestAvailable",
+			"RequireAdministrator"
+		},
+		aliases = {
+			Invoker = 'AsInvoker',
+			Highest = 'HighestAvailable',
+			Admin = 'RequireAdministrator'
+		}
+	}
+
+	api.register {
+		name = "uacuiaccess",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		},
+		aliases = {
+			Bypass = 'On',
+			True = 'On',
+			False = 'Off'
+		}
+	}
+
+--
+-- Deprecated fields
+--
+
+	p.api.register {   -- DEPRECATED 2019-10-21
+		name = "debuggerflavor",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Local",
+			"Remote",
+			"WebBrowser",
+			"WebService"
+		}
+	}
+
+	p.api.deprecateField("debuggerflavor", 'Use `debugger` instead.',
+	function(value)
+		debugger('VisualStudio' .. value)
+	end)
 
 --
 -- Decide when the full module should be loaded.
