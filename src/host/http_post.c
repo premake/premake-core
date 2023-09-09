@@ -49,7 +49,7 @@ int http_post(lua_State* L)
 		lua_pushstring(L, "OK");
 	}
 
-	buffer_destroy(&state.S);
+	premake_buffer_destroy(&state.S);
 	lua_pushnumber(L, (lua_Number)responseCode);
 	return 3;
 }
