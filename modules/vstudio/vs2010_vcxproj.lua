@@ -12,6 +12,7 @@
 	local config = p.config
 	local fileconfig = p.fileconfig
 	local tree = p.tree
+	local dotnetbase = p.vstudio.dotnetbase
 
 	local m = p.vstudio.vc2010
 
@@ -107,7 +108,7 @@
 
 
 --
--- Write out the TargetFrameworkVersion property.
+-- Write out the TargetFramework property.
 --
 
 	function m.targetFramework(prj)
@@ -115,7 +116,11 @@
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.dotnetframework or action.vstudio.targetFramework or "4.0"
-		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		if framework and dotnetbase.isNewFormatProject(prj) then
+			p.w('<TargetFramework>%s</TargetFramework>', framework)
+		else
+			p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		end
 	end
 
 
