@@ -30,6 +30,15 @@
 	function suite.usesCorrectTools()
 		make.cppTools(cfg, p.tools.gcc)
 		test.capture [[
+  ifeq ($(origin CC), default)
+    CC = gcc
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = g++
+  endif
+  ifeq ($(origin AR), default)
+    AR = ar
+  endif
   RESCOMP = windres
 		]]
 	end
