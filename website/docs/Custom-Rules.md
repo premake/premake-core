@@ -72,3 +72,14 @@ project "MyProject"
       StripDebugInfo = true
     }
 ```
+
+## Rule Batching
+
+With msbuild, custom rules can be batched if same properties are used. To enable this, use `rule.inputs` or `rule.outputs` tokens in `buildcommands`. If corresponding output is up-to-date to the input, then the input will be omitted.
+
+```lua
+rule "BatchRule"
+  fileextension ".xyz"
+  buildcommands 'MyProcessor.exe %{rule.inputs}'
+```
+
