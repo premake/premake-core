@@ -113,7 +113,6 @@
 	output_path="%(example.output_path)"
 	AdditionalOptions="%(example.AdditionalOptions)"
 	Inputs="@(example)"
-	Outputs="@(example->'%(Outputs)')"
 	StandardOutputImportance="High"
 	StandardErrorImportance="High" />
 		]]

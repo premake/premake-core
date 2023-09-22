@@ -406,7 +406,8 @@
 		p.push('<StringListProperty')
 		p.w('Name="Outputs"')
 		p.w('DisplayName="Outputs"')
-		p.w('IncludeInCommandLine="true" />')
+		p.w('Visible="False"')
+		p.w('IncludeInCommandLine="False" />')
 		p.pop()
 	end
 

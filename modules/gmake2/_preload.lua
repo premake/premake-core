@@ -62,12 +62,7 @@
 
 		onCleanProject = function(prj)
 			p.clean.file(prj, p.modules.gmake2.getmakefilename(prj, true))
-		end,
-
-		pathVars = {
-			["rule.inputs"]	 = { absolute = false, token = "$<" },
-			["rule.outputs"] = { absolute = false, token = "$@" }
-		}
+		end
 	}
 
 --

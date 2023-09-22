@@ -294,9 +294,7 @@
 
 
 	function m.inputs(r)
-		-- inputs and outputs passed to task
 		p.w('Inputs="@(%s)"', r.name)
-		p.w('Outputs="@(%s->\'%%(Outputs)\')"', r.name)
 	end
 
 

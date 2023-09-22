@@ -46,11 +46,6 @@
 		onCleanTarget = function(prj)
 			p.modules.codelite.cleanTarget(prj)
 		end,
-
-		pathVars = {
-			["rule.inputs"]	 = { absolute = false, token = "$&lt;" },
-			["rule.outputs"] = { absolute = false, token = "$@" }
-		}
 	}
 
 
