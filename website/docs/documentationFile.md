@@ -1,9 +1,11 @@
 Enables C# xmlDocumentationFile
 
-The documentation file is used for adding [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/) to a dll that has been packed inside a framework or other C# related project.
-This can then be referenced inside other projects by placing it next to the corresponding dll.
+The `xmlDocumentationFile` option is used to include [XML comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/) in a DLL that has been included in a .NET framework or another C# project. These XML comments can then be referenced by other projects when placed alongside the corresponding DLL.
 
-This feature sets the [documentationfile](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option inside csproj for each corresponding [configuration](https://premake.github.io/docs/configurations/)
+This feature sets the [documentationfile](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option in a C# project's .csproj file for each respective [configuration](https://premake.github.io/docs/configurations/)
+
+## Usage ##
+To use xmlDocumentationFile, add the following line to your project configuration in your Premake script:
 
 ```lua
 documentationfile "targetdir"
@@ -13,18 +15,17 @@ documentationfile "targetdir"
 
 ### Examples ###
 
-When you put **documentationfile** inside the project configuration, the following filename/path will be generated:
+When you specify an empty string for `documentationfile`, the following filename/path will be generated:
 ```%{targetdir}/%{prj.name}.xml```
 ```lua
 documentationfile ""
 ```
-
-When you put the following inside the project configuration, the following filename/path will be generated:
-```bin\test\%{prj.name}.xml```
-
+If you specify a custom target directory like this:
 ```lua
 documentationfile "%{prj.location}/bin/test"
 ```
+ the following filename/path will be generated:
+```bin\test\%{prj.name}.xml```
 ### Applies To ###
 
 Project configurations.
@@ -36,9 +37,10 @@ Premake 5.0 or later.
 Visual studio 2005 C# is the only toolset currently supported.
 
 ### Warning ###
-default option is recommendes because visual studio cannot detect the xml file if the name is the same as the dll.
+It's recommended to use the default option because Visual Studio may not detect the XML file if its name is not the same as the DLL.
+
 ### See Also ###
-More [info](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#create-xml-documentation-output)
-[xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
-[documentation file](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile)
-[configuration](https://premake.github.io/docs/configurations/)
+For more information on XML documentation in C#, refer to:
+1) [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
+2) [documentation file](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile)
+3) [configuration](https://premake.github.io/docs/configurations/)
