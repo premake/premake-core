@@ -1,15 +1,15 @@
 Enables C# xmlDocumentationFile
 
-The Documentation File is used for adding the [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/) added to functions/ variables, to a dll that has been packed inside a framework or other C# related project.
-This can then be referenced inside another project by placing it next to the corresponding dll.
+The documentation file is used for adding [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/) to a dll that has been packed inside a framework or other C# related project.
+This can then be referenced inside other projects by placing it next to the corresponding dll.
 
-This feature sets the [Documentation File](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option inside csproj for each corresponding [configuration](https://premake.github.io/docs/configurations/)
+This feature sets the [documentationfile](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option inside csproj for each corresponding [configuration](https://premake.github.io/docs/configurations/)
 
 ```lua
 documentationfile "targetdir"
 ```
 ### Parameters ###
-`targetdir` is the directory where the Documentation File should be placed after building the project using Visual Studio.
+`targetdir` is the directory where the documentation file should be placed after building the project using visual studio.
 
 ### Examples ###
 
@@ -19,7 +19,7 @@ When you put **documentationfile** inside the project configuration, the followi
 documentationfile ""
 ```
 
-When you put the following inside the project configuration the following filename/path will be generated:
+When you put the following inside the project configuration, the following filename/path will be generated:
 ```bin\test\%{prj.name}.xml```
 
 ```lua
@@ -33,13 +33,12 @@ Project configurations.
 
 Premake 5.0 or later.
 
-Visual Studio 2005 C# is the only toolset currently supported.
+Visual studio 2005 C# is the only toolset currently supported.
 
 ### Warning ###
-It is recommended to use the default option because Visual Studio can only apply the Documentation File when it is placed directly next to the corresponding DLL.
-
+default option is recommendes because visual studio cannot detect the xml file if the name is the same as the dll.
 ### See Also ###
 More [info](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#create-xml-documentation-output)
 [xml comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
-[Documentation File](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile)
+[documentation file](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile)
 [configuration](https://premake.github.io/docs/configurations/)
