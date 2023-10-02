@@ -5,7 +5,7 @@ The `xmlDocumentationFile` option is used to include [XML comments](https://lear
 This feature sets the [documentationfile](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output#documentationfile) option in a C# project's .csproj file for each respective [configuration](https://premake.github.io/docs/configurations/)
 
 ## Usage ##
-To use xmlDocumentationFile, add the following line to your project configuration in your Premake script:
+To use xmlDocumentationFile, add the following line to your project configuration in your premake script:
 
 ```lua
 documentationfile "targetdir"
@@ -15,7 +15,7 @@ documentationfile "targetdir"
 
 ### Examples ###
 
-When you specify an empty string for `documentationfile`, the following filename/path will be generated:
+When you specify an empty string for `documentationfile`, the following filepath will be generated:
 ```%{targetdir}/%{prj.name}.xml```
 ```lua
 documentationfile ""
@@ -24,7 +24,7 @@ If you specify a custom target directory like this:
 ```lua
 documentationfile "%{prj.location}/bin/test"
 ```
- the following filename/path will be generated:
+ the following filepath will be generated:
 ```bin\test\%{prj.name}.xml```
 ### Applies To ###
 
