@@ -2029,14 +2029,22 @@
 
 
 	function m.userAccountControl(cfg)
+		local disabled = false
 		if cfg.uacexecutionlevel and cfg.uacexecutionlevel ~= "Default" then
-			m.element("UACExecutionLevel", nil, cfg.uacexecutionlevel)
+			if (cfg.uacexecutionlevel == "Disabled") then
+				disabled = true
+				m.element("EnableUAC", nil, "false")
+			else
+				m.element("UACExecutionLevel", nil, cfg.uacexecutionlevel)
+			end
 		end
 
-		local map = { Off = "false", On = "true" }
-		local value = map[cfg.uacuiaccess]
-		if value then
-			m.element("UACUIAccess", nil, value)
+		if (not disabled) then
+			local map = { Off = "false", On = "true" }
+			local value = map[cfg.uacuiaccess]
+			if value then
+				m.element("UACUIAccess", nil, value)
+			end
 		end
 	end
 

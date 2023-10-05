@@ -186,12 +186,14 @@
 			"Default",
 			"AsInvoker",
 			"HighestAvailable",
-			"RequireAdministrator"
+			"RequireAdministrator",
+			"Disabled"
 		},
 		aliases = {
 			Invoker = 'AsInvoker',
 			Highest = 'HighestAvailable',
-			Admin = 'RequireAdministrator'
+			Admin = 'RequireAdministrator',
+			None = 'Disabled'
 		}
 	}
 
