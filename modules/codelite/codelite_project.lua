@@ -33,35 +33,33 @@
 	m.elements = {}
 
 	m.ctools = {
-		gcc = "gnu gcc",
-		clang = "clang",
-		msc = "Visual C++",
+		[p.tools.gcc] = "gnu gcc",
+		[p.tools.clang] = "clang",
+		[p.tools.msc] = "Visual C++",
 	}
 	m.cxxtools = {
-		gcc = "gnu g++",
-		clang = "clang++",
-		msc = "Visual C++",
+		[p.tools.gcc] = "gnu g++",
+		[p.tools.clang] = "clang++",
+		[p.tools.msc] = "Visual C++",
 	}
 
 	function m.getcompilername(cfg)
-		local tool = _OPTIONS.cc or cfg.toolset or p.CLANG
-
-		local toolset = p.tools[tool]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
-			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
+			error("Invalid toolset '" + cfg.toolset + "'")
 		end
 
 		if p.languages.isc(cfg.language) then
-			return m.ctools[tool]
+			return m.ctools[toolset]
 		elseif p.languages.iscpp(cfg.language) then
-			return m.cxxtools[tool]
+			return m.cxxtools[toolset]
 		end
 	end
 
 	function m.getcompiler(cfg)
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or p.CLANG]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
-			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
+			error("Invalid toolset '" + cfg.toolset + "'")
 		end
 		return toolset
 	end
