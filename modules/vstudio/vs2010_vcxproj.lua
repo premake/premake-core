@@ -561,6 +561,7 @@
 				m.additionalLinkOptions,
 				m.programDatabaseFile,
 				m.assemblyDebug,
+				m.userAccountControl,
 			}
 		end
 	end
@@ -2024,9 +2025,31 @@
 		end
 	end
 
+
 	function m.assemblyDebug(cfg)
 		if cfg.assemblydebug then
       		m.element("AssemblyDebug", nil, "true")
+		end
+	end
+
+
+	function m.userAccountControl(cfg)
+		local disabled = false
+		if cfg.uacexecutionlevel and cfg.uacexecutionlevel ~= "Default" then
+			if (cfg.uacexecutionlevel == "Disabled") then
+				disabled = true
+				m.element("EnableUAC", nil, "false")
+			else
+				m.element("UACExecutionLevel", nil, cfg.uacexecutionlevel)
+			end
+		end
+
+		if (not disabled) then
+			local map = { Off = "false", On = "true" }
+			local value = map[cfg.uacuiaccess]
+			if value then
+				m.element("UACUIAccess", nil, value)
+			end
 		end
 	end
 
