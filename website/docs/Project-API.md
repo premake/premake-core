@@ -132,6 +132,7 @@
 | [optimize](optimize.md)                                   | Optimization level |
 | [pchheader](pchheader.md)                                 | Precompiled header file |
 | [pchsource](pchsource.md)                                 | Precompiled header source file (which should build the PCH) |
+| [pchoutputfile](pchoutputfile.md)                         | Precompiled header generated output file |
 | [pic](pic.md)                                             | Position independent code |
 | [platforms](platforms.md)                                 |  |
 | [postbuildcommands](postbuildcommands.md)                 |  |

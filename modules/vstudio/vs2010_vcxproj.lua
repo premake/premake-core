@@ -2619,6 +2619,11 @@
 		if filecfg then
 			if prjcfg.pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'Create')
+
+				if prjcfg.pchoutputfile then
+					m.element('PrecompiledHeaderOutputFile', condition, prjcfg.pchoutputfile)
+				end
+
 			elseif filecfg.flags.NoPCH then
 				m.element('PrecompiledHeader', condition, 'NotUsing')
 			end
@@ -2626,6 +2631,11 @@
 			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
 				m.element("PrecompiledHeader", nil, "Use")
 				m.precompiledHeaderFile(prjcfg.pchheader, prjcfg)
+
+				if prjcfg.pchoutputfile then
+					m.element('PrecompiledHeaderOutputFile', condition, prjcfg.pchoutputfile)
+				end
+
 			else
 				m.element("PrecompiledHeader", nil, "NotUsing")
 			end

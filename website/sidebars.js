@@ -213,6 +213,7 @@ module.exports = {
 						'optimize',
 						'pchheader',
 						'pchsource',
+						'pchoutputfile',
 						'pic',
 						'platforms',
 						'postbuildcommands',

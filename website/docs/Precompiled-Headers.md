@@ -74,6 +74,13 @@ pchsource(src_dir.."stdafx.cpp")
 files{src_dir.."**.h", src_dir.."**.cpp"}
 ```
 
+By default the precompiled header file is `$(IntDir)$(TargetName).pch` when using Visual Studio, this output file can be changed by 
+using the `pchoutputfile` config
+
+```lua
+pchoutputfile "some_pch.pch"
+```
+
 ## Considerations for Non-Visual Studio Tools
 
 Premake does its best to make all of this just work transparently across all of its supported toolsets. For instance, if your header is located in a folder called `includes` and you set up your project like:

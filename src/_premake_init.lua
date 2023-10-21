@@ -991,6 +991,13 @@
 	}
 
 	api.register {
+		name = "pchoutputfile",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	api.register {
 		name = "pic",
 		scope = "config",
 		kind = "string",
