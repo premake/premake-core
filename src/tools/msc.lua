@@ -485,3 +485,24 @@
 
 		return result
 	end
+
+
+--
+-- Get precompiled header output filename
+--
+-- @param cfg
+--    Project configuration
+-- @return
+--    The precompiled header's output file name
+--
+
+	function msc.getpchoutputfile(cfg)
+        local res = {}
+
+        if(cfg.pchoutputfile) then
+            table.insert(res, '/Fp' .. p.quoted(cfg.pchoutputfile))
+        else 
+
+		return res
+	end
+

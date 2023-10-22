@@ -10,7 +10,7 @@ See [Precompiled Headers](Precompiled-Headers.md) for more information.
 
 `filename.pch` is the name of the outputted precompiled header file.
 
-On MSVC this is the `/FP` compiler flag.
+On MSVC this is the `/Fp` compiler flag.
 
 ### Applies To ###
 
