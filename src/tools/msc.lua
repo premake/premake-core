@@ -41,6 +41,14 @@
 -- Returns list of C compiler flags for a configuration.
 --
 
+    local function getPchOutputFileFlag(cfg)
+        local res = '';
+        if cfg.pchoutputfile then
+            res = '/Fp' .. p.quoted(cfg.pchoutputfile)
+        end
+        return res
+    end
+
 	local function getRuntimeFlag(cfg, isstatic)
 		local rt = cfg.runtime
 		local flag = iif(isstatic, "/MT", "/MD")
@@ -155,7 +163,10 @@
 		usestandardpreprocessor = {
 			On = "/Zc:preprocessor",
 			Off = "/Zc:preprocessor-"
-		}
+		},
+        pchoutputfile = {
+            _ = function (cfg) return getPchOutputFileFlag(cfg) end
+        }
 
 	}
 
@@ -485,24 +496,3 @@
 
 		return result
 	end
-
-
---
--- Get precompiled header output filename
---
--- @param cfg
---    Project configuration
--- @return
---    The precompiled header's output file name
---
-
-	function msc.getpchoutputfile(cfg)
-        local res = {}
-
-        if(cfg.pchoutputfile) then
-            table.insert(res, '/Fp' .. p.quoted(cfg.pchoutputfile))
-        else 
-
-		return res
-	end
-
