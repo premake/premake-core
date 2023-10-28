@@ -10,6 +10,7 @@ debuggertype "value"
 * `Mixed` - needs documentation.
 * `NativeOnly` - needs documentation.
 * `ManagedOnly` - needs documentation.
+* `NativeWithManagedCore` - needs documentation.
 
 ### Applies To ###
 
