@@ -160,3 +160,29 @@ function suite.TreatAngleIncludeAsExternalOffFile()
 		<TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
 	]]
 end
+
+function suite.BuildStlModulesOff()
+	buildstlmodules 'Off'
+	prepare()
+	test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<BuildStlModules>false</BuildStlModules>
+	]]
+end
+
+function suite.BuildStlModulesOn()
+	buildstlmodules 'On'
+	prepare()
+	test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<BuildStlModules>true</BuildStlModules>
+	]]
+end
