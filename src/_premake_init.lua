@@ -299,6 +299,7 @@
 			"Mixed",
 			"NativeOnly",
 			"ManagedOnly",
+			"NativeWithManagedCore"
 		}
 	}
 
