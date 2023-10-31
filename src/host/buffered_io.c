@@ -9,14 +9,14 @@
 #include "premake.h"
 #include "buffered_io.h"
 
-void buffer_init(Buffer* b)
+void premake_buffer_init(Buffer* b)
 {
 	b->capacity = 0;
 	b->length = 0;
 	b->data = NULL;
 }
 
-void buffer_destroy(Buffer* b)
+void premake_buffer_destroy(Buffer* b)
 {
 	free(b->data);
 	b->capacity = 0;
@@ -24,7 +24,7 @@ void buffer_destroy(Buffer* b)
 	b->data = NULL;
 }
 
-void buffer_puts(Buffer* b, const void* ptr, size_t len)
+void premake_buffer_puts(Buffer* b, const void* ptr, size_t len)
 {
 	char* data;
 
@@ -53,7 +53,7 @@ void buffer_puts(Buffer* b, const void* ptr, size_t len)
 	b->length += len;
 }
 
-void buffer_printf(Buffer* b, const char *fmt, ...)
+void premake_buffer_printf(Buffer* b, const char *fmt, ...)
 {
 	char text[2048];
 	int len;
@@ -61,7 +61,7 @@ void buffer_printf(Buffer* b, const char *fmt, ...)
 	va_start(args, fmt);
 	len = vsnprintf(text, sizeof(text) - 1, fmt, args);
 	va_end(args);
-	buffer_puts(b, text, len);
+	premake_buffer_puts(b, text, len);
 }
 
 // -- Lua wrappers ----------------------------------------
@@ -69,7 +69,7 @@ void buffer_printf(Buffer* b, const char *fmt, ...)
 int buffered_new(lua_State* L)
 {
 	Buffer* b = (Buffer*)malloc(sizeof(Buffer));
-	buffer_init(b);
+	premake_buffer_init(b);
 	lua_pushlightuserdata(L, b);
 	return 1;
 }
@@ -80,7 +80,7 @@ int buffered_write(lua_State* L)
 	const char *s = luaL_checklstring(L, 2, &len);
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
 
-	buffer_puts(b, s, len);
+	premake_buffer_puts(b, s, len);
 	return 0;
 }
 
@@ -91,15 +91,15 @@ int buffered_writeln(lua_State* L)
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
 
 	if (s != NULL)
-		buffer_puts(b, s, len);
-	buffer_puts(b, "\r\n", 2);
+		premake_buffer_puts(b, s, len);
+	premake_buffer_puts(b, "\r\n", 2);
 	return 0;
 }
 
 int buffered_close(lua_State* L)
 {
 	Buffer* b = (Buffer*)lua_touserdata(L, 1);
-	buffer_destroy(b);
+	premake_buffer_destroy(b);
 	free(b);
 	return 0;
 }

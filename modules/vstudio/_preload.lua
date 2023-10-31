@@ -92,7 +92,8 @@
 			"6.2",
 			"6.3",
 			"6.4",
-			"6.5"
+			"6.5",
+			"6.6"
 		}
 	}
 
@@ -196,6 +197,26 @@
 	}
 
 	p.api.register {
+    name = "enablemodules",
+		scope = { "config" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
+  p.api.register {
+		name = "buildstlmodules",
+		scope = { "config" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+    }
+	}
+  
+  p.api.register {
 		name = "toolchainversion",
 		scope = "config",
 		kind = "string",

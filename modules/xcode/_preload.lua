@@ -69,7 +69,7 @@
 
 		-- Xcode always uses Mac OS X path and naming conventions
 
-		toolset  = "clang",
+		toolset  = "clang", -- TODO: os.target() == p.MACOSX and p.checkVersion(minOSVersion, "<10.7") -> gcc
 
 		-- The capabilities of this action
 

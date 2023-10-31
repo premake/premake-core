@@ -48,6 +48,7 @@ return {
 	"api/test_boolean_kind.lua",
 	"api/test_containers.lua",
 	"api/test_directory_kind.lua",
+	"api/test_file_kind.lua",
 	"api/test_list_kind.lua",
 	"api/test_path_kind.lua",
 	"api/test_register.lua",

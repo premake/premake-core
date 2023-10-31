@@ -160,7 +160,12 @@
 			if opt.allowed then
 				local found = false
 				for _, match in ipairs(opt.allowed) do
-					if match[1] == value then
+					if type(match) == "function" then
+						if match(value) then
+							found = true
+							break
+						end
+					elseif match[1] == value then
 						found = true
 						break
 					end

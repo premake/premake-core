@@ -173,7 +173,7 @@
 
 	function gmake2.getToolSet(cfg)
 		local default = iif(cfg.system == p.MACOSX, "clang", "gcc")
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		local toolset, version = p.tools.canonical(cfg.toolset or default)
 		if not toolset then
 			error("Invalid toolset '" .. cfg.toolset .. "'")
 		end

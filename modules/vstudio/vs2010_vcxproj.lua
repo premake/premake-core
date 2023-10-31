@@ -12,6 +12,7 @@
 	local config = p.config
 	local fileconfig = p.fileconfig
 	local tree = p.tree
+	local dotnetbase = p.vstudio.dotnetbase
 
 	local m = p.vstudio.vc2010
 
@@ -107,7 +108,7 @@
 
 
 --
--- Write out the TargetFrameworkVersion property.
+-- Write out the TargetFramework property.
 --
 
 	function m.targetFramework(prj)
@@ -115,7 +116,11 @@
 		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
 		local framework = prj.dotnetframework or action.vstudio.targetFramework or "4.0"
-		p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		if framework and dotnetbase.isNewFormatProject(prj) then
+			p.w('<TargetFramework>%s</TargetFramework>', framework)
+		else
+			p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+		end
 	end
 
 
@@ -499,6 +504,8 @@
 			m.externalAngleBrackets,
 			m.scanSourceForModuleDependencies,
 			m.useStandardPreprocessor,
+			m.enableModules,
+			m.buildStlModules,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -3207,6 +3214,24 @@
 			if cfg.externalwarnings then
 				local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
 				m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
+			end
+		end
+	end
+
+
+	function m.enableModules(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.enablemodules then
+				m.element("EnableModules", nil, iif(cfg.enablemodules == "On", "true", "false"))
+			end
+		end
+	end
+
+
+	function m.buildStlModules(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.buildstlmodules then
+				m.element("BuildStlModules", nil, iif(cfg.buildstlmodules == "On", "true", "false"))
 			end
 		end
 	end
