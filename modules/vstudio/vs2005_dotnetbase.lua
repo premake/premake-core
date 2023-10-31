@@ -754,6 +754,13 @@
 		end
 	end
 
+	function dotnetbase.documentationfile(cfg)
+		if cfg.documentationFile then
+			local documentationFile = iif(cfg.documentationFile ~= "", cfg.documentationFile, cfg.targetdir)
+        	_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, documentationFile),cfg.project.name))
+		end
+	end
+
 	function dotnetbase.isNewFormatProject(cfg)
 		local framework = cfg.dotnetframework
 		if not framework then

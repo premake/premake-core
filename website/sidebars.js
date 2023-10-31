@@ -132,6 +132,7 @@ module.exports = {
 						'display',
 						'docdir',
 						'docname',
+						'documentationfile',
 						'dofileopt',
 						'dotnetframework',
 						'dpiawareness',
