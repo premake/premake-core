@@ -117,7 +117,7 @@
 	api.register {
 		name = "buildinputs",
 		scope = "config",
-		kind = "list:path",
+		kind = "list:file",
 		tokens = true,
 		pathVars = false,
 	}
