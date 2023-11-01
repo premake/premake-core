@@ -675,8 +675,14 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
-		if (cfg.gccprefix and gcc.tools[tool]) or tool == "rc" then
-			return (cfg.gccprefix or "") .. gcc.tools[tool]
+		local toolset, version = p.tools.canonical(cfg.toolset or p.GCC)
+		if toolset == p.tools.gcc and version ~= nil then
+			version = "-" .. version
+		else
+			version = ""
+		end
+		if ((cfg.gccprefix  or version ~= "") and gcc.tools[tool]) or tool == "rc" then
+			return (cfg.gccprefix or "") .. gcc.tools[tool] .. version
 		end
 		return nil
 	end

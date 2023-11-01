@@ -278,16 +278,8 @@
 --
 
 	function xcode.getToolSet(cfg)
-		local default = "clang"
-		local minOSVersion = project.systemversion(cfg)
-		if minOSVersion ~= nil
-			and cfg.system == p.MACOSX
-			and p.checkVersion(minOSVersion, "<10.7")
-		then
-			default = "gcc"
-		end
 
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
 			error("Invalid toolset '" .. cfg.toolset .. "'")
 		end

@@ -44,6 +44,9 @@ project "luasocket"
 		
 		defines { "LUASOCKET_API=__attribute__((visibility(\"default\")))" }
 		
+		-- Do not prepend with "lib" prefix.
+		targetprefix ""
+
 	filter "configurations:Release"
 		targetdir "../../bin/release"
 

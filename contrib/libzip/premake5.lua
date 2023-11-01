@@ -13,6 +13,7 @@ project "zip-lib"
 
 	filter "system:linux or bsd or solaris or haiku"
 		defines { "HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H" }
+		forceincludes { "unistd.h" }
 
 	filter "system:windows"
 		defines { "_WINDOWS" }
@@ -21,3 +22,4 @@ project "zip-lib"
 
 	filter "system:macosx"
 		defines { "HAVE_SSIZE_T_LIBZIP" }
+		forceincludes { "unistd.h" }

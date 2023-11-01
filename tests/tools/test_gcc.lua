@@ -48,6 +48,14 @@
 		test.isequal("test-prefix-windres", gcc.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_forVersion()
+		toolset "gcc-16"
+		prepare()
+		test.isequal("gcc-16", gcc.gettoolname(cfg, "cc"))
+		test.isequal("g++-16", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ar-16", gcc.gettoolname(cfg, "ar"))
+		test.isequal("windres-16", gcc.gettoolname(cfg, "rc"))
+	end
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
