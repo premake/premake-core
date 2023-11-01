@@ -197,7 +197,7 @@
 	}
 
 	p.api.register {
-    name = "enablemodules",
+	name = "enablemodules",
 		scope = { "config" },
 		kind = "string",
 		allowed = {
@@ -206,17 +206,17 @@
 		}
 	}
 
-  p.api.register {
+	p.api.register {
 		name = "buildstlmodules",
 		scope = { "config" },
 		kind = "string",
 		allowed = {
 			"On",
 			"Off"
-    }
+		}
 	}
-  
-  p.api.register {
+
+	p.api.register {
 		name = "toolchainversion",
 		scope = "config",
 		kind = "string",
