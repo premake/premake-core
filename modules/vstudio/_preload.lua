@@ -197,7 +197,7 @@
 	}
 
 	p.api.register {
-	name = "enablemodules",
+		name = "enablemodules",
 		scope = { "config" },
 		kind = "string",
 		allowed = {
