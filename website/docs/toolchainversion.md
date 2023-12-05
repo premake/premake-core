@@ -31,7 +31,8 @@ The `config` scope.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later, only applies to Android or Linux projects.
+Premake 5.0.0 alpha 14 or later, only applies to Android projects.
+Premake 5.0.0 beta 3 or later, only applies to Visual Studio Linux projects.
 
 ### Examples ###
 
