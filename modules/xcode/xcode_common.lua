@@ -43,6 +43,7 @@
 			[".S"] = "Sources",
 			[".swift"] = "Sources",
 			[".metal"] = "Resources",
+			[".xcprivacy"] = "Resources",
 		}
 		if node.isResource then
 			return "Resources"
@@ -147,6 +148,7 @@
 			[".swift"]     = "sourcecode.swift",
 			[".metal"]     = "sourcecode.metal",
 			[".dylib"]     = "compiled.mach-o.dylib",
+			[".xcprivacy"] = "PrivacyInfo.xcprivacy",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
