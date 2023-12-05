@@ -495,6 +495,45 @@ end
 	end
 
 
+	function suite.additionalProps()
+		p.action.set("vs2022")
+
+		vsprops {
+			-- https://devblogs.microsoft.com/directx/gettingstarted-dx12agility/#2-set-agility-sdk-parameters
+			Microsoft_Direct3D_D3D12_D3D12SDKPath = "custom_path",
+			ValueRequiringEscape = "if (age > 3 && age < 8)",
+		}
+		filter "Debug"
+			vsprops {
+				CustomParam = "DebugParam",
+			}
+		filter "Release"
+			vsprops {
+				CustomParam = "ReleaseParam",
+			}
+		filter {}
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<Microsoft_Direct3D_D3D12_D3D12SDKPath>custom_path</Microsoft_Direct3D_D3D12_D3D12SDKPath>
+	<ValueRequiringEscape>if (age &gt; 3 &amp;&amp; age &lt; 8)</ValueRequiringEscape>
+	<CustomParam>DebugParam</CustomParam>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<Microsoft_Direct3D_D3D12_D3D12SDKPath>custom_path</Microsoft_Direct3D_D3D12_D3D12SDKPath>
+	<ValueRequiringEscape>if (age &gt; 3 &amp;&amp; age &lt; 8)</ValueRequiringEscape>
+	<CustomParam>ReleaseParam</CustomParam>
+</PropertyGroup>
+		]]
+	end
+
+
 	function suite.disableFastUpToDateCheck()
 		fastuptodate "Off"
 		prepare()

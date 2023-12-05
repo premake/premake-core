@@ -216,6 +216,13 @@
 		}
 	}
 
+	p.api.register {
+		name = "vsprops",
+		scope = "config",
+		kind = "list:table",
+		tokens = true,
+	}
+
 --
 -- Decide when the full module should be loaded.
 --

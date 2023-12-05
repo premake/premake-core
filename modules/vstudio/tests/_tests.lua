@@ -6,6 +6,7 @@ return {
 	"dotnet2005/test_nuget_framework_folders.lua",
 
 	-- Visual Studio 2005+ C# projects
+	"cs2005/test_additional_props.lua",
 	"cs2005/test_assembly_refs.lua",
 	"cs2005/test_build_events.lua",
 	"cs2005/test_common_props.lua",
