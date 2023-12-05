@@ -8,6 +8,7 @@
 	p.vstudio.vc2010 = {}
 
 	local vstudio = p.vstudio
+	local vs2010 = p.vstudio.vs2010
 	local project = p.project
 	local config = p.config
 	local fileconfig = p.fileconfig
@@ -161,6 +162,7 @@
 		return {
 			m.windowsTargetPlatformVersion,
 			m.xpDeprecationWarning,
+			m.additionalProps,
 		}
 	end
 
@@ -1535,8 +1537,8 @@
 								if value and #value > 0 then
 									m.element(prop.name, m.configPair(cfg), '%s', value)
 								end
-								end
 							end
+						end
 						if #m.conditionalElements > 0 then
 							m.emitConditionalElements(prj)
 						end
@@ -3087,6 +3089,15 @@
 	function m.xpDeprecationWarning(prj, cfg)
 		if cfg.toolset == "msc-v141_xp" then
 			m.element("XPDeprecationWarning", nil, "false")
+		end
+	end
+
+
+	function m.additionalProps(prj, cfg)
+		for i = 1, #cfg.vsprops do
+			for key, value in spairs(cfg.vsprops[i]) do
+				m.element(key, nil, vs2010.esc(value))
+			end
 		end
 	end
 

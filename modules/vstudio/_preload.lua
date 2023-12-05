@@ -217,6 +217,13 @@
 	}
 
 	p.api.register {
+		name = "vsprops",
+		scope = "config",
+		kind = "list:table",
+		tokens = true,
+	}
+
+	p.api.register {
 		name = "toolchainversion",
 		scope = "config",
 		kind = "string",

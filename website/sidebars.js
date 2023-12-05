@@ -294,6 +294,7 @@ module.exports = {
 						'versionlevel',
 						'visibility',
 						'vpaths',
+						'vsprops',
 						'warnings',
 						'workspace',
 						'xcodebuildresources',
