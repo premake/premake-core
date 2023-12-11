@@ -187,6 +187,34 @@
 		]]
 	end
 
+	function suite.PBXBuildFile_ExcludedFromBuildByFlags()
+		files { "source.cpp", "excluded.cpp" }
+		filter { "files:excluded.cpp" }
+			flags { "ExcludeFromBuild" }
+		filter {}
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+	function suite.PBXBuildFile_ExcludedFromBuildByBuildactionNone()
+		files { "source.cpp", "excluded.cpp" }
+		filter { "files:excluded.cpp" }
+			buildaction "None"
+		filter {}
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
 
 ---------------------------------------------------------------------------
 -- PBXFileReference tests
