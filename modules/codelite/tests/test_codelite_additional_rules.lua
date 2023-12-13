@@ -286,3 +286,25 @@ foo.c: foo.txt foo.h extra_dependency
       </AdditionalRules>]]
 	end
 
+	function suite.buildactionCopy()
+		targetdir "bin"
+		files {"foo.txt", "bar.txt"}
+		filter "files:**.txt"
+			buildaction "Copy"
+
+		prepare()
+		codelite.project.additionalRules(cfg)
+		test.capture( [[
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>bin/bar.txt bin/foo.txt
+bin/bar.txt: bar.txt
+	@$(MakeDirCommand) $(@D)
+	]] .. os.translateCommands('{COPYFILE} "bar.txt" "bin/bar.txt"') .. '\n' ..	[[
+
+bin/foo.txt: foo.txt
+	@$(MakeDirCommand) $(@D)
+	]]  .. os.translateCommands('{COPYFILE} "foo.txt" "bin/foo.txt"') .. '\n' .. [[
+</CustomPreBuild>
+      </AdditionalRules>]])
+	end
