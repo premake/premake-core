@@ -202,6 +202,8 @@ module.exports = {
 						'links',
 						'locale',
 						'location',
+						'llvmdir',
+						'llvmversion',
 						'makesettings',
 						'namespace',
 						'nativewchar',

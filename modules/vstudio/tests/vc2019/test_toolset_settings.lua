@@ -59,6 +59,45 @@
 	end
 
 
+---
+-- Check the project settings with the llvm version
+---
+
+	function suite.toolsetClang_llvmVersion()
+		toolset "clang"
+		llvmversion "16"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>ClangCL</PlatformToolset>
+	<LLVMToolsVersion>16</LLVMToolsVersion>
+</PropertyGroup>
+		]]
+	end
+
+---
+-- Check the project settings with the llvm version
+---
+
+	function suite.toolsetClang_llvmDir()
+		toolset "clang"
+		llvmdir "llvm/dir"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>ClangCL</PlatformToolset>
+	<LLVMInstallDir>llvm\dir</LLVMInstallDir>
+</PropertyGroup>
+		]]
+	end
+
+
 --
 -- If AllModulesPublic flag is set, add <AllProjectBMIsArePublic> element (supported from VS2019)
 --

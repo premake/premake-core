@@ -224,6 +224,7 @@
 			return {
 				m.configurationType,
 				m.platformToolset,
+				m.llvmTools,
 				m.toolsVersion,
 			}
 		else
@@ -238,6 +239,7 @@
 				m.enableUnityBuild,
 				m.sanitizers,
 				m.toolsVersion,
+				m.llvmTools,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 				m.windowsSDKDesktopARMSupport,
@@ -2773,6 +2775,19 @@
 			else
 				m.element("PlatformToolset", nil, version)
 			end
+		end
+	end
+
+	function m.llvmTools(cfg)
+		local llvmdir = cfg.llvmdir
+		local llvmversion = cfg.llvmversion
+
+		if llvmdir and _ACTION >= "vs2019" then
+			m.element("LLVMInstallDir", nil, vstudio.path(cfg, llvmdir))
+		end
+		
+		if llvmversion and _ACTION >= "vs2019" then
+			m.element("LLVMToolsVersion", nil, llvmversion)
 		end
 	end
 
