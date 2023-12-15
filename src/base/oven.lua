@@ -754,7 +754,7 @@
 
 			for cfg in p.project.eachconfig(prj) do
 				local fcfg = p.fileconfig.getconfig(file, cfg)
-				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
+				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild and fcfg.buildaction ~= "None" then
 					oven.uniqueSequence(fcfg, cfg, sequences, bases)
 				end
 			end
