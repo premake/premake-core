@@ -751,6 +751,7 @@
 			"OSXBundle",
 			"OSXFramework",
 			"XCTest",
+			"XCUITest",
 		},
 	}
 
@@ -1950,6 +1951,10 @@
 		targetextension ".framework"
 
 	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:XCTest" }
+		targetprefix ""
+		targetextension ".xctest"
+
+	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:XCUITest" }
 		targetprefix ""
 		targetextension ".xctest"
 
