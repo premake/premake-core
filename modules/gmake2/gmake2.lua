@@ -125,7 +125,7 @@
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) mkdir -p %s', dirname)
 		_p('else')
-		_p('\t$(SILENT) mkdir $(subst /,\\\\,%s)', dirname)
+		_p('\t$(SILENT) -mkdir $(subst /,\\\\,%s)', dirname)
 		_p('endif')
 	end
 
