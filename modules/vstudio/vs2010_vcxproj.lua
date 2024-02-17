@@ -322,6 +322,7 @@
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
 				m.allModulesPublic,
+				m.clangtidy,
 			}
 		end
 	end
@@ -3036,6 +3037,11 @@
 		m.element("TargetName", nil, "%s%s", cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
+	function m.clangtidy(cfg)
+		if _ACTION >= "vs2019" and cfg.clangtidy ~= nil then
+			m.element("EnableClangTidyCodeAnalysis", nil, iif(cfg.clangtidy, "true", "false"))
+		end
+	end
 
 	function m.latestTargetPlatformVersion(prj)
 		-- See https://developercommunity.visualstudio.com/content/problem/140294/windowstargetplatformversion-makes-it-impossible-t.html

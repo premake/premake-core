@@ -170,6 +170,12 @@
 	}
 
 	api.register {
+		name = "clangtidy",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	api.register {
 		name = "compilebuildoutputs",
 		scope = "config",
 		kind = "boolean"
