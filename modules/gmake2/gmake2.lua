@@ -129,6 +129,15 @@
 		_p('endif')
 	end
 
+	function gmake2.copyfile_cmds(source, dest)
+		local cmd = '$(SILENT) {COPYFILE} ' .. source .. ' ' .. dest
+		return { 'ifeq (posix,$(SHELLTYPE))',
+			'\t' .. os.translateCommands(cmd, 'posix'),
+			'else',
+			'\t' .. os.translateCommands(cmd, 'windows'),
+			'endif' }
+	end
+
 	function gmake2.mkdirRules(dirname)
 		_p('%s:', dirname)
 		_p('\t@echo Creating %s', dirname)

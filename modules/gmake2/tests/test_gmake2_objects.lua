@@ -494,3 +494,26 @@ endif
 
 		]]
 	end
+
+	function suite.objectsOnBuildactionCopy()
+		files { "hello.dll" }
+		filter { "Debug", "files:hello.dll" }
+			buildaction "Copy"
+		filter {}
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+CUSTOM :=
+GENERATED :=
+
+ifeq ($(config),debug)
+CUSTOM += $(TARGETDIR)/hello.dll
+GENERATED += $(TARGETDIR)/hello.dll
+
+endif
+
+		]]
+	end
+
