@@ -217,6 +217,12 @@
 	}
 
 	p.api.register {
+		name = "clangtidy",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
 		name = "vsprops",
 		scope = "config",
 		kind = "list:table",
