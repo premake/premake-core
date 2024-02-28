@@ -1061,7 +1061,7 @@
 
 			if #commands > 0 then
 				table.insert(commands, 1, 'set -e') -- Tells the shell to exit when any command fails
-				commands = os.translateCommands(commands, p.MACOSX)
+				commands = os.translateCommandsAndPaths(commands, tr.project.basedir, tr.project.location, p.MACOSX)
 				if not wrapperWritten then
 					_p('/* Begin PBXShellScriptBuildPhase section */')
 					wrapperWritten = true
