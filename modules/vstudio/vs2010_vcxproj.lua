@@ -323,6 +323,7 @@
 				m.executablePath,
 				m.allModulesPublic,
 				m.clangtidy,
+				m.runcodeanalysis
 			}
 		end
 	end
@@ -3040,6 +3041,12 @@
 	function m.clangtidy(cfg)
 		if _ACTION >= "vs2019" and cfg.clangtidy ~= nil then
 			m.element("EnableClangTidyCodeAnalysis", nil, iif(cfg.clangtidy, "true", "false"))
+		end
+	end
+
+	function m.runcodeanalysis(cfg)
+		if _ACTION >= "vs2019" and cfg.runcodeanalysis ~= nil then
+			m.element("RunCodeAnalysis", nil, iif(cfg.runcodeanalysis, "true", "false"))
 		end
 	end
 
