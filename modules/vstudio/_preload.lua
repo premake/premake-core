@@ -223,6 +223,12 @@
 	}
 
 	p.api.register {
+		name = "runcodeanalysis",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
 		name = "vsprops",
 		scope = "config",
 		kind = "list:table",

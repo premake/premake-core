@@ -62,3 +62,41 @@ function suite.onClangTidy_Disabled()
 </PropertyGroup>
 	]]
 end
+
+--
+-- Check build-time code analysis enabled.
+--
+
+function suite.onRunCodeAnalysis_Enabled()
+	runcodeanalysis "On"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<RunCodeAnalysis>true</RunCodeAnalysis>
+</PropertyGroup>
+	]]
+end
+
+--
+-- Check build-time code analysis disabled.
+--
+
+function suite.RunCodeAnalysis_Disabled()
+	runcodeanalysis "Off"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+	<RunCodeAnalysis>false</RunCodeAnalysis>
+</PropertyGroup>
+	]]
+end
