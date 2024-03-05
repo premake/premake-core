@@ -105,7 +105,7 @@ The available tokens, and their replacements:
 | {COPYDIR}  | xcopy /Q /E /Y /I {args}                    | cp -rf {args}   |
 | {DELETE}   | del {args}                                  | rm -rf {args}   |
 | {ECHO}     | echo {args}                                 | echo {args}     |
-| {MKDIR}    | mkdir {args}                                | mkdir -p {args} |
+| {MKDIR}    | IF NOT EXIST {args} (mkdir {args})          | mkdir -p {args} |
 | {MOVE}     | move /Y {args}                              | mv -f {args}    |
 | {RMDIR}    | rmdir /S /Q {args}                          | rm -rf {args}   |
 | {TOUCH}    | type nul >> {arg} && copy /b {arg}+,, {arg} | touch {args}    |
