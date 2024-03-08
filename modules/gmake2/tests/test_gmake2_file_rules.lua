@@ -409,3 +409,27 @@ test2.obj: test2.rule
 	$(SILENT) dorule       S1 "test2.rule"
 		]]
 	end
+
+	function suite.fileRulesOnBuildactionCopy()
+		files { "hello.dll" }
+		filter { "Debug", "files:hello.dll" }
+			buildaction "Copy"
+		filter {}
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+ifeq ($(config),debug)
+$(TARGETDIR)/hello.dll: hello.dll $(TARGETDIR)
+	@echo "$(notdir $<)"
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) cp -f "$<" "$@"
+else
+	$(SILENT) copy /B /Y "$<" "$@"
+endif
+
+endif
+]]
+	end
+

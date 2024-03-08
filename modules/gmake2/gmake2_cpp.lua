@@ -192,6 +192,17 @@
 					cpp.addGeneratedFile(cfg, node, output)
 				end
 			end
+		elseif filecfg.buildaction == "Copy" then
+			local output = '$(TARGETDIR)/' .. node.name
+			local file = {
+				buildoutputs  = { output },
+				source        = node.relpath,
+				buildmessage  = '$(notdir $<)',
+				verbatimbuildcommands = gmake2.copyfile_cmds('"$<"', '"$@"'),
+				buildinputs = {'$(TARGETDIR)'}
+			}
+			table.insert(cfg._gmake.fileRules, file)
+			cpp.addGeneratedFile(cfg, node, output)
 		else
 			cpp.addRuleFile(cfg, node)
 		end
@@ -761,7 +772,11 @@
 				end
 			end
 		end
-
+		if file.verbatimbuildcommands then
+			for _, cmd in ipairs(file.verbatimbuildcommands) do
+				_p('%s', cmd);
+			end
+		end
 		-- TODO: this is a hack with some imperfect side-effects.
 		--       better solution would be to emit a dummy file for the rule, and then outputs depend on it (must clean up dummy in 'clean')
 		--       better yet, is to use pattern rules, but we need to detect that all outputs have the same stem
