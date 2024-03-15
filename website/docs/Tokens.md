@@ -74,7 +74,7 @@ The paths are expanded relative to premake script, to obtain absolute paths, you
 
 ## Command Tokens
 
-Command tokens represent a system level command in a platform-neutral way.
+Command tokens represent a system level command in a shell-neutral way.
 
 ```lua
 postbuildcommands {
@@ -94,11 +94,11 @@ You can use command tokens anywhere you specify a command line, including:
 * [prelinkcommands](prelinkcommands.md)
 * [rebuildcommands](rebuildcommands.md)
 
-Command tokens are replaced with an appropriate command for the target platform. For Windows, path separators in the commmand arguments are converted to backslashes.
+Command tokens are replaced with an appropriate command for the target shell. For Windows, path separators in the commmand arguments are converted to backslashes.
 
 The available tokens, and their replacements:
 
-| Token      | DOS                                         | Posix           |
+| Token      | DOS/cmd                                     | Posix           |
 |------------|---------------------------------------------|-----------------|
 | {CHDIR}    | chdir {args}                                | cd {args}       |
 | {COPYFILE} | copy /B /Y {args}                           | cp -f {args}    |
