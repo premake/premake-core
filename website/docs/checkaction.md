@@ -1,4 +1,5 @@
-checkaction - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+checkaction - What should happend when an assertion fails (D Lang)
+
 
 ```lua
 checkaction (value)
@@ -9,10 +10,12 @@ checkaction (value)
 `value` is one of:
 
 * `Default`: needs documentation
-* `D`: needs documentation
-* `C`: needs documentation
-* `Halt`: needs documentation
-* `Context`: needs documentation
+* `D`: call D assert on failure
+* `C`: call C assert on failure
+* `Halt`: cause program halt on failure
+* `Context`: call D assert with the error context on failure
+
+See https://dlang.org/library/dmd/globals/checkaction.html
 
 ## Applies To ###
 
