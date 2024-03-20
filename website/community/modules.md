@@ -16,6 +16,7 @@ These add-on modules are available from other developers; follow the links for m
 ## Platform Modules
 
 * [Android.mk](https://github.com/Meoo/premake-androidmk) : Generator for Android NDK's [ndk-build system](https://developer.android.com/ndk/guides/build.html)
+* [Android NDK](https://github.com/Triang3l/premake-androidndk) : Generator for Android NDK's [ndk-build system](https://developer.android.com/ndk/guides/build.html) supporting per-ABI settings
 * [Emscripten](https://github.com/TurkeyMan/premake-emscripten) : [Emscripten](http://kripken.github.io/emscripten-site/) support
 * [NaCL](https://github.com/TurkeyMan/premake-nacl) : [Google Native Client](https://developer.chrome.com/native-client) support
 * [VSLinux](https://github.com/LORgames/premake-vslinux) : [VSLinux](https://visualstudiogallery.msdn.microsoft.com/725025cf-7067-45c2-8d01-1e0fd359ae6e) support
