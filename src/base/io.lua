@@ -26,6 +26,10 @@
 -- Write content to a new file.
 --
 	function io.writefile(filename, content)
+		if content == io.readfile(filename) then
+			return true
+		end
+	
 		local file = io.open(filename, "w+b")
 		if file then
 			file:write(content)
