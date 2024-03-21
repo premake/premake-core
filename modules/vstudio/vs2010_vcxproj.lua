@@ -963,6 +963,8 @@
 			m.objectFileName,
 			m.clCompilePreprocessorDefinitions,
 			m.clCompileUndefinePreprocessorDefinitions,
+			m.languageStandard,
+			m.languageStandardC,
 			m.optimization,
 			m.forceIncludes,
 			m.forceUsings,
@@ -1485,7 +1487,7 @@
 
 				local contents = p.capture(function ()
 					p.push()
-					p.callArray(fileFunc, cfg, file)
+					p.callArray(fileFunc, nil, file)
 					m.conditionalElements = {}
 					for cfg in project.eachconfig(prj) do
 						local fcfg = fileconfig.getconfig(file, cfg)
@@ -1730,27 +1732,27 @@
 	end
 
 
-	function m.languageStandard(cfg)
+	function m.languageStandard(cfg, condition)
 		if _ACTION >= "vs2017" then
 			if (cfg.cppdialect == "C++14") then
-				m.element("LanguageStandard", nil, 'stdcpp14')
+				m.element("LanguageStandard", condition, 'stdcpp14')
 			elseif (cfg.cppdialect == "C++17") then
-				m.element("LanguageStandard", nil, 'stdcpp17')
+				m.element("LanguageStandard", condition, 'stdcpp17')
 			elseif (cfg.cppdialect == "C++20") then
-				m.element("LanguageStandard", nil, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
+				m.element("LanguageStandard", condition, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
 			elseif (cfg.cppdialect == "C++latest") then
-				m.element("LanguageStandard", nil, 'stdcpplatest')
+				m.element("LanguageStandard", condition, 'stdcpplatest')
 			end
 		end
 	end
 
 
-	function m.languageStandardC(cfg)
+	function m.languageStandardC(cfg, condition)
 		if _ACTION >= "vs2019" then
 			if (cfg.cdialect == "C11") then
-				m.element("LanguageStandard_C", nil, 'stdc11')
+				m.element("LanguageStandard_C", condition, 'stdc11')
 			elseif (cfg.cdialect == "C17") then
-				m.element("LanguageStandard_C", nil, 'stdc17')
+				m.element("LanguageStandard_C", condition, 'stdc17')
 			end
 		end
 	end
