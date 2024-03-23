@@ -1360,6 +1360,10 @@
 				if fcfg.buildaction then
 					return m.categories[fcfg.buildaction] or m.categories.None
 				end
+
+				if fcfg.compileas ~= nil and fcfg.compileas ~= "Default" then
+					return m.categories.ClCompile
+				end
 			end
 		end
 

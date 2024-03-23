@@ -657,6 +657,18 @@
 		]]
 	end
 
+	function suite.onCompileAsExt()
+		files { "hello.unknown_ext" }
+		filter "files:hello.unknown_ext"
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.unknown_ext">
+		<CompileAs>CompileAsCpp</CompileAs>
+		]]
+	end
+
 --
 -- Check handling of per-file cdialect.
 --
