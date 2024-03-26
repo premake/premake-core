@@ -277,6 +277,22 @@
 		kind = "string",
 	}
 
+	-- Directory of LLVM install
+	p.api.register {
+		name = "llvmdir",
+		scope = "config",
+		kind = "directory",
+		tokens = "true",
+	}
+
+	-- Version of LLVM Install
+	p.api.register {
+		name = "llvmversion",
+		scope = "config",
+		kind = "string",
+		tokens = "true",
+	}
+
 --
 -- Decide when the full module should be loaded.
 --
