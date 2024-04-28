@@ -505,14 +505,16 @@
 		architecture = {
 			x86 = function (cfg)
 				local r = {}
-				if not table.contains(os.getSystemTags(cfg.system), "darwin") then
+				if not (table.contains(os.getSystemTags(cfg.system), "darwin")
+					or table.contains(os.getSystemTags(cfg.system), "emscripten")) then
 					table.insert (r, "-L/usr/lib32")
 				end
 				return r
 			end,
 			x86_64 = function (cfg)
 				local r = {}
-				if not table.contains(os.getSystemTags(cfg.system), "darwin") then
+				if not (table.contains(os.getSystemTags(cfg.system), "darwin")
+					or table.contains(os.getSystemTags(cfg.system), "emscripten")) then
 					table.insert (r, "-L/usr/lib64")
 				end
 				return r
