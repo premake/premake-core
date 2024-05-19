@@ -36,6 +36,7 @@
 		["file.reldirectory"]           = { absolute = false, token = "%(RelativeDir)" },
 		["file.extension"]              = { absolute = false, token = "%(Extension)" },
 		["file.name"]                   = { absolute = false, token = "%(Filename)%(Extension)" },
+		["file.ruleinputs"]            	= { absolute = false, token = "[Inputs]" },
 	}
 
 
