@@ -233,12 +233,13 @@
 			end
 		end
 
-		local cfg = project.getfirstconfig(prj)
-		if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
-			_p(1,'<PropertyGroup>')
-			output("Pre", cfg.prebuildcommands)
-			output("Post", cfg.postbuildcommands)
-			_p(1,'</PropertyGroup>')
+		for cfg in project.eachconfig(prj) do
+			if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
+				_p(1,'<PropertyGroup %s>', dotnetbase.condition(cfg))
+				output("Pre", cfg.prebuildcommands)
+				output("Post", cfg.postbuildcommands)
+				_p(1,'</PropertyGroup>')
+			end
 		end
 	end
 
