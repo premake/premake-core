@@ -540,6 +540,44 @@ end
 	end
 
 
+	function suite.additionalPropsNested()
+		p.action.set("vs2022")
+		filter "Debug"
+			vsprops {
+				Key3 = {
+					NestedKey = "NestedValue"
+				}
+			}
+		filter "Release"
+			vsprops {
+				Key1 = "Value1",
+				Key2 = {
+					NestedKey = "NestedValue"
+				}
+			}
+		filter {}
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<Key3>
+		<NestedKey>NestedValue</NestedKey>
+	</Key3>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<Key1>Value1</Key1>
+	<Key2>
+		<NestedKey>NestedValue</NestedKey>
+	</Key2>
+</PropertyGroup>
+		]]
+	end
+
 	function suite.disableFastUpToDateCheck()
 		fastuptodate "Off"
 		prepare()
