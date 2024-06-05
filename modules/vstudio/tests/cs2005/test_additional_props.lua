@@ -48,6 +48,26 @@
 
 
 --
+-- Check handling of nested AdditionalProps.
+-- Elements are nested properly.
+--
+
+	function suite.propsAreNested()
+		vsprops {
+			RandomKey = {
+				RandomNestedKey = "NestedValue"
+			}
+		}
+		prepare()
+		test.capture [[
+		<RandomKey>
+			<RandomNestedKey>NestedValue</RandomNestedKey>
+		</RandomKey>
+		]]
+	end
+
+
+--
 -- Check handling of AdditionialProps.
 -- Element groups set multiple times are placed in the order in which they are set.
 --
@@ -80,5 +100,3 @@
 		<ValueRequiringEscape>if (age &gt; 3 &amp;&amp; age &lt; 8)</ValueRequiringEscape>
 		]]
 	end
-
-

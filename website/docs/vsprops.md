@@ -14,6 +14,17 @@ If you want to output groups of values in any order, set multiple times.
 	}
 ```
 
+Nested values are also supported.
+
+```lua
+	vsprops {
+		Name1 = "value1",
+		Name2 = {
+			Name3 = "value3"
+		}
+	}
+```
+
 ### Parameters ###
 
 Name and value are strings
