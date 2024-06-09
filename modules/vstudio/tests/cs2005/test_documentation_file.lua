@@ -59,6 +59,14 @@ function suite.documentationFilePath()
 		]]
 end
 
+function suite.documentationFilePath_vs2017up()
+	p.action.set("vs2017")
+	prepareDir()
+	test.capture [[
+		<DocumentationFile>test\MyProject.xml</DocumentationFile>
+		]]
+end
+
 function suite.documentationEmpty()
 	prepareEmpty()
 	test.capture [[
@@ -66,7 +74,15 @@ function suite.documentationEmpty()
 		]]
 end
 
+function suite.documentationEmpty_vs2017up()
+	p.action.set("vs2017")
+	prepareEmpty()
+	test.capture [[<GenerateDocumentationFile>true</GenerateDocumentationFile>]]
+end
+
 function suite.documentationNull()
 	prepareNull()
 	test.isemptycapture()
 end
+
+
