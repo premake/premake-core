@@ -15,10 +15,10 @@ typedef struct struct_Buffer
 	char*  data;
 } Buffer;
 
-void buffer_init(Buffer* b);
-void buffer_destroy(Buffer* b);
+void premake_buffer_init(Buffer* b);
+void premake_buffer_destroy(Buffer* b);
 
-void buffer_puts(Buffer* b, const void* ptr, size_t len);
-void buffer_printf(Buffer* b, const char* s, ...);
+void premake_buffer_puts(Buffer* b, const void* ptr, size_t len);
+void premake_buffer_printf(Buffer* b, const char* s, ...);
 
 #endif

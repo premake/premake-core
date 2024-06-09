@@ -293,6 +293,8 @@
 		if not valid_tools then
 			return true
 		end
+		toolset = p.tools.normalize(toolset)
+		toolset = toolset:explode("-", true, 1)[1] -- get rid of version
 
 		return table.contains(valid_tools, toolset)
 	end

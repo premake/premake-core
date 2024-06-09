@@ -24,6 +24,7 @@ shadermodel ("value")
 * `6.3`: Shader Model 6.3
 * `6.4`: Shader Model 6.4
 * `6.5`: Shader Model 6.5
+* `6.6`: Shader Model 6.6
 
 ## Applies To ###
 

@@ -111,6 +111,17 @@
 		]]
 	end
 
+	function suite.OnProjectCfg_Undefines()
+		defines { "TEST" }
+		undefines { "UNDEF" }
+		prepare()
+		codelite.project.compiler(cfg)
+		test.capture [[
+      <Compiler Options="-DTEST;-UUNDEF" C_Options="-DTEST;-UUNDEF" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      </Compiler>
+		]]
+	end
+
 	function suite.OnProjectCfg_Pch()
 		  pchheader "pch.h"
 		prepare()

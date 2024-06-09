@@ -3,7 +3,7 @@ project "example"
 	kind         "SharedLib"
 	warnings     "extra"
 
-	includedirs { 
+	includedirs {
 		"../../contrib/lua/src",
 		"../../contrib/luashim"
 	}

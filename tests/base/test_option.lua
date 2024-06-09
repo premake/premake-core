@@ -43,3 +43,27 @@
 
 		test.isnotnil(p.option.get("testopt2"))
 	end
+
+	-- Test allowed validators
+
+	function suite.OptionValidationText()
+		newoption {
+			trigger = "TestOptValidation",
+			description = "Testing",
+			allowed = {{"value1", "desc1"}}
+		}
+
+		test.istrue(p.option.validate( {testoptvalidation = "value1"}))
+		test.isfalse(p.option.validate( {testoptvalidation = "other"}))
+	end
+
+	function suite.OptionValidationFunc()
+		newoption {
+			trigger = "TestOptValidation",
+			description = "Testing",
+			allowed = {function(text) return text == "OK" end}
+		}
+
+		test.istrue(p.option.validate( {testoptvalidation = "OK"}))
+		test.isfalse(p.option.validate( {testoptvalidation = "KO"}))
+	end

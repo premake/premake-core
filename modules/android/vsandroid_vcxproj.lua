@@ -641,7 +641,7 @@ end)
 			return oldfn(cfg)
 		end
 	end)
-	
+
 --
 -- Disable usage of ExternalIncludePath, Android project format ignores it.
 --

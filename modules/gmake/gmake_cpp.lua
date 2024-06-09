@@ -138,7 +138,7 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = p.tools[_OPTIONS.cc or cfg.toolset or "gcc"]
+			local toolset, version = p.tools.canonical(cfg.toolset or p.GCC)
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end
@@ -292,7 +292,7 @@ end
 				local custom = false
 				for cfg in project.eachconfig(prj) do
 					local filecfg = fileconfig.getconfig(node, cfg)
-					if filecfg and not filecfg.flags.ExcludeFromBuild then
+					if filecfg and not filecfg.flags.ExcludeFromBuild and filecfg.buildaction ~= "None" then
 						incfg[cfg] = filecfg
 						custom = fileconfig.hasCustomBuildRule(filecfg)
 					else

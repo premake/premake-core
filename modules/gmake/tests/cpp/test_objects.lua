@@ -248,3 +248,25 @@ endif
 
 		]]
 	end
+
+	function suite.excludedFromBuild_onBuildactionNone()
+		files { "hello.cpp" }
+		filter { "Debug", "files:hello.cpp" }
+			buildaction "None"
+		filter {}
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+
+CUSTOMFILES := \
+
+ifeq ($(config),release)
+  OBJECTS += \
+	$(OBJDIR)/hello.o \
+
+endif
+
+		]]
+	end

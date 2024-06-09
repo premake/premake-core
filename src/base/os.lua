@@ -258,6 +258,13 @@
 		return table.contains(tags, id:lower())
 	end
 
+--
+-- Retrieve the current target shell ID string.
+--
+
+	function os.shell()
+		return _OPTIONS.shell or iif(os.target() == "windows", "cmd", "posix")
+	end
 
 ---
 -- Determine if a directory exists on the file system, and that it is a
@@ -599,7 +606,7 @@
 ---
 
 	os.commandTokens = {
-		_ = {
+		posix = {
 			chdir = function(v)
 				return "cd " .. path.normalize(v)
 			end,
@@ -631,7 +638,7 @@
 				return "touch " .. path.normalize(v)
 			end,
 		},
-		windows = {
+		cmd = {
 			chdir = function(v)
 				return "chdir " .. path.translate(path.normalize(v))
 			end,
@@ -681,9 +688,12 @@
 	}
 
 	function os.translateCommands(cmd, map)
-		map = map or os.target()
+		map = map or os.shell()
 		if type(map) == "string" then
-			map = os.commandTokens[map] or os.commandTokens["_"]
+			if map == "windows" then -- For retro compatibility
+				map = "cmd"
+			end
+			map = os.commandTokens[map] or os.commandTokens["posix"]
 		end
 
 		local processOne = function(cmd)
@@ -697,7 +707,7 @@
 
 					local token = cmd:sub(i + 1, j - 1):lower()
 					local args = cmd:sub(j + 2)
-					local func = map[token] or os.commandTokens["_"][token]
+					local func = map[token] or os.commandTokens["posix"][token]
 					if func then
 						cmd = cmd:sub(1, i -1) .. func(args)
 					end
@@ -725,7 +735,7 @@
 -- Apply os slashes for decorated command paths.
 ---
 	function os.translateCommandAndPath(dir, map)
-		if map == 'windows' then
+		if map == 'windows' or map == 'cmd' then
 			return path.translate(dir)
 		end
 		return dir
@@ -735,12 +745,12 @@
 -- Translate decorated command paths into their OS equivalents.
 ---
 	function os.translateCommandsAndPaths(cmds, basedir, location, map)
-		local translatedBaseDir = path.getrelative(location, basedir)
-
-		map = map or os.target()
+		map = map or os.shell()
+		location = path.getabsolute(location)
+		basedir = path.getabsolute(basedir)
 
 		local translateFunction = function(value)
-			local result = path.join(translatedBaseDir, value)
+			local result = path.getrelative(location, path.join(basedir, value))
 			result = os.translateCommandAndPath(result, map)
 			if value:endswith('/') or value:endswith('\\') or -- if original path ends with a slash then ensure the same
 			   value:endswith('/"') or value:endswith('\\"') then

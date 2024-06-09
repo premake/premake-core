@@ -472,3 +472,48 @@ endif
 
 		]]
 	end
+
+	function suite.excludedFromBuild_onBuildactionNone()
+		files { "hello.cpp" }
+		filter { "Debug", "files:hello.cpp" }
+			buildaction "None"
+		filter {}
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+GENERATED :=
+OBJECTS :=
+
+ifeq ($(config),release)
+GENERATED += $(OBJDIR)/hello.o
+OBJECTS += $(OBJDIR)/hello.o
+
+endif
+
+		]]
+	end
+
+	function suite.objectsOnBuildactionCopy()
+		files { "hello.dll" }
+		filter { "Debug", "files:hello.dll" }
+			buildaction "Copy"
+		filter {}
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+CUSTOM :=
+GENERATED :=
+
+ifeq ($(config),debug)
+CUSTOM += $(TARGETDIR)/hello.dll
+GENERATED += $(TARGETDIR)/hello.dll
+
+endif
+
+		]]
+	end
+

@@ -48,11 +48,10 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		local fullPath = premake.findProjectScript(fname)
-		fname = fullPath or fname
+		fname, compiled_chunk = premake.findProjectScript(fname)
 		if not io._includedFiles[fname] then
 			io._includedFiles[fname] = true
-			return dofile(fname)
+			return compiled_chunk()
 		end
 	end
 

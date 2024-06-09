@@ -14,7 +14,7 @@ These are the simplest to setup and use: pass one or more command lines to the [
 ```lua
 -- copy a file from the objects directory to the target directory
 postbuildcommands {
-  "{COPY} %{cfg.objdir}/output.map %{cfg.targetdir}"
+  "{COPYFILE} %[%{!cfg.objdir}/output.map] %[%{!cfg.targetdir}]"
 }
 ```
 
@@ -29,11 +29,11 @@ Here is an example which compiles all Lua files in a project to C:
 ```lua
 filter 'files:**.lua'
    -- A message to display while this build step is running (optional)
-   buildmessage 'Compiling %{file.relpath}'
+   buildmessage 'Compiling %[%{file.relpath}]'
 
    -- One or more commands to run (required)
    buildcommands {
-      'luac -o "%{cfg.objdir}/%{file.basename}.out" "%{file.relpath}"'
+      'luac -o "%[%{!cfg.objdir}/%{file.basename}.out]" "%[%{!file.relpath}]"'
    }
 
    -- One or more outputs resulting from the build (required)

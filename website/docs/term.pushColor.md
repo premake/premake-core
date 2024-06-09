@@ -1,4 +1,4 @@
-Saves the current text color state and changes the color of future text printed to the console.  
+Saves the current text color state and changes the color of future text printed to the console.
 Use [term.popColor](term.popColor.md) to restore the previous color setting.
 
 ``` lua

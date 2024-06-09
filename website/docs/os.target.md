@@ -1,4 +1,4 @@
-Returns the name of the operating system currently being targeted.  
+Returns the name of the operating system currently being targeted.
 See [system](system.md) for a complete list of OS identifiers.
 
 The targeted OS may be overridden on the command line with the `--os` option.

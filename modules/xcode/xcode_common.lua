@@ -43,6 +43,7 @@
 			[".S"] = "Sources",
 			[".swift"] = "Sources",
 			[".metal"] = "Resources",
+			[".xcprivacy"] = "Resources",
 		}
 		if node.isResource then
 			return "Resources"
@@ -147,6 +148,7 @@
 			[".swift"]     = "sourcecode.swift",
 			[".metal"]     = "sourcecode.metal",
 			[".dylib"]     = "compiled.mach-o.dylib",
+			[".xcprivacy"] = "PrivacyInfo.xcprivacy",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
@@ -278,16 +280,8 @@
 --
 
 	function xcode.getToolSet(cfg)
-		local default = "clang"
-		local minOSVersion = project.systemversion(cfg)
-		if minOSVersion ~= nil
-			and cfg.system == p.MACOSX
-			and p.checkVersion(minOSVersion, "<10.7")
-		then
-			default = "gcc"
-		end
 
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
 			error("Invalid toolset '" .. cfg.toolset .. "'")
 		end
@@ -1067,7 +1061,7 @@
 
 			if #commands > 0 then
 				table.insert(commands, 1, 'set -e') -- Tells the shell to exit when any command fails
-				commands = os.translateCommands(commands, p.MACOSX)
+				commands = os.translateCommandsAndPaths(commands, tr.project.basedir, tr.project.location, p.MACOSX)
 				if not wrapperWritten then
 					_p('/* Begin PBXShellScriptBuildPhase section */')
 					wrapperWritten = true
@@ -1309,7 +1303,7 @@
 						-- ms this seems to work on visual studio !!!
 						-- why not in xcode ??
 						local filecfg = fileconfig.getconfig(node, cfg)
-						if filecfg and filecfg.flags.ExcludeFromBuild then
+						if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
 						--fileNameList = fileNameList .. " " ..filecfg.name
 							table.insert(fileNameList, xcode.escapeArg(node.name))
 						end

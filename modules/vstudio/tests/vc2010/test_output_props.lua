@@ -25,6 +25,41 @@
 		vc2010.outputProperties(cfg)
 	end
 
+--
+-- Ensure clangtidy is not enabled for vc2010.
+--
+
+function suite.onClangTidy()
+	clangtidy "On"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+</PropertyGroup>
+	]]
+end
+
+--
+-- Ensure runcodeanalysis is not enabled for vc2010.
+--
+
+function suite.onRunCodeAnalysis()
+	runcodeanalysis "On"
+	prepare()
+	test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>bin\Debug\</OutDir>
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>.exe</TargetExt>
+</PropertyGroup>
+	]]
+end
 
 --
 -- Check the structure with the default project values.
