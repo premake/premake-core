@@ -248,12 +248,22 @@
 --
 
 	function dotnetbase.additionalProps(cfg)
-		for i = 1, #cfg.vsprops do
-			for key, value in spairs(cfg.vsprops[i]) do
-				_p(2, '<%s>%s</%s>', key, vs2005.esc(value), key)
+		local function recurseTableIfNeeded(tbl, tab_level)
+			for key, value in spairs(tbl) do
+				if (type(value) == "table") then
+					_p(tab_level, '<%s>', key)
+					recurseTableIfNeeded(value, tab_level + 1)
+					_p(tab_level, '</%s>', key)
+				else
+					_p(tab_level, '<%s>%s</%s>', key, vs2005.esc(value), key)
+				end
 			end
 		end
+		for i = 1, #cfg.vsprops do
+			recurseTableIfNeeded(cfg.vsprops[i], 2)
+		end
 	end
+
 
 --
 -- Write the compiler flags for a particular configuration.
