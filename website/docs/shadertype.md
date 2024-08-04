@@ -15,6 +15,7 @@ shadertype ("value")
 * `Hull`
 * `Domain`
 * `Compute`
+* `Library`
 * `Mesh`
 * `Amplification`
 * `Texture`
