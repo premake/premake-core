@@ -48,6 +48,7 @@
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -67,6 +68,7 @@
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -90,6 +92,7 @@
 		<TargetFrameworkProfile>
 		</TargetFrameworkProfile>
 		<FileAlignment>512</FileAlignment>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -109,6 +112,7 @@
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -129,6 +133,7 @@
 		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -149,6 +154,7 @@
 		<TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -168,6 +174,7 @@
 		<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
 		<FileAlignment>512</FileAlignment>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -190,6 +197,7 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -210,6 +218,7 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -234,6 +243,7 @@
 		<RootNamespace>MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
 		<LangVersion>6</LangVersion>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -257,6 +267,7 @@
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>MyCompany.MyProject</RootNamespace>
 		<AssemblyName>MyProject</AssemblyName>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
@@ -286,6 +297,7 @@
 		</TargetFrameworkProfile>
 		<FileAlignment>512</FileAlignment>
 		<ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
 		]]
 	end
