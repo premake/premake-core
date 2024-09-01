@@ -681,8 +681,5 @@
 		else
 			version = ""
 		end
-		if ((cfg.gccprefix  or version ~= "") and gcc.tools[tool]) or tool == "rc" then
-			return (cfg.gccprefix or "") .. gcc.tools[tool] .. version
-		end
-		return nil
+		return (cfg.gccprefix or "") .. gcc.tools[tool] .. version
 	end
