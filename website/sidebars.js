@@ -310,6 +310,14 @@ module.exports = {
 				{
 					collapsed: true,
 					type: 'category',
+					label: 'Global Settings',
+					items: [
+						'gitintegration'
+					]
+				},
+				{
+					collapsed: true,
+					type: 'category',
 					label: 'Globals',
 					items: [
 						'_ACTION',
