@@ -66,6 +66,7 @@ static const luaL_Reg os_functions[] = {
 	{ "_is64bit",               os_is64bit              },
 	{ "isdir",                  os_isdir                },
 	{ "getcwd",                 os_getcwd               },
+	{ "getnumcpus",             os_getnumcpus           },
 	{ "getpass",                os_getpass              },
 	{ "getWindowsRegistry",     os_getWindowsRegistry   },
 	{ "listWindowsRegistry",    os_listWindowsRegistry  },

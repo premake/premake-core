@@ -488,3 +488,13 @@
 		test.isequal(true, ok)
 		test.isnil(err)
 	end
+
+
+--
+-- os.getnumcpus() tests.
+--
+
+	function suite.numcpus()
+		local numcpus = os.getnumcpus()
+		test.istrue(numcpus > 0)
+	end

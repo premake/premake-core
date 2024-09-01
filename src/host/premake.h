@@ -121,6 +121,7 @@ int os_chmod(lua_State* L);
 int os_comparefiles(lua_State* L);
 int os_copyfile(lua_State* L);
 int os_getcwd(lua_State* L);
+int os_getnumcpus(lua_State* L);
 int os_getpass(lua_State* L);
 int os_getWindowsRegistry(lua_State* L);
 int os_listWindowsRegistry(lua_State* L);
