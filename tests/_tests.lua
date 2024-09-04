@@ -1,5 +1,6 @@
 return {
 	-- Base API tests
+	"test_lua.lua",
 	"test_string.lua",
 	"base/test_aliasing.lua",
 	"base/test_binmodules.lua",
