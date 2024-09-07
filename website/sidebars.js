@@ -387,6 +387,7 @@ module.exports = {
 						'os.getpass',
 						'os.getversion',
 						'os.host',
+						'os.hostarch',
 						'os.is',
 						'os.is64bit',
 						'os.isdir',
