@@ -128,6 +128,8 @@
 * [term.setTextColor](term.setTextColor.md)
 * [term.pushColor](term.pushColor.md)
 * [term.popColor](term.popColor.md)
+* [term.clearToEndOfLine](term.clearToEndOfLine.md)
+* [term.moveLeft](term.moveLeft.md)
 
 ### Zip
 

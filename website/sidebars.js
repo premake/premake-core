@@ -491,7 +491,8 @@ module.exports = {
 						'term.getTextColor',
 						'term.popColor',
 						'term.pushColor',
-						'term.setTextColor'
+						'term.setTextColor',
+						'term.clearToEndOfLine'
 					]
 				},
 				{
