@@ -383,6 +383,7 @@ module.exports = {
 						'os.findlib',
 						'os.get',
 						'os.getcwd',
+						'os.getenv',
 						'os.getnumcpus',
 						'os.getpass',
 						'os.getversion',
