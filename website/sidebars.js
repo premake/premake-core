@@ -399,6 +399,7 @@ module.exports = {
 						'os.outputof',
 						'os.pathsearch',
 						'os.realpath',
+						'os.rename',
 						'os.remove',
 						'os.rmdir',
 						'os.stat',
