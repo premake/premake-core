@@ -375,6 +375,7 @@ module.exports = {
 						'os.findlib',
 						'os.get',
 						'os.getcwd',
+						'os.getnumcpus',
 						'os.getpass',
 						'os.getversion',
 						'os.host',
