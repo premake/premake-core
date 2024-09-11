@@ -60,7 +60,13 @@
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
 			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CXX) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {
+				-- code checking must be before the build, so that if the code checking 
+				-- fails, the build is not completed, and hence, a re-run will trigger 
+				-- the code check again.
+				'$(CLANG_TIDY) "$<" -- %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"',
+				'$(CXX) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'
+			}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
@@ -326,6 +332,7 @@
 			cpp.cppFlags,
 			cpp.cFlags,
 			cpp.cxxFlags,
+			cpp.clangtidy,
 			cpp.resFlags,
 			cpp.libs,
 			cpp.ldDeps,
@@ -425,6 +432,13 @@
 		p.outln('ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)' .. flags)
 	end
 
+	function cpp.clangtidy(cfg, toolset)
+		if cfg.clangtidy ~= nil then
+			p.outln('CLANG_TIDY = clang-tidy')
+		else
+			p.outln('CLANG_TIDY = \\#')
+		end
+	end
 
 	function cpp.resFlags(cfg, toolset)
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)

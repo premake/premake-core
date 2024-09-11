@@ -94,9 +94,11 @@
 
 $(OBJDIR)/hello.o: src/greetings/hello.cpp
 	@echo "$(notdir $<)"
+	$(SILENT) $(CLANG_TIDY) "$<" -- $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/hello1.o: src/hello.cpp
 	@echo "$(notdir $<)"
+	$(SILENT) $(CLANG_TIDY) "$<" -- $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 		]]
@@ -119,6 +121,7 @@ $(OBJDIR)/hello.o: src/hello.c
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/test.o: src/test.cpp
 	@echo "$(notdir $<)"
+	$(SILENT) $(CLANG_TIDY) "$<" -- $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 		]]
@@ -139,6 +142,7 @@ $(OBJDIR)/test.o: src/test.cpp
 
 $(OBJDIR)/hello.o: src/hello.c
 	@echo "$(notdir $<)"
+	$(SILENT) $(CLANG_TIDY) "$<" -- $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/test.o: src/test.c
 	@echo "$(notdir $<)"
@@ -166,6 +170,7 @@ $(OBJDIR)/test.o: src/test.c
 ifeq ($(config),debug)
 $(OBJDIR)/hello.o: src/hello.c
 	@echo "$(notdir $<)"
+	$(SILENT) $(CLANG_TIDY) "$<" -- $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
 else ifeq ($(config),release)
