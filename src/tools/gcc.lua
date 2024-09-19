@@ -412,7 +412,12 @@
 				rpath = "@loader_path/" .. rpath
 			elseif (cfg.system == p.LINUX) then
 				rpath = iif(rpath == ".", "", "/" .. rpath)
-				rpath = "$$ORIGIN" .. rpath
+				local origin = "$ORIGIN"
+				-- need to escape the $ for make if using gmake actions
+				if string.startswith(_ACTION, "gmake") then
+					origin = "$" .. origin
+				end
+				rpath = origin .. rpath
 			end
 
 			if mode == "linker" then

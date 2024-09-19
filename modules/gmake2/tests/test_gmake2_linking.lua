@@ -20,6 +20,7 @@
 
 	function suite.setup()
 		_OS = "linux"
+		_ACTION = "gmake2"
 		wks, prj = test.createWorkspace()
 	end
 
