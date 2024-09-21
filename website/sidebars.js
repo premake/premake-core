@@ -489,10 +489,11 @@ module.exports = {
 					label: 'term',
 					items: [
 						'term.getTextColor',
+						'term.setTextColor',
 						'term.popColor',
 						'term.pushColor',
-						'term.setTextColor',
-						'term.clearToEndOfLine'
+						'term.clearToEndOfLine',
+						'term.moveLeft'
 					]
 				},
 				{
