@@ -804,15 +804,15 @@
 
 	os.systemTags =
 	{
-		["aix"]      = { "aix",     "posix" },
-		["bsd"]      = { "bsd",     "posix" },
-		["haiku"]    = { "haiku",   "posix" },
+		["aix"]      = { "aix",     "posix", "desktop" },
+		["bsd"]      = { "bsd",     "posix", "desktop" },
+		["haiku"]    = { "haiku",   "posix", "desktop" },
 		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
-		["linux"]    = { "linux",   "posix" },
-		["macosx"]   = { "macosx",  "darwin", "posix" },
-		["solaris"]  = { "solaris", "posix" },
-		["uwp"]      = { "uwp", "windows" },
-		["windows"]  = { "windows", "win32" },
+		["linux"]    = { "linux",   "posix", "desktop" },
+		["macosx"]   = { "macosx",  "darwin", "posix", "desktop" },
+		["solaris"]  = { "solaris", "posix", "desktop" },
+		["uwp"]      = { "uwp", "windows", "desktop" },
+		["windows"]  = { "windows", "win32", "desktop" },
 	}
 
 	function os.getSystemTags(name)
