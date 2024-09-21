@@ -7,6 +7,7 @@ os.rename("path", "newpath")
 ### Parameters ###
 
 `path` is the file system path to be renamed.
+`newpath` is the renamed file system path.
 
 
 ### Return Value ###
