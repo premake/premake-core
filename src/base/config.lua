@@ -11,6 +11,27 @@
 	local project = p.project
 	local config = p.config
 
+---
+-- Helper function to get the target directory for a config or project.
+--
+-- @param cfg
+--    The configuration object or project being queried.
+	function config.targetdir(cfg)
+		if cfg.targetdir then
+			return cfg.targetdir
+		end
+
+		local basedir = cfg.location
+
+		local targetdir
+		if cfg.platform then
+			targetdir = path.join(basedir, 'bin', cfg.platform, cfg.buildcfg)
+		else
+			targetdir = path.join(basedir, 'bin', cfg.buildcfg)
+		end
+
+		return targetdir
+	end
 
 ---
 -- Helper function for getlinkinfo() and gettargetinfo(); builds the
@@ -29,16 +50,8 @@
 ---
 
 	function config.buildtargetinfo(cfg, kind, field)
-		local basedir = cfg.project.location
-
-		local targetdir
-		if cfg.platform then
-			targetdir = path.join(basedir, 'bin', cfg.platform, cfg.buildcfg)
-		else
-			targetdir = path.join(basedir, 'bin', cfg.buildcfg)
-		end
-
-		local directory = cfg[field.."dir"] or cfg.targetdir or targetdir
+		local targetdir = config.targetdir(cfg)
+		local directory = cfg[field.."dir"] or targetdir
 		local basename = cfg[field.."name"] or cfg.targetname or cfg.project.name
 
 		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
