@@ -389,6 +389,7 @@
 		sanitize { "Address" }
 		prepare()
 		test.contains({ "-fsanitize=address" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=address" }, gcc.getcflags(cfg))
 		test.contains({ "-fsanitize=address" }, gcc.getldflags(cfg))
 	end
 
@@ -1083,28 +1084,28 @@
 	function suite.cxxflags_onVisibilityDefault()
 		visibility "Default"
 		prepare()
-		test.excludes({ "-fvisibility=default" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=default" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=default" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityHidden()
 		visibility "Hidden"
 		prepare()
-		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityInternal()
 		visibility "Internal"
 		prepare()
-		test.excludes({ "-fvisibility=internal" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=internal" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=internal" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityProtected()
 		visibility "Protected"
 		prepare()
-		test.excludes({ "-fvisibility=protected" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=protected" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=protected" }, gcc.getcxxflags(cfg))
 	end
 
@@ -1122,7 +1123,7 @@
 	function suite.cxxflags_onInlinesVisibilityHidden()
 		inlinesvisibility "Hidden"
 		prepare()
-		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end
 
