@@ -138,6 +138,18 @@
 			["C++"] = "-x c++",
 			["Objective-C"] = "-x objective-c",
 			["Objective-C++"] = "-x objective-c++",
+		},
+		sanitize = {
+			Address = "-fsanitize=address",
+		},
+		visibility = {
+			Default = "-fvisibility=default",
+			Hidden = "-fvisibility=hidden",
+			Internal = "-fvisibility=internal",
+			Protected = "-fvisibility=protected",
+		},
+		inlinesvisibility = {
+			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 
@@ -230,18 +242,6 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
-		},
-		sanitize = {
-			Address = "-fsanitize=address",
-		},
-		visibility = {
-			Default = "-fvisibility=default",
-			Hidden = "-fvisibility=hidden",
-			Internal = "-fvisibility=internal",
-			Protected = "-fvisibility=protected",
-		},
-		inlinesvisibility = {
-			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 

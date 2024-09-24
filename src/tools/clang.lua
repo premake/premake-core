@@ -65,7 +65,10 @@
 		symbols = gcc.shared.symbols,
 		unsignedchar = gcc.shared.unsignedchar,
 		omitframepointer = gcc.shared.omitframepointer,
-		compileas = gcc.shared.compileas
+		compileas = gcc.shared.compileas,
+		sanitize = gcc.shared.sanitize,
+		visibility = gcc.shared.visibility,
+		inlinesvisibility = gcc.shared.inlinesvisibility
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {
