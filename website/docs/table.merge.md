@@ -18,3 +18,6 @@ A new table containing the key-value pairs from each input table, from first to 
 
 Premake 5.0 or later.
 
+### See Also ###
+
+* [table.join](table.join.md)

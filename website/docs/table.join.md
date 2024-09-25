@@ -19,3 +19,6 @@ A new array containing all of the values in order.
 
 Premake 5.0 or later.
 
+### See Also ###
+
+* [table.merge](table.merge.md)
