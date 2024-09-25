@@ -75,11 +75,11 @@ int getKernelVersion(struct OsVersionInfo* info)
 				info->majorversion = HIWORD(fileInfo->dwProductVersionMS);
 				info->minorversion = LOWORD(fileInfo->dwProductVersionMS);
 				info->revision = HIWORD(fileInfo->dwProductVersionLS);
-				return TRUE;
+				return true;
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 int getversion(struct OsVersionInfo* info)
@@ -119,7 +119,7 @@ int getversion(struct OsVersionInfo* info)
 int getversion(struct OsVersionInfo* info)
 {
 	const char * propertyListFilePath = "/System/Library/CoreServices/SystemVersion.plist";
-	Boolean fallback = TRUE;
+	Boolean fallback = true;
 
 	info->description = "Mac OS";
 	info->majorversion = 10;
@@ -133,7 +133,7 @@ int getversion(struct OsVersionInfo* info)
 		CFReadStreamRef streamRef = NULL;
 		CFPropertyListRef propertyListRef = NULL;
 		CFTypeID typeId = 0;
-		Boolean result = FALSE;
+		Boolean result = false;
 
 		stringRef = CFStringCreateWithCStringNoCopy(
 						kCFAllocatorDefault,
@@ -165,7 +165,7 @@ int getversion(struct OsVersionInfo* info)
 
 		result = CFReadStreamOpen (streamRef);
 
-		if (result == FALSE)
+		if (result == false)
 		{
 			goto getversion_macosx_cleanup;
 		}
@@ -196,7 +196,7 @@ int getversion(struct OsVersionInfo* info)
 				CFStringGetCString(stringValueRef, &versionString[0], (CFIndex)sizeof (versionString), kCFStringEncodingASCII);
 				sscanf (versionString, "%d.%d.%d", &info->majorversion, &info->minorversion, &info->revision);
 
-				fallback = FALSE;
+				fallback = false;
 			}
 		}
 
@@ -208,7 +208,7 @@ getversion_macosx_cleanup:
 		if (stringRef) CFRelease (stringRef);
 	}
 
-	if (fallback == TRUE)
+	if (fallback == true)
 	{
 		int mib[] = { CTL_KERN, KERN_OSRELEASE };
 		size_t len;

@@ -54,14 +54,7 @@
 #include <unistd.h>
 #endif
 #include <stdint.h>
-
-/* not all platforms define this */
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
+#include <stdbool.h>
 
 /* Fill in any missing bits */
 #ifndef PATH_MAX

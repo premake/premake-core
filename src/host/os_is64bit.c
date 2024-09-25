@@ -16,7 +16,7 @@ int os_is64bit(lua_State* L)
 	WowFuncSig func = (WowFuncSig)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 	if (func)
 	{
-		BOOL isWow = FALSE;
+		BOOL isWow = false;
 		if (func(GetCurrentProcess(), &isWow))
 		{
 			lua_pushboolean(L, isWow);

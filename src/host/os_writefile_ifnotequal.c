@@ -21,7 +21,7 @@ static int compare_file(const char* content, size_t length, const char* dst)
 	#if PLATFORM_WINDOWS
 	wchar_t wide_path[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
-		return FALSE;
+		return false;
 
 	file = _wfopen(wide_path, L"rb");
 	#else
@@ -30,7 +30,7 @@ static int compare_file(const char* content, size_t length, const char* dst)
 
 	if (file == NULL)
 	{
-		return FALSE;
+		return false;
 	}
 
 	// check sizes.
@@ -41,7 +41,7 @@ static int compare_file(const char* content, size_t length, const char* dst)
 	if (length != size)
 	{
 		fclose(file);
-		return FALSE;
+		return false;
 	}
 
 	while (size > 0)
@@ -52,13 +52,13 @@ static int compare_file(const char* content, size_t length, const char* dst)
 		if (read != num)
 		{
 			fclose (file);
-			return FALSE;
+			return false;
 		}
 
 		if (memcmp(content, buffer, num) != 0)
 		{
 			fclose(file);
-			return FALSE;
+			return false;
 		}
 
 		size    -= num;
@@ -66,7 +66,7 @@ static int compare_file(const char* content, size_t length, const char* dst)
 	}
 
 	fclose(file);
-	return TRUE;
+	return true;
 }
 
 
@@ -87,7 +87,7 @@ int os_writefile_ifnotequal(lua_State* L)
 	#if PLATFORM_WINDOWS
 	wchar_t wide_path[PATH_MAX];
 	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
-		return FALSE;
+		return false;
 
 	file = _wfopen(wide_path, L"wb");
 	#else

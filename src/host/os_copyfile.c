@@ -29,7 +29,7 @@ int os_copyfile(lua_State* L)
 		return lua_error(L);
 	}
 
-	z = CopyFileW(wide_src, wide_dst, FALSE);
+	z = CopyFileW(wide_src, wide_dst, false);
 #else
 	lua_pushfstring(L, "cp \"%s\" \"%s\"", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);

@@ -17,13 +17,6 @@
 	#include <sys/types.h>
 #endif
 
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-
 static int truncate_file(const char* fn)
 {
 	FILE* file = fopen(fn, "rb");
@@ -31,7 +24,7 @@ static int truncate_file(const char* fn)
 	file = fopen(fn, "ab");
 	if (file == NULL)
 	{
-		return FALSE;
+		return false;
 	}
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
@@ -41,23 +34,23 @@ static int truncate_file(const char* fn)
 	if (fwrite(" ", 1, 1, file) != 1)
 	{
 		fclose(file);
-		return FALSE;
+		return false;
 	}
 #if PLATFORM_WINDOWS
 	if (_chsize(_fileno(file), (long)size) != 0)
 	{
 		fclose(file);
-		return FALSE;
+		return false;
 	}
 #endif
 	fclose(file);
 #if !PLATFORM_WINDOWS
 	if (truncate(fn, (off_t)size) != 0)
 	{
-		return FALSE;
+		return false;
 	}
 #endif
-	return TRUE;
+	return true;
 }
 
 int os_touchfile(lua_State* L)
