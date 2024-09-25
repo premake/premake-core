@@ -61,6 +61,7 @@
 			["C"] = "/TC",
 			["C++"] = "/TP",
 		},
+		driver = "msvc",
 		flags = {
 			FatalCompileWarnings = "/WX",
 			LinkTimeOptimization = "/GL",

@@ -44,6 +44,7 @@
 
 	clang.shared = {
 		architecture = gcc.shared.architecture,
+		driver = gcc.shared.driver,
 		flags = gcc.shared.flags,
 		floatingpoint = {
 			Fast = "-ffast-math",

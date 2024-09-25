@@ -33,6 +33,7 @@
 
 	function suite.tools_onDefaults()
 		prepare()
+		test.isequal("gcc", clang.shared.driver)
 		test.isequal("clang", clang.gettoolname(cfg, "cc"))
 		test.isequal("clang++", clang.gettoolname(cfg, "cxx"))
 		test.isequal("ar", clang.gettoolname(cfg, "ar"))

@@ -26,6 +26,16 @@
 	end
 
 
+
+--
+-- Check the selection of tools based on the target system.
+--
+
+function suite.tools_onDefaults()
+	prepare()
+	test.isequal("msvc", msc.shared.driver)
+end
+
 --
 -- Check the optimization flags.
 --

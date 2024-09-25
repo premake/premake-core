@@ -33,6 +33,7 @@
 
 	function suite.tools_onDefaults()
 		prepare()
+		test.isequal("gcc", gcc.shared.driver)
 		test.isequal("gcc", gcc.gettoolname(cfg, "cc"))
 		test.isequal("g++", gcc.gettoolname(cfg, "cxx"))
 		test.isequal("ar", gcc.gettoolname(cfg, "ar"))
