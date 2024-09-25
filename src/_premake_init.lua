@@ -1876,6 +1876,24 @@
 		}
 	}
 
+	local function getArchs()
+		local keys={}
+		for key,_ in pairs(premake.field.get("architecture").allowed) do
+			if type(key) ~= "number" then
+				table.insert(keys, { key, "" })
+			end
+		end
+		return keys
+	end
+
+	newoption
+	{
+		trigger     = "arch",
+		value       = "VALUE",
+		description = "Generate files for a different architecture",
+		allowed = getArchs()
+	}
+
 	newoption
 	{
 		trigger     = "shell",
@@ -1988,6 +2006,9 @@
 
 	filter { "system:darwin" }
 		toolset "clang"
+
+	filter { "platforms:Win32" }
+		architecture "x86"
 
 	filter { "platforms:Win64" }
 		architecture "x86_64"

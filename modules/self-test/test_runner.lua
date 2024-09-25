@@ -172,6 +172,7 @@
 		hooks.action = _ACTION
 		hooks.options = _OPTIONS
 		hooks.targetOs = _TARGET_OS
+		hooks.targetArch = _TARGET_ARCH
 
 		hooks.io_open = io.open
 		hooks.io_output = io.output
@@ -217,6 +218,7 @@
 		p.action.set(hooks.action)
 		_OPTIONS = hooks.options
 		_TARGET_OS = hooks.targetOs
+		_TARGET_ARCH = hooks.targetArch
 
 		io.open = hooks.io_open
 		io.output = hooks.io_output

@@ -112,10 +112,9 @@
 			--
 			{ "Win32", "Same as x86" },
 			{ "x64", "Same as x86_64" },
-			--
-			{ "default", "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
 		},
-		default = "default",
+		-- "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
+		default = nil,
 	}
 
 --
