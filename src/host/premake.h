@@ -45,6 +45,18 @@
 
 #define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)
 
+#if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || \
+    defined(_M_X64) || defined(_M_AMD64)
+#define PLATFORM_ARCHITECTURE "x86_64"
+#elif defined(i386) || defined(__i386) || defined(__i386__) || defined(__i486__) || defined(__i586__) || \
+    defined(__i686__) || defined(_M_IX86)|| defined(__X86__) || defined(_X86_)
+#define PLATFORM_ARCHITECTURE "x86"
+#elif defined(__aarch64__) || defined(_M_ARM64) || defined(__AARCH64EL__) || defined(__arm64)
+#define PLATFORM_ARCHITECTURE "ARM64"
+#elif defined(__arm__) || defined(__thumb__) || defined(__TARGET_ARCH_ARM) || defined(__TARGET_ARCH_THUMB) || \
+    defined(__ARM) || defined(_M_ARM) || defined(_M_ARM_T) || defined(__ARM_ARCH)
+#define PLATFORM_ARCHITECTURE "ARM"
+#endif
 
 /* Pull in platform-specific headers required by built-in functions */
 #if PLATFORM_WINDOWS
@@ -127,6 +139,7 @@ int os_getWindowsRegistry(lua_State* L);
 int os_listWindowsRegistry(lua_State* L);
 int os_getversion(lua_State* L);
 int os_host(lua_State* L);
+int os_hostarch(lua_State* L);
 int os_is64bit(lua_State* L);
 int os_isdir(lua_State* L);
 int os_isfile(lua_State* L);

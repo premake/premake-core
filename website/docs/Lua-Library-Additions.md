@@ -39,6 +39,7 @@
 * [os.getpass](os.getpass.md)
 * [os.getversion](os.getversion.md)
 * [os.host](os.host.md)
+* [os.hostarch](os.hostarch.md)
 * [os.is](os.is.md)
 * [os.is64bit](os.is64bit.md)
 * [os.isdir](os.isdir.md)

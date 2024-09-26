@@ -498,3 +498,13 @@
 		local numcpus = os.getnumcpus()
 		test.istrue(numcpus > 0)
 	end
+
+
+--
+-- os.hostarch() tests.
+--
+
+	function suite.hostarch()
+		local arch = os.hostarch()
+		test.istrue(string.len(arch) > 0)
+	end

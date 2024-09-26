@@ -72,6 +72,7 @@ static const luaL_Reg os_functions[] = {
 	{ "listWindowsRegistry",    os_listWindowsRegistry  },
 	{ "getversion",             os_getversion           },
 	{ "host",                   os_host                 },
+	{ "hostarch",               os_hostarch             },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
 	{ "locate",                 os_locate               },
