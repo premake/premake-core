@@ -10,6 +10,7 @@ sharedlibtype "value"
 * `OSXBundle` - needs documentation.
 * `OSXFramework` - needs documentation.
 * `XCTest` - needs documentation.
+* `XCUITest`- needs documentation.
 
 ### Applies To ###
 
