@@ -20,7 +20,7 @@
 		wks = test.createWorkspace()
 	 	configurations { "Debug", "Release" }
 		language "C#"
-		targetdir("test\\targetDir")
+		targetdir("test/targetDir")
 	end
 
 	local function setConfig()
@@ -34,26 +34,10 @@
 		prj = test.getproject(wks, 1)
 	end
 
-	local function prepareEmpty()
-		prepare()
-		documentationfile ""
-		setConfig()
-	end
-
-	local function prepareDir()
-		prepare()
-		documentationfile "test"
-		setConfig()
-	end
-
-	local function prepareNull()
-		p.action.set("vs2010")
-		wks = test.createWorkspace()
-		setConfig()
-	end
-
 function suite.documentationFilePath()
-	prepareDir()
+	prepare()
+	documentationfile "test"
+	setConfig()
 	test.capture [[
 		<DocumentationFile>test\MyProject.xml</DocumentationFile>
 		]]
@@ -61,14 +45,21 @@ end
 
 function suite.documentationFilePath_vs2017up()
 	p.action.set("vs2017")
-	prepareDir()
+
+	prepare()
+	documentationfile "test"
+	setConfig()
+
 	test.capture [[
 		<DocumentationFile>test\MyProject.xml</DocumentationFile>
 		]]
 end
 
 function suite.documentationEmpty()
-	prepareEmpty()
+	prepare()
+	documentationfile ""
+	setConfig()
+
 	test.capture [[
 		<DocumentationFile>test\targetDir\MyProject.xml</DocumentationFile>
 		]]
@@ -76,12 +67,17 @@ end
 
 function suite.documentationEmpty_vs2017up()
 	p.action.set("vs2017")
-	prepareEmpty()
+
+	prepare()
+	documentationfile ""
+	setConfig()
+
 	test.capture [[<GenerateDocumentationFile>true</GenerateDocumentationFile>]]
 end
 
 function suite.documentationNull()
-	prepareNull()
+	wks = test.createWorkspace()
+	setConfig()
 	test.isemptycapture()
 end
 
