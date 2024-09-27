@@ -59,3 +59,14 @@
 		local parts = identifier:explode("-", true, 1)
 		return p.tools[parts[1]], parts[2]
 	end
+
+
+--
+-- Returns the relative path to passed value for the given project.
+-- This can be overriden by actions to allow for more customized relative
+-- path behaviors.
+--
+
+	function p.tools.getrelative(prj, value)
+		return p.project.getrelative(prj, value)
+	end
