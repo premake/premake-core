@@ -780,10 +780,10 @@
 
 	function dotnetbase.documentationfile(cfg)
 		if cfg.documentationFile then
-			if _ACTION > "vs2015" and cfg.documentationFile == "" then
+			if _ACTION > "vs2015" and cfg.documentationFile == true then
 				_p(2,'<GenerateDocumentationFile>true</GenerateDocumentationFile>')
 			else
-				local documentationFile = iif(cfg.documentationFile ~= "", cfg.documentationFile, cfg.targetdir)
+				local documentationFile = iif(cfg.documentationFile ~= true, cfg.documentationFile, cfg.targetdir)
 				_p(2, string.format('<DocumentationFile>%s\\%s.xml</DocumentationFile>', vstudio.path(cfg, documentationFile),cfg.project.name))
 			end
 		end

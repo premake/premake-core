@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_documentation_file.lua
 -- Test DocumentationFile feature Visual Studio 2005+ C# project.
--- Copyright (c) 2012-2023 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2024 Jason Perkins and the Premake project
 --
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_documentation_file")
@@ -36,7 +36,7 @@
 
 function suite.documentationFilePath()
 	prepare()
-	documentationfile "test"
+	documentationfile("test")
 	setConfig()
 	test.capture [[
 		<DocumentationFile>test\MyProject.xml</DocumentationFile>
@@ -47,7 +47,7 @@ function suite.documentationFilePath_vs2017up()
 	p.action.set("vs2017")
 
 	prepare()
-	documentationfile "test"
+	documentationfile("test")
 	setConfig()
 
 	test.capture [[
@@ -57,7 +57,7 @@ end
 
 function suite.documentationEmpty()
 	prepare()
-	documentationfile ""
+	documentationfile(true)
 	setConfig()
 
 	test.capture [[
@@ -69,7 +69,7 @@ function suite.documentationEmpty_vs2017up()
 	p.action.set("vs2017")
 
 	prepare()
-	documentationfile ""
+	documentationfile(true)
 	setConfig()
 
 	test.capture [[<GenerateDocumentationFile>true</GenerateDocumentationFile>]]
@@ -77,6 +77,7 @@ end
 
 function suite.documentationNull()
 	wks = test.createWorkspace()
+	prepare()
 	setConfig()
 	test.isemptycapture()
 end
