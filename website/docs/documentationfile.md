@@ -32,9 +32,9 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0 beta3 or later.
 
-Visual studio 2005 C# is the only toolset currently supported.
+Visual studio is the only toolset currently supported.
 
 ### Warning ###
 It's recommended to use `documentationfile(true)` because Visual Studio's intellisense will not detect the XML file if its name is not the same as the SharedLib.
