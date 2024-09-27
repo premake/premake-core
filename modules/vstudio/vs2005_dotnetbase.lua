@@ -233,12 +233,13 @@
 			end
 		end
 
-		local cfg = project.getfirstconfig(prj)
-		if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
-			_p(1,'<PropertyGroup>')
-			output("Pre", cfg.prebuildcommands)
-			output("Post", cfg.postbuildcommands)
-			_p(1,'</PropertyGroup>')
+		for cfg in project.eachconfig(prj) do
+			if #cfg.prebuildcommands > 0 or #cfg.postbuildcommands > 0 then
+				_p(1,'<PropertyGroup %s>', dotnetbase.condition(cfg))
+				output("Pre", cfg.prebuildcommands)
+				output("Post", cfg.postbuildcommands)
+				_p(1,'</PropertyGroup>')
+			end
 		end
 	end
 
@@ -247,12 +248,22 @@
 --
 
 	function dotnetbase.additionalProps(cfg)
-		for i = 1, #cfg.vsprops do
-			for key, value in spairs(cfg.vsprops[i]) do
-				_p(2, '<%s>%s</%s>', key, vs2005.esc(value), key)
+		local function recurseTableIfNeeded(tbl, tab_level)
+			for key, value in spairs(tbl) do
+				if (type(value) == "table") then
+					_p(tab_level, '<%s>', key)
+					recurseTableIfNeeded(value, tab_level + 1)
+					_p(tab_level, '</%s>', key)
+				else
+					_p(tab_level, '<%s>%s</%s>', key, vs2005.esc(value), key)
+				end
 			end
 		end
+		for i = 1, #cfg.vsprops do
+			recurseTableIfNeeded(cfg.vsprops[i], 2)
+		end
 	end
+
 
 --
 -- Write the compiler flags for a particular configuration.

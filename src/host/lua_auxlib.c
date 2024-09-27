@@ -29,6 +29,10 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	const char* script_dir;
 	const char* test_name;
 
+	/* this function can be called with from 1 to 3 arguments on the stack,
+	 * the filename, the mode and an environment table */
+
+  	int env = (!lua_isnone(L, 3) ? 1 : 0);  /* 1 if there is an env or 0 if no 'env' */
 	int bottom = lua_gettop(L);
 	int z = !OKAY;
 
@@ -60,11 +64,11 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 			z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
 
 			/* remove test_name */
-			lua_remove(L, bottom + 1);
+			lua_remove(L, -3);
 		}
 
 		/* remove _SCRIPT_DIR */
-		lua_remove(L, bottom);
+		lua_remove(L, bottom + env);
 	}
 
 	/* Try to locate the script on the filesystem */
@@ -100,7 +104,15 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	 * script chunk on the stack. Turn these into a closure that will call my
 	 * wrapper below when the loaded script needs to be executed. */
 	if (z == OKAY) {
-		lua_pushcclosure(L, chunk_wrapper, 2);
+		/* if we are called with an env, then our caller, luaB_loadfile, will
+		 * call load_aux, which sets up our env as the first up value via
+		 * lua_setupvalue, which would overwrite the one we are setting up here.
+		 * workaround this by pushing a nil value as our first up value */
+		if (env) {
+			lua_pushnil(L);
+			lua_insert(L, -3);
+		}
+		lua_pushcclosure(L, chunk_wrapper, 2 + (env ? 1 : 0));
 	}
 	else if (z == LUA_ERRFILE) {
 		lua_pushfstring(L, "cannot open %s: No such file or directory", filename);
@@ -124,8 +136,13 @@ static int chunk_wrapper(lua_State* L)
 	const char* filename;
 	char* ptr;
 	int i, args;
+	int upvalue_offset;
 
 	args = lua_gettop(L);
+
+	/* if the first up value is a table, then we have an env upvalue
+	 * and should take that into account by offsetting the rest of the up values */
+	upvalue_offset = (lua_type(L, lua_upvalueindex(1)) == LUA_TTABLE) ? 1 : 0;
 
 	/* Remember the current _SCRIPT and working directory so I can
 	 * restore them after this new chunk has been run. */
@@ -136,12 +153,12 @@ static int chunk_wrapper(lua_State* L)
 
 	/* Set the new _SCRIPT variable */
 
-	lua_pushvalue(L, lua_upvalueindex(1));
+	lua_pushvalue(L, lua_upvalueindex(1 + upvalue_offset));
 	lua_setglobal(L, "_SCRIPT");
 
 	/* And the new _SCRIPT_DIR variable (const cheating) */
 
-	filename = lua_tostring(L, lua_upvalueindex(1));
+	filename = lua_tostring(L, lua_upvalueindex(1 + upvalue_offset));
 	ptr = strrchr(filename, '/');
 	if (ptr) *ptr = '\0';
 	lua_pushlstring(L, filename, strlen(filename));
@@ -157,7 +174,15 @@ static int chunk_wrapper(lua_State* L)
 	/* Move the function's arguments to the top of the stack and
 	 * execute the function created by luaL_loadfile() */
 
-	lua_pushvalue(L, lua_upvalueindex(2));
+	lua_pushvalue(L, lua_upvalueindex(2 + upvalue_offset));
+
+	/* forward the env table to the closure as 1st upvalue */
+	if (upvalue_offset) {
+		lua_pushvalue(L, -1);
+	 	lua_pushvalue(L, lua_upvalueindex(1));
+		lua_setupvalue(L, -2, 1);
+	}
+
 	for (i = 1; i <= args; ++i) {
 		lua_pushvalue(L, i);
 	}

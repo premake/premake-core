@@ -311,6 +311,14 @@ module.exports = {
 				{
 					collapsed: true,
 					type: 'category',
+					label: 'Global Settings',
+					items: [
+						'gitintegration'
+					]
+				},
+				{
+					collapsed: true,
+					type: 'category',
 					label: 'Globals',
 					items: [
 						'_ACTION',
@@ -376,14 +384,19 @@ module.exports = {
 						'os.findlib',
 						'os.get',
 						'os.getcwd',
+						'os.getenv',
+						'os.getnumcpus',
 						'os.getpass',
+						'os.getSystemTags',
 						'os.getversion',
 						'os.host',
+						'os.hostarch',
 						'os.is',
 						'os.is64bit',
 						'os.isdir',
 						'os.isfile',
 						'os.islink',
+						'os.istarget',
 						'os.locate',
 						'os.matchdirs',
 						'os.matchfiles',
@@ -392,6 +405,7 @@ module.exports = {
 						'os.pathsearch',
 						'os.realpath',
 						'os.remove',
+						'os.rename',
 						'os.rmdir',
 						'os.stat',
 						'os.target',
@@ -481,9 +495,11 @@ module.exports = {
 					label: 'term',
 					items: [
 						'term.getTextColor',
+						'term.setTextColor',
 						'term.popColor',
 						'term.pushColor',
-						'term.setTextColor'
+						'term.clearToEndOfLine',
+						'term.moveLeft'
 					]
 				},
 				{
