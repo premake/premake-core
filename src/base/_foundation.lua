@@ -244,9 +244,13 @@
 
 		local res = os.locate(fname, with_ext, p5, p4)
 		res = res or fname
-		local compiled_chunk = loadfile(res)
+		local compiled_chunk, err = loadfile(res)
 		if compiled_chunk == nil then
-			premake.error("Cannot find either " .. table.implode({fname, with_ext, p5, p4}, "", "", " or "))
+			if err then
+				premake.error("Cannot load " .. fname .. ": " .. err)
+			else
+				premake.error("Cannot find either " .. table.implode({fname, with_ext, p5, p4}, "", "", " or "))
+			end
 		end
 		return res, compiled_chunk
 	end
