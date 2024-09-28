@@ -89,7 +89,7 @@
 	end
 
 --
--- Returns C/C++ system version related build flags
+-- Returns system version related build flags
 --
 
 	function clang.getsystemversionflags(cfg)
