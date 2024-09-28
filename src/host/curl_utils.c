@@ -28,7 +28,7 @@ int curlProgressCallback(curl_state* state, double dltotal, double dlnow, double
 	lua_pushnumber(L, (lua_Number)dlnow);
 	int ret = premake_pcall(L, 2, LUA_MULTRET);
 	if (ret != LUA_OK) {
-		printLastError(L);
+		premake_handle_lua_error(L);
 		return -1; // abort download
 	}
 

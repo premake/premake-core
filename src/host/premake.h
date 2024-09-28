@@ -114,7 +114,6 @@ void do_translate(char* value, const char sep);
 
 int term_doGetTextColor();
 void term_doSetTextColor(int color);
-void printLastError(lua_State* L);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -216,3 +215,4 @@ const buildin_mapping* premake_find_embedded_script(const char* filename);
 
 int premake_locate_executable(lua_State* L, const char* argv0);
 int premake_test_file(lua_State* L, const char* filename, int searchMask);
+void premake_handle_lua_error(lua_State* L);

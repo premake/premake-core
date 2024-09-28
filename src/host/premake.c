@@ -287,12 +287,14 @@ static void setErrorColor(lua_State* L)
 
 
 
-void printLastError(lua_State* L)
+void premake_handle_lua_error(lua_State* L)
 {
 	const char* message = lua_tostring(L, -1);
 	int oldColor = term_doGetTextColor();
 	setErrorColor(L);
-	printf(ERROR_MESSAGE, message);
+	/* avoid printing a double Error: prefix for premake.error() messages */
+	int has_error_prefix = strncmp(message, "** Error:", 9) == 0;
+	printf(has_error_prefix ? "%s\n" : ERROR_MESSAGE, message);
 	term_doSetTextColor(oldColor);
 }
 
@@ -342,14 +344,14 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
 
 	/* Find and run the main Premake bootstrapping script */
 	if (run_premake_main(L, script) != OKAY) {
-		printLastError(L);
+		premake_handle_lua_error(L);
 		return !OKAY;
 	}
 
 	/* and call the main entry point */
 	lua_getglobal(L, "_premake_main");
 	if (premake_pcall(L, 0, 1) != OKAY) {
-		printLastError(L);
+		premake_handle_lua_error(L);
 		return !OKAY;
 	}
 	else {

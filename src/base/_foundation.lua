@@ -195,22 +195,6 @@
 	end
 
 
-
---
--- Raise an error, with a formatted message built from the provided
--- arguments.
---
--- @param message
---    The error message, which may contain string formatting tokens.
--- @param ...
---    Values to fill in the string formatting tokens.
---
-
-	function premake.error(message, ...)
-		error(string.format("** Error: " .. message, ...), 0)
-	end
-
-
 --
 -- Finds the correct premake script filename to be run.
 --
@@ -339,6 +323,20 @@
 		return scope, name
 	end
 
+
+--
+-- Raise an error, with a formatted message built from the provided
+-- arguments.
+--
+-- @param message
+--    The error message, which may contain string formatting tokens.
+-- @param ...
+--    Values to fill in the string formatting tokens.
+--
+
+function premake.error(message, ...)
+	error(string.format("** Error: " .. message, ...), 0)
+end
 
 
 --
