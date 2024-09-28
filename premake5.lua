@@ -112,10 +112,9 @@
 			--
 			{ "Win32", "Same as x86" },
 			{ "x64", "Same as x86_64" },
-			--
-			{ "default", "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
 		},
-		default = "default",
+		-- "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
+		default = nil,
 	}
 
 --
@@ -168,7 +167,7 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:arch=default" }
+		filter { "system:windows", "options:not arch" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"

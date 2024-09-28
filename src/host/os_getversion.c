@@ -289,7 +289,7 @@ int getversion(struct OsVersionInfo* info)
 	if (uname(&u))
 	{
 		// error
-		info->description = PLATFORM_STRING;
+		info->description = PLATFORM_OS;
 		return 0;
 	}
 

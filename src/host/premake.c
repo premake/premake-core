@@ -212,9 +212,13 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PREMAKE_PROJECT_URL);
 	lua_setglobal(L, "_PREMAKE_URL");
 
-	/* set the OS platform variable */
-	lua_pushstring(L, PLATFORM_STRING);
+	/* set the target OS platform variable */
+	lua_pushstring(L, PLATFORM_OS);
 	lua_setglobal(L, "_TARGET_OS");
+
+	/* set the target arch platform variable */
+	lua_pushnil(L);
+	lua_setglobal(L, "_TARGET_ARCH");
 
 	/* find the user's home directory */
 	value = getenv("HOME");

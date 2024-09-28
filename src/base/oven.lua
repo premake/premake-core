@@ -536,7 +536,7 @@
 		-- external Visual Studio project files.
 
 		local system = os.target()
-		local architecture = nil
+		local architecture = os.targetarch()
 		local toolset = p.action.current().toolset
 
 		if platform then

@@ -19,28 +19,28 @@
  * Windows but since it is the most common I use it as the default */
 #if defined(__linux__)
 #define PLATFORM_LINUX    (1)
-#define PLATFORM_STRING   "linux"
+#define PLATFORM_OS   "linux"
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 #define PLATFORM_BSD      (1)
-#define PLATFORM_STRING   "bsd"
+#define PLATFORM_OS   "bsd"
 #elif defined(__APPLE__) && defined(__MACH__)
 #define PLATFORM_MACOSX   (1)
-#define PLATFORM_STRING   "macosx"
+#define PLATFORM_OS   "macosx"
 #elif defined(__sun__) && defined(__svr4__)
 #define PLATFORM_SOLARIS  (1)
-#define PLATFORM_STRING   "solaris"
+#define PLATFORM_OS   "solaris"
 #elif defined(__HAIKU__)
 #define PLATFORM_HAIKU    (1)
-#define PLATFORM_STRING   "haiku"
+#define PLATFORM_OS   "haiku"
 #elif defined (_AIX)
 #define PLATFORM_AIX  (1)
-#define PLATFORM_STRING  "aix"
+#define PLATFORM_OS  "aix"
 #elif defined (__GNU__)
 #define PLATFORM_HURD  (1)
-#define PLATFORM_STRING  "hurd"
+#define PLATFORM_OS  "hurd"
 #else
 #define PLATFORM_WINDOWS  (1)
-#define PLATFORM_STRING   "windows"
+#define PLATFORM_OS   "windows"
 #endif
 
 #define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)

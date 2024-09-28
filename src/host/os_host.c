@@ -8,6 +8,6 @@
 
 int os_host(lua_State* L)
 {
-	lua_pushstring(L, PLATFORM_STRING);
+	lua_pushstring(L, PLATFORM_OS);
 	return 1;
 }
