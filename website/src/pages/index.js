@@ -49,7 +49,7 @@ function Home() {
 									syntax, and build it everywhere.
 								</p>
 								<p>
-									&#8594; <Link to="docs/your-first-script">See an example</Link>
+									&#8594; <Link to="docs/Your-First-Script">See an example</Link>
 								</p>
 							</Feature>
 							<Feature title="Script Once, Target Many">
@@ -58,7 +58,7 @@ function Home() {
 									across Windows, Mac OS X, and Linux.
 								</p>
 								<p>
-									&#8594; <Link to="docs/using-premake">See the full list</Link>
+									&#8594; <Link to="docs/Using-Premake">See the full list</Link>
 								</p>
 							</Feature>
 							<Feature title="Full Powered">

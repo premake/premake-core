@@ -1,10 +1,7 @@
 ---
 title: "Community Update #4"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 It's been much longer than anticipated since the last community update. I was out of the country for a bit, and then shortly after my return the whole Situation hit the fan and things got crazy for a while. I'm back now, up and running and looking ahead to what's next. I hope all of you are also safe and sound and getting your groove back.
@@ -20,6 +17,8 @@ Whew!
 #### Alpha-15
 
 With inbox zero reached, we also cut [a new 5.0 alpha release](https://github.com/premake/premake-core/releases/tag/v5.0.0-alpha15) with over 50 changes and fixes, from over 20 different contributors. Nicely done everyone, and thanks! 🙌
+
+{/* truncate */}
 
 #### Premake5 Stable?
 
