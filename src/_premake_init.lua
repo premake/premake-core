@@ -893,6 +893,16 @@
 	}
 
 	api.register {
+		name = "linker",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"LLD",
+		}
+	}
+
+	api.register {
 		name = "locale",
 		scope = "config",
 		kind = "string",

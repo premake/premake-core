@@ -812,6 +812,17 @@
 
 
 --
+-- Check handling of linker flag.
+--
+
+function suite.ldflags_linker_lld()
+	linker "LLD"
+	prepare()
+	test.contains("-fuse-ld=lld", gcc.getldflags(cfg))
+end
+
+
+--
 -- Check handling of link time optimization flag.
 --
 
