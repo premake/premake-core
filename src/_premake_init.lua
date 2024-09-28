@@ -2013,6 +2013,12 @@
 	filter { "system:darwin" }
 		toolset "clang"
 
+	filter "files:**.m"
+		compileas(p.OBJECTIVEC)
+
+	filter "files:**.mm"
+		compileas(p.OBJECTIVECPP)
+
 	filter { "platforms:Win32" }
 		architecture "x86"
 

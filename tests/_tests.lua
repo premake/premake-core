@@ -31,6 +31,7 @@ return {
 	-- Project object tests
 	"project/test_config_maps.lua",
 	"project/test_eachconfig.lua",
+	"project/test_fileconfig.lua",
 	"project/test_getconfig.lua",
 	"project/test_location.lua",
 	"project/test_sources.lua",
