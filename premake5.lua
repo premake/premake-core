@@ -167,7 +167,7 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:arch=default" }
+		filter { "system:windows", "options:not arch" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"
