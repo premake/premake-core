@@ -48,18 +48,25 @@
 	io._includedFiles = {}
 
 	function include(fname)
-		local actualFname, compiled_chunk = premake.findProjectScript(fname)
-		if not io._includedFiles[actualFname] then
-			io._includedFiles[actualFname] = true
-			local success, res = pcall(compiled_chunk)
-			if success then
-				-- res is the return value of the script
-				return res
-			else
-				-- res is the error message
-				local caller = filelineinfo(2)
-				premake.error(caller .. ": Error executing '" .. fname .. ": " .. res)
+		local findOK, foundFnameOrErr, compiled_chunk = pcall(function () return premake.findProjectScript(fname) end)
+		if findOK then
+			local actualFname = foundFnameOrErr
+			if not io._includedFiles[actualFname] then
+				io._includedFiles[actualFname] = true
+				local callOK, res = pcall(compiled_chunk)
+				if callOK then
+					-- res is the return value of the script
+					return res
+				else
+					local err = res
+					local caller = filelineinfo(2)
+					premake.error(caller .. ": include(" .. fname .. ") execution error: " .. err)
+				end
 			end
+		else
+			local err = foundFnameOrErr
+			local caller = filelineinfo(2)
+			premake.error(caller .. ": include(" .. fname .. ") not found: " .. err)
 		end
 	end
 
