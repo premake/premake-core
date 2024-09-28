@@ -286,7 +286,7 @@
 		table.insert(flags, '/noconfig')
 
 		if cfg.project.icon then
-			local fn = project.getrelative(cfg.project, cfg.project.icon)
+			local fn = p.tools.getrelative(cfg.project, cfg.project.icon)
 			table.insert(flags, string.format('/win32icon:"%s"', fn))
 		end
 

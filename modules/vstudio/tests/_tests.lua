@@ -14,6 +14,7 @@ return {
 	"cs2005/test_no_warn.lua",
 	"cs2005/test_debug_props.lua",
 	"cs2005/test_debug_props_2019.lua",
+	"cs2005/test_documentation_file.lua",
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
 	"cs2005/test_netcore.lua",

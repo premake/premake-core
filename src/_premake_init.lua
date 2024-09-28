@@ -767,6 +767,12 @@
 	}
 
 	api.register {
+		name = "documentationfile",
+		scope = "project",
+		kind = "string",
+	}
+
+	api.register {
 		name = "cdialect",
 		scope = "config",
 		kind = "string",
