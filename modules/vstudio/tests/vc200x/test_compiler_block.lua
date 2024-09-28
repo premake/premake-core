@@ -135,7 +135,7 @@
 
 	function suite.looksGood_onC7DebugFormat()
 		symbols "On"
-		debugformat "C7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <Tool

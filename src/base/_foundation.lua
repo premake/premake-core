@@ -27,7 +27,6 @@
 --
 
 	premake.C           = "C"
-	premake.C7          = "c7"
 	premake.CLANG       = "clang"
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
