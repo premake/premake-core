@@ -81,11 +81,26 @@
 ---
 
 	function includeexternal(fname)
-		fname, compiled_chunk = p.findProjectScript(fname)
-		local wasIncludingExternal = api._isIncludingExternal
-		api._isIncludingExternal = true
-		compiled_chunk()
-		api._isIncludingExternal = wasIncludingExternal
+		local findOK, foundFnameOrErr, compiled_chunk = pcall(function () return p.findProjectScript(fname) end)
+		if findOK then
+			local wasIncludingExternal = api._isIncludingExternal
+			api._isIncludingExternal = true
+			local callOK, res = pcall(compiled_chunk)
+			api._isIncludingExternal = wasIncludingExternal
+
+			if callOK then
+				-- res is the return value of the script
+				return res
+			else
+				local err = res
+				local caller = filelineinfo(2)
+				premake.error(caller .. ": includeexternal(" .. fname .. ") execution error: " .. err)
+			end
+		else
+			local err = foundFnameOrErr
+			local caller = filelineinfo(2)
+			premake.error(caller .. ": includeexternal(" .. fname .. ") not found or failed to load: " .. err)
+		end
 	end
 
 	p.alias(_G, "includeexternal", "includeExternal")

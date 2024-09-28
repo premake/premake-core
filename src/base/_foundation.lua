@@ -245,13 +245,11 @@
 		local compiled_chunk
 		local res = os.locate(fname, with_ext, p5, p4)
 		if res == nil then
-			local caller = filelineinfo(3)
-			premake.error(caller .. ": Cannot find neither " .. table.implode({fname, with_ext, p5, p4}, "", "", " nor "))
+			premake.error("Cannot find neither " .. table.implode({fname, with_ext, p5, p4}, "", "", " nor "))
 		else
 			compiled_chunk, err = loadfile(res)
 			if err ~= nil then
-				local caller = filelineinfo(3)
-				premake.error(caller .. ": Error loading '" .. fname .. ": " .. err)
+				premake.error("Error loading '" .. fname .. ": " .. err)
 			end
 		end
 		return res, compiled_chunk
