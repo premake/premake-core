@@ -17,4 +17,4 @@ Premake 5.0 alpha 12 or later.
 
 ## See Also ##
 
-* [_TARGET_ARCH](premake_TARGET_ARCH.md)
+* [_TARGET_ARCH](globals/premake_TARGET_ARCH.md)

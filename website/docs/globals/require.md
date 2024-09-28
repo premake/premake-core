@@ -58,4 +58,4 @@ require("foo", ">=1.1")
 
 ### See Also ###
 
-* [_PREMAKE_VERSION](premake_PREMAKE_VERSION.md)
+* [_PREMAKE_VERSION](globals/premake_PREMAKE_VERSION.md)

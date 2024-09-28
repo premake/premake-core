@@ -21,5 +21,5 @@ Premake 4.0 or later.
 
 ### See Also ###
 
-* [os.matchdirs](os.matchdirs.md)
-* [os.matchfiles](os.matchfiles.md)
+* [os.matchdirs](os/os.matchdirs.md)
+* [os.matchfiles](os/os.matchfiles.md)

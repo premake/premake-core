@@ -2,16 +2,16 @@
 
 | API                                                       | Brief              |
 |-----------------------------------------------------------|--------------------|
-| [_ACTION](premake_ACTION.md)                                     | The action that will be run |
-| [_ARGS](premake_ARGS.md)                                         | Array of action args |
-| [_MAIN_SCRIPT](premake_MAIN_SCRIPT.md)                           |  |
-| [_MAIN_SCRIPT_DIR](premake_MAIN_SCRIPT_DIR.md)                   |  |
-| [_OPTIONS](premake_OPTIONS.md)                                   |  |
-| [_OS](premake_OS.md)                                             | The currently targeted operating system |
-| [_PREMAKE_COMMAND](premake_PREMAKE_COMMAND.md)                   |  |
-| [_PREMAKE_DIR](premake_PREMAKE_DIR.md)                           |  |
-| [_PREMAKE_VERSION](premake_PREMAKE_VERSION.md)                   | The version of the currently executing instance of Premake |
-| [_WORKING_DIR](premake_WORKING_DIR.md)                           |  |
+| [_ACTION](globals/premake_ACTION.md)                      | The action that will be run |
+| [_ARGS](globals/premake_ARGS.md)                          | Array of action args |
+| [_MAIN_SCRIPT](globals/premake_MAIN_SCRIPT.md)            |  |
+| [_MAIN_SCRIPT_DIR](globals/premake_MAIN_SCRIPT_DIR.md)    |  |
+| [_OPTIONS](globals/premake_OPTIONS.md)                    |  |
+| [_OS](globals/premake_OS.md)                              | The currently targeted operating system |
+| [_PREMAKE_COMMAND](globals/premake_PREMAKE_COMMAND.md)    |  |
+| [_PREMAKE_DIR](globals/premake_PREMAKE_DIR.md)            |  |
+| [_PREMAKE_VERSION](globals/premake_PREMAKE_VERSION.md)    | The version of the currently executing instance of Premake |
+| [_WORKING_DIR](globals/premake_WORKING_DIR.md)            |  |
 | [architecture](architecture.md)                           |  |
 | [atl](atl.md)                                             | Use Microsoft's Active Template Library |
 | [basedir](basedir.md)                                     |  |
@@ -107,10 +107,10 @@
 | [implibname](implibname.md)                               |  |
 | [implibprefix](implibprefix.md)                           |  |
 | [implibsuffix](implibsuffix.md)                           |  |
-| [include](include.md)                                     |  |
+| [include](globals/include.md)                             |  |
 | [includedirs](includedirs.md)                             |  |
 | [includedirsafter](includedirsafter.md)                   |  |
-| [includeexternal](includeexternal.md)                     |  |
+| [includeexternal](globals/includeexternal.md)             |  |
 | [inlining](inlining.md)                                   | Tells the compiler when it should inline functions |
 | [intrinsics](intrinsics.md)                               |  |
 | [kind](kind.md)                                           |  |

@@ -87,8 +87,8 @@ You can use command tokens anywhere you specify a command line, including:
 
 * [buildcommands](buildcommands.md)
 * [cleancommands](cleancommands.md)
-* [os.execute](os.execute.md)
-* [os.executef](os.executef.md)
+* [os.execute](os/os.execute.md)
+* [os.executef](os/os.executef.md)
 * [postbuildcommands](postbuildcommands.md)
 * [prebuildcommands](prebuildcommands.md)
 * [prelinkcommands](prelinkcommands.md)
