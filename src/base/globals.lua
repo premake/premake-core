@@ -66,7 +66,7 @@
 		else
 			local err = foundFnameOrErr
 			local caller = filelineinfo(2)
-			premake.error(caller .. ": include(" .. fname .. ") not found: " .. err)
+			premake.error(caller .. ": include(" .. fname .. ") not found or failed to load: " .. err)
 		end
 	end
 
