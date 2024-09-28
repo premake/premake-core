@@ -49,7 +49,7 @@
 
 	function suite.PerConfigFile()
 		files { "Hello.cs" }
-		configuration { 'debug' }
+		filter { 'configurations:debug' }
 			files { "HelloTwo.cs" }
 		prepare()
 		test.capture [[

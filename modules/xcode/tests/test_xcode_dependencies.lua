@@ -31,7 +31,7 @@
 
 		prj2 = test.createproject(wks)
 		kind "StaticLib"
-		configuration "Debug"
+		filter { "configurations:Debug" }
 		targetsuffix "-d"
 	end
 
