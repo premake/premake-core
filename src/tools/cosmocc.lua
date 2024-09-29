@@ -7,16 +7,20 @@
 local p = premake
 local gcc = p.tools.gcc
 
-p.tools.cosmocc = table.merge(gcc, {})
+p.tools.cosmocc = table.deepcopy(gcc, {})
 local cosmocc = p.tools.cosmocc
+
+function cosmocc.getsharedlibarg(cfg)
+    return ""
+end
+
+cosmocc.ldflags.kind.SharedLib = cosmocc.getsharedlibarg
 
 cosmocc.tools = {
     cc = "cosmocc",
     cxx = "cosmoc++",
-    ar = "ar",
+    ar = "cosmoar",
 }
-
--- cosmocc.arargs = "rcs"
 
 function cosmocc.gettoolname(cfg, tool)
     return cosmocc.tools[tool]

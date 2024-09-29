@@ -38,12 +38,15 @@
 #elif defined (__GNU__)
 #define PLATFORM_HURD  (1)
 #define PLATFORM_OS  "hurd"
+#elif defined (__COSMOPOLITAN__)
+#define PLATFORM_COSMO  (1)
+#define PLATFORM_OS  "cosmopolitan"
 #else
 #define PLATFORM_WINDOWS  (1)
 #define PLATFORM_OS   "windows"
 #endif
 
-#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU || PLATFORM_COSMO)
 
 #if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || \
     defined(_M_X64) || defined(_M_AMD64)
