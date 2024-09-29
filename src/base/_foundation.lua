@@ -238,15 +238,23 @@
 --
 
 	function premake.findProjectScript(fname)
-		local with_ext = fname .. ".lua"
-		local p5 = path.join(fname, "premake5.lua")
-		local p4 = path.join(fname, "premake4.lua")
+		local filenames = {
+			fname,
+			fname .. ".lua",
+			path.join(fname, "premake5.lua"),
+			path.join(fname, "premake4.lua"),
+		}
+
+		-- If the currently running script was embedded, try to find this file as if it were embedded too.
+		if _SCRIPT_DIR and _SCRIPT_DIR:startswith('$') then
+			table.insert(filenames, path.getabsolute(fname, _SCRIPT_DIR))
+		end
 
 		local compiled_chunk
-		local res = os.locate(fname, with_ext, p5, p4)
+		local res = os.locate(table.unpack(filenames))
 		if res == nil then
 			local caller = filelineinfo(3)
-			premake.error(caller .. ": Cannot find neither " .. table.implode({fname, with_ext, p5, p4}, "", "", " nor "))
+			premake.error(caller .. ": Cannot find neither " .. table.implode(filenames, "", "", " nor "))
 		else
 			compiled_chunk, err = loadfile(res)
 			if err ~= nil then
