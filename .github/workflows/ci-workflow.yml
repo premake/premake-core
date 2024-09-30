@@ -9,17 +9,21 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
+        depsrc: [none, contrib, system]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Install dependencies
+      if: matrix.depsrc == 'system'
+      run: sudo apt-get install libcurl4-openssl-dev
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release'
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib'
       uses: actions/upload-artifact@v4
       with:
         name: premake-linux-${{ matrix.platform }}

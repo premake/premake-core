@@ -79,9 +79,24 @@
 
 
 	newoption {
+		trigger = "curl-src",
+		description = "Specify the source of the Curl 3rd party library",
+		allowed = {
+			{ "none", "Disables Curl" },
+			{ "contrib", "Uses Curl in contrib folder" },
+			{ "system", "Uses Curl from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
 		trigger = "no-curl",
 		description = "Disable Curl 3rd party lib"
 	}
+	if _OPTIONS["no-curl"] then
+		premake.warn("--no-curl is deprecated, please use --curl-src=none")
+		_OPTIONS["curl-src"] = "none"
+	end
 
 
 	newoption {
@@ -139,9 +154,10 @@
 			defines { "PREMAKE_COMPRESSION" }
 		end
 
-		if not _OPTIONS["no-curl"] then
-			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
-		end
+		filter { "options:not curl-src=none" }
+			defines { "PREMAKE_CURL" }
+		filter { "options:curl-src=contrib" }
+			defines { "CURL_STATICLIB" }
 
 		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
 			buildoptions { "-arch arm64" }
@@ -206,10 +222,12 @@
 			links { "zip-lib", "zlib-lib" }
 		end
 
-		if not _OPTIONS["no-curl"] then
+		filter { "options:curl-src=contrib" }
 			includedirs { "contrib/curl/include" }
 			links { "curl-lib" }
-		end
+		filter { "options:curl-src=system" }
+			links { "curl" }
+		filter {}
 
 		files
 		{
@@ -247,10 +265,8 @@
 		filter "system:linux or hurd"
 			links       { "dl", "rt" }
 
-		filter { "system:not windows", "system:not macosx" }
-			if not _OPTIONS["no-curl"] then
-				links   { "mbedtls-lib" }
-			end
+		filter { "system:not windows", "system:not macosx", "options:curl-src=contrib" }
+			links       { "mbedtls-lib" }
 
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
@@ -303,7 +319,7 @@ end
 			include "contrib/libzip"
 		end
 
-		if not _OPTIONS["no-curl"] then
+		if _OPTIONS["curl-src"] == "contrib" then
 			include "contrib/mbedtls"
 			include "contrib/curl"
 		end
