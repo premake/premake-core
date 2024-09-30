@@ -1400,6 +1400,8 @@
 		["C++17"] = "c++1z",
 		["C++2a"] = "c++2a",
 		["C++20"] = "c++2a",
+		["C++2b"] = "c++2b",
+		["C++23"] = "c++23",
 		["gnu++98"] = "gnu++98",
 		["gnu++0x"] = "gnu++0x",
 		["gnu++11"] = "gnu++0x",  -- Xcode project GUI uses gnu++0x, but gnu++11 also works
@@ -1409,6 +1411,8 @@
 		["gnu++17"] = "gnu++1z",
 		["gnu++2a"] = "gnu++2a",
 		["gnu++20"] = "gnu++2a",
+		["gnu++2b"] = "gnu++2b",
+		["gnu++23"] = "gnu++23",
 	}
 
 	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)

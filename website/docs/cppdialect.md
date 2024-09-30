@@ -19,6 +19,8 @@ cppdialect "value"
 * `C++17`: ISO C++17
 * `C++2a`: ISO C++20 Draft
 * `C++20`: ISO C++20
+* `C++2b`: ISO C++23 Draft
+* `C++23`: ISO C++23
 * `gnu++98`: GNU dialect of ISO C++98
 * `gnu++0x`: GNU dialect of ISO C++11 Draft
 * `gnu++11`: GNU dialect of ISO C++11
@@ -28,6 +30,8 @@ cppdialect "value"
 * `gnu++17`: GNU dialect of ISO C++17
 * `gnu++2a`: GNU dialect of ISO C++20 Draft
 * `gnu++20`: GNU dialect of ISO C++20
+* `gnu++2b`: GNU dialect of ISO C++23 Draft
+* `gnu++23`: GNU dialect of ISO C++23
 
 ### Applies To ###
 
