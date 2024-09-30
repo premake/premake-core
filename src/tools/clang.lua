@@ -253,6 +253,7 @@
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
+		linker = gcc.ldflags.linker,
 		sanitize = {
 			Address = "-fsanitize=address",
 		},

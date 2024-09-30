@@ -107,6 +107,16 @@
 	end
 
 --
+-- Check handling of linker flag.
+--
+
+function suite.ldflags_linker_lld()
+	linker "LLD"
+	prepare()
+	test.contains("-fuse-ld=lld", clang.getldflags(cfg))
+end
+
+--
 -- Check the translation of CXXFLAGS.
 --
 

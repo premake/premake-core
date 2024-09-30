@@ -40,3 +40,7 @@ If you need to discover the location of a library, use the [`os.findlib`](os.fin
 ```lua
 libdirs { os.findlib("X11") }
 ```
+
+### Linker
+
+The linker defaults to the specified toolset default linker, but can be changed with the [`linker`](linker.md) flag.

@@ -199,6 +199,7 @@ module.exports = {
 						'largeaddressaware',
 						'libdirs',
 						'linkbuildoutputs',
+						'linker',
 						'linkgroups',
 						'linkoptions',
 						'links',

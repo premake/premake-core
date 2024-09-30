@@ -478,6 +478,10 @@
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
+		linker = {
+			Default = "",
+			LLD = "-fuse-ld=lld"
+		},
 		sanitize = {
 			Address = "-fsanitize=address",
 		},
