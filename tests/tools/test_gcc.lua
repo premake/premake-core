@@ -868,204 +868,204 @@ end
 	function suite.cflags_onCDefault()
 		cdialect "Default"
 		prepare()
-		test.contains({ }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC89()
 		cdialect "C89"
 		prepare()
 		test.contains({ "-std=c89" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC90()
 		cdialect "C90"
 		prepare()
 		test.contains({ "-std=c90" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC99()
 		cdialect "C99"
 		prepare()
 		test.contains({ "-std=c99" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC11()
 		cdialect "C11"
 		prepare()
 		test.contains({ "-std=c11" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC17()
 		cdialect "C17"
 		prepare()
 		test.contains({ "-std=c17" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu89()
 		cdialect "gnu89"
 		prepare()
 		test.contains({ "-std=gnu89" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu90()
 		cdialect "gnu90"
 		prepare()
 		test.contains({ "-std=gnu90" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu99()
 		cdialect "gnu99"
 		prepare()
 		test.contains({ "-std=gnu99" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu11()
 		cdialect "gnu11"
 		prepare()
 		test.contains({ "-std=gnu11" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu17()
 		cdialect "gnu17"
 		prepare()
 		test.contains({ "-std=gnu17" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onCppDefault()
 		cppdialect "Default"
 		prepare()
-		test.contains({ }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp98()
 		cppdialect "C++98"
 		prepare()
 		test.contains({ "-std=c++98" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp11()
 		cppdialect "C++11"
 		prepare()
 		test.contains({ "-std=c++11" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp14()
 		cppdialect "C++14"
 		prepare()
 		test.contains({ "-std=c++14" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp17()
 		cppdialect "C++17"
 		prepare()
 		test.contains({ "-std=c++17" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp2a()
 		cppdialect "C++2a"
 		prepare()
 		test.contains({ "-std=c++2a" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp20()
 		cppdialect "C++20"
 		prepare()
 		test.contains({ "-std=c++20" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp2b()
 		cppdialect "C++2b"
 		prepare()
 		test.contains({ "-std=c++2b" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp23()
 		cppdialect "C++23"
 		prepare()
 		test.contains({ "-std=c++23" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppLatest()
 		cppdialect "C++latest"
 		prepare()
 		test.contains({ "-std=c++23" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu98()
 		cppdialect "gnu++98"
 		prepare()
 		test.contains({ "-std=gnu++98" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu11()
 		cppdialect "gnu++11"
 		prepare()
 		test.contains({ "-std=gnu++11" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu14()
 		cppdialect "gnu++14"
 		prepare()
 		test.contains({ "-std=gnu++14" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu17()
 		cppdialect "gnu++17"
 		prepare()
 		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu2a()
 		cppdialect "gnu++2a"
 		prepare()
 		test.contains({ "-std=gnu++2a" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu20()
 		cppdialect "gnu++20"
 		prepare()
 		test.contains({ "-std=gnu++20" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu2b()
 		cppdialect "gnu++23"
 		prepare()
 		test.contains({ "-std=gnu++23" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu23()
 		cppdialect "gnu++2b"
 		prepare()
 		test.contains({ "-std=gnu++2b" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 --
