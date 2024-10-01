@@ -1745,7 +1745,9 @@
 			elseif (cfg.cppdialect == "C++17") then
 				m.element("LanguageStandard", condition, 'stdcpp17')
 			elseif (cfg.cppdialect == "C++20") then
-				m.element("LanguageStandard", condition, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
+				m.element("LanguageStandard", condition, iif(_ACTION <= "vs2017", 'stdcpplatest', 'stdcpp20'))
+			elseif (cfg.cppdialect == "C++23") then
+				m.element("LanguageStandard", condition, iif(_ACTION <= "vs2019", 'stdcpplatest', 'stdcpp23'))
 			elseif (cfg.cppdialect == "C++latest") then
 				m.element("LanguageStandard", condition, 'stdcpplatest')
 			end
@@ -3525,13 +3527,17 @@
 			["C++17"]   = "c++17",
 			["C++2a"]   = "c++2a",
 			["C++20"]   = "c++20",
-			["C++latest"] = "c++20",
+			["C++2b"]   = "c++2b",
+			["C++23"]   = "c++23",
+			["C++latest"] = "c++23",
 			["gnu++98"] = "gnu++98",
 			["gnu++03"] = "gnu++03",
 			["gnu++11"] = "gnu++11",
 			["gnu++14"] = "gnu++14",
 			["gnu++17"] = "gnu++17",
 			["gnu++20"] = "gnu++20",
+			["gnu++2b"] = "gnu++2b",
+			["gnu++23"] = "gnu++23",
 		}
 
 		if cpp_langmap[cfg.cppdialect] ~= nil then
