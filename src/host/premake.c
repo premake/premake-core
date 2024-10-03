@@ -213,14 +213,6 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PREMAKE_PROJECT_URL);
 	lua_setglobal(L, "_PREMAKE_URL");
 
-	/* set the target OS platform variable */
-	lua_pushstring(L, premake_host_os());
-	lua_setglobal(L, "_TARGET_OS");
-
-	/* set the target arch platform variable */
-	lua_pushnil(L);
-	lua_setglobal(L, "_TARGET_ARCH");
-
 #if PLATFORM_COSMO
 	/* set _COSMOPOLITAN if its a Cosmopolitan build */
 	lua_pushboolean(L, TRUE);
