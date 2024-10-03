@@ -8,7 +8,7 @@ id = os.targetarch()
 This will return `nil` by default instead of returning the architecture for the current running
 system due to backwards compatibility.
 
-A target architecture can be set either via setting [_TARGET_ARCH](premake_TARGET_ARCH.md) or
+A target architecture can be set either via setting [_TARGET_ARCH](globals/premake_TARGET_ARCH.md) or
 by passing an architecture via the `--arch` command line option (which has the most priority).
 
 
@@ -40,6 +40,6 @@ end
 
 ### See Also ###
 
-* [_TARGET_ARCH](premake_TARGET_ARCH.md)
-* [os.hostarch](os.hostarch.md)
+* [_TARGET_ARCH](globals/premake_TARGET_ARCH.md)
+* [os.hostarch](os/os.hostarch.md)
 * [architecture](architecture.md)

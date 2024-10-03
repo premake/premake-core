@@ -51,4 +51,4 @@ workspace "MyWorkspace"
 ### See Also ###
 
 * [architecture](architecture.md)
-* [_OS](premake_OS.md)
+* [_OS](globals/premake_OS.md)

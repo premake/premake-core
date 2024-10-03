@@ -26,13 +26,13 @@ title: What's New in 5.0
 * [Removes](Removing-Values.md)
 * [System Scripts](System-Scripts.md)
 * [Tokens](Tokens.md)
-* [HTTP support](http.download.md)
+* [HTTP support](http/http.download.md)
 
 ## New or Modified Globals ##
 
-* [_MAIN_SCRIPT](premake_MAIN_SCRIPT.md)
-* [_MAIN_SCRIPT_DIR](premake_MAIN_SCRIPT_DIR.md)
-* [_PREMAKE_DIR](premake_PREMAKE_DIR.md)
+* [_MAIN_SCRIPT](globals/premake_MAIN_SCRIPT.md)
+* [_MAIN_SCRIPT_DIR](globals/premake_MAIN_SCRIPT_DIR.md)
+* [_PREMAKE_DIR](globals/premake_PREMAKE_DIR.md)
 
 ## New or Modified API calls ##
 
@@ -127,22 +127,22 @@ title: What's New in 5.0
 
 ## New or Modified Lua library calls ##
 
-* [includeexternal](includeexternal.md) (new)
-* [require](require.md) (modified)
+* [includeexternal](globals/includeexternal.md) (new)
+* [require](globals/require.md) (modified)
 
 * [debug.prompt](debug.prompt.md) (new)
 
-* [http.download](http.download.md) (new)
-* [http.get](http.get.md) (new)
+* [http.download](http/http.download.md) (new)
+* [http.get](http/http.get.md) (new)
 
-* [os.chmod](os.chmod.md) (new)
-* [os.islink](os.islink.md) (new)
-* [os.realpath](os.realpath.md) (new)
-* [os.uuid](os.uuid.md) (can now generated deterministic name-based UUIDs)
+* [os.chmod](os/os.chmod.md) (new)
+* [os.islink](os/os.islink.md) (new)
+* [os.realpath](os/os.realpath.md) (new)
+* [os.uuid](os/os.uuid.md) (can now generated deterministic name-based UUIDs)
 
-* [path.getabsolute](path.getabsolute.md) (new "relative to" argument)
+* [path.getabsolute](path/path.getabsolute.md) (new "relative to" argument)
 
-* [string.hash](string.hash.md) (new)
+* [string.hash](string/string.hash.md) (new)
 
 ## Deprecated Values and Functions ##
 

@@ -17,5 +17,5 @@ Premake 5.0 beta 3 or later.
 
 ## See Also ##
 
-* [os.targetarch](os.targetarch.md)
-* [_TARGET_OS](premake_TARGET_OS.md)
+* [os.targetarch](os/os.targetarch.md)
+* [_TARGET_OS](globals/premake_TARGET_OS.md)
