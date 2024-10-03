@@ -256,7 +256,7 @@
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework", "Foundation.framework", "Security.framework", "readline" }
 
-		filter "system:linux"
+		filter { "system:linux", "toolset:not cosmocc" }
 			links		{ "uuid" }
 
 		filter { "system:macosx", "action:gmake" }
@@ -289,13 +289,14 @@
 			include "contrib/curl"
 		end
 
-	group "Binary Modules"
-		include "binmodules/example"
+	if _OPTIONS["cc"] ~= "cosmocc" then
+		group "Binary Modules"
+			include "binmodules/example"
 
-		if not _OPTIONS["no-luasocket"] then
-			include "binmodules/luasocket"
-		end
-
+			if not _OPTIONS["no-luasocket"] then
+				include "binmodules/luasocket"
+			end
+	end
 --
 -- A more thorough cleanup.
 --

@@ -151,3 +151,12 @@ windows: windows-base
 
 windows-msbuild: windows-base
 	msbuild /p:Configuration=$(CONFIG) /p:Platform=$(PLATFORM:x86=win32) .\build\bootstrap\Premake5.sln
+
+cosmo-clean: nix-clean
+
+cosmo: cosmo-clean
+	mkdir -p build/bootstrap
+	cosmocc -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lm -ldl -lrt
+	./build/bootstrap/premake_bootstrap embed
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap --cc=cosmocc gmake2
+	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)

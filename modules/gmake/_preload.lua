@@ -20,7 +20,7 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "None" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
-			cc     = { "clang", "gcc" },
+			cc     = { "clang", "gcc", "cosmocc" },
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 

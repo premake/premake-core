@@ -10,7 +10,7 @@
 
 #include "premake.h"
 
-#if PLATFORM_LINUX
+#if PLATFORM_LINUX | PLATFORM_COSMO
 #include <sched.h>
 #elif PLATFORM_SOLARIS | PLATFORM_AIX | PLATFORM_MACOSX | PLATFORM_BSD
 #include <sys/sysctl.h>
@@ -25,7 +25,7 @@ int do_getnumcpus()
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;
-#elif PLATFORM_LINUX
+#elif PLATFORM_LINUX | PLATFORM_COSMO
 	cpu_set_t set;
 	int count, i;
 
