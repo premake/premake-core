@@ -1,10 +1,7 @@
 ---
 title: "Community Update #10"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 ### Premake 5.0-beta1! 🥳
@@ -14,6 +11,8 @@ After one of the world's longest alpha cycles, Premake5 has finally entered beta
 As [previously discussed](/blog/2021/08/01/community-update-9#the-path-to-50), we've started the process of stabilizing 5.0 and shifting breaking changes over to the new v6.x branch. We've [set up a milestone to track our progress](https://github.com/premake/premake-core/milestone/3) toward a stable 5.0 release, and this is the first step in working it down.
 
 Most of the changes in the queue are under-the-hood: release automation, bootstrapping, and unit test fixes. The only potentially significant breaking change remaining is [promoting the `gmake2` exporter](https://github.com/premake/premake-core/issues/1099), which I will be prioritizing for the next beta. If you happen to still be using the older `gmake` exporter, please give `gmake2` a try and let us know if you encounter issues! Most fixes have been going to `gmake2` lately, so we expect your experience will be a good one.
+
+{/* truncate */}
 
 ### Premake6
 
@@ -59,7 +58,7 @@ Yay open source development! 🎉 Big shout out to everyone who took the time to
 
 Extra thanks to the unsung heroes not mentioned here who helped review pull requests, triage issues, and generally keep the machine humming.
 
-### Our Sponsors
+### Our Sponsors {#our-sponsors}
 
 <div style={{textAlign: 'center'}}>
 	<a href="https://opencollective.com/_fivem">

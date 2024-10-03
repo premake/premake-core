@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	title: 'Premake',
 	tagline: 'Powerfully simple build configuration',
 	url: 'https://premake.github.io/',
@@ -11,6 +11,9 @@ module.exports = {
 	favicon: 'img/favicon.ico',
 	organizationName: 'premake',
 	projectName: 'premake.github.io',
+	markdown: {
+		format: 'detect'
+	},
 	themeConfig: {
 		prism: {
 			additionalLanguages: ['lua'],

@@ -1,10 +1,7 @@
 ---
 title: "Community Update #5"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 ### The new storage system has arrived
@@ -16,6 +13,8 @@ I am happy to be able to say that I've wrapped up the first round of development
 Learning my lesson from past development, I did my best to make this new version as open-ended and unconstrained as possible.
 
 **A proper API.** The storage and query API have been cleaned up and condensed to make things easier and more powerful for module authors. (Sorry for the inline images, the OpenCollective editor won't allow me to author code blocks?)
+
+{/* truncate */}
 
 ```lua
 -- create a new query, targeting a particular "environment";

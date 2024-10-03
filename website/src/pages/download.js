@@ -53,7 +53,7 @@ const Download = () =>
 						<h1>Download Premake</h1>
 						<p>
 							Premake is a self-contained, single file command line executable which should build and run pretty much everywhere.
-							See <Link to="/docs/using-premake">Using Premake</Link> for usage instructions and help getting started.
+							See <Link to="/docs/Using-Premake">Using Premake</Link> for usage instructions and help getting started.
 						</p>
 						<p>
 							The latest released version is <b>v{LATEST_VERSION}</b>. <Link to="https://github.com/premake/premake-core/releases">See all releases</Link>.
