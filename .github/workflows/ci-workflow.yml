@@ -109,3 +109,17 @@ jobs:
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+
+  # This job will be required for PRs to be merged.
+  # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.
+  ci:
+    runs-on: ubuntu-latest
+    needs: [linux, macosx, windows]
+    if: always()
+    steps:
+      - name: All builds ok
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some builds failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
