@@ -7,12 +7,12 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2012, Marc Hoersken, <info@marc-hoersken.de>, et al.
- * Copyright (C) 2012 - 2017, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Marc Hoersken, <info@marc-hoersken.de>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -21,101 +21,66 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * SPDX-License-Identifier: curl
+ *
  ***************************************************************************/
 #include "curl_setup.h"
 
 #ifdef USE_SCHANNEL
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4201)
+#endif
+#include <subauth.h>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+/* Wincrypt must be included before anything that could include OpenSSL. */
+#if defined(USE_WIN32_CRYPTO)
+#include <wincrypt.h>
+/* Undefine wincrypt conflicting symbols for BoringSSL. */
+#undef X509_NAME
+#undef X509_EXTENSIONS
+#undef PKCS7_ISSUER_AND_SERIAL
+#undef PKCS7_SIGNER_INFO
+#undef OCSP_REQUEST
+#undef OCSP_RESPONSE
+#endif
+
+#include <schnlsp.h>
+#include <schannel.h>
+#include "curl_sspi.h"
+
+#include "cfilters.h"
 #include "urldata.h"
 
-#ifndef UNISP_NAME_A
-#define UNISP_NAME_A "Microsoft Unified Security Protocol Provider"
+/* <wincrypt.h> has been included via the above <schnlsp.h>.
+ * Or in case of ldap.c, it was included via <winldap.h>.
+ * And since <wincrypt.h> has this:
+ *   #define X509_NAME  ((LPCSTR) 7)
+ *
+ * And in BoringSSL's <openssl/base.h> there is:
+ *  typedef struct X509_name_st X509_NAME;
+ *  etc.
+ *
+ * this will cause all kinds of C-preprocessing paste errors in
+ * BoringSSL's <openssl/x509.h>: So just undefine those defines here
+ * (and only here).
+ */
+#if defined(OPENSSL_IS_BORINGSSL)
+# undef X509_NAME
+# undef X509_CERT_PAIR
+# undef X509_EXTENSIONS
 #endif
 
-#ifndef UNISP_NAME_W
-#define UNISP_NAME_W L"Microsoft Unified Security Protocol Provider"
-#endif
+extern const struct Curl_ssl Curl_ssl_schannel;
 
-#ifndef UNISP_NAME
-#ifdef UNICODE
-#define UNISP_NAME  UNISP_NAME_W
-#else
-#define UNISP_NAME  UNISP_NAME_A
-#endif
-#endif
+CURLcode Curl_verify_host(struct Curl_cfilter *cf,
+                          struct Curl_easy *data);
 
-#ifndef SP_PROT_SSL2_CLIENT
-#define SP_PROT_SSL2_CLIENT             0x00000008
-#endif
-
-#ifndef SP_PROT_SSL3_CLIENT
-#define SP_PROT_SSL3_CLIENT             0x00000008
-#endif
-
-#ifndef SP_PROT_TLS1_CLIENT
-#define SP_PROT_TLS1_CLIENT             0x00000080
-#endif
-
-#ifndef SP_PROT_TLS1_0_CLIENT
-#define SP_PROT_TLS1_0_CLIENT           SP_PROT_TLS1_CLIENT
-#endif
-
-#ifndef SP_PROT_TLS1_1_CLIENT
-#define SP_PROT_TLS1_1_CLIENT           0x00000200
-#endif
-
-#ifndef SP_PROT_TLS1_2_CLIENT
-#define SP_PROT_TLS1_2_CLIENT           0x00000800
-#endif
-
-#ifndef SECBUFFER_ALERT
-#define SECBUFFER_ALERT                 17
-#endif
-
-/* Both schannel buffer sizes must be > 0 */
-#define CURL_SCHANNEL_BUFFER_INIT_SIZE   4096
-#define CURL_SCHANNEL_BUFFER_FREE_SIZE   1024
-
-
-CURLcode Curl_schannel_connect(struct connectdata *conn, int sockindex);
-
-CURLcode Curl_schannel_connect_nonblocking(struct connectdata *conn,
-                                           int sockindex,
-                                           bool *done);
-
-bool Curl_schannel_data_pending(const struct connectdata *conn, int sockindex);
-void Curl_schannel_close(struct connectdata *conn, int sockindex);
-int Curl_schannel_shutdown(struct connectdata *conn, int sockindex);
-void Curl_schannel_session_free(void *ptr);
-
-int Curl_schannel_init(void);
-void Curl_schannel_cleanup(void);
-size_t Curl_schannel_version(char *buffer, size_t size);
-
-CURLcode Curl_schannel_random(unsigned char *entropy, size_t length);
-
-/* Set the API backend definition to Schannel */
-#define CURL_SSL_BACKEND CURLSSLBACKEND_SCHANNEL
-
-/* this backend supports CURLOPT_CERTINFO */
-#define have_curlssl_certinfo 1
-
-/* API setup for Schannel */
-#define curlssl_init Curl_schannel_init
-#define curlssl_cleanup Curl_schannel_cleanup
-#define curlssl_connect Curl_schannel_connect
-#define curlssl_connect_nonblocking Curl_schannel_connect_nonblocking
-#define curlssl_session_free Curl_schannel_session_free
-#define curlssl_close_all(x) ((void)x)
-#define curlssl_close Curl_schannel_close
-#define curlssl_shutdown Curl_schannel_shutdown
-#define curlssl_set_engine(x,y) ((void)x, (void)y, CURLE_NOT_BUILT_IN)
-#define curlssl_set_engine_default(x) ((void)x, CURLE_NOT_BUILT_IN)
-#define curlssl_engines_list(x) ((void)x, (struct curl_slist *)NULL)
-#define curlssl_version Curl_schannel_version
-#define curlssl_check_cxn(x) ((void)x, -1)
-#define curlssl_data_pending Curl_schannel_data_pending
-#define curlssl_random(x,y,z) ((void)x, Curl_schannel_random(y,z))
+CURLcode Curl_verify_certificate(struct Curl_cfilter *cf,
+                                 struct Curl_easy *data);
 
 #endif /* USE_SCHANNEL */
 #endif /* HEADER_CURL_SCHANNEL_H */

@@ -19,15 +19,18 @@ project "curl-lib"
 
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
-		links "crypt32"
+		links { "crypt32", "bcrypt" }
 
 	filter { "system:macosx" }
-		defines { "USE_DARWINSSL" }
+		defines { "USE_SECTRANSP" }
 
 	filter { "system:not windows", "system:not macosx" }
 		defines { "USE_MBEDTLS" }
 
-	filter { "system:linux or bsd or solaris or haiku" }
+	filter { "system:linux or toolset:cosmocc"}
+		defines { "_GNU_SOURCE" }
+
+	filter { "system:linux or bsd or solaris or haiku or toolset:cosmocc" }
 		defines { "CURL_HIDDEN_SYMBOLS" }
 
 		-- find the location of the ca bundle
@@ -47,5 +50,5 @@ project "curl-lib"
 			end
 		end
 		if ca then
-			defines { 'CURL_CA_BUNDLE="' .. ca .. '"' }
+			defines { 'CURL_CA_BUNDLE="' .. ca .. '"', 'CURL_CA_PATH="' .. path.getdirectory(ca) .. '"' }
 		end

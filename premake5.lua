@@ -237,7 +237,7 @@
 			files { "src/**.rc" }
 
 		filter "toolset:mingw"
-			links		{ "crypt32" }
+			links		{ "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
