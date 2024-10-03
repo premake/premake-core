@@ -20,10 +20,6 @@
 #include <sys/sysctl.h>
 #endif
 
-#if PLATFORM_COSMO
-#include <cosmo.h>
-#endif
-
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
@@ -174,24 +170,6 @@ void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
 	lua_getorcreate_table(L, libname);
 	luaL_setfuncs(L, l, 0);
 	lua_pop(L, 1);
-}
-
-
-static const char* premake_host_os()
-{
-#if PLATFORM_COSMO
-	if (IsLinux()) { return "linux"; }
-	else if (IsWindows()) { return "windows"; }
-	else if (IsXnu()) { return "macosx"; }
-	else if (IsBsd()) { return "bsd"; }
-	else
-	{
-		assert(0 && "Platform is unknown to Cosmopolitan Libc");
-		return 0;
-	}
-#else
-	return PLATFORM_OS;
-#endif
 }
 
 
