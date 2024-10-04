@@ -9,6 +9,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #define PREMAKE_VERSION        "5.0.0-dev"
@@ -68,7 +69,6 @@
 #else
 #include <unistd.h>
 #endif
-#include <stdint.h>
 
 /* not all platforms define this */
 #ifndef FALSE
@@ -82,7 +82,6 @@
 #ifndef PATH_MAX
 #define PATH_MAX   (4096)
 #endif
-
 
 /* A success return code */
 #define OKAY   (0)
@@ -98,7 +97,6 @@ enum FileSearchMask
 
 /* If a /scripts argument is present, its value */
 extern const char* scripts_path;
-
 
 /* Bootstrapping helper functions */
 int do_chdir(lua_State* L, const char* path);
@@ -190,12 +188,6 @@ int http_download(lua_State* L);
 int zip_extract(lua_State* L);
 #endif
 
-#ifdef _MSC_VER
- #ifndef snprintf
-  #define snprintf _snprintf
- #endif
-#endif
-
 /* Engine interface */
 
 typedef struct
@@ -211,6 +203,7 @@ extern void  registerModules(lua_State* L);
 int premake_init(lua_State* L);
 int premake_pcall(lua_State* L, int nargs, int nresults);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
+
 int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);
 
