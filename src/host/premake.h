@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #define PREMAKE_VERSION        "5.0.0-dev"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2021 Jason Perkins and the Premake Project"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2024 Jason Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 #if defined(__linux__)
