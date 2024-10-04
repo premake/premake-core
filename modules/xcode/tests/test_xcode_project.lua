@@ -1318,7 +1318,7 @@
 
 	function suite.PBXShellScriptBuildPhase_OnPerConfigCmds()
 		prebuildcommands { 'ls src' }
-		configuration "Debug"
+		filter { "configurations:Debug" }
 		prebuildcommands { 'cp a b' }
 		prepare()
 		xcode.PBXShellScriptBuildPhase(tr)

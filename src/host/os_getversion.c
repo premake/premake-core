@@ -297,8 +297,7 @@ int getversion(struct OsVersionInfo* info)
 	// When using glibc, info->description gets set to u.sysname,
 	// but it isn't passed out of this function, so we need to copy
 	// the string.
-	info->description = malloc(strlen(u.sysname) + 1);
-	strcpy((char*)info->description, u.sysname);
+	info->description = strdup(u.sysname);
 	info->isalloc = 1;
 #else
 	info->description = u.sysname;

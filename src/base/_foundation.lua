@@ -27,7 +27,6 @@
 --
 
 	premake.C           = "C"
-	premake.C7          = "c7"
 	premake.CLANG       = "clang"
 	premake.CONSOLEAPP  = "ConsoleApp"
 	premake.CPP         = "C++"
@@ -119,22 +118,6 @@
 	end
 
 
-	-- TODO: THIS IMPLEMENTATION IS GOING AWAY
-
-	function premake.callarray(namespace, array, ...)
-		local n = #array
-		for i = 1, n do
-			local fn = namespace[array[i]]
-			if not fn then
-				error(string.format("Unable to find function '%s'", array[i]))
-			end
-			fn(...)
-		end
-
-	end
-
-
-
 ---
 -- Compare a version string that uses semver semantics against a
 -- version comparison string. Comparisons take the form of ">=5.0" (5.0 or
@@ -209,22 +192,6 @@
 
 	function premake.clearWarnings()
 		_warnings = {}
-	end
-
-
-
---
--- Raise an error, with a formatted message built from the provided
--- arguments.
---
--- @param message
---    The error message, which may contain string formatting tokens.
--- @param ...
---    Values to fill in the string formatting tokens.
---
-
-	function premake.error(message, ...)
-		error(string.format("** Error: " .. message, ...), 0)
 	end
 
 
@@ -356,6 +323,20 @@
 		return scope, name
 	end
 
+
+--
+-- Raise an error, with a formatted message built from the provided
+-- arguments.
+--
+-- @param message
+--    The error message, which may contain string formatting tokens.
+-- @param ...
+--    Values to fill in the string formatting tokens.
+--
+
+function premake.error(message, ...)
+	error(string.format("** Error: " .. message, ...), 0)
+end
 
 
 --

@@ -2606,7 +2606,7 @@
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
-		   cfg.debugformat == p.C7
+		   cfg.debugformat == "c7"
 		then
 			m.element("MinimalRebuild", nil, "false")
 		end

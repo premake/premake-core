@@ -417,7 +417,7 @@
 --
 
 	function suite.minimalRebuild_onC7()
-		debugformat "C7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -627,7 +627,7 @@
 
 	function suite.onC7DebugFormat()
 		symbols "On"
-		debugformat "c7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -635,7 +635,8 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>OldStyle</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-		]]
+	<MinimalRebuild>false</MinimalRebuild>
+	]]
 	end
 
 
