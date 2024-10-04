@@ -65,3 +65,24 @@
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
 		test.isequal("okokok", p.captured())
 	end
+
+	function suite.includeexternal_withGroup()
+		local w = workspace "w"
+			group "g_"
+			include (_TESTS_DIR .. "/folder/project.lua")
+		local w2 = workspace "w2"
+			project("w2")
+				kind "ConsoleApp"
+				language "C++"
+			includeexternal (_TESTS_DIR .. "/folder/project.lua")
+		
+		prj = p.workspace.getproject(w, 1)
+		test.isequal("ok", prj.name)
+		test.isequal(false, prj.external)
+		prj = p.workspace.getproject(w2, 1)
+		test.isequal("w2", prj.name)
+		test.isequal(false, prj.external) -- is true
+		prj = p.workspace.getproject(w2, 2)
+		test.isequal("ok", prj.name)
+		test.isequal(true, prj.external)
+	end
