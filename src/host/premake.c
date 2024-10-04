@@ -404,6 +404,8 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	}
 #endif
 
+	(void)buffer;
+
 	/* As a fallback, search the PATH with argv[0] */
 	if (!path)
 	{
