@@ -87,13 +87,14 @@
 /* A success return code */
 #define OKAY   (0)
 
-
 /* Bitmasks for the different script file search locations */
-#define TEST_LOCAL     (0x01)
-#define TEST_SCRIPTS   (0x02)
-#define TEST_PATH      (0x04)
-#define TEST_EMBEDDED  (0x08)
-
+enum FileSearchMask
+{
+    SEARCH_LOCAL    =  0x01,
+    SEARCH_SCRIPTS  =  0x02,
+    SEARCH_PATH     =  0x04,
+    SEARCH_EMBEDDED =  0x08
+};
 
 /* If a /scripts argument is present, its value */
 extern const char* scripts_path;
@@ -214,5 +215,5 @@ int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);
 
 int premake_locate_executable(lua_State* L, const char* argv0);
-int premake_test_file(lua_State* L, const char* filename, int searchMask);
+int premake_locate_file(lua_State* L, const char* filename, int searchMask);
 void premake_handle_lua_error(lua_State* L);

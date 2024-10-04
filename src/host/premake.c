@@ -451,9 +451,9 @@ int premake_locate_executable(lua_State* L, const char* argv0)
  * specified file. If found, returns the discovered path to the script on
  * the top of the Lua stack.
  */
-int premake_test_file(lua_State* L, const char* filename, int searchMask)
+int premake_locate_file(lua_State* L, const char* filename, int searchMask)
 {
-	if (searchMask & TEST_LOCAL) {
+	if (searchMask & SEARCH_LOCAL) {
 		if (do_isfile(L, filename)) {
 			lua_pushcfunction(L, path_getabsolute);
 			lua_pushstring(L, filename);
@@ -462,17 +462,17 @@ int premake_test_file(lua_State* L, const char* filename, int searchMask)
 		}
 	}
 
-	if (scripts_path && (searchMask & TEST_SCRIPTS)) {
+	if (scripts_path && (searchMask & SEARCH_SCRIPTS)) {
 		if (do_locate(L, filename, scripts_path)) return OKAY;
 	}
 
-	if (searchMask & TEST_PATH) {
+	if (searchMask & SEARCH_PATH) {
 		const char* path = getenv("PREMAKE_PATH");
 		if (path && do_locate(L, filename, path)) return OKAY;
 	}
 
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
-	if ((searchMask & TEST_EMBEDDED) != 0) {
+	if ((searchMask & SEARCH_EMBEDDED) != 0) {
 		/* Try to locate a record matching the filename */
 		if (premake_find_embedded_script(filename) != NULL) {
 			lua_pushstring(L, "$/");
@@ -614,18 +614,18 @@ static int run_premake_main(lua_State* L, const char* script)
 	 * argument allowed as an override. Debug builds will look at the
 	 * local file system first, then fall back to embedded. */
 #if defined(NDEBUG)
-	int z = premake_test_file(L, script,
-		TEST_SCRIPTS | TEST_EMBEDDED);
+	int z = premake_locate_file(L, script,
+		SEARCH_SCRIPTS | SEARCH_EMBEDDED);
 #else
-	int z = premake_test_file(L, script,
-		TEST_LOCAL | TEST_SCRIPTS | TEST_PATH | TEST_EMBEDDED);
+	int z = premake_locate_file(L, script,
+		SEARCH_LOCAL | SEARCH_SCRIPTS | SEARCH_PATH | SEARCH_EMBEDDED);
 #endif
 
 	/* If no embedded script can be found, release builds will then
 	 * try to fall back to the local file system, just in case */
 #if defined(NDEBUG)
 	if (z != OKAY) {
-		z = premake_test_file(L, script, TEST_LOCAL | TEST_PATH);
+		z = premake_locate_file(L, script, SEARCH_LOCAL | SEARCH_PATH);
 	}
 #endif
 
