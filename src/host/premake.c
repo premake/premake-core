@@ -20,10 +20,6 @@
 #include <sys/sysctl.h>
 #endif
 
-#if PLATFORM_COSMO
-#include <cosmo.h>
-#endif
-
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
@@ -177,24 +173,6 @@ void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
 }
 
 
-static const char* premake_host_os()
-{
-#if PLATFORM_COSMO
-	if (IsLinux()) { return "linux"; }
-	else if (IsWindows()) { return "windows"; }
-	else if (IsXnu()) { return "macosx"; }
-	else if (IsBsd()) { return "bsd"; }
-	else
-	{
-		assert(0 && "Platform is unknown to Cosmopolitan Libc");
-		return 0;
-	}
-#else
-	return PLATFORM_OS;
-#endif
-}
-
-
 /**
  * Initialize the Premake Lua environment.
  */
@@ -234,14 +212,6 @@ int premake_init(lua_State* L)
 
 	lua_pushstring(L, PREMAKE_PROJECT_URL);
 	lua_setglobal(L, "_PREMAKE_URL");
-
-	/* set the target OS platform variable */
-	lua_pushstring(L, premake_host_os());
-	lua_setglobal(L, "_TARGET_OS");
-
-	/* set the target arch platform variable */
-	lua_pushnil(L);
-	lua_setglobal(L, "_TARGET_ARCH");
 
 #if PLATFORM_COSMO
 	/* set _COSMOPOLITAN if its a Cosmopolitan build */

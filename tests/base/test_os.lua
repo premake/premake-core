@@ -501,6 +501,20 @@
 
 
 --
+-- os.host() tests.
+--
+
+function suite.host()
+	local host = os.host()
+	test.istrue(string.len(host) > 0)
+
+	if _COSMOPOLITAN then
+		test.istrue(host ~= "cosmopolitan")
+	end
+end
+
+
+--
 -- os.hostarch() tests.
 --
 

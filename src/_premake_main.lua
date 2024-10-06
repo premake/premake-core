@@ -8,8 +8,11 @@
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 	local startTime     = os.clock()
 
--- set a global.
+-- set main globals.
 	_PREMAKE_STARTTIME = startTime
+
+	-- default the target OS to the host OS
+	_TARGET_OS = os.host()
 
 -- Load the collection of core scripts, required for everything else to work
 
