@@ -44,14 +44,12 @@
 | [debugargs](debugargs.md)                                 |  |
 | [debugcommand](debugcommand.md)                           |  |
 | [debugconnectcommands](debugconnectcommands.md)           | Debugger commands to execute on remote target connection |
-| [debugconstants](debugconstants.md)                       |  |
 | [debugdir](debugdir.md)                                   | Working directory for debug session |
 | [debugenvs](debugenvs.md)                                 | Env vars for debug session |
 | [debugextendedprotocol](debugextendedprotocol.md)         | Use gdb 'extended' protocol; maintain a persistent connection |
 | [debugformat](debugformat.md)                             | Format for embedded debug information |
 | [debugger](debugger.md)                                   |  |
 | [debuggertype](debuggertype.md)                           |  |
-| [debuglevel](debuglevel.md)                               |  |
 | [debugpathmap](debugpathmap.md)                           |  |
 | [debugport](debugport.md)                                 | Port to use for remote debugging |
 | [debugremotehost](debugremotehost.md)                     | Target for remote debugging |
@@ -67,8 +65,6 @@
 | [disablewarnings](disablewarnings.md)                     |  |
 | [display](display.md)                                     |  |
 | [display](display.md)                                     |  |
-| [docdir](docdir.md)                                       |  |
-| [docname](docname.md)                                     |  |
 | [editandcontinue](editandcontinue.md)                     |  |
 | [editorintegration](editorintegration.md)                 | Enable or disable IDE integration |
 | [enableunitybuild](enableunitybuild.md)                   |  |
@@ -96,8 +92,6 @@
 | [functionlevellinking](functionlevellinking.md)           |  |
 | [gccprefix](gccprefix.md)                                 |  |
 | [group](group.md)                                         |  |
-| [headerdir](headerdir.md)                                 |  |
-| [headername](headername.md)                               |  |
 | [icon](icon.md)                                           |  |
 | [ignoredefaultlibraries](ignoredefaultlibraries.md)       | Specify a list of default libraries to ignore |
 | [imageoptions](imageoptions.md)                           |  |
@@ -174,8 +168,6 @@
 | [usingdirs](usingdirs.md)                                 |  |
 | [uuid](uuid.md)                                           | Set project GUID (for VS projects/workspaces) |
 | [vectorextensions](vectorextensions.md)                   | Enable hardware vector extensions |
-| [versionconstants](versionconstants.md)                   |  |
-| [versionlevel](versionlevel.md)                           |  |
 | [vpaths](vpaths.md)                                       |  |
 | [warnings](warnings.md)                                   |  |
 | [workspace](workspace.md)                                 |  |
@@ -183,17 +175,6 @@
 ### Builtin Extension APIs ###
 
 The following API reference is for use with various built-in extensions.
-
-| D language APIs                                | Brief              |
-|------------------------------------------------|--------------------|
-| [debugconstants](https://github.com/premake/premake-dlang/wiki/debugconstants)     | Declare debug identifiers |
-| [debuglevel](https://github.com/premake/premake-dlang/wiki/debuglevel)             | Declare debug level |
-| [docdir](https://github.com/premake/premake-dlang/wiki/docdir)                     | Output dir for ddoc generation |
-| [docname](https://github.com/premake/premake-dlang/wiki/docname)                   | Filename for the ddoc output |
-| [headerdir](https://github.com/premake/premake-dlang/wiki/headerdir)               | Output dir for interface file generation |
-| [headername](https://github.com/premake/premake-dlang/wiki/headername)             | Filename for the interface (.di) file |
-| [versionconstants](https://github.com/premake/premake-dlang/wiki/versionconstants) | Declare version identifiers |
-| [versionlevel](https://github.com/premake/premake-dlang/wiki/versionlevel)         | Declare version level |
 
 | Xcode APIs                                     | Brief              |
 |------------------------------------------------|--------------------|

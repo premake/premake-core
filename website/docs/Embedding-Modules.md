@@ -58,11 +58,11 @@ Here is a subset of the `_preload.lua` script from Premake's Xcode module:
 
 It starts by registering the Xcode action; this allows the action to be used on the command line and appear in Premake's help text, even though the full module has not yet been loaded. It then returns a test function to decide when the module should be loaded: in this case, when the user requests the "xcode4" action on the command line.
 
-In the case of a new action, the test function's configuration argument is ignored. In Premake's D language module, it should only load if one of the project's specified in the user scripts wants to use the D language.
+In the case of a new action, the test function's configuration argument is ignored. In Premake's Android module, it should only load if one of the project's specified in the user scripts wants to target the Android system.
 
 ```lua
 return function(cfg)
-    return (cfg.language == "D")
+    return (cfg.system == p.ANDROID)
 end
 ```
 

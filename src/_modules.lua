@@ -10,6 +10,5 @@
 		"xcode",
 		"codelite",
 		"gmake2",
-		"d",
 		"android",
 	}

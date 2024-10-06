@@ -58,31 +58,6 @@ flags { "flag_list" }
 | ReleaseRuntime        | Needs documentation                                                        |
 | Symbols               | Needs documentation                                                        |
 | C11                   | Needs documentation                                                        |
-| CodeCoverage          | Needs documentation                                                        |
-| Color                 | Needs documentation                                                        |
-| Documentation         | Needs documentation                                                        |
-| GenerateHeader        | Needs documentation                                                        |
-| GenerateJSON          | Needs documentation                                                        |
-| GenerateMap           | Needs documentation                                                        |
-| LowMem                | Needs documentation                                                        |
-| Profile               | Needs documentation                                                        |
-| Quiet                 | Needs documentation                                                        |
-| RetainPaths           | Needs documentation                                                        |
-| SymbolsLikeC          | Needs documentation                                                        |
-| UnitTest              | Needs documentation                                                        |
-| UseLDC                | Needs documentation                                                        |
-| ProfileGC             | Needs documentation                                                        |
-| StackFrame            | Needs documentation                                                        |
-| StackStomp            | Needs documentation                                                        |
-| AllInstantiate        | Needs documentation                                                        |
-| BetterC               | Needs documentation                                                        |
-| PerformSyntaxCheckOnly| Needs documentation                                                        |
-| ShowCommandLine       | Needs documentation                                                        |
-| Verbose               | Needs documentation                                                        |
-| ShowTLS               | Needs documentation                                                        |
-| ShowGC                | Needs documentation                                                        |
-| IgnorePragma          | Needs documentation                                                        |
-| ShowDependencies      | Needs documentation                                                        |
 | Thumb                 | Needs documentation                                                        |
 
 ### Applies To ###
