@@ -60,7 +60,7 @@
 			if prj.flags.WPF then
 				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
 			else
-				_p('<Project Sdk="Microsoft.NET.Sdk">')
+				_p('<Project Sdk="%s">',dotnetbase.netcore.getsdk(prj))
 			end
 		else
 			local ver = ''
@@ -817,6 +817,30 @@
 	function dotnetbase.netcore.useWpf(cfg)
 		if cfg.flags.WPF then
 			_p(2,'<UseWpf>true</UseWpf>')
+		end
+	end
+
+	function dotnetbase.netcore.getsdk(cfg)
+		if cfg.dotnetsdk == "web" then
+			return "Microsoft.NET.Sdk.Web"
+		elseif cfg.dotnetsdk == "razor" then
+			return "Microsoft.NET.Sdk.Razor"
+		elseif cfg.dotnetsdk == "worker" then
+			return "Microsoft.NET.Sdk.Worker"
+		elseif cfg.dotnetsdk == "blazor" then
+			return "Microsoft.NET.Sdk.BlazorWebAssembly"
+		elseif cfg.dotnetsdk ==  "windowsdesktop" then
+			return "Microsoft.NET.Sdk.WindowsDesktop"
+		elseif cfg.dotnetsdk == "mstest" then
+			return "MSTest.Sdk"
+		elseif not cfg.dotnetsdk then
+			return "Microsoft.NET.Sdk"
+		end
+	end
+
+	function dotnetbase.netcore.dotnetsdk(cfg)
+		if cfg.dotnetsdk == "mstest" then
+			_p(2,'')
 		end
 	end
 

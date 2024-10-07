@@ -773,6 +773,20 @@
 	}
 
 	api.register {
+		name = "dotnetsdk",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"web",
+			"razor",
+			"worker",
+			"blazor",
+			"windowsdesktop",
+			"mstest"
+		}
+	}
+
+	api.register {
 		name = "cdialect",
 		scope = "config",
 		kind = "string",
