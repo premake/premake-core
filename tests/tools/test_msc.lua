@@ -401,6 +401,12 @@ end
 		test.contains('/std:c++20', msc.getcxxflags(cfg))
 	end
 
+	function suite.cppdialectCpp23()
+		cppdialect "C++23"
+		prepare()
+		test.contains('/std:c++latest', msc.getcxxflags(cfg))
+	end
+
 	function suite.cppdialectCppLatest()
 		cppdialect "C++latest"
 		prepare()

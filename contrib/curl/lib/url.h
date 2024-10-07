@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -19,6 +19,8 @@
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
+ *
+ * SPDX-License-Identifier: curl
  *
  ***************************************************************************/
 #include "curl_setup.h"
@@ -29,65 +31,67 @@
 
 CURLcode Curl_init_do(struct Curl_easy *data, struct connectdata *conn);
 CURLcode Curl_open(struct Curl_easy **curl);
-CURLcode Curl_init_userdefined(struct UserDefined *set);
-CURLcode Curl_setopt(struct Curl_easy *data, CURLoption option,
-                     va_list arg);
-CURLcode Curl_dupset(struct Curl_easy * dst, struct Curl_easy * src);
-void Curl_freeset(struct Curl_easy * data);
-CURLcode Curl_close(struct Curl_easy *data); /* opposite of curl_open() */
-CURLcode Curl_connect(struct Curl_easy *, struct connectdata **,
-                      bool *async, bool *protocol_connect);
-CURLcode Curl_disconnect(struct connectdata *, bool dead_connection);
-CURLcode Curl_protocol_connect(struct connectdata *conn, bool *done);
-CURLcode Curl_protocol_connecting(struct connectdata *conn, bool *done);
-CURLcode Curl_protocol_doing(struct connectdata *conn, bool *done);
-CURLcode Curl_setup_conn(struct connectdata *conn,
+CURLcode Curl_init_userdefined(struct Curl_easy *data);
+
+void Curl_freeset(struct Curl_easy *data);
+CURLcode Curl_uc_to_curlcode(CURLUcode uc);
+CURLcode Curl_close(struct Curl_easy **datap); /* opposite of curl_open() */
+CURLcode Curl_connect(struct Curl_easy *, bool *async, bool *protocol_connect);
+bool Curl_on_disconnect(struct Curl_easy *data,
+                        struct connectdata *, bool aborted);
+CURLcode Curl_setup_conn(struct Curl_easy *data,
                          bool *protocol_done);
-void Curl_free_request_state(struct Curl_easy *data);
+void Curl_conn_free(struct Curl_easy *data, struct connectdata *conn);
+CURLcode Curl_parse_login_details(const char *login, const size_t len,
+                                  char **userptr, char **passwdptr,
+                                  char **optionsptr);
 
-int Curl_protocol_getsock(struct connectdata *conn,
-                          curl_socket_t *socks,
-                          int numsocks);
-int Curl_doing_getsock(struct connectdata *conn,
-                       curl_socket_t *socks,
-                       int numsocks);
-
-bool Curl_isPipeliningEnabled(const struct Curl_easy *handle);
-CURLcode Curl_addHandleToPipeline(struct Curl_easy *handle,
-                                  struct curl_llist *pipeline);
-int Curl_removeHandleFromPipeline(struct Curl_easy *handle,
-                                  struct curl_llist *pipeline);
-struct connectdata *
-Curl_oldest_idle_connection(struct Curl_easy *data);
-/* remove the specified connection from all (possible) pipelines and related
-   queues */
-void Curl_getoff_all_pipelines(struct Curl_easy *data,
-                               struct connectdata *conn);
-
-void Curl_close_connections(struct Curl_easy *data);
+/* Get protocol handler for a URI scheme
+ * @param scheme URI scheme, case-insensitive
+ * @return NULL of handler not found
+ */
+const struct Curl_handler *Curl_get_scheme_handler(const char *scheme);
+const struct Curl_handler *Curl_getn_scheme_handler(const char *scheme,
+                                                    size_t len);
 
 #define CURL_DEFAULT_PROXY_PORT 1080 /* default proxy port unless specified */
 #define CURL_DEFAULT_HTTPS_PROXY_PORT 443 /* default https proxy port unless
                                              specified */
 
-CURLcode Curl_connected_proxy(struct connectdata *conn, int sockindex);
-
 #ifdef CURL_DISABLE_VERBOSE_STRINGS
-#define Curl_verboseconnect(x)  Curl_nop_stmt
+#define Curl_verboseconnect(x,y,z)  Curl_nop_stmt
 #else
-void Curl_verboseconnect(struct connectdata *conn);
+void Curl_verboseconnect(struct Curl_easy *data, struct connectdata *conn,
+                         int sockindex);
 #endif
 
-#define CONNECT_PROXY_SSL()\
-  (conn->http_proxy.proxytype == CURLPROXY_HTTPS &&\
-  !conn->bits.proxy_ssl_connected[sockindex])
+/**
+ * Return TRUE iff the given connection is considered dead.
+ * @param nowp      NULL or pointer to time being checked against.
+ */
+bool Curl_conn_seems_dead(struct connectdata *conn,
+                          struct Curl_easy *data,
+                          struct curltime *nowp);
 
-#define CONNECT_FIRSTSOCKET_PROXY_SSL()\
-  (conn->http_proxy.proxytype == CURLPROXY_HTTPS &&\
-  !conn->bits.proxy_ssl_connected[FIRSTSOCKET])
+/**
+ * Perform upkeep operations on the connection.
+ */
+CURLcode Curl_conn_upkeep(struct Curl_easy *data,
+                          struct connectdata *conn,
+                          struct curltime *now);
 
-#define CONNECT_SECONDARYSOCKET_PROXY_SSL()\
-  (conn->http_proxy.proxytype == CURLPROXY_HTTPS &&\
-  !conn->bits.proxy_ssl_connected[SECONDARYSOCKET])
+#if defined(USE_HTTP2) || defined(USE_HTTP3)
+void Curl_data_priority_clear_state(struct Curl_easy *data);
+#else
+#define Curl_data_priority_clear_state(x)
+#endif /* !(defined(USE_HTTP2) || defined(USE_HTTP3)) */
+
+#ifdef USE_NGHTTP2
+CURLcode Curl_data_priority_add_child(struct Curl_easy *parent,
+                                      struct Curl_easy *child,
+                                      bool exclusive);
+#else
+#define Curl_data_priority_add_child(x, y, z) CURLE_NOT_BUILT_IN
+#endif
 
 #endif /* HEADER_CURL_URL_H */

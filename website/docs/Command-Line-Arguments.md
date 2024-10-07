@@ -12,7 +12,7 @@ An _action_ indicates what Premake should do on any given run. For instance, the
 
 An _option_ modifies the behavior of the action. For instance, the `dotnet` option is used to change which .NET compiler set is used in the generated files. Options can accept a value, such as `--dotnet=mono` or act as a flag, like `--with-opengl`.
 
-From within your script, you can identify the current action with the [`_ACTION`](premake_ACTION.md) global variable, a string value. You can check for an option using the [`_OPTIONS`](premake_OPTIONS.md) table, which contains a list of key-value pairs. The key is the option identifier ("dotnet"), which references the command line value ("mono") or an empty string for valueless options.
+From within your script, you can identify the current action with the [`_ACTION`](globals/premake_ACTION.md) global variable, a string value. You can check for an option using the [`_OPTIONS`](globals/premake_OPTIONS.md) table, which contains a list of key-value pairs. The key is the option identifier ("dotnet"), which references the command line value ("mono") or an empty string for valueless options.
 
 ```lua
 -- delete a file if the clean action is running

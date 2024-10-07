@@ -71,7 +71,7 @@ end)
 
 This snippet replaces the original implementation of `m.project()` with my new (anonymous) function. From this point on, when someone calls `m.project()`, Premake will call my new function, passing it the original implementation as the first argument (`base`). If the function requires any other arguments (in this case, it receives the project being exported as `prj`) they appear after.
 
-In our replacement function, we emit our comment header using `premake.w()`, which is short for "premake write", and [_PREMAKE_VERSION](premake_PREMAKE_VERSION.md), which is a global variable holding the version of the currently running Premake executable.
+In our replacement function, we emit our comment header using `premake.w()`, which is short for "premake write", and [_PREMAKE_VERSION](globals/premake_PREMAKE_VERSION.md), which is a global variable holding the version of the currently running Premake executable.
 
 After emitting the comment we call `base(prj)`, the original implementation of `m.project()`, to do the rest of the work for us. Easy!
 

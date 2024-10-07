@@ -31,8 +31,13 @@ int os_getpass(lua_State* L)
 
 		lua_pushstring(L, buffer);
 		return 1;
-	#else
+	#elif PLATFORM_COSMO
+		luaL_error(L, "Not supported by this platform");
+		return 0;
+	#elif PLATFORM_POSIX
 		lua_pushstring(L, getpass(prompt));
 		return 1;
+	#else
+		#error Not implemented yet for this platform
 	#endif
 }

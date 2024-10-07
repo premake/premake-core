@@ -196,6 +196,7 @@
 			["C++14"] = "/std:c++14",
 			["C++17"] = "/std:c++17",
 			["C++20"] = "/std:c++20",
+			["C++23"] = "/std:c++latest",
 			["C++latest"] = "/std:c++latest"
 		},
 		exceptionhandling = {

@@ -272,7 +272,7 @@ getversion_macosx_cleanup:
 
 /*************************************************************/
 
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD) || defined(PLATFORM_HAIKU)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD) || defined(PLATFORM_HAIKU) || defined(PLATFORM_COSMO)
 
 #include <string.h>
 #include <sys/utsname.h>
@@ -289,7 +289,7 @@ int getversion(struct OsVersionInfo* info)
 	if (uname(&u))
 	{
 		// error
-		info->description = PLATFORM_STRING;
+		info->description = PLATFORM_OS;
 		return 0;
 	}
 
@@ -297,8 +297,7 @@ int getversion(struct OsVersionInfo* info)
 	// When using glibc, info->description gets set to u.sysname,
 	// but it isn't passed out of this function, so we need to copy
 	// the string.
-	info->description = malloc(strlen(u.sysname) + 1);
-	strcpy((char*)info->description, u.sysname);
+	info->description = strdup(u.sysname);
 	info->isalloc = 1;
 #else
 	info->description = u.sysname;

@@ -89,7 +89,7 @@
 	end
 
 --
--- Returns C/C++ system version related build flags
+-- Returns system version related build flags
 --
 
 	function clang.getsystemversionflags(cfg)
@@ -253,6 +253,7 @@
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
+		linker = gcc.ldflags.linker,
 		sanitize = {
 			Address = "-fsanitize=address",
 		},

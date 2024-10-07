@@ -37,10 +37,10 @@ If you wish to make a module always available to *all* of your projects, you may
 
 ## Version Requirements
 
-To ensure compatibility with your project script, it can sometimes be helpful to require a minimum version or range of versions for your module dependencies. Premake includes [a modified version Lua's `require()` function](require.md) which accepts a version test as its second argument.
+To ensure compatibility with your project script, it can sometimes be helpful to require a minimum version or range of versions for your module dependencies. Premake includes [a modified version Lua's `require()` function](globals/require.md) which accepts a version test as its second argument.
 
 ```lua
 require("qt", ">=1.1")
 ```
 
-See [the `require()` documentation](require.md) for more information and examples.
+See [the `require()` documentation](globals/require.md) for more information and examples.

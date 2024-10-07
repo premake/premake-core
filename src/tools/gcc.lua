@@ -229,6 +229,8 @@
 			["C++17"] = "-std=c++17",
 			["C++2a"] = "-std=c++2a",
 			["C++20"] = "-std=c++20",
+			["C++2b"] = "-std=c++2b",
+			["C++23"] = "-std=c++23",
 			["gnu++98"] = "-std=gnu++98",
 			["gnu++0x"] = "-std=gnu++0x",
 			["gnu++11"] = "-std=gnu++11",
@@ -238,7 +240,9 @@
 			["gnu++17"] = "-std=gnu++17",
 			["gnu++2a"] = "-std=gnu++2a",
 			["gnu++20"] = "-std=gnu++20",
-			["C++latest"] = "-std=c++20",
+			["gnu++2b"] = "-std=gnu++2b",
+			["gnu++23"] = "-std=gnu++23",
+			["C++latest"] = "-std=c++23",
 		},
 		rtti = {
 			Off = "-fno-rtti"
@@ -477,6 +481,10 @@
 			WindowedApp = function(cfg)
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
+		},
+		linker = {
+			Default = "",
+			LLD = "-fuse-ld=lld"
 		},
 		sanitize = {
 			Address = "-fsanitize=address",

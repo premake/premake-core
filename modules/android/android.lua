@@ -9,7 +9,7 @@ if not p.modules.android then
 	p.modules.android = {}
 
 	if _ACTION < "vs2015" then
-		configuration { "Android" }
+		filter { "configurations:Android" }
 			system "android"
 			toolset "gcc"
 	end

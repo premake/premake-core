@@ -417,7 +417,7 @@
 --
 
 	function suite.minimalRebuild_onC7()
-		debugformat "C7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -627,7 +627,7 @@
 
 	function suite.onC7DebugFormat()
 		symbols "On"
-		debugformat "c7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -635,7 +635,8 @@
 	<WarningLevel>Level3</WarningLevel>
 	<DebugInformationFormat>OldStyle</DebugInformationFormat>
 	<Optimization>Disabled</Optimization>
-		]]
+	<MinimalRebuild>false</MinimalRebuild>
+	]]
 	end
 
 
@@ -1366,6 +1367,53 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<LanguageStandard>stdcpp20</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp23_VS2017()
+		p.action.set("vs2017")
+
+		cppdialect 'C++23'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp23_VS2019()
+		p.action.set("vs2019")
+
+		cppdialect 'C++23'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp23_VS2022()
+		p.action.set("vs2022")
+
+		cppdialect 'C++23'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
 	<ExternalWarningLevel>Level3</ExternalWarningLevel>
 </ClCompile>
 		]]

@@ -807,6 +807,8 @@
 			"C++17",
 			"C++2a",
 			"C++20",
+			"C++2b",
+			"C++23",
 			"gnu++98",
 			"gnu++0x",
 			"gnu++11",
@@ -816,6 +818,8 @@
 			"gnu++17",
 			"gnu++2a",
 			"gnu++20",
+			"gnu++2b",
+			"gnu++23",
 		}
 	}
 
@@ -889,6 +893,16 @@
 		allowed = {
 			"Off",
 			"On",
+		}
+	}
+
+	api.register {
+		name = "linker",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"LLD",
 		}
 	}
 
@@ -1882,6 +1896,24 @@
 		}
 	}
 
+	local function getArchs()
+		local keys={}
+		for key,_ in pairs(premake.field.get("architecture").allowed) do
+			if type(key) ~= "number" then
+				table.insert(keys, { key, "" })
+			end
+		end
+		return keys
+	end
+
+	newoption
+	{
+		trigger     = "arch",
+		value       = "VALUE",
+		description = "Generate files for a different architecture",
+		allowed = getArchs()
+	}
+
 	newoption
 	{
 		trigger     = "shell",
@@ -1994,6 +2026,9 @@
 
 	filter { "system:darwin" }
 		toolset "clang"
+
+	filter { "platforms:Win32" }
+		architecture "x86"
 
 	filter { "platforms:Win64" }
 		architecture "x86_64"

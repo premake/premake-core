@@ -66,7 +66,7 @@ $(TARGET): $(OBJECTS) $(LDDEPS)
 	end
 
 	function suite.make_targetRules_mixedCompilation()
-		configuration { "Release" }
+		filter { "configurations:Release" }
 			compilationmodel "File"
 		prepare()
 		m.make.targetRules(prj)
@@ -111,7 +111,7 @@ $(OBJDIR)/blah.o: blah.d
 
 	function suite.make_fileRules_mixedCompilation()
 		files { "blah.d" }
-		configuration { "Release" }
+		filter { "configurations:Release" }
 			compilationmodel "File"
 		prepare()
 		m.make.dFileRules(prj)
@@ -148,7 +148,7 @@ OBJECTS := \
 
 	function suite.make_objects_mixedCompilation()
 		files { "blah.d" }
-		configuration { "Release" }
+		filter { "configurations:Release" }
 			compilationmodel "File"
 			files { "blah2.d" }
 		prepare()

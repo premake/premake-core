@@ -1,10 +1,7 @@
 ---
 title: "Community Update #6"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 ### Enter the Exporters
@@ -26,6 +23,8 @@ For those of you who are more interested in "is it done yet?" than "what's new?"
 - Add **kind, links,** and the most important switches (e.g. **includedirs, symbols, optimize**)—be able to support the most common C/C++ builds
 
 Somewhere in there I should also backfill the documentation so people know what's working. All of this is subject to change and peer pressure, feedback welcome.
+
+{/* truncate */}
 
 ### What's New
 

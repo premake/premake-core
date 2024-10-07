@@ -109,3 +109,40 @@ jobs:
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+  cosmopolitan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: tritao/setup-cosmopolitan@v1.3
+      with:
+        version: '3.9.2'
+    - name: Build
+      run: make -f Bootstrap.mak cosmo CONFIG=${{ matrix.config }}
+    - name: Test
+      run: bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-cosmopolitan-universal
+        path: bin/${{ matrix.config }}/premake5
+
+  # This job will be required for PRs to be merged.
+  # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.
+  ci:
+    runs-on: ubuntu-latest
+    needs: [linux, macosx, windows]
+    if: always()
+    steps:
+      - name: All builds ok
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some builds failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1

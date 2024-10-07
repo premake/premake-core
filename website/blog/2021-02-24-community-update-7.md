@@ -1,10 +1,7 @@
 ---
 title: "Community Update #7"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 A quick update this cycle so I can get right back to it: I managed to free up meaningful blocks of time for Premake in February—felt good!—and tackle **files** and **removeFiles**, support configuration and platform specific files, and get it all exporting to Visual Studio (…and bulldoze through the rabbit holes along the way). From the user-facing side not a big change, but [a hefty commit](https://github.com/starkos/premake-next/commit/f5cb8678a6cc2939faceacbb8143bd9a094709f6) just the same. The core platform is starting to feel reasonably complete.
@@ -15,6 +12,8 @@ A quick update this cycle so I can get right back to it: I managed to free up me
 - Work with [@KyrietS](https://github.com/KyrietS) to bring [a new & improved documentation system online](https://github.com/premake/premake-core/pull/1587).
 
 Longer term: push to get the new code to the point where it can generate its own Visual Studio project files. I've actually done a good chunk of work on this, but wasn't quite able to bring it home this month. Then do the same with Xcode.
+
+{/* truncate */}
 
 ### Meanwhile in V5
 

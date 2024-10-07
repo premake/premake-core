@@ -211,10 +211,11 @@
 	function action.set(name)
 		_ACTION = name
 
-		-- Some actions imply a particular operating system
+		-- Some actions imply a particular operating system or architecture
 		local act = action.get(name)
 		if act then
 			_TARGET_OS = act.targetos or _TARGET_OS
+			_TARGET_ARCH =  act.targetarch or _TARGET_ARCH
 		end
 
 		-- Some are implemented in standalone modules

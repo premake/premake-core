@@ -501,6 +501,20 @@
 
 
 --
+-- os.host() tests.
+--
+
+function suite.host()
+	local host = os.host()
+	test.istrue(string.len(host) > 0)
+
+	if _COSMOPOLITAN then
+		test.istrue(host ~= "cosmopolitan")
+	end
+end
+
+
+--
 -- os.hostarch() tests.
 --
 
@@ -508,3 +522,20 @@
 		local arch = os.hostarch()
 		test.istrue(string.len(arch) > 0)
 	end
+
+
+--
+-- os.targetarch() tests.
+--
+
+function suite.targetarch()
+	-- nil by default for backwards compatibility
+	test.isequal(nil, os.targetarch())
+
+	_TARGET_ARCH = "x64"
+	test.isequal(_TARGET_ARCH, os.targetarch())
+
+	-- --arch has priority over _TARGET_ARCH
+	_OPTIONS["arch"] = "arm64"
+	test.isequal(_OPTIONS["arch"], os.targetarch())
+end

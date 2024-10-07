@@ -19,31 +19,34 @@
  * Windows but since it is the most common I use it as the default */
 #if defined(__linux__)
 #define PLATFORM_LINUX    (1)
-#define PLATFORM_STRING   "linux"
+#define PLATFORM_OS   "linux"
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 #define PLATFORM_BSD      (1)
-#define PLATFORM_STRING   "bsd"
+#define PLATFORM_OS   "bsd"
 #elif defined(__APPLE__) && defined(__MACH__)
 #define PLATFORM_MACOSX   (1)
-#define PLATFORM_STRING   "macosx"
+#define PLATFORM_OS   "macosx"
 #elif defined(__sun__) && defined(__svr4__)
 #define PLATFORM_SOLARIS  (1)
-#define PLATFORM_STRING   "solaris"
+#define PLATFORM_OS   "solaris"
 #elif defined(__HAIKU__)
 #define PLATFORM_HAIKU    (1)
-#define PLATFORM_STRING   "haiku"
+#define PLATFORM_OS   "haiku"
 #elif defined (_AIX)
 #define PLATFORM_AIX  (1)
-#define PLATFORM_STRING  "aix"
+#define PLATFORM_OS  "aix"
 #elif defined (__GNU__)
 #define PLATFORM_HURD  (1)
-#define PLATFORM_STRING  "hurd"
+#define PLATFORM_OS  "hurd"
+#elif defined (__COSMOPOLITAN__)
+#define PLATFORM_COSMO  (1)
+#define PLATFORM_OS  "cosmopolitan"
 #else
 #define PLATFORM_WINDOWS  (1)
-#define PLATFORM_STRING   "windows"
+#define PLATFORM_OS   "windows"
 #endif
 
-#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU)
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU || PLATFORM_COSMO)
 
 #if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || \
     defined(_M_X64) || defined(_M_AMD64)
@@ -111,7 +114,6 @@ void do_translate(char* value, const char sep);
 
 int term_doGetTextColor();
 void term_doSetTextColor(int color);
-void printLastError(lua_State* L);
 
 /* Built-in functions */
 int criteria_compile(lua_State* L);
@@ -213,3 +215,4 @@ const buildin_mapping* premake_find_embedded_script(const char* filename);
 
 int premake_locate_executable(lua_State* L, const char* argv0);
 int premake_test_file(lua_State* L, const char* filename, int searchMask);
+void premake_handle_lua_error(lua_State* L);

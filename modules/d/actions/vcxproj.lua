@@ -456,7 +456,7 @@
 
 		if cfg.cppdialect and cfg.cppdialect ~= "Default" then
 			local cppMap = {
-				["C++latest"] = "c++20",
+				["C++latest"] = "c++23",
 				["C++98"] = "c++98",
 				["C++0x"] = "c++11",
 				["C++11"] = "c++11",
@@ -466,6 +466,8 @@
 				["C++17"] = "c++17",
 				["C++2a"] = "c++20",
 				["C++20"] = "c++20",
+				["C++2b"] = "c++23",
+				["C++23"] = "c++23",
 				["gnu++98"] = "c++98",
 				["gnu++0x"] = "c++11",
 				["gnu++11"] = "c++11",
@@ -475,6 +477,8 @@
 				["gnu++17"] = "c++17",
 				["gnu++2a"] = "c++20",
 				["gnu++20"] = "c++20",
+				["gnu++2b"] = "c++23",
+				["gnu++23"] = "c++23",
 			}
 			if cppMap[cfg.cppdialect] ~= nil then
 				table.insert(opts, "-extern-std=" .. cppMap[cfg.cppdialect])
