@@ -135,6 +135,7 @@ module.exports = {
 						'docname',
 						'documentationfile',
 						'dotnetframework',
+						'dotnetsdk',
 						'dpiawareness',
 						'editandcontinue',
 						'editorintegration',
