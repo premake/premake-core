@@ -619,6 +619,20 @@
 	}
 
 	api.register {
+		name = "dotnetsdk",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"web",
+			"razor",
+			"worker",
+			"blazor",
+			"windowsdesktop",
+			"mstest"
+		}
+	}
+
+	api.register {
 		name = "enabledefaultcompileitems",
 		scope = "config",
 		kind = "boolean",
@@ -770,20 +784,6 @@
 		name = "documentationfile",
 		scope = "project",
 		kind = "string",
-	}
-
-	api.register {
-		name = "dotnetsdk",
-		scope = "project",
-		kind = "string",
-		allowed = {
-			"web",
-			"razor",
-			"worker",
-			"blazor",
-			"windowsdesktop",
-			"mstest"
-		}
 	}
 
 	api.register {
