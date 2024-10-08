@@ -821,20 +821,18 @@
 	end
 
 	function dotnetbase.netcore.getsdk(cfg)
-		if cfg.dotnetsdk == "web" then
-			return "Microsoft.NET.Sdk.Web"
-		elseif cfg.dotnetsdk == "razor" then
-			return "Microsoft.NET.Sdk.Razor"
-		elseif cfg.dotnetsdk == "worker" then
-			return "Microsoft.NET.Sdk.Worker"
-		elseif cfg.dotnetsdk == "blazor" then
-			return "Microsoft.NET.Sdk.BlazorWebAssembly"
-		elseif cfg.dotnetsdk ==  "windowsdesktop" then
-			return "Microsoft.NET.Sdk.WindowsDesktop"
-		elseif cfg.dotnetsdk == "mstest" then
-			return "MSTest.Sdk"
-		elseif not cfg.dotnetsdk then
-			return "Microsoft.NET.Sdk"
+        if not cfg.dotnetsdk then
+	    return "Microsoft.NET.Sdk"
+        end
+        local map = {
+            ["web"] = "Microsoft.NET.Sdk.Web",
+            ["razor"] = "Microsoft.NET.Sdk.Razor",
+            ["worker"] = "Microsoft.NET.Sdk.Worker",
+            ["blazor"] = "Microsoft.NET.Sdk.BlazorWebAssembly",
+            ["windowsdesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
+            ["mstest"] = "MSTest.Sdk",
+        }
+        return map[cfg.dotnetsdk]
 		end
 	end
 
