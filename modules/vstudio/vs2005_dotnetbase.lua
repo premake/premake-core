@@ -57,11 +57,7 @@
 
 	function dotnetbase.projectElement(prj)
 		if dotnetbase.isNewFormatProject(prj) then
-			if prj.flags.WPF then
-				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
-			else
-				_p('<Project Sdk="%s">',dotnetbase.netcore.getsdk(prj))
-			end
+			_p('<Project Sdk="%s">', dotnetbase.netcore.getsdk(prj))
 		else
 			local ver = ''
 			local action = p.action.current()
@@ -821,8 +817,10 @@
 	end
 
 	function dotnetbase.netcore.getsdk(cfg)
-        if not cfg.dotnetsdk then
-	    return "Microsoft.NET.Sdk"
+		if cfg.flags.WP then
+			return nmap["windowsdesktop"]
+        elseif not cfg.dotnetsdk then
+	    	return "Microsoft.NET.Sdk"
         end
         local map = {
             ["web"] = "Microsoft.NET.Sdk.Web",
@@ -833,12 +831,11 @@
             ["mstest"] = "MSTest.Sdk",
         }
         return map[cfg.dotnetsdk]
-		end
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
 		if cfg.dotnetsdk == "mstest" then
-			_p(2,'')
+			io.writefile(cfg.workspace.location + "/global.json","{\"msbuild-sdks\": {\"MSTest.Sdk\": \"3.6.1\"}}")
 		end
 	end
 
