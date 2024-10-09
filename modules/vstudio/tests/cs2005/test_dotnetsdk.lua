@@ -99,6 +99,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 		]]
 	end
+
 	function suite.testMSTest()
 		prepare()
 		dotnetsdk "MSTest"
@@ -118,4 +119,14 @@
 		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 		]]
+	end
+
+	function suite.testMSTestGlobalJson()
+		prepare()
+		dotnetsdk "MSTest"
+		setConfig()
+
+		local globalpath = path.join(cfg.workspace.location, "global.json")
+
+		test.istrue(os.isfile(globalpath))
 	end
