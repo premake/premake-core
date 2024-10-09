@@ -32,7 +32,7 @@
 		prj = test.getproject(wks, 1)
 	end
 
-	function suite.testDefault()
+	function suite.testNone()
 		prepare()
 		setConfig()
 
@@ -41,9 +41,18 @@
 	]]
 	end
 
+	function suite.testDefault()
+		prepare()
+		setConfig()
+		dotnetsdk "Web"
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk">
+	]]
+	end
+
 	function suite.testWeb()
 		prepare()
-		dotnetsdk "web"
+		dotnetsdk "Web"
 		setConfig()
 
 		test.capture [[
@@ -53,7 +62,7 @@
 
 	function suite.testRazor()
 		prepare()
-		dotnetsdk "razor"
+		dotnetsdk "Razor"
 		setConfig()
 
 		test.capture [[
@@ -63,7 +72,7 @@
 
 	function suite.testWorker()
 		prepare()
-		dotnetsdk "worker"
+		dotnetsdk "Worker"
 		setConfig()
 
 		test.capture [[
@@ -73,7 +82,7 @@
 
 	function suite.testBlazor()
 		prepare()
-		dotnetsdk "blazor"
+		dotnetsdk "Blazor"
 		setConfig()
 
 		test.capture [[
@@ -83,7 +92,7 @@
 
 	function suite.testWindowsDesktop()
 		prepare()
-		dotnetsdk "windowsdesktop"
+		dotnetsdk "WindowsDesktop"
 		setConfig()
 
 		test.capture [[
@@ -92,10 +101,21 @@
 	end
 	function suite.testMSTest()
 		prepare()
-		dotnetsdk "mstest"
+		dotnetsdk "MSTest"
 		setConfig()
 
 		test.capture [[
 <Project Sdk="MSTest.Sdk">
+		]]
+	end
+
+	function suite.testWPFFlag()
+		prepare()
+		dotnetsdk "Web"
+		flags { "WPF" }
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 		]]
 	end

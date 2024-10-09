@@ -827,15 +827,15 @@
             ["MSTest"] = "MSTest.Sdk",
         }
 
-		if cfg.flags.WP then
-			return nmap["windowsdesktop"]
+		if cfg.flags.WPF then
+			return map["WindowsDesktop"]
         end
 
         return map[cfg.dotnetsdk or "Default"]
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
-		globalpath = string.format("%s/global.json", cfg.workspace.location)
+		local globalpath = string.format("%s/global.json", cfg.workspace.location)
 		if cfg.dotnetsdk == "mstest" and not os.isfile(globalpath) then
 			io.writefile(globalpath, "{\"msbuild-sdks\": {\"MSTest.Sdk\": \"3.6.1\"}}")
 		end
