@@ -19,22 +19,7 @@ For more information see the MSDN documentation [here](https://learn.microsoft.c
 
 
 ## mstest ##
-To make the MSTest SDK work you need to add the version to `global.json`:
-```json
-{
-    "msbuild-sdks": {
-        "MSTest.Sdk": "3.6.1"
-    }
-}
-```
-:::note
-`global.json` will be auto generated when it does not exist!
-:::
-
-:::warning
-`global.json` needs to be located in the same folder as your solution.
-:::
-
+SDK used for MSTest is `"3.6.1"`, to use another version create or update global.json near the solution.
 ### Applies To ###
 
 Project configurations.

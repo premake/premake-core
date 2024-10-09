@@ -835,9 +835,9 @@
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
-		local globalpath = string.format("%s/global.json", cfg.workspace.location)
-		if cfg.dotnetsdk == "mstest" and not os.isfile(globalpath) then
-			io.writefile(globalpath, "{\"msbuild-sdks\": {\"MSTest.Sdk\": \"3.6.1\"}}")
+		local globalpath = path.join(cfg.workspace.location, "global.json")
+		if cfg.dotnetsdk == "MSTest" and not os.isfile(globalpath) then
+			io.writefile(globalpath, '{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
 		end
 	end
 
