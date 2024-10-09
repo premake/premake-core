@@ -1,6 +1,6 @@
 --
 -- tests/actions/vstudio/cs2005/test_dotnetsdk.lua
--- Test DocumentationFile feature Visual Studio 2005+ C# project.
+-- Test DotnetSDK feature Visual Studio 2005+ C# project.
 -- Copyright (c) 2012-2024 Jason Perkins and the Premake project
 --
 	local p = premake
@@ -32,70 +32,70 @@
 		prj = test.getproject(wks, 1)
 	end
 
-function suite.testDefault()
-	prepare()
-	setConfig()
+	function suite.testDefault()
+		prepare()
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk">
-]]
-end
+	]]
+	end
 
-function suite.testWeb()
-	prepare()
-	dotnetsdk "web"
-	setConfig()
+	function suite.testWeb()
+		prepare()
+		dotnetsdk "web"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.Web">
-	]]
-end
+		]]
+	end
 
-function suite.testRazor()
-	prepare()
-	dotnetsdk "razor"
-	setConfig()
+	function suite.testRazor()
+		prepare()
+		dotnetsdk "razor"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.Razor">
-	]]
-end
+		]]
+	end
 
-function suite.testWorker()
-	prepare()
-	dotnetsdk "worker"
-	setConfig()
+	function suite.testWorker()
+		prepare()
+		dotnetsdk "worker"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.Worker">
-	]]
-end
+		]]
+	end
 
-function suite.testBlazor()
-	prepare()
-	dotnetsdk "blazor"
-	setConfig()
+	function suite.testBlazor()
+		prepare()
+		dotnetsdk "blazor"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-	]]
-end
+		]]
+	end
 
-function suite.testWindowsDesktop()
-	prepare()
-	dotnetsdk "windowsdesktop"
-	setConfig()
+	function suite.testWindowsDesktop()
+		prepare()
+		dotnetsdk "windowsdesktop"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-	]]
-end
-function suite.testMSTest()
-	prepare()
-	dotnetsdk "mstest"
-	setConfig()
+		]]
+	end
+	function suite.testMSTest()
+		prepare()
+		dotnetsdk "mstest"
+		setConfig()
 
-	test.capture [[
+		test.capture [[
 <Project Sdk="MSTest.Sdk">
-	]]
-end
+		]]
+	end

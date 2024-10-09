@@ -623,12 +623,13 @@
 		scope = "project",
 		kind = "string",
 		allowed = {
-			"web",
-			"razor",
-			"worker",
-			"blazor",
-			"windowsdesktop",
-			"mstest"
+			"Default",
+			"Web",
+			"Razor",
+			"Worker",
+			"Blazor",
+			"WindowsDesktop",
+			"MSTest"
 		}
 	}
 

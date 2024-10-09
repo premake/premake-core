@@ -817,26 +817,27 @@
 	end
 
 	function dotnetbase.netcore.getsdk(cfg)
+        local map = {
+			["Default"] = "Microsoft.NET.Sdk",
+            ["Web"] = "Microsoft.NET.Sdk.Web",
+            ["Razor"] = "Microsoft.NET.Sdk.Razor",
+            ["Worker"] = "Microsoft.NET.Sdk.Worker",
+            ["Blazor"] = "Microsoft.NET.Sdk.BlazorWebAssembly",
+            ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
+            ["MSTest"] = "MSTest.Sdk",
+        }
+
 		if cfg.flags.WP then
 			return nmap["windowsdesktop"]
-        elseif not cfg.dotnetsdk then
-	    	return "Microsoft.NET.Sdk"
         end
-        local map = {
-            ["web"] = "Microsoft.NET.Sdk.Web",
-            ["razor"] = "Microsoft.NET.Sdk.Razor",
-            ["worker"] = "Microsoft.NET.Sdk.Worker",
-            ["blazor"] = "Microsoft.NET.Sdk.BlazorWebAssembly",
-            ["windowsdesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
-            ["mstest"] = "MSTest.Sdk",
-        }
-        return map[cfg.dotnetsdk]
+
+        return map[cfg.dotnetsdk or "Default"]
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
-		globalpath = string.format("%s/global.json",cfg.workspace.location)
+		globalpath = string.format("%s/global.json", cfg.workspace.location)
 		if cfg.dotnetsdk == "mstest" and not os.isfile(globalpath) then
-			io.writefile(globalpath,"{\"msbuild-sdks\": {\"MSTest.Sdk\": \"3.6.1\"}}")
+			io.writefile(globalpath, "{\"msbuild-sdks\": {\"MSTest.Sdk\": \"3.6.1\"}}")
 		end
 	end
 

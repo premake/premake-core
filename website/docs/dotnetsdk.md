@@ -1,13 +1,14 @@
-Selects a .NET Sdk
+Selects a .NET SDK
 
 ```lua
-dotnetsdk "sdk"
+dotnetsdk "SDK"
 ```
 
-[overview](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview)
+For more information see the MSDN documentation [here](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview)
 
 ## parameters ##
-`sdk` is one of
+`SDK` is one of:
+
  * [web](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/web-sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
  * [razor](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
  * [worker](https://learn.microsoft.com/en-us/dotnet/core/extensions/workers)
@@ -17,7 +18,7 @@ dotnetsdk "sdk"
 
 
 ## mstest ##
-to make the MSTest sdk work you need to add the version to `global.json`:
+To make the MSTest SDK work you need to add the version to `global.json`:
 ```json
 {
     "msbuild-sdks": {
@@ -25,8 +26,12 @@ to make the MSTest sdk work you need to add the version to `global.json`:
     }
 }
 ```
+:::note
+`global.json` will be auto generated when it does not exist!
+:::
+
 :::warning
-`global.json` needs to be located in the same folder as your solution
+`global.json` needs to be located in the same folder as your solution.
 :::
 
 ### Applies To ###
@@ -40,8 +45,6 @@ Premake 5.0 beta3 or later.
 Visual studio is the only toolset currently supported.
 
 ### Examples ###
-use the web sdk
-
 ```lua
-dotnetsdk "web"
+dotnetsdk "Web"
 ```
