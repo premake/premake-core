@@ -9,12 +9,12 @@ For more information see the MSDN documentation [here](https://learn.microsoft.c
 ## parameters ##
 `SDK` is one of:
 
- * [web](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/web-sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
- * [razor](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
- * [worker](https://learn.microsoft.com/en-us/dotnet/core/extensions/workers)
- * [blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/)
- * [windowsdesktop](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-desktop?view=aspnetcore-8.0)
- * [mstest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-sdk)
+ * [Web](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/web-sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
+ * [Razor](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/sdk?toc=%2Fdotnet%2Fnavigate%2Ftools-diagnostics%2Ftoc.json&bc=%2Fdotnet%2Fbreadcrumb%2Ftoc.json)
+ * [Worker](https://learn.microsoft.com/en-us/dotnet/core/extensions/workers)
+ * [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/)
+ * [Windowsdesktop](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-desktop?view=aspnetcore-8.0)
+ * [MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-sdk)
 
 
 ## mstest ##
