@@ -10,12 +10,15 @@
 -- Setup
 --
 
-	local wks, prj
+	local wks, prj, cwd
 
 --
 -- Setup and teardown
 --
 	function suite.setup()
+		cwd = os.getcwd()
+		os.chdir(_TESTS_DIR)
+
 		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	 	configurations { "Debug", "Release" }
@@ -23,6 +26,9 @@
 		dotnetframework "net8.0"
 	end
 
+	function suite.teardown()
+		os.chdir(cwd)
+	end
 	local function setConfig()
 		local cfg = test.getconfig(prj, "Debug")
 		dn2005.projectElement(cfg);
@@ -125,8 +131,6 @@
 		prepare()
 		dotnetsdk "MSTest"
 		setConfig()
-
 		local globalpath = path.join(cfg.workspace.location, "global.json")
-
-		test.istrue(os.isfile(globalpath))
+		test.filecontains('{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}',globalpath)
 	end
