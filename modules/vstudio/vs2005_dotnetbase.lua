@@ -835,6 +835,7 @@
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
+		-- do not remove the file generation for global.json otherwise MSTest will not work!!!
 		local globalpath = path.join(cfg.workspace.location, "global.json")
 		if cfg.dotnetsdk == "MSTest" and not os.isfile(globalpath) then
 			io.writefile(globalpath, '{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')

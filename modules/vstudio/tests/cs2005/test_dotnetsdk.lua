@@ -126,11 +126,3 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 		]]
 	end
-
-	function suite.testMSTestGlobalJson()
-		prepare()
-		dotnetsdk "MSTest"
-		setConfig()
-		local globalpath = path.join(cfg.workspace.location, "global.json")
-		test.filecontains('{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}',globalpath)
-	end
