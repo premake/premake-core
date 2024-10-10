@@ -433,17 +433,6 @@
 	}
 
 	api.register {
-		name = "endian",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Little",
-			"Big",
-		},
-	}
-
-	api.register {
 		name = "entrypoint",
 		scope = "config",
 		kind = "string",
@@ -603,16 +592,6 @@
 		scope = "config",
 		kind = "list:file",
 		tokens = true,
-	}
-
-	api.register {
-		name = "fpu",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Software",
-			"Hardware",
-		}
 	}
 
 	api.register {
