@@ -614,13 +614,6 @@
 	}
 
 	api.register {
-		name = "gccprefix",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
 		name = "ignoredefaultlibraries",
 		scope = "config",
 		kind = "list:mixed",
