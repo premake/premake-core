@@ -126,3 +126,12 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 		]]
 	end
+
+	function suite.testMSTestGlobalJSON()
+		prepare()
+		dotnetsdk "MSTest"
+		test.capture [[test]]
+		setConfig()
+
+
+	end

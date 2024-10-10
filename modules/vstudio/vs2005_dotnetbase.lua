@@ -838,7 +838,10 @@
 		-- do not remove the file generation for global.json otherwise MSTest will not work!!!
 		local globalpath = path.join(cfg.workspace.location, "global.json")
 		if cfg.dotnetsdk == "MSTest" and not os.isfile(globalpath) then
-			io.writefile(globalpath, '{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
+			local content = p.capture(function() generate_global_json_content(prj) end)
+			if content ~= nil and #content > 0 then
+				p.generate(cfg.workspace, path.join(cfg.workspace.location,"global.json"), function() p.outln(content) end)
+			end
 		end
 	end
 
@@ -846,4 +849,8 @@
 		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
 		end
+	end
+
+	function generate_global_json_content(cfg)
+		_p(0,'{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
 	end
