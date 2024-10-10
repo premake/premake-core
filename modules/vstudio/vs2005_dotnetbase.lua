@@ -835,14 +835,7 @@
 	end
 
 	function dotnetbase.netcore.dotnetsdk(cfg)
-		-- do not remove the file generation for global.json otherwise MSTest will not work!!!
-		local globalpath = path.join(cfg.workspace.location, "global.json")
-		if cfg.dotnetsdk == "MSTest" and not os.isfile(globalpath) then
-			local content = p.capture(function() generate_global_json_content(prj) end)
-			if content ~= nil and #content > 0 then
-				p.generate(cfg.workspace, path.join(cfg.workspace.location,"global.json"), function() p.outln(content) end)
-			end
-		end
+		dotnetbase.generate_global_json(cfg)
 	end
 
 	function dotnetbase.allowUnsafeBlocks(cfg)
@@ -851,6 +844,14 @@
 		end
 	end
 
-	function generate_global_json_content(cfg)
-		_p(0,'{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
+	function dotnetbase.output_global_json(prj) -- unsure how you handle project with different config
+			if prj.dotnetsdk == "MSTest" then
+				_p('{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
+		end
+	end
+	function dotnetbase.generate_global_json(prj)
+				local content = p.capture(function() dotnetbase.output_global_json(prj) end)
+				if content ~= nil and #content > 0 then
+					p.generate(prj, path.join(prj.workspace.location,"global.json"), function() p.outln(content) end)
+				end
 	end
