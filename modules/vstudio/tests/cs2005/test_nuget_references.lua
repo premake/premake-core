@@ -32,7 +32,7 @@
 -- Check that we process Unix-style paths correctly.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.unixPaths()
 		dotnetframework "4.6"
 		nuget "Mono.Cecil:0.9.6.4"
