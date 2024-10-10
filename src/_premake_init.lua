@@ -38,17 +38,6 @@
 	}
 
 	api.register {
-		name = "atl",
-		scope = "config",
-		kind  = "string",
-		allowed = {
-			"Off",
-			"Dynamic",
-			"Static",
-		},
-	}
-
-	api.register {
 		name = "basedir",
 		scope = "project",
 		kind = "path"
@@ -64,28 +53,6 @@
 		name = "buildcommands",
 		scope = { "config", "rule" },
 		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "buildcustomizations",
-		scope = "project",
-		kind = "list:string",
-	}
-
-	api.register {
-		name = "builddependencies",
-		scope = { "rule" },
-		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "buildlog",
-		scope = { "config" },
-		kind = "path",
 		tokens = true,
 		pathVars = true,
 	}
@@ -150,12 +117,6 @@
 	}
 
 	api.register {
-		name = "cleanextensions",
-		scope = "config",
-		kind = "list:string",
-	}
-
-	api.register {
 		name = "clr",
 		scope = "config",
 		kind = "string",
@@ -192,12 +153,6 @@
 	}
 
 	api.register {
-		name = "allmodulespublic",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
@@ -207,12 +162,6 @@
 		name = "configurations",
 		scope = "project",
 		kind = "list:string",
-	}
-
-	api.register {
-		name = "consumewinrtextension",
-		scope = "config",
-		kind = "boolean",
 	}
 
 	api.register {
@@ -279,18 +228,6 @@
 	}
 
 	api.register {
-		name = "debuggertype",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Mixed",
-			"NativeOnly",
-			"ManagedOnly",
-			"NativeWithManagedCore"
-		}
-	}
-
-	api.register {
 		name = "debugpathmap",
 		scope = "config",
 		kind = "list:keyed:path",
@@ -350,18 +287,6 @@
 	}
 
 	api.register {
-		name = "dpiawareness",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"None",
-			"High",
-			"HighPerMonitor",
-		}
-	}
-
-	api.register {
 		name = "editandcontinue",
 		scope = "config",
 		kind = "string",
@@ -399,12 +324,6 @@
 	}
 
 	api.register {
-		name = "fastuptodate",
-		scope = "project",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "fatalwarnings",
 		scope = "config",
 		kind = "list:string",
@@ -429,12 +348,6 @@
 		scope = "config",
 		kind = "list:file",
 		tokens = true,
-	}
-
-	api.register {
-		name = "functionlevellinking",
-		scope = "config",
-		kind = "boolean"
 	}
 
 	api.register {
@@ -511,60 +424,10 @@
 	}
 
 	api.register {
-		name = "floatingpointexceptions",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "inlining",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Disabled",
-			"Explicit",
-			"Auto"
-		}
-	}
-
-	api.register {
-		name = "callingconvention",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Cdecl",
-			"FastCall",
-			"StdCall",
-			"VectorCall",
-		}
-	}
-
-	api.register {
 		name = "forceincludes",
 		scope = "config",
 		kind = "list:mixed",
 		tokens = true,
-	}
-
-	api.register {
-		name = "forceusings",
-		scope = "config",
-		kind = "list:file",
-		tokens = true,
-	}
-
-	api.register {
-		name = "dotnetframework",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
-		name = "enabledefaultcompileitems",
-		scope = "config",
-		kind = "boolean",
-		default = false
 	}
 
 	api.register {
@@ -574,36 +437,9 @@
 	}
 
 	api.register {
-		name = "ignoredefaultlibraries",
-		scope = "config",
-		kind = "list:mixed",
-		tokens = true,
-	}
-
-	api.register {
-		name = "inheritdependencies",
-		scope = "config",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
-		tokens = true,
-	}
-
-	api.register {
-		name = "imageoptions",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "imagepath",
-		scope = "config",
-		kind = "path",
 		tokens = true,
 	}
 
@@ -650,12 +486,6 @@
 	}
 
 	api.register {
-		name = "intrinsics",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "bindirs",
 		scope = "config",
 		kind = "list:directory",
@@ -699,12 +529,6 @@
 			"C#",
 			"F#"
 		}
-	}
-
-	api.register {
-		name = "documentationfile",
-		scope = "project",
-		kind = "string",
 	}
 
 	api.register {
@@ -756,24 +580,6 @@
 			"gnu++2b",
 			"gnu++23",
 		}
-	}
-
-	api.register {
-		name = "conformancemode",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "usefullpaths",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "removeunreferencedcodedata",
-		scope = "config",
-		kind = "boolean"
 	}
 
 	api.register {
@@ -831,13 +637,6 @@
 	}
 
 	api.register {
-		name = "locale",
-		scope = "config",
-		kind = "string",
-		tokens = false,
-	}
-
-	api.register {
 		name = "location",
 		scope = { "project", "rule" },
 		kind = "path",
@@ -849,24 +648,6 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
-	}
-
-	api.register {
-		name = "namespace",
-		scope = "project",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "nativewchar",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"On",
-			"Off",
-		}
 	}
 
 	api.register {
@@ -925,13 +706,6 @@
 		name = "pchheader",
 		scope = "config",
 		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "pchsource",
-		scope = "config",
-		kind = "path",
 		tokens = true,
 	}
 
@@ -1104,12 +878,6 @@
 	}
 
 	api.register {
-		name = "stringpooling",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "symbols",
 		scope = "config",
 		kind = "string",
@@ -1120,13 +888,6 @@
 			"FastLink",    -- Visual Studio 2015+ only, considered 'On' for all other cases.
 			"Full",        -- Visual Studio 2017+ only, considered 'On' for all other cases.
 		},
-	}
-
-	api.register {
-		name = "symbolspath",
-		scope = "config",
-		kind = "path",
-		tokens = true,
 	}
 
 	api.register {
@@ -1164,12 +925,6 @@
 		name = "tags",
 		scope = "config",
 		kind = "list:string",
-	}
-
-	api.register {
-		name = "tailcalls",
-		scope = "config",
-		kind = "boolean"
 	}
 
 	api.register {
@@ -1223,29 +978,9 @@
 	}
 
 	api.register {
-		name = "toolsversion",
-		scope = "project",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "customtoolnamespace",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
 		name = "undefines",
 		scope = "config",
 		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "usingdirs",
-		scope = "config",
-		kind = "list:directory",
 		tokens = true,
 	}
 
@@ -1330,45 +1065,15 @@
 	}
 
 	api.register {
-		name = "largeaddressaware",
-		scope = "config",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "editorintegration",
 		scope = "workspace",
 		kind = "boolean",
 	}
 
 	api.register {
-		name = "preferredtoolarchitecture",
-		scope = "workspace",
-		kind = "string",
-		allowed = {
-			"Default",
-			p.X86,
-			p.X86_64,
-		}
-	}
-
-	api.register {
 		name = "unsignedchar",
 		scope = "config",
 		kind = "boolean",
-	}
-
-	p.api.register {
-		name = "structmemberalign",
-		scope = "config",
-		kind = "integer",
-		allowed = {
-			"1",
-			"2",
-			"4",
-			"8",
-			"16",
-		}
 	}
 
 	api.register {
@@ -1401,22 +1106,6 @@
 		allowed = {
 			"Default",
 			"Hidden"
-		}
-	}
-
-	api.register {
-		name = "assemblydebug",
-		scope = "config",
-		kind  = "boolean"
-	}
-
-	api.register {
-		name = "justmycode",
-		scope = "project",
-		kind = "string",
-		allowed = {
-			"On",
-			"Off"
 		}
 	}
 
@@ -1476,11 +1165,8 @@
 -----------------------------------------------------------------------------
 
 	api.alias("buildcommands", "buildCommands")
-	api.alias("builddependencies", "buildDependencies")
 	api.alias("buildmessage", "buildMessage")
 	api.alias("buildoutputs", "buildOutputs")
-	api.alias("cleanextensions", "cleanExtensions")
-	api.alias("dotnetframework", "framework")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
 	api.alias("propertydefinition", "propertyDefinition")
