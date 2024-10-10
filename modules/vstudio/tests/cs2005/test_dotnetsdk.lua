@@ -133,7 +133,12 @@
 		prj.dotnetsdk = "MSTest"
 		dn2005.output_global_json(prj)
 		test.capture[[
-{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}
+{
+	"msbuild-sdks":
+		{
+			"MSTest.Sdk": "3.6.1"
+		}
+}
 		]]
 
 	end

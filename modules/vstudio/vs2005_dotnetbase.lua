@@ -846,7 +846,14 @@
 
 	function dotnetbase.output_global_json(prj) -- unsure how you handle project with different config
 			if prj.dotnetsdk == "MSTest" then
-				_p('{"msbuild-sdks": {"MSTest.Sdk": "3.6.1"}}')
+				_p([[
+{
+	"msbuild-sdks":
+		{
+			"MSTest.Sdk": "3.6.1"
+		}
+}
+		]])
 		end
 	end
 	function dotnetbase.generate_global_json(prj)
