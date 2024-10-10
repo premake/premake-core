@@ -240,13 +240,6 @@
 	}
 
 	api.register {
-		name = "debugconnectcommands",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
 		name = "debugdir",
 		scope = "config",
 		kind = "path",
@@ -260,12 +253,6 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
-	}
-
-	api.register {
-		name = "debugextendedprotocol",
-		scope = "config",
-		kind = "boolean",
 	}
 
 	api.register {
@@ -307,33 +294,6 @@
 		name = "debugpathmap",
 		scope = "config",
 		kind = "list:keyed:path",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugport",
-		scope = "config",
-		kind = "integer",
-	}
-
-	api.register {
-		name = "debugremotehost",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugsearchpaths",
-		scope = "config",
-		kind = "list:path",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugstartupcommands",
-		scope = "config",
-		kind = "list:string",
 		tokens = true,
 	}
 
