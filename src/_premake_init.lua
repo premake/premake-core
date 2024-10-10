@@ -228,29 +228,6 @@
 	}
 
 	api.register {
-		name = "debugpathmap",
-		scope = "config",
-		kind = "list:keyed:path",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugtoolargs",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "debugtoolcommand",
-		scope = "config",
-		kind = "path",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
 		name = "defaultplatform",
 		scope = "project",
 		kind = "string",
