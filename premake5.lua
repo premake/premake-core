@@ -273,7 +273,17 @@
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN", "_BSD_SOURCE" }
 			links       { "network", "bsd" }
 
+if premake.action.supports("None") then
+	project "Web"
+		kind "None"
 
+		files "website/**"
+
+	project "Github"
+		kind "None"
+
+		files ".github/**"
+end
 	-- optional 3rd party libraries
 	group "contrib"
 		include "contrib/lua"
