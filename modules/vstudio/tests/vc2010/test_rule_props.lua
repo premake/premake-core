@@ -38,6 +38,10 @@
 				'%{output_path}%{file.basename}.example.cc',
 				'%{output_path}%{file.basename}.example.h'
 			}
+			builddependencies {
+				'dependency_1.lib',
+				'dependency_2.lib',
+			}
 	end
 
 
@@ -68,3 +72,16 @@
 		]]
 	end
 
+
+--
+-- additionalDependencies
+--
+
+	function suite.additionalDependencies()
+		local r = test.getRule("example")
+		m.additionalDependencies(r)
+
+		test.capture [[
+<AdditionalDependencies>dependency_1.lib;dependency_2.lib</AdditionalDependencies>
+		]]
+	end
