@@ -19,11 +19,11 @@
 	local oldcwd
 
 	function suite.setup()
-		wks, prj = test.createWorkspace()
-
 		-- We change the directory to get nice relative paths
 		oldcwd = os.getcwd()
 		os.chdir(cwd)
+
+		wks, prj = test.createWorkspace()
 
 		-- Create a token to be used in search paths
 		p.api.register { name = "mytoken", kind = "string", scope = "config" }
