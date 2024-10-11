@@ -405,12 +405,6 @@
 	}
 
 	api.register {
-		name = "csversion",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
@@ -782,16 +776,6 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
-	}
-
-	api.register {
-		name = "resourcegenerator",
-		scope = "project",
-		kind = "string",
-        allowed = {
-            "internal",
-            "public"
-        }
 	}
 
 	api.register {
