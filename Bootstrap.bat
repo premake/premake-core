@@ -105,18 +105,18 @@ SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVe
 
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
 
-	IF EXIST "%%i\VC\Auxiliary\Build\vcvars32.bat" (
-		CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
+	IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
+		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
 		EXIT /B %ERRORLEVEL%
 	) ELSE (
-		IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
-			CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
+		IF EXIST "%%i\VC\Auxiliary\Build\vcvars32.bat" (
+			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
 			EXIT /B %ERRORLEVEL%
 		)
 	)
 )
 
-ECHO Could not find vcvars32.bat or vcvars64.bat to setup Visual Studio environment
+ECHO Could not find vcvars64.bat or vcvars32.bat to setup Visual Studio environment
 EXIT /B 2
 
 REM :VsWhereVisualBootstrap
