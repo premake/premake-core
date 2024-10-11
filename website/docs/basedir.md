@@ -1,5 +1,7 @@
 Sets the base directory for a configuration, from with other paths contained by the configuration will be made relative at export time.
 
+This base directory is used when expanding path tokens encountered in non-path values. Such values will be made relative to this value so the resulting projects will only contain relative paths.
+
 ```lua
 basedir ("value")
 ```

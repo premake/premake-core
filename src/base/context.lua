@@ -49,7 +49,7 @@
 		-- expected that the creator of the context will set this value using
 		-- the setbasedir() function.
 
-		ctx._basedir = os.getcwd()
+		ctx._basedir = cfgset.basedir or os.getcwd()
 
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups

@@ -50,8 +50,9 @@
 
 	api.register {
 		name = "basedir",
-		scope = "project",
-		kind = "path"
+		scope = { "workspace", "project" },
+		kind = "path",
+		cwdAsBase = true
 	}
 
 	api.register {
