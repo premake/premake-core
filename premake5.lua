@@ -143,6 +143,9 @@
 			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
 		end
 
+		defines { "PREMAKE_DEBUGGER" }
+		includedirs { "contrib/debugger.lua" }
+
 		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
 			buildoptions { "-arch arm64" }
 			linkoptions { "-arch arm64" }
