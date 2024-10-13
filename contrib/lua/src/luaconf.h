@@ -782,9 +782,10 @@
 ** without modifying the main part of the file.
 */
 
-
-
-
+#ifdef LUA_IDSIZE
+#undef LUA_IDSIZE
+#endif
+#define LUA_IDSIZE 120
 
 #endif
 
