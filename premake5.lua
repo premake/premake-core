@@ -277,7 +277,15 @@ if premake.action.supports("None") then
 	project "Web"
 		kind "None"
 
-		files { "website/blog/**", "website/community/**", "website/doc/**", "website/src/**", "website/static/**", "website/*" }
+		files
+		{
+			"website/blog/**",
+			"website/community/**",
+			"website/doc/**",
+			"website/src/**",
+			"website/static/**",
+			"website/*"
+		}
 		-- ensure that "website/node_modules/**" is not there (generated files)
 
 	project "Github"
