@@ -243,6 +243,7 @@
 			OSXBundle    = "com.apple.product-type.bundle",
 			OSXFramework = "com.apple.product-type.framework",
 			XCTest       = "com.apple.product-type.bundle.unit-test",
+			XCUITest	 = "com.apple.product-type.bundle.ui-testing",
 		}
 		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
@@ -266,6 +267,7 @@
 			OSXBundle    = "wrapper.cfbundle",
 			OSXFramework = "wrapper.framework",
 			XCTest       = "wrapper.cfbundle",
+			XCUITest     = "wrapper.cfbundle",
 		}
 		return types[iif(node.cfg.kind == "SharedLib" and node.cfg.sharedlibtype, node.cfg.sharedlibtype, node.cfg.kind)]
 	end
@@ -1263,6 +1265,7 @@
 				OSXBundle    = "bundle",
 				OSXFramework = "framework",
 				XCTest       = "xctest",
+				XCUITest	 = "xctest",
 			}
 			local ext = cfg.buildtarget.extension:sub(2)
 			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then
