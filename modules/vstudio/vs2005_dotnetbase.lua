@@ -844,19 +844,12 @@
 		end
 	end
 
-	function dotnetbase.output_global_json(prj) -- unsure how you handle project with different config
+	function dotnetbase.output_global_json(prj)
 		if prj.dotnetsdk == "MSTest" then
 			globaljson = json.decode(io.readfile(path.join(prj.workspace.location, "global.json")))
-			if globaljson == nil then
-				globaljson = {}
-				globaljson["msbuild-sdks"] = {}
-				globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
-			elseif globaljson["msbuild-sdks"] ~= nil then
-				globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
-			else
-				globaljson["msbuild-sdks"] = {}
-				globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
-			end
+			globaljson = globaljson or {}
+			globaljson["msbuild-sdks"] = globaljson["msbuild-sdks"] or {}
+			globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
 			_p(json.encode(globaljson))
 		end
 	end
