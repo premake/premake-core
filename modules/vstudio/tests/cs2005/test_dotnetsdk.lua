@@ -132,12 +132,14 @@
 		local cfg = test.getconfig(prj, "Debug")
 		prj.dotnetsdk = "MSTest"
 		dn2005.output_global_json(prj)
-		test.capture[[
-{
-	"msbuild-sdks":
-		{
-			"MSTest.Sdk": "3.6.1"
-		}
-}
-		]]
+		test.capture[[{"msbuild-sdks":{"MSTest.Sdk": "3.6.1"}}]]
+	end
+
+	function suite.testMSTestGlobalJSONExists()
+		prepare()
+		local cfg = test.getconfig(prj, "Debug")
+		prj.dotnetsdk = "MSTest"
+		p.generate(prj, path.join(prj.workspace.location, "global.json"), function() p.outln('{"test":"global"') end)
+		dn2005.output_global_json(prj)
+		test.capture[[{"test":"global","msbuild-sdks":{"MSTest.Sdk": "3.6.1"}}]]
 	end

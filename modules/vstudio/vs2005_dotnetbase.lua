@@ -846,10 +846,10 @@
 
 	function dotnetbase.output_global_json(prj)
 		if prj.dotnetsdk == "MSTest" then
-			globaljson = json.decode(io.readfile(path.join(prj.workspace.location, "global.json")))
-			globaljson = globaljson or {}
+			local globaljson = json.decode(io.readfile(path.join(prj.workspace.location, "global.json"))) or {}
 			globaljson["msbuild-sdks"] = globaljson["msbuild-sdks"] or {}
 			globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
+
 			_p(json.encode(globaljson))
 		end
 	end
