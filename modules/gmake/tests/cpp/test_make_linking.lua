@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_make_linking.lua
 -- Validate the link step generation for makefiles.
--- Copyright (c) 2010-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

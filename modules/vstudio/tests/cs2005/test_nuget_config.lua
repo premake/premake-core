@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_nuget_config.lua
 -- Validate generation of NuGet.Config files for Visual Studio 2010 and newer
--- Copyright (c) 2017 Jason Perkins and the Premake project
+-- Copyright (c) 2017 Jess Perkins and the Premake project
 --
 
 	local p = premake

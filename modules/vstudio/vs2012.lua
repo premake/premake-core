@@ -1,7 +1,7 @@
 --
 -- vs2012.lua
 -- Extend the existing exporters with support for Visual Studio 2012.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

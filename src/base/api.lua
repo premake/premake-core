@@ -1,8 +1,8 @@
 --
 -- api.lua
 -- Implementation of the workspace, project, and configuration APIs.
--- Author Jason Perkins
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

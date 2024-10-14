@@ -1,7 +1,7 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2024 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2024 Jess Perkins and the Premake project
 --
 
 	local shorthelp     = "Type 'premake5 --help' for help"

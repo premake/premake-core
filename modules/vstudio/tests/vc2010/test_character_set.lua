@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_character_set.lua
 -- Validate generation Unicode/MBCS settings.
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

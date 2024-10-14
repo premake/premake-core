@@ -1,7 +1,7 @@
 --
 -- tests/project/test_vpaths.lua
 -- Automated test suite for the project support functions.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

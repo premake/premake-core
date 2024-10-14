@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_icon.lua
 -- Validate generation of the application icon declaration.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

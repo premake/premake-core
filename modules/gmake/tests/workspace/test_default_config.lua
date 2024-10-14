@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/test_default_config.lua
 -- Validate generation of default configuration block for makefiles.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("make_default_config")

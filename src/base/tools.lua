@@ -1,8 +1,8 @@
 ---
 -- tools.lua
 -- Work with Premake's collection of tool adapters.
--- Author Jason Perkins
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- snc.lua
 -- Provides Sony SNC-specific configuration strings.
--- Copyright (c) 2010-2016 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2016 Jess Perkins and the Premake project
 --
 
 	local p = premake

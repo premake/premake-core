@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vs2010/test_nuget_package_references.lua
 -- Validate generation of NuGet packages references for Visual Studio 2017 and newer.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

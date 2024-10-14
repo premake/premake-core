@@ -1,7 +1,7 @@
 --
 -- clang.lua
 -- Clang toolset adapter for Premake
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

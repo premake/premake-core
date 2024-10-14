@@ -1,7 +1,7 @@
 /**
  * \file   os_islink.c
  * \brief  Returns true if the given path is a symbolic link or reparse point.
- * \author Copyright (c) 2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014 Jess Perkins and the Premake project
  */
 
 #include <sys/stat.h>

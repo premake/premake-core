@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2021 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2021 Jess Perkins and the Premake project
  */
 
 #define lua_c
@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #define PREMAKE_VERSION        "5.0.0-dev"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2021 Jason Perkins and the Premake Project"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2021 Jess Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 /* Identify the current platform I'm not sure how to reliably detect

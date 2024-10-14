@@ -1,7 +1,7 @@
 /**
  * \file   os_realpath.c
  * \brief  Return the canonical absolute version of a given path.
- * \author Copyright (c) 2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_nested_projects.lua
 -- Check Visual Studio 2005+ Nested Projects solution block.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

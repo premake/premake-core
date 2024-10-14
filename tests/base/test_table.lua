@@ -1,7 +1,7 @@
 --
 -- tests/base/test_table.lua
 -- Automated test suite for the new table functions.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jess Perkins and the Premake project
 --
 
 

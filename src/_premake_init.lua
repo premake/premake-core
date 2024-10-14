@@ -3,7 +3,7 @@
 --
 -- Prepares the runtime environment for the add-ons and user project scripts.
 --
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

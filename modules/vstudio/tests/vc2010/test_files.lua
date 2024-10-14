@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_files.lua
 -- Validate generation of files block in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

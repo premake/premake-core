@@ -1,7 +1,7 @@
 --
 -- tests/test_lua.lua
 -- Automated test suite for Lua base functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("lua")

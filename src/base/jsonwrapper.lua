@@ -1,7 +1,7 @@
 --
 -- jsonwrapper.lua
 -- Provides JSON encoding and decoding API by wrapping a third-party JSON library
--- Copyright (c) 2017 Jason Perkins and the Premake project
+-- Copyright (c) 2017 Jess Perkins and the Premake project
 --
 
 	json = {}

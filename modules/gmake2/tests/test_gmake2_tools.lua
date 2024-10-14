@@ -1,7 +1,7 @@
 --
 -- test_gmake2_tools.lua
 -- Tests for tools support in makefiles.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_tools")

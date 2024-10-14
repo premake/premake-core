@@ -1,7 +1,7 @@
 --
 -- test_gmake2_objects.lua
 -- Validate the list of objects for a makefile.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_objects")

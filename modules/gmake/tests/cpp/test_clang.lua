@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_clang.lua
 -- Test Clang support in Makefiles.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

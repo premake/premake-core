@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_ensure_nuget_imports.lua
 -- Check the EnsureNuGetPackageBuildImports block of a VS 2010 project.
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) 2016 Jess Perkins and the Premake project
 --
 
 	local p = premake

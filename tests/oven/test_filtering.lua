@@ -1,7 +1,7 @@
 --
 -- tests/oven/test_filtering.lua
 -- Test the project object configuration accessor.
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

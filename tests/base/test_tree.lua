@@ -1,7 +1,7 @@
 --
 -- tests/base/test_tree.lua
 -- Automated test suite source code tree handling.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

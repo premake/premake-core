@@ -1,7 +1,7 @@
 ---
 -- xcode/_preload.lua
 -- Define the Apple XCode actions and new APIs.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

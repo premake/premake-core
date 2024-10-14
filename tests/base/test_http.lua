@@ -1,7 +1,7 @@
 --
 -- tests/base/test_http.lua
 -- Tests the http API
--- Copyright (c) 2016, 2020 Jason Perkins and the Premake project
+-- Copyright (c) 2016, 2020 Jess Perkins and the Premake project
 --
 
 if http.get ~= nil and _OPTIONS["test-all"] then

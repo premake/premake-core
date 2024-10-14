@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_files.lua
 -- Validate generation of <files/> block in Visual Studio 200x projects.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

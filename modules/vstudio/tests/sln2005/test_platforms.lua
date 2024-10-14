@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_platforms.lua
 -- Test the Visual Studio 2005-2010 platform mapping blocks.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

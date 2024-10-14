@@ -1,7 +1,7 @@
 /**
  * \file   os_getpass.c
  * \brief  Prompt and retrieve a password from the user.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2008 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_override.lua
 -- Verify function override support.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012 Jess Perkins and the Premake project
 --
 
 

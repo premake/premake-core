@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_manifest.lua
 -- Validate generation of Manifest block in Visual Studio 201x C/C++ projects.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

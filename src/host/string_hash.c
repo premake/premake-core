@@ -1,7 +1,7 @@
 /**
  * \file   string_hash.c
  * \brief  Computes a hash value for a string.
- * \author Copyright (c) 2012-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2012-2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

@@ -1,7 +1,7 @@
 --
 -- globals.lua
 -- Replacements and extensions to Lua's global functions.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jess Perkins and the Premake project
 --
 
 

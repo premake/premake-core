@@ -1,8 +1,8 @@
 --
 -- tests/actions/vstudio/vc2010/test_rule_vars.lua
 -- Validate generation of custom rule variables at the project level.
--- Author Jason Perkins
--- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2014-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

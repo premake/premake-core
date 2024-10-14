@@ -1,7 +1,7 @@
 --
 -- vs2010_nuget.lua
 -- Generate a NuGet packages.config file.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

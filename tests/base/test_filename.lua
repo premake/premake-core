@@ -1,7 +1,7 @@
 --
 -- tests/base/test_filename.lua
 -- Verify generation of project/workspace/rule filenames.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("project_filename")

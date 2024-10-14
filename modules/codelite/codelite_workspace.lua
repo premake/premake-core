@@ -5,7 +5,7 @@
 -- Modified by: Andrea Zanellato
 --              Manu Evans
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2015 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

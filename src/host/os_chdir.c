@@ -1,7 +1,7 @@
 /**
  * \file   os_chdir.c
  * \brief  Change the current working directory.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"
