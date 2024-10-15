@@ -84,6 +84,10 @@
 
 	function _.runTest(test)
 		_.log(term.lightGreen, "[ RUN      ]", string.format(" %s.%s", test.suiteName, test.testName))
+
+		-- Provide a consistent working directory to the tests.
+		os.chdir(_MAIN_SCRIPT_DIR)
+
 		local startTime = os.clock()
 		local cwd = os.getcwd()
 		local hooks = _.installTestingHooks()
@@ -105,7 +109,6 @@
 		err = err or terr
 
 		_.removeTestingHooks(hooks)
-		os.chdir(cwd)
 
 		if ok then
 			_.log(term.lightGreen, "[       OK ]", string.format(" %s.%s (%.0f ms)", test.suiteName, test.testName, (os.clock() - startTime) * 1000))
