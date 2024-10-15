@@ -122,7 +122,7 @@ The following tokens are deprecated:
 
 Paths in Premake should be relative to premake script in which they appears.
 
-When you specify a path inside a commands, you have to wrap path insice `%[]` to allow correct trnasformation for the generator.
+When you specify a path inside a commands, you have to wrap path insice `%[]` to allow correct transformation for the generator.
 
 i.e.
 
