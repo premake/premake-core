@@ -11,6 +11,46 @@
 
 	local p = premake
 
+	p.api.register {
+		name = "debugconnectcommands",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "debugextendedprotocol",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "debugport",
+		scope = "config",
+		kind = "integer",
+	}
+
+	p.api.register {
+		name = "debugremotehost",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "debugsearchpaths",
+		scope = "config",
+		kind = "list:path",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "debugstartupcommands",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
 	newaction
 	{
 		-- Metadata for the command line and help system
