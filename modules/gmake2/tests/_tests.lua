@@ -3,6 +3,7 @@ require ("gmake2")
 return {
 	"test_gmake2_buildcmds.lua",
 	"test_gmake2_clang.lua",
+	"test_gmake2_clangtidy.lua",
 	"test_gmake2_file_rules.lua",
 	"test_gmake2_flags.lua",
 	"test_gmake2_includes.lua",
