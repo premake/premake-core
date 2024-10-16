@@ -148,7 +148,8 @@
 		-- if I have an existing instance, create a new configuration
 		-- block for it so I don't pick up an old filter
 		if instance then
-			configset.addFilter(instance, {}, os.getcwd())
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			configset.addFilter(instance, {}, basedir)
 		end
 
 		-- otherwise, a new instance
@@ -163,7 +164,7 @@
 		-- (recursive call, so needs to be its own function)
 		api._clearContainerChildren(class)
 
-		-- active this container, as well as it ancestors
+		-- active this container, as well as its ancestors
 		if not class.placeholder then
 			api.scope.current = instance
 		end
@@ -716,7 +717,8 @@
 			table.remove(api.scope.global.blocks, i)
 		end
 
-		configset.addFilter(api.scope.current, {}, os.getcwd())
+		local basedir = p.api.scope.current.basedir or os.getcwd()
+		configset.addFilter(api.scope.current, {}, basedir)
 	end
 
 
@@ -802,10 +804,12 @@
 	premake.field.kind("directory", {
 		paths = true,
 		store = function(field, current, value, processor)
-			return path.getabsolute(value)
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			return path.getabsolute(value, basedir)
 		end,
 		remove = function(field, current, value, processor)
-			return path.getabsolute(value)
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			return path.getabsolute(value, basedir)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
@@ -829,10 +833,12 @@
 	premake.field.kind("file", {
 		paths = true,
 		store = function(field, current, value, processor)
-			return path.getabsolute(value)
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			return path.getabsolute(value, basedir)
 		end,
 		remove = function(field, current, value, processor)
-			return path.getabsolute(value)
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			return path.getabsolute(value, basedir)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
@@ -1087,7 +1093,13 @@
 	premake.field.kind("path", {
 		paths = true,
 		store = function(field, current, value, processor)
-			return path.deferredjoin(os.getcwd(), value)
+			local basedir
+			if field.cwdAsBase then
+				basedir = os.getcwd()
+			else
+				basedir = p.api.scope.current.basedir or os.getcwd()
+			end
+			return path.deferredjoin(basedir, value)
 		end,
 		compare = function(field, a, b, processor)
 			return (a == b)
@@ -1152,7 +1164,8 @@
 			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or (terms == "*") then
 				terms = nil
 			end
-			local ok, err = configset.addFilter(api.scope.current, {terms}, os.getcwd())
+			local basedir = p.api.scope.current.basedir or os.getcwd()
+			local ok, err = configset.addFilter(api.scope.current, {terms}, basedir)
 			if not ok then
 				error(err, 2)
 			end
