@@ -57,11 +57,7 @@
 
 	function dotnetbase.projectElement(prj)
 		if dotnetbase.isNewFormatProject(prj) then
-			if prj.flags.WPF then
-				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
-			else
-				_p('<Project Sdk="Microsoft.NET.Sdk">')
-			end
+			_p('<Project Sdk="%s">', dotnetbase.netcore.getsdk(prj))
 		else
 			local ver = ''
 			local action = p.action.current()
@@ -820,8 +816,46 @@
 		end
 	end
 
+	function dotnetbase.netcore.getsdk(cfg)
+        local map = {
+			["Default"] = "Microsoft.NET.Sdk",
+            ["Web"] = "Microsoft.NET.Sdk.Web",
+            ["Razor"] = "Microsoft.NET.Sdk.Razor",
+            ["Worker"] = "Microsoft.NET.Sdk.Worker",
+            ["Blazor"] = "Microsoft.NET.Sdk.BlazorWebAssembly",
+            ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
+            ["MSTest"] = "MSTest.Sdk",
+        }
+
+		if cfg.flags.WPF then
+			return map["WindowsDesktop"]
+        end
+
+        return map[cfg.dotnetsdk or "Default"]
+	end
+
+	function dotnetbase.netcore.dotnetsdk(cfg)
+		dotnetbase.generate_global_json(cfg)
+	end
+
 	function dotnetbase.allowUnsafeBlocks(cfg)
 		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
+		end
+	end
+
+	function dotnetbase.output_global_json(prj)
+		if prj.dotnetsdk == "MSTest" then
+			local globaljson = json.decode(io.readfile(path.join(prj.workspace.location, "global.json"))) or {}
+			globaljson["msbuild-sdks"] = globaljson["msbuild-sdks"] or {}
+			globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
+
+			_p(json.encode(globaljson))
+		end
+	end
+	function dotnetbase.generate_global_json(prj)
+		local content = p.capture(function() dotnetbase.output_global_json(prj) end)
+		if content ~= nil and #content > 0 then
+			p.generate(prj, path.join(prj.workspace.location, "global.json"), function() p.outln(content) end)
 		end
 	end

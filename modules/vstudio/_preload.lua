@@ -294,6 +294,21 @@
 		tokens = "true",
 	}
 
+	p.api.register {
+		name = "dotnetsdk",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Web",
+			"Razor",
+			"Worker",
+			"Blazor",
+			"WindowsDesktop",
+			"MSTest"
+		}
+	}
+
 --
 -- Decide when the full module should be loaded.
 --

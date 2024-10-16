@@ -53,6 +53,7 @@
 				dotnetbase.netcore.useWpf,
 				dotnetbase.csversion,
 				dotnetbase.netcore.enableDefaultCompileItems,
+				dotnetbase.netcore.dotnetsdk
 			}
 		else
 			return {
