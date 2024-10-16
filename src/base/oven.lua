@@ -103,6 +103,7 @@
 		-- Specify the workspaces's file system location; when path tokens are
 		-- expanded in workspace values, they will be made relative to this.
 
+		self.basedir = self.basedir or self.cwd
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
@@ -238,6 +239,7 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated project.
 
+		self.basedir = self.basedir or self.cwd
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 
@@ -317,6 +319,7 @@
 		-- location. Any path tokens which are expanded in non-path fields
 		-- are made relative to this, ensuring a portable generated rule.
 
+		self.basedir = self.basedir or self.cwd
 		self.location = self.location or self.basedir
 		context.basedir(self, self.location)
 	end
