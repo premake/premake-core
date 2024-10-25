@@ -280,7 +280,6 @@
 			["C"] = "cc",
 			["C++"] = "cc",
 			["C#"] = "dotnet",
-			["D"] = "dc",
 		}
 		local language_key = language_keys_map[language]
 		if not language_key then
