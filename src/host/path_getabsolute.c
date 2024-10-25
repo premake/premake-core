@@ -1,7 +1,7 @@
 /**
  * \file   path_getabsolute.c
  * \brief  Returns an absolute version of a relative path.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

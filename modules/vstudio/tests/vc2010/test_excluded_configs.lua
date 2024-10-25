@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_excluded_configs.lua
 -- Check handling of configurations which have been excluded from the build.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

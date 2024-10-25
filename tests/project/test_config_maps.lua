@@ -1,7 +1,7 @@
 --
 -- tests/project/test_config_maps.lua
 -- Test mapping from workspace to project configurations.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("project_config_maps")

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_filters.lua
 -- Validate generation of file filter blocks in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

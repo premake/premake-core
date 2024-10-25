@@ -14,7 +14,7 @@
 -- point. If you find yourself using or extending this code for your own
 -- work give me a shout before you go too far with it so we can coordinate.
 --
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_option.lua
 -- Verify the handling of command line options and the _OPTIONS table.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) 2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_tools.lua
 -- Tests for tools support in makefiles.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

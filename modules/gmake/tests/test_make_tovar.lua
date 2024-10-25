@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/test_make_tovar.lua
 -- Test translation of strings to make variable names.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

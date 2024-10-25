@@ -5,7 +5,7 @@
 -- Modified by: Aleksi Juvani
 --              Vlad Ivanov
 -- Created:     2016/01/01
--- Copyright:   (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- Copyright:   (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake

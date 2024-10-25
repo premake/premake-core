@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_files.lua
 -- Validate generation of <Files/> block in Visual Studio 2005 .csproj
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

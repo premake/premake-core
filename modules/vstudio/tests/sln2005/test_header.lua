@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_header.lua
 -- Validate generation of Visual Studio 2005+ solution header.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

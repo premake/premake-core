@@ -1,7 +1,7 @@
 /**
  * \file   os_stat.c
  * \brief  Retrieve information about a file.
- * \author Copyright (c) 2011 Jason Perkins and the Premake project
+ * \author Copyright (c) 2011 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

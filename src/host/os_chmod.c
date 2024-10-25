@@ -1,7 +1,7 @@
 /**
  * \file   os_chmod.c
  * \brief  Change file permissions
- * \author Copyright (c) 2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

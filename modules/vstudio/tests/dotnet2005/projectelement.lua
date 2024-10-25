@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/dotnet2005/projectelement.lua
 -- Validate generation of <Project/> element in Visual Studio 2005+ .csproj
--- Copyright (c) 2009-2017 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2017 Jess Perkins and the Premake project
 --
 
 	local p = premake

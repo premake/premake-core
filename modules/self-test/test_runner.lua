@@ -3,8 +3,8 @@
 --
 -- Execute unit tests and test suites.
 --
--- Author Jason Perkins
--- Copyright (c) 2008-2016 Jason Perkins and the Premake project.
+-- Author Jess Perkins
+-- Copyright (c) 2008-2016 Jess Perkins and the Premake project.
 ---
 
 	local p = premake

@@ -1,7 +1,7 @@
 /**
  * \file   string_startswith.c
  * \brief  Determines if a string starts with the given sequence.
- * \author Copyright (c) 2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2013 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

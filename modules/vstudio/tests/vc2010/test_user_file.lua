@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_user_file.lua
 -- Verify handling of empty and non-empty .user files for VC'201x.
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

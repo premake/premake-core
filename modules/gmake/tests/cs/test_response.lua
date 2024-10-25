@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cs/test_response.lua
 -- Validate the list of objects for a response file used by a makefile.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 ---
 -- gcc.lua
 -- Provides GCC-specific configuration strings.
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

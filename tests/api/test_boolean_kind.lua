@@ -1,7 +1,7 @@
 --
 -- tests/api/test_boolean_kind.lua
 -- Tests the boolean API value type.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) 2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

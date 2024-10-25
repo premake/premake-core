@@ -1,7 +1,7 @@
 --
 -- _preload.lua
 -- Define the makefile action(s).
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -65,7 +65,7 @@
 			"Hull",
 			"Domain",
 			"Compute",
-			"Library",		
+			"Library",
 			"Mesh",
 			"Amplification",
 			"Texture",
@@ -255,7 +255,7 @@
 		scope = "config",
 		kind = "string",
 	}
-	
+
 	-- Relative per-project directory. Set to empty for the entire project to be copied as is
 	-- Should default to empty really for the more seamless experience
 	p.api.register {

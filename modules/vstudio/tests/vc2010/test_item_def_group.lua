@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_item_def_group.lua
 -- Check the item definition groups, containing compile and link flags.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

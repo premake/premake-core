@@ -1,7 +1,7 @@
 /**
  * \file   os_isdir.c
  * \brief  Returns true if the specified directory exists.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2008 Jess Perkins and the Premake project
  */
 
 #include <string.h>

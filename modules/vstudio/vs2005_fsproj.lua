@@ -1,7 +1,7 @@
 --
 -- vs2005_fsproj.lua
 -- Generate a Visual Studio 2005+ F# project.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

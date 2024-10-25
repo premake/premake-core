@@ -9,7 +9,7 @@
 -- The field.* functions here manage the definition of these fields, and the
 -- accessor functions required to get, set, remove, and merge their values.
 --
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) 2014 Jess Perkins and the Premake project
 ---
 
 	local p = premake

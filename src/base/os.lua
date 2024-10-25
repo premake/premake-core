@@ -1,7 +1,7 @@
 --
 -- os.lua
 -- Additions to the OS namespace.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jess Perkins and the Premake project
 --
 
 

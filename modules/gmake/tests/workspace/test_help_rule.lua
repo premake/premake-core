@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/test_help_rule.lua
 -- Validate generation of help rule and configurations list.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

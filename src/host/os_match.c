@@ -1,7 +1,7 @@
 /**
  * \file   os_match.c
  * \brief  Match files and directories.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jess Perkins and the Premake project
  */
 
 #include <stdlib.h>

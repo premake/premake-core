@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_debugdir.lua
 -- Validate handling of the working directory for debugging.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2022/test_compile_settings.lua
 -- Validate compiler settings in Visual Studio 2022 C/C++ projects.
--- Copyright (c) 2011-2021 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2021 Jess Perkins and the Premake project
 --
 
 local p = premake

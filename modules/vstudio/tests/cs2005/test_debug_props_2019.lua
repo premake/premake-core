@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_debug_props_2019.lua
 -- Test debugging and optimization flags block of a Visual Studio 2019+ C# project.
--- Copyright (c) 2012-2021 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2021 Jess Perkins and the Premake project
 --
 
 	local p = premake

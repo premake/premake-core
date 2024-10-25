@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_user_file.lua
 -- Verify handling of empty and non-empty .user files for VC'200x.
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

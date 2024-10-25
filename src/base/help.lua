@@ -1,7 +1,7 @@
 --
 -- help.lua
 -- User help, displayed on /help option.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jess Perkins and the Premake project
 --
 
 

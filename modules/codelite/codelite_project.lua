@@ -6,7 +6,7 @@
 --              Manu Evans
 --              Tom van Dijck
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2016 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2016 Jess Perkins and the Premake project
 --
 
 	local p = premake

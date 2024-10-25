@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_configuration.lua
 -- Test the Visual Studio 2002-2008 project's Configuration block
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 ---
 -- tests/actions/xcode/test_xcode4_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 ---
 
 

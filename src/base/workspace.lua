@@ -1,7 +1,7 @@
 ---
 -- workspace.lua
 -- Work with the list of workspaces loaded from the script.
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/fs2005/projectsettings.lua
 -- Validate generation of root <PropertyGroup/> in Visual Studio 2005+ .fsproj
--- Copyright (c) 2009-2017 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2017 Jess Perkins and the Premake project
 --
 
 	local p = premake

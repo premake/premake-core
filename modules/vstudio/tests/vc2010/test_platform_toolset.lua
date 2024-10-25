@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_platform_toolset.lua
 -- Validate VC platform toolset generation.
--- Copyright (c) 2013-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

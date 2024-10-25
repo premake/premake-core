@@ -1,7 +1,7 @@
 ---
 -- tests/base/test_os.lua
 -- Automated test suite for the new OS functions.
--- Copyright (c) 2008-2017 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2017 Jess Perkins and the Premake project
 ---
 
 	local suite = test.declare("base_os")

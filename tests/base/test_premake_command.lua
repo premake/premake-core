@@ -1,7 +1,7 @@
 --
 -- tests/base/test_premake_command.lua
 -- Test the initialization of the _PREMAKE_COMMAND global.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("premake_command")

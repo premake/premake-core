@@ -1,7 +1,7 @@
 --
 -- _manifest.lua
 -- Manage the list of built-in Premake scripts.
--- Copyright (c) 2002-2024 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2024 Jess Perkins and the Premake project
 --
 
 -- The master list of built-in scripts. Order is important! If you want to

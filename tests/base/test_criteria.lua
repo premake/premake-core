@@ -1,7 +1,7 @@
 --
 -- tests/base/test_criteria.lua
 -- Test suite for the criteria matching API.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

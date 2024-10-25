@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_nmake_settings.lua
 -- Validate generation the VCNMakeTool element in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

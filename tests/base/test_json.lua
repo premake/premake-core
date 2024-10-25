@@ -1,7 +1,7 @@
 --
 -- tests/base/test_json.lua
 -- Tests the json API
--- Copyright (c) 2017 Jason Perkins and the Premake project
+-- Copyright (c) 2017 Jess Perkins and the Premake project
 --
 
 	local p = premake

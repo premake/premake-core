@@ -1,7 +1,7 @@
 --
 -- tests/project/test_eachconfig.lua
 -- Test the project object configuration iterator function.
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
