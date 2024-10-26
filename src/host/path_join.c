@@ -138,7 +138,7 @@ int path_deferred_join(lua_State* L)
 }
 
 
-int do_path_has_deferred_join(const char* path)
+static int do_path_has_deferred_join(const char* path)
 {
 	return (strchr(path, DEFERRED_JOIN_DELIMITER) != NULL);
 }
