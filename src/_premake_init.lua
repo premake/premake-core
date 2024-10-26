@@ -364,6 +364,9 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
+		allowed = function(value)
+			return iif(value == "", nil, value)
+		end
 	}
 
 	api.register {
