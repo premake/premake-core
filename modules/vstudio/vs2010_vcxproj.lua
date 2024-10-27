@@ -675,6 +675,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
+				m.LinkTimeCodeGeneration,
 			}
 		else
 			return {
@@ -682,6 +683,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
+				m.LinkTimeCodeGeneration,
 				m.additionalDependencies,
 				m.additionalLibraryDirectories,
 				m.importLibrary,
@@ -2727,6 +2729,11 @@
 		end
 	end
 
+	function m.LinkTimeCodeGeneration(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			m.element("LinkTimeCodeGeneration", nil, "UseLinkTimeCodeGeneration")
+		end
+	end
 
 	function m.optimization(cfg, condition)
 		local map = { Off="Disabled", On="Full", Debug="Disabled", Full="Full", Size="MinSpace", Speed="MaxSpeed" }

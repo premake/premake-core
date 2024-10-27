@@ -152,7 +152,8 @@
 	function config.canLinkIncremental(cfg)
 		if cfg.kind == "StaticLib"
 				or config.isOptimizedBuild(cfg)
-				or cfg.flags.NoIncrementalLink then
+				or cfg.flags.NoIncrementalLink
+				or cfg.flags.LinkTimeOptimization then
 			return false
 		end
 		return true
