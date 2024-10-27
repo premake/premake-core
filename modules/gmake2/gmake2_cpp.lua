@@ -109,7 +109,7 @@
 			['.c']   = 'SOURCES',
 			['.s']   = 'SOURCES',
 			['.m']   = 'SOURCES',
-			['.rc']  = 'RESOURCES',
+			['.res'] = 'RESOURCES',
 		}
 
 		-- cache the result.

@@ -50,6 +50,22 @@ OBJECTS += $(OBJDIR)/hello.o
 		]]
 	end
 
+	function suite.listResoucesInProjectObjects()
+		files { "src/hello.rc" }
+		prepare()
+		test.capture [[
+# File sets
+# #############################################
+
+GENERATED :=
+RESOURCES :=
+
+GENERATED += $(OBJDIR)/hello.res
+RESOURCES += $(OBJDIR)/hello.res
+
+		]]
+	end
+
 
 --
 -- Only buildable files should be listed.
