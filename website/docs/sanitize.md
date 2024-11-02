@@ -12,6 +12,8 @@ sanitize { "value_list" }
 |-------------|--------------------------------------------------------|
 | Address     | Enables compiler support for AddressSanitizer. | Visual Studio support starts with 2019 16.9 |
 | Fuzzer      | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Visual Studio support starts with 2019 16.9 |
+| Thread      | Enables compiler support for ThreadSanitizer. |
+| Undefined   | Enables compiler support for UndefinedBehaviorSanitizer (UBSan). |
 
 ### Applies To ###
 
