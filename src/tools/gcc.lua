@@ -141,6 +141,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			Undefined = "-fsanitize=undefined",
 		},
 		visibility = {
 			Default = "-fvisibility=default",
