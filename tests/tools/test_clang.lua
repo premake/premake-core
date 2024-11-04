@@ -1,7 +1,7 @@
 --
 -- tests/test_clang.lua
 -- Automated test suite for the GCC toolset interface.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

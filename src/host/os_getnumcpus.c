@@ -1,7 +1,7 @@
 /**
  * \file   os_getnumcpus.c
  * \brief  Retrieve the logical number of CPUs of the host system.
- * \author Copyright (c) 2002-2024 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2024 Jess Perkins and the Premake project
  */
 
 #if __linux__

@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_target_rules.lua
 -- Validate the makefile target building rules.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

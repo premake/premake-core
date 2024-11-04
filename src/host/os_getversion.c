@@ -1,7 +1,7 @@
 /**
  * \file   os_getversioninfo.c
  * \brief  Retrieve operating system version information.
- * \author Copyright (c) 2011-2012 Jason Perkins and the Premake project
+ * \author Copyright (c) 2011-2012 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

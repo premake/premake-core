@@ -1,7 +1,7 @@
 --
 -- tests/api/test_string_kind.lua
 -- Tests the string API value type.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

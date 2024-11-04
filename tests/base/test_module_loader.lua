@@ -1,7 +1,7 @@
 --
 -- tests/base/test_module_loader.lua
 -- Test the custom module loader.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

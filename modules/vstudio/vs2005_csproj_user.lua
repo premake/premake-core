@@ -1,7 +1,7 @@
 --
 -- vs2005_csproj_user.lua
 -- Generate a Visual Studio 2005+ C# .user file.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

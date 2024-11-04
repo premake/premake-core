@@ -3,7 +3,7 @@
 --
 -- Code for git integration.
 --
--- Copyright (c) 2024 Jason Perkins and the Premake project
+-- Copyright (c) 2024 Jess Perkins and the Premake project
 --
 
 local p = premake

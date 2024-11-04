@@ -1,7 +1,7 @@
 --
 -- tests/api/test_directory_kind.lua
 -- Tests the directory API value type.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_project.lua
 -- Validate generation of the opening <VisualStudioProject> element.
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

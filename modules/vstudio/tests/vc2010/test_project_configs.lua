@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_project_configs.lua
 -- Test the Visual Studio 2010 project configurations item group.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

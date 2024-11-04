@@ -1,7 +1,7 @@
 --
 -- gmake2_cpp.lua
 -- Generate a C/C++ project makefile.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
@@ -109,7 +109,7 @@
 			['.c']   = 'SOURCES',
 			['.s']   = 'SOURCES',
 			['.m']   = 'SOURCES',
-			['.rc']  = 'RESOURCES',
+			['.res'] = 'RESOURCES',
 		}
 
 		-- cache the result.

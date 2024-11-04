@@ -1,7 +1,7 @@
 --
 -- tests/base/test_rule.lua
 -- Automated test suite for custom rule.
--- Copyright (c) 2008-2021 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2021 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("rule")

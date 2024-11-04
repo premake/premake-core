@@ -13,7 +13,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build
-      run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
@@ -34,7 +34,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build
-      run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
@@ -51,13 +51,16 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [Win32, x64]
+        msdev: [vs2022]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build
-      run: |
-        $vcvarsall_path = vswhere.exe -find VC\Auxiliary\Build\vcvarsall.bat
-        cmd.exe /c "call ""$vcvarsall_path"" x86_amd64 && nmake -f Bootstrap.mak MSDEV=vs2019 windows-msbuild PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}"
+      shell: cmd
+      env:
+        PLATFORM: ${{ matrix.platform }}
+        CONFIG: ${{ matrix.config }}
+      run: ./Bootstrap.bat ${{ matrix.msdev }}
     - name: Test
       run: bin\${{ matrix.config }}\premake5 test --test-all
       shell: cmd
@@ -98,7 +101,7 @@ jobs:
         pacboy: >-
           toolchain:p
     - name: Build
-      run: make -f Bootstrap.mak mingw PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5.exe test --test-all
     - name: Docs check
@@ -121,7 +124,7 @@ jobs:
       with:
         version: '3.9.2'
     - name: Build
-      run: make -f Bootstrap.mak cosmo CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh -cosmo
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check

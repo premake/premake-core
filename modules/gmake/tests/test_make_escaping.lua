@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/test_make_escaping.lua
 -- Validate the escaping of literal values in Makefiles.
--- Copyright (c) 2010-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

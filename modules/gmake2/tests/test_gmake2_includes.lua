@@ -1,7 +1,7 @@
 --
 -- test_gmake2_includes.lua
 -- Validate the link step generation for makefiles.
--- (c) 2016-2023 Jason Perkins and the Premake project
+-- (c) 2016-2023 Jess Perkins and the Premake project
 --
 
 local suite = test.declare("gmake2_includes")

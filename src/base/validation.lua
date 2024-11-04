@@ -4,7 +4,7 @@
 -- Verify the contents of the project object before handing them off to
 -- the action/exporter.
 --
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

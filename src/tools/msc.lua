@@ -1,9 +1,9 @@
 ---
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Author Jason Perkins
+-- Author Jess Perkins
 -- Modified by Manu Evans
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 ---
 
 

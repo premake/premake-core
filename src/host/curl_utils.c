@@ -36,10 +36,10 @@ int curlProgressCallback(curl_state* state, double dltotal, double dlnow, double
 }
 
 
-size_t curlWriteCallback(char *ptr, size_t size, size_t nmemb, curl_state* state)
+size_t curlWriteCallback(char *ptr, size_t size, size_t nmemb, void* state)
 {
 	size_t length = size * nmemb;
-	premake_buffer_puts(&state->S, ptr, length);
+	premake_buffer_puts(&((curl_state*)state)->S, ptr, length);
 	return length;
 }
 

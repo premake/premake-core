@@ -1,7 +1,7 @@
 /**
 * \file   path_join.c
 * \brief  Join two or more pieces of a file system path.
-* \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+* \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
 */
 
 #include "premake.h"
@@ -138,7 +138,7 @@ int path_deferred_join(lua_State* L)
 }
 
 
-int do_path_has_deferred_join(const char* path)
+static int do_path_has_deferred_join(const char* path)
 {
 	return (strchr(path, DEFERRED_JOIN_DELIMITER) != NULL);
 }

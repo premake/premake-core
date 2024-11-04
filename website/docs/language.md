@@ -14,7 +14,6 @@ language ("lang")
 | `C++`    | Built-in; always available    |
 | `C#`     | Built-in; always available    |
 | `F#`     | Built-in; always available    |
-| `D`      | Built-in; always available ([API and support](https://github.com/premake/premake-dlang/wiki)) |
 
 
 ### Applies To ###

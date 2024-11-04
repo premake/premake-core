@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_common_props.lua
 -- Check Visual Studio 2012 extensions to the project properties block.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

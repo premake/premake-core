@@ -1,8 +1,8 @@
 ---
 -- project.lua
 -- Premake project object API
--- Author Jason Perkins
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

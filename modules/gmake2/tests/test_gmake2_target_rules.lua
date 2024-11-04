@@ -1,7 +1,7 @@
 --
 -- test_gmake2_target_rules.lua
 -- Validate the makefile target building rules.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake

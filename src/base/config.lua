@@ -1,7 +1,7 @@
 --
 -- config.lua
 -- Premake configuration object API
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -152,7 +152,8 @@
 	function config.canLinkIncremental(cfg)
 		if cfg.kind == "StaticLib"
 				or config.isOptimizedBuild(cfg)
-				or cfg.flags.NoIncrementalLink then
+				or cfg.flags.NoIncrementalLink
+				or cfg.flags.LinkTimeOptimization then
 			return false
 		end
 		return true

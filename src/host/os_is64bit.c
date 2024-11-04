@@ -1,7 +1,7 @@
 /**
  * \file   os_is64bit.c
  * \brief  Native code-side checking for a 64-bit architecture.
- * \author Copyright (c) 2011 Jason Perkins and the Premake project
+ * \author Copyright (c) 2011 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

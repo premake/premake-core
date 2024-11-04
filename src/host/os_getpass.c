@@ -1,7 +1,7 @@
 /**
  * \file   os_getpass.c
  * \brief  Prompt and retrieve a password from the user.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2008 Jess Perkins and the Premake project
  */
 
 #include "premake.h"
@@ -32,6 +32,7 @@ int os_getpass(lua_State* L)
 		lua_pushstring(L, buffer);
 		return 1;
 	#elif PLATFORM_COSMO
+		(void)prompt;
 		luaL_error(L, "Not supported by this platform");
 		return 0;
 	#elif PLATFORM_POSIX

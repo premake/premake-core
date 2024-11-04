@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_wiidev.lua
 -- Tests for Wii homebrew support in makefiles.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

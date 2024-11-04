@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_additional_props.lua
 -- Test the compiler flags of a Visual Studio 2005+ C# project.
--- Copyright (c) 2012-2023 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2023 Jess Perkins and the Premake project
 --
 
 	local p = premake

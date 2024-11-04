@@ -27,7 +27,17 @@ BUILDING FROM A SOURCE PACKAGE
 BUILDING FROM THE REPOSITORY
 
  If you have pulled sources from the Premake source repository, you can
- use `Bootstrap.mak` to generate your first premake executable:
+ use `Bootstrap.sh` or `Bootstrap.bat` to generate your first premake executable:
+
+ On Windows:
+
+    $ ./Bootstrap.bat
+
+ On other platforms:
+
+    $ ./Bootstrap.sh
+
+Alternatively, you may call the Makefile directly:
 
     $ make -f Bootstrap.mak PLATFORM
 

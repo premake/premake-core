@@ -1,7 +1,7 @@
 --
 -- _preload.lua
 -- Define the makefile action(s).
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

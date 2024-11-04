@@ -689,6 +689,7 @@ static size_t dot(int c, size_t state, luaL_Buffer *buffer)
         case '.':
             if (state == 2)
                 luaL_addchar(buffer, '.');
+            /* Falls through. */
         default:
             return 0;
     }

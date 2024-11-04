@@ -1,7 +1,7 @@
 --
 -- tests/config/test_links.lua
 -- Test the list of linked objects retrieval function.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jess Perkins and the Premake project
 --
 	local suite = test.declare("xcode_project")
 	local p = premake

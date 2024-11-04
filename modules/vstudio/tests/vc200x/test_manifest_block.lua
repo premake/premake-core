@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_manifest_block.lua
 -- Validate generation of VCManifest elements Visual Studio 200x C/C++ projects.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_assembly_refs.lua
 -- Validate managed assembly references in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

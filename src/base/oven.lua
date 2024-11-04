@@ -6,7 +6,7 @@
 -- and actions. Fills in computed values (e.g. object directories) and
 -- optimizes the layout of the data for faster fetches.
 --
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

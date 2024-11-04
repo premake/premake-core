@@ -1,7 +1,7 @@
 --
 -- tests/base/test_configset.lua
 -- Test suite for the configset API.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

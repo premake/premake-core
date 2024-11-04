@@ -1,7 +1,7 @@
 /**
  * \file   os_uuid.c
  * \brief  Create a new UUID.
- * \author Copyright (c) 2002-2012 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2012 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

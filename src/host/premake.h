@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2021 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2021 Jess Perkins and the Premake project
  */
 
 #define lua_c
@@ -9,14 +9,13 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #define PREMAKE_VERSION        "5.0.0-dev"
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2021 Jason Perkins and the Premake Project"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2021 Jess Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
-/* Identify the current platform I'm not sure how to reliably detect
- * Windows but since it is the most common I use it as the default */
 #if defined(__linux__)
 #define PLATFORM_LINUX    (1)
 #define PLATFORM_OS   "linux"
@@ -41,9 +40,11 @@
 #elif defined (__COSMOPOLITAN__)
 #define PLATFORM_COSMO  (1)
 #define PLATFORM_OS  "cosmopolitan"
-#else
+#elif defined(_WIN32) || defined(_WIN64)
 #define PLATFORM_WINDOWS  (1)
 #define PLATFORM_OS   "windows"
+#else
+#error Unknown platform detected
 #endif
 
 #define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU || PLATFORM_COSMO)
@@ -68,7 +69,6 @@
 #else
 #include <unistd.h>
 #endif
-#include <stdint.h>
 
 /* not all platforms define this */
 #ifndef FALSE
@@ -83,21 +83,20 @@
 #define PATH_MAX   (4096)
 #endif
 
-
 /* A success return code */
 #define OKAY   (0)
 
-
 /* Bitmasks for the different script file search locations */
-#define TEST_LOCAL     (0x01)
-#define TEST_SCRIPTS   (0x02)
-#define TEST_PATH      (0x04)
-#define TEST_EMBEDDED  (0x08)
-
+enum FileSearchMask
+{
+    SEARCH_LOCAL    =  0x01,
+    SEARCH_SCRIPTS  =  0x02,
+    SEARCH_PATH     =  0x04,
+    SEARCH_EMBEDDED =  0x08
+};
 
 /* If a /scripts argument is present, its value */
 extern const char* scripts_path;
-
 
 /* Bootstrapping helper functions */
 int do_chdir(lua_State* L, const char* path);
@@ -189,12 +188,6 @@ int http_download(lua_State* L);
 int zip_extract(lua_State* L);
 #endif
 
-#ifdef _MSC_VER
- #ifndef snprintf
-  #define snprintf _snprintf
- #endif
-#endif
-
 /* Engine interface */
 
 typedef struct
@@ -210,9 +203,10 @@ extern void  registerModules(lua_State* L);
 int premake_init(lua_State* L);
 int premake_pcall(lua_State* L, int nargs, int nresults);
 int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
+
 int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);
 
 int premake_locate_executable(lua_State* L, const char* argv0);
-int premake_test_file(lua_State* L, const char* filename, int searchMask);
+int premake_locate_file(lua_State* L, const char* filename, int searchMask);
 void premake_handle_lua_error(lua_State* L);

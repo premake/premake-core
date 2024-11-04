@@ -1,7 +1,7 @@
 --
 -- tests/base/test_aliasing.lua
 -- Verify handling of function aliases.
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("premake_alias")

@@ -1,7 +1,7 @@
 ---
 -- action.lua
 -- Work with the list of registered actions.
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake
@@ -280,7 +280,6 @@
 			["C"] = "cc",
 			["C++"] = "cc",
 			["C#"] = "dotnet",
-			["D"] = "dc",
 		}
 		local language_key = language_keys_map[language]
 		if not language_key then

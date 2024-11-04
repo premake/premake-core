@@ -1,7 +1,7 @@
 --
 -- tests/project/test_location.lua
 -- Test handling of the projects's location field.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("project_location")

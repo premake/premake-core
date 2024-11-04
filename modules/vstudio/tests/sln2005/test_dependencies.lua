@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_dependencies.lua
 -- Validate generation of Visual Studio 2005+ solution project dependencies.
--- Copyright (c) 2009-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

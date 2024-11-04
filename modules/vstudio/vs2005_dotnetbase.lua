@@ -1,7 +1,7 @@
 --
 -- vs2005_dotnetbase.lua
 -- Generate a Visual Studio 2005+ .NET project.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_path.lua
 -- Automated test suite for the action list.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("path")

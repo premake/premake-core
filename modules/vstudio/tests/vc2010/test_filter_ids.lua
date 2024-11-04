@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_filter_ids.lua
 -- Validate generation of filter unique identifiers.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

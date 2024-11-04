@@ -1,7 +1,7 @@
 --
 -- tests/base/test_include.lua
 -- Test the include() function, for including external scripts
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 

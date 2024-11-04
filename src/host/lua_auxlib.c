@@ -1,7 +1,7 @@
 /**
  * \file   lua_auxlib.c
  * \brief  Modifications and extensions to Lua's library functions.
- * \author Copyright (c) 2014-2017 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014-2017 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cs/test_flags.lua
 -- Tests compiler and linker flags for C# Makefiles.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

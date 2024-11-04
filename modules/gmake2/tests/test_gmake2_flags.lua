@@ -1,7 +1,7 @@
 --
 -- test_gmake2_flags.lua
 -- Tests compiler and linker flags for Makefiles.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_flags")

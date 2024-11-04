@@ -67,7 +67,7 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName", "Jason Perkins and the Premake Project"
+            VALUE "CompanyName", "Jess Perkins and the Premake Project"
             VALUE "FileDescription", "Premake5"
             VALUE "FileVersion", PREMAKE_VERSION
             VALUE "LegalCopyright", PREMAKE_COPYRIGHT

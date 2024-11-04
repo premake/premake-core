@@ -1,7 +1,7 @@
 --
 -- make_makefile.lua
 -- Generate a C/C++ project makefile.
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 /**
  * \file   criteria_matches.c
  * \brief  Determine if this criteria is met by the provided filter terms.
- * \author Copyright (c) 2002-2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

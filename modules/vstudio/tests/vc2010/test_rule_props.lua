@@ -2,7 +2,7 @@
 -- tests/actions/vstudio/vc2010/vstudio_vs2010_rule_props.lua
 -- Validate generation of custom rules
 -- Author Tom van Dijck
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) 2016 Jess Perkins and the Premake project
 --
 
 	local p = premake

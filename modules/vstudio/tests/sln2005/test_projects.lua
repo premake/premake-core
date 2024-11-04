@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_projects.lua
 -- Validate generation of Visual Studio 2005+ solution project entries.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

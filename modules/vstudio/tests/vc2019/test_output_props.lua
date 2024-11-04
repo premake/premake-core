@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2019/test_output_props.lua
 -- Validate generation of the output property groups.
--- Copyright (c) 2024 Jason Perkins and the Premake project
+-- Copyright (c) 2024 Jess Perkins and the Premake project
 --
 
 local p = premake

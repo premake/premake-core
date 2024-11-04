@@ -1,7 +1,7 @@
 /**
  * \file   string_endswith.c
  * \brief  Determines if a string ends with the given sequence.
- * \author Copyright (c) 2002-2009 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2009 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

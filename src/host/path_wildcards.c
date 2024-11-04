@@ -1,7 +1,7 @@
 /**
  * \file   path_wildcards.c
  * \brief  Converts from a simple wildcard syntax to the corresponding Lua pattern.
- * \author Copyright (c) 2015 Tom van Dijck, Jason Perkins and the Premake project
+ * \author Copyright (c) 2015 Tom van Dijck, Jess Perkins and the Premake project
  */
 
 #include "premake.h"
