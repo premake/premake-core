@@ -89,7 +89,6 @@
 		os.chdir(_MAIN_SCRIPT_DIR)
 
 		local startTime = os.clock()
-		local cwd = os.getcwd()
 		local hooks = _.installTestingHooks()
 
 		_TESTS_DIR = test.suite._TESTS_DIR

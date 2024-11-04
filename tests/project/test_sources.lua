@@ -34,8 +34,9 @@
 		local cfg = test.getconfig(prj, "Debug")
 
 		local files = {}
+		local cwd = os.getcwd()
 		for _, file in ipairs(cfg.files) do
-			table.insert(files, path.getrelative(os.getcwd(), file))
+			table.insert(files, path.getrelative(cwd, file))
 		end
 
 		return files
