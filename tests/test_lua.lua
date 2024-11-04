@@ -35,3 +35,13 @@ end
 		test.isequal(10, value)
 	end
 
+
+--
+-- loadfile via require with init.lua
+--
+
+function suite.loadfile_with_require()
+	os.chdir(_SCRIPT_DIR)
+	assert(require("folder"))
+end
+
