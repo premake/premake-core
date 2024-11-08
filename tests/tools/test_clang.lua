@@ -146,7 +146,7 @@
 
 	-- UBSan
 	function suite.cxxflags_onSanitizeUndefined()
-		sanitize { "Undefined" }
+		sanitize { "UndefinedBehavior" }
 		prepare()
 		test.contains({ "-fsanitize=undefined" }, clang.getcxxflags(cfg))
 		test.contains({ "-fsanitize=undefined" }, clang.getcflags(cfg))
