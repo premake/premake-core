@@ -82,10 +82,24 @@
 		_p(1,'<PropertyGroup>')
 		local cfg = project.getfirstconfig(prj)
 		p.callArray(dotnetbase.elements.projectProperties, cfg)
+
+		dotnetbase.projectConfigurations(prj)
+
 		_p(1,'</PropertyGroup>')
 	end
 
-
+--
+-- Write the available configurations to have correct configuration mapping on vs2022 format and later.
+--
+	function dotnetbase.projectConfigurations(prj)
+		if _ACTION >= "vs2022" and #prj._cfglist > 0 then
+			_p(2,'<Configurations>')
+			for prjcfg in project.eachconfig(prj) do
+				_p(3,'%s;',prjcfg.shortname)
+			end
+			_p(2,'</Configurations>')
+		end
+	end
 --
 -- Write out the settings for the project configurations.
 --
