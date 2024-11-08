@@ -132,3 +132,20 @@ function suite.allowUnsafeProperty_core()
 	</PropertyGroup>
     ]]
 end
+
+function suite.project_element_configurations()
+	p.action.set("vs2022")
+	dotnetframework "net8.0"
+	prepareProjectProperties()
+
+	configurations { "Debug","Release","Distribution"}
+	test.capture [[
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <TargetFramework>net8.0</TargetFramework>
+        <Configurations>Debug;Release</Configurations>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    </PropertyGroup>
+]]
+end
