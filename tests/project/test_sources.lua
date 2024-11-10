@@ -15,15 +15,11 @@
 
 	local wks, prj
 
-	local cwd = os.getcwd()
-	local oldcwd
-
 	function suite.setup()
 		wks, prj = test.createWorkspace()
 
 		-- We change the directory to get nice relative paths
-		oldcwd = os.getcwd()
-		os.chdir(cwd)
+		os.chdir(_SCRIPT_DIR)
 
 		-- Create a token to be used in search paths
 		p.api.register { name = "mytoken", kind = "string", scope = "config" }
@@ -32,13 +28,13 @@
 
 	function suite.teardown()
 		mytoken = nil
-		os.chdir(oldcwd)
 	end
 
 	local function run()
 		local cfg = test.getconfig(prj, "Debug")
 
 		local files = {}
+		local cwd = os.getcwd()
 		for _, file in ipairs(cfg.files) do
 			table.insert(files, path.getrelative(cwd, file))
 		end
