@@ -490,6 +490,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			UndefinedBehavior = "-fsanitize=undefined",
 		},
 		system = {
 			wii = "$(MACHDEP)",
