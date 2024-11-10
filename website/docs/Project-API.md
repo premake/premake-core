@@ -50,14 +50,10 @@
 | [debugformat](debugformat.md)                             | Format for embedded debug information |
 | [debugger](debugger.md)                                   |  |
 | [debuggertype](debuggertype.md)                           |  |
-| [debugpathmap](debugpathmap.md)                           |  |
 | [debugport](debugport.md)                                 | Port to use for remote debugging |
 | [debugremotehost](debugremotehost.md)                     | Target for remote debugging |
 | [debugsearchpaths](debugsearchpaths.md)                   | Search paths for source code while debugging |
 | [debugstartupcommands](debugstartupcommands.md)           | Debugger commands to execute on debugger startup |
-| [debugtoolargs](debugtoolargs.md)                         |  |
-| [debugtoolcommand](debugtoolcommand.md)                   |  |
-| [defaultplatform](defaultplatform.md)                     |  |
 | [defaultplatform](defaultplatform.md)                     |  |
 | [defines](defines.md)                                     |  |
 | [dependson](dependson.md)                                 |  |

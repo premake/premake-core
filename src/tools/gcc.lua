@@ -12,6 +12,12 @@
 	local project = p.project
 	local config = p.config
 
+	p.api.register {
+		name = "gccprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
 
 --
 -- Returns list of C preprocessor flags for a configuration.

@@ -12,6 +12,17 @@
 --
 
 	p.api.register {
+		name = "swiftversion",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"4.0",
+			"4.2",
+			"5.0",
+		}
+	}
+
+	p.api.register {
 		name = "xcodebuildsettings",
 		scope = "config",
 		kind = "key-array",

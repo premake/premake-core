@@ -11,6 +11,21 @@
 	local project = p.project
 	local config = p.config
 
+	p.api.register {
+		name = "csversion",
+		scope = "config",
+		kind = "string",
+	}
+
+	p.api.register {
+		name = "resourcegenerator",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"internal",
+			"public"
+		}
+	}
 
 --
 -- Examine the file and project configurations to glean additional
