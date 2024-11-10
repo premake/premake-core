@@ -66,7 +66,9 @@
 		unsignedchar = gcc.shared.unsignedchar,
 		omitframepointer = gcc.shared.omitframepointer,
 		compileas = gcc.shared.compileas,
-		sanitize = gcc.shared.sanitize,
+		sanitize = table.merge(gcc.shared.sanitize, {
+			Fuzzer = "-fsanitize=fuzzer",
+		}),
 		visibility = gcc.shared.visibility,
 		inlinesvisibility = gcc.shared.inlinesvisibility
 	}
@@ -118,9 +120,6 @@
 --
 
 	clang.cxxflags = table.merge(gcc.cxxflags, {
-		sanitize = {
-			Fuzzer = "-fsanitize=fuzzer",
-		},
 	})
 
 	function clang.getcxxflags(cfg)
@@ -254,9 +253,9 @@
 			end,
 		},
 		linker = gcc.ldflags.linker,
-		sanitize = {
-			Address = "-fsanitize=address",
-		},
+		sanitize = table.merge(gcc.ldflags.sanitize, {
+			Fuzzer = "-fsanitize=fuzzer",
+		}),
 		system = {
 			wii = "$(MACHDEP)",
 		}
