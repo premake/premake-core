@@ -451,6 +451,14 @@
 		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
 	end
 
+	function suite.ldflags_onMacOSXXCUITest()
+		system "MacOSX"
+		kind "SharedLib"
+		sharedlibtype "XCUITest"
+		prepare()
+		test.contains({ "-Wl,-x", "-bundle" }, gcc.getldflags(cfg))
+	end
+
 	function suite.ldflags_onMacOSXFramework()
 		system "MacOSX"
 		kind "SharedLib"
