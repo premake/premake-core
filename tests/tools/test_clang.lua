@@ -110,25 +110,45 @@
 -- Check handling of linker flag.
 --
 
-function suite.ldflags_linker_lld()
-	linker "LLD"
-	prepare()
-	test.contains("-fuse-ld=lld", clang.getldflags(cfg))
-end
+	function suite.ldflags_linker_lld()
+		linker "LLD"
+		prepare()
+		test.contains("-fuse-ld=lld", clang.getldflags(cfg))
+	end
 
 --
 -- Check the translation of CXXFLAGS.
 --
 
-function suite.onSanitizeAddress()
-	sanitize { "Address" }
-	prepare()
-	test.contains({ "-fsanitize=address" }, clang.getcxxflags(cfg))
-	test.contains({ "-fsanitize=address" }, clang.getldflags(cfg))
-end
+	function suite.onSanitizeAddress()
+		sanitize { "Address" }
+		prepare()
+		test.contains({ "-fsanitize=address" }, clang.getcxxflags(cfg))
+		test.contains({ "-fsanitize=address" }, clang.getcflags(cfg))
+		test.contains({ "-fsanitize=address" }, clang.getldflags(cfg))
+	end
 
-function suite.cxxflags_onSanitizeFuzzer()
-	sanitize { "Fuzzer" }
-	prepare()
-	test.contains({ "-fsanitize=fuzzer" }, clang.getcxxflags(cfg))
-end
+	function suite.cxxflags_onSanitizeFuzzer()
+		sanitize { "Fuzzer" }
+		prepare()
+		test.contains({ "-fsanitize=fuzzer" }, clang.getcxxflags(cfg))
+		test.contains({ "-fsanitize=fuzzer" }, clang.getcflags(cfg))
+		test.contains({ "-fsanitize=fuzzer" }, clang.getldflags(cfg))
+	end
+
+	function suite.cxxflags_onSanitizeThread()
+		sanitize { "Thread" }
+		prepare()
+		test.contains({ "-fsanitize=thread" }, clang.getcxxflags(cfg))
+		test.contains({ "-fsanitize=thread" }, clang.getcflags(cfg))
+		test.contains({ "-fsanitize=thread" }, clang.getldflags(cfg))
+	end
+
+	-- UBSan
+	function suite.cxxflags_onSanitizeUndefined()
+		sanitize { "UndefinedBehavior" }
+		prepare()
+		test.contains({ "-fsanitize=undefined" }, clang.getcxxflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, clang.getcflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, clang.getldflags(cfg))
+	end

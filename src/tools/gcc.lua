@@ -147,6 +147,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			UndefinedBehavior = "-fsanitize=undefined",
 		},
 		visibility = {
 			Default = "-fvisibility=default",
@@ -494,6 +496,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			UndefinedBehavior = "-fsanitize=undefined",
 		},
 		system = {
 			wii = "$(MACHDEP)",

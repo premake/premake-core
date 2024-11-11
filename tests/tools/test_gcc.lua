@@ -393,6 +393,23 @@
 		test.contains({ "-fsanitize=address" }, gcc.getldflags(cfg))
 	end
 
+	function suite.cxxflags_onSanitizeThread()
+		sanitize { "Thread" }
+		prepare()
+		test.contains({ "-fsanitize=thread" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=thread" }, gcc.getcflags(cfg))
+		test.contains({ "-fsanitize=thread" }, gcc.getldflags(cfg))
+	end
+
+	-- UBSan
+	function suite.cxxflags_onSanitizeUndefined()
+		sanitize { "UndefinedBehavior" }
+		prepare()
+		test.contains({ "-fsanitize=undefined" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, gcc.getcflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, gcc.getldflags(cfg))
+	end
+
 --
 -- Check the basic translation of LDFLAGS for a Posix system.
 --

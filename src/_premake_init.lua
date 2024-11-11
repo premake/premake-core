@@ -805,6 +805,8 @@
 		allowed = {
 			"Address",
 			"Fuzzer",              -- Visual Studio 2022+ only
+			"Thread",
+			"UndefinedBehavior",
 		}
 	}
 
