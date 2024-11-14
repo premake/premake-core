@@ -375,11 +375,6 @@
 			"UndefinedIdentifiers",
 			"WinMain",             -- DEPRECATED
 			"WPF",
-			"C++11",               -- DEPRECATED
-			"C++14",               -- DEPRECATED
-			"C90",                 -- DEPRECATED
-			"C99",                 -- DEPRECATED
-			"C11",                 -- DEPRECATED
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -1292,49 +1287,6 @@
 	end,
 	function(value)
 		symbols "Default"
-	end)
-
-
-	-- 31 January 2017
-
-	api.deprecateValue("flags", "C++11", 'Use `cppdialect "C++11"` instead',
-	function(value)
-		cppdialect "C++11"
-	end,
-	function(value)
-		cppdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C++14", 'Use `cppdialect "C++14"` instead',
-	function(value)
-		cppdialect "C++14"
-	end,
-	function(value)
-		cppdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C90",   'Use `cdialect "gnu90"` instead',
-	function(value)
-		cdialect "gnu90"
-	end,
-	function(value)
-		cdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C99",   'Use `cdialect "gnu99"` instead',
-	function(value)
-		cdialect "gnu99"
-	end,
-	function(value)
-		cdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C11",   'Use `cdialect "gnu11"` instead',
-	function(value)
-		cdialect "gnu11"
-	end,
-	function(value)
-		cdialect "Default"
 	end)
 
 

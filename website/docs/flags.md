@@ -36,10 +36,6 @@ flags { "flag_list" }
 | UndefinedIdentifiers | Warn if an undefined identifier is evaluated in an #if directive.   |
 | WinMain               | Use `WinMain()` as entry point for Windows applications, rather than the default `main()`. |
 | WPF                   | Mark the project as using Windows Presentation Framework, rather than WinForms. |
-| C++11                 | Pass the c++11 flag to the gcc/clang compilers (msvc ignores this currently) |
-| C++14                 | Pass the c++14 flag to the gcc/clang compilers (msvc ignores this currently) |
-| C90                   | Pass the c90 flag to the gcc/clang compilers (msvc ignores this currently) |
-| C99                   | Pass the c99 flag to the gcc/clang compilers (msvc ignores this currently) |
 | Component             | Needs documentation                                                        |
 | DebugEnvsDontMerge    | Needs documentation                                                        |
 | DebugEnvsInherit      | Needs documentation                                                        |
@@ -57,7 +53,6 @@ flags { "flag_list" }
 | OptimizeSpeed         | Needs documentation                                                        |
 | ReleaseRuntime        | Needs documentation                                                        |
 | Symbols               | Needs documentation                                                        |
-| C11                   | Needs documentation                                                        |
 | Thumb                 | Needs documentation                                                        |
 
 ### Applies To ###
@@ -66,7 +61,7 @@ Project and file configurations, though not all flags are yet supported for file
 
 ### Availability ###
 
-Unless otherwise noted, Premake 5.0 or later.
+Flags are currently available in Premake 5.0 beta3, but are considered deprecated. Future releases will be deprecating and removing all flags in favor of dedicated APIs.
 
 ### Examples ###
 
