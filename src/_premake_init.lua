@@ -332,55 +332,33 @@
 		scope = "config",
 		kind  = "list:string",
 		allowed = {
-			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
-			"EnableSSE",           -- DEPRECATED
-			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
-			"ExtraWarnings",       -- DEPRECATED
 			"FatalCompileWarnings",
 			"FatalLinkWarnings",
-			"FloatFast",           -- DEPRECATED
-			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",             -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
-			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",   -- DEPRECATED
-			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
 			"NoImportLib",         -- DEPRECATED
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
-			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
 			"NoBufferSecurityCheck",
-			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
-			"Optimize",            -- DEPRECATED
-			"OptimizeSize",        -- DEPRECATED
-			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
-			"ReleaseRuntime",      -- DEPRECATED
 			"ShadowedVariables",
-			"StaticRuntime",       -- DEPRECATED
-			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
-			"WinMain",             -- DEPRECATED
 			"WPF",
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
-			Optimise = 'Optimize',
-			OptimiseSize = 'OptimizeSize',
-			OptimiseSpeed = 'OptimizeSpeed',
 		},
 	}
 
@@ -1146,178 +1124,6 @@
 		end
 		buildcommands(value.commands)
 		buildoutputs(value.outputs)
-	end)
-
-
-	api.deprecateValue("flags", "Component", 'Use `buildaction "Component"` instead.',
-	function(value)
-		buildaction "Component"
-	end)
-
-
-	api.deprecateValue("flags", "EnableSSE", 'Use `vectorextensions "SSE"` instead.',
-	function(value)
-		vectorextensions("SSE")
-	end,
-	function(value)
-		vectorextensions "Default"
-	end)
-
-
-	api.deprecateValue("flags", "EnableSSE2", 'Use `vectorextensions "SSE2"` instead.',
-	function(value)
-		vectorextensions("SSE2")
-	end,
-	function(value)
-		vectorextensions "Default"
-	end)
-
-
-	api.deprecateValue("flags", "FloatFast", 'Use `floatingpoint "Fast"` instead.',
-	function(value)
-		floatingpoint("Fast")
-	end,
-	function(value)
-		floatingpoint "Default"
-	end)
-
-
-	api.deprecateValue("flags", "FloatStrict", 'Use `floatingpoint "Strict"` instead.',
-	function(value)
-		floatingpoint("Strict")
-	end,
-	function(value)
-		floatingpoint "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NativeWChar", 'Use `nativewchar "On"` instead."',
-	function(value)
-		nativewchar("On")
-	end,
-	function(value)
-		nativewchar "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NoNativeWChar", 'Use `nativewchar "Off"` instead."',
-	function(value)
-		nativewchar("Off")
-	end,
-	function(value)
-		nativewchar "Default"
-	end)
-
-
-	api.deprecateValue("flags", "Optimize", 'Use `optimize "On"` instead.',
-	function(value)
-		optimize ("On")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "OptimizeSize", 'Use `optimize "Size"` instead.',
-	function(value)
-		optimize ("Size")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "OptimizeSpeed", 'Use `optimize "Speed"` instead.',
-	function(value)
-		optimize ("Speed")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "ReleaseRuntime", 'Use `runtime "Release"` instead.',
-	function(value)
-		runtime "Release"
-	end,
-	function(value)
-	end)
-
-
-	api.deprecateValue("flags", "ExtraWarnings", 'Use `warnings "Extra"` instead.',
-	function(value)
-		warnings "Extra"
-	end,
-	function(value)
-		warnings "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NoWarnings", 'Use `warnings "Off"` instead.',
-	function(value)
-		warnings "Off"
-	end,
-	function(value)
-		warnings "Default"
-	end)
-
-	api.deprecateValue("flags", "Managed", 'Use `clr "On"` instead.',
-	function(value)
-		clr "On"
-	end,
-	function(value)
-		clr "Off"
-	end)
-
-
-	api.deprecateValue("flags", "NoEditAndContinue", 'Use editandcontinue "Off"` instead.',
-	function(value)
-		editandcontinue "Off"
-	end,
-	function(value)
-		editandcontinue "On"
-	end)
-
-
-	-- 21 June 2016
-
-	api.deprecateValue("flags", "Symbols", 'Use `symbols "On"` instead',
-	function(value)
-		symbols "On"
-	end,
-	function(value)
-		symbols "Default"
-	end)
-
-
-	-- 13 April 2017
-
-	api.deprecateValue("flags", "WinMain", 'Use `entrypoint "WinMainCRTStartup"` instead',
-	function(value)
-		entrypoint "WinMainCRTStartup"
-	end,
-	function(value)
-		entrypoint "mainCRTStartup"
-	end)
-
-	-- 31 October 2017
-
-	api.deprecateValue("flags", "StaticRuntime", 'Use `staticruntime "On"` instead',
-	function(value)
-		staticruntime "On"
-	end,
-	function(value)
-		staticruntime "Default"
-	end)
-
-	-- 08 April 2018
-
-	api.deprecateValue("flags", "NoFramePointer", 'Use `omitframepointer "On"` instead.',
-	function(value)
-		omitframepointer("On")
-	end,
-	function(value)
-		omitframepointer("Default")
 	end)
 
 -----------------------------------------------------------------------------

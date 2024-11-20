@@ -172,7 +172,7 @@
 
 		filter "configurations:Debug"
 			defines     "_DEBUG"
-			flags       { "Symbols" }
+			symbols	    "On"
 
 		filter "configurations:Release"
 			defines     "NDEBUG"

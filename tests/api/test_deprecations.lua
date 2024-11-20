@@ -10,17 +10,48 @@
 
 
 	function suite.setup()
+		api.register {
+			name = "testsuiteflags",
+			kind = "list:string",
+			scope = "config",
+			allowed = {
+				"Symbols",
+				"Optimize",
+			}
+		}
+
+		api.deprecateValue("testsuiteflags", "Optimize", 'Use `optimize "On"` instead.',
+		function(value)
+			optimize ("On")
+		end,
+		function(value)
+			optimize "Off"
+		end)
+
+		api.deprecateValue("testsuiteflags", "Symbols", 'Use `symbols "On"` instead',
+		function(value)
+			symbols "On"
+		end,
+		function(value)
+			symbols "Default"
+		end)
+
 		workspace("MyWorkspace")
 		configurations { "Debug", "Release" }
+	end
+
+	
+	function suite.teardown()
+		api.unregister "testsuiteflags"
 	end
 
 	function suite.setsNewValue_whenOldValueIsRemovedViaWildcard_inSubConfig()
 		local prj = project "MyProject"
 			filter { "configurations:Debug" }
-				flags { "Symbols" }
+				testsuiteflags { "Symbols" }
 
 			filter { "*" }
-				removeflags { "*" }
+				removetestsuiteflags { "*" }
 
 		-- test output.
 		local cfg = test.getconfig(prj, "Debug", platform)
@@ -30,10 +61,10 @@
 
 	function suite.setsNewValue_whenOldValueIsRemovedInOtherConfig_inSubConfig()
 		local prj = project "MyProject"
-			flags { "Symbols" }
+			testsuiteflags { "Symbols" }
 
 			filter { "configurations:Release" }
-				removeflags { "*" }
+				removetestsuiteflags { "*" }
 
 		-- test output.
 		test.isequal("On",      test.getconfig(prj, "Debug", platform).Symbols)
@@ -44,7 +75,7 @@
 	function suite.dontRemoveFlagIfSetThroughNewApi()
 		local prj = project "MyProject"
 			floatingpoint "Fast"
-			removeflags "*"
+			removetestsuiteflags "*"
 
 		-- test output.
 		local cfg = test.getconfig(prj, "Debug", platform)
@@ -53,11 +84,11 @@
 
 
 	function suite.setsNewValue_whenOldValueFromParentIsRemovedInOtherConfig_inSubConfig()
-		flags { "Symbols" }
+		testsuiteflags { "Symbols" }
 
 		local prj = project "MyProject"
 			filter { "configurations:Release" }
-				removeflags { "*" }
+				removetestsuiteflags { "*" }
 
 		-- test output.
 		test.isequal("On",      test.getconfig(prj, "Debug", platform).Symbols)

@@ -66,12 +66,6 @@
 		test.contains("/Od", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_onNoFramePointers()
-		flags "NoFramePointer"
-		prepare()
-		test.contains("/Oy", msc.getcflags(cfg))
-	end
-
 	function suite.cflags_onOmitFramePointer()
 		omitframepointer "On"
 		prepare()
