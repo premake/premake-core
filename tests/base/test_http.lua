@@ -4,7 +4,7 @@
 -- Copyright (c) 2016, 2020 Jess Perkins and the Premake project
 --
 
-if http.get ~= nil and _OPTIONS["test-all"] then
+if http ~= nil and http.get ~= nil and _OPTIONS["test-all"] then
 	local p = premake
 
 	local suite = test.declare("premake_http")
