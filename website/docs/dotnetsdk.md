@@ -19,18 +19,22 @@ For more information see the MSDN documentation [here](https://learn.microsoft.c
 
 
 ## mstest ##
-SDK used for MSTest is `"3.6.1"`, to use another version create or update global.json near the solution.
+when using MSTest sdk a version has to be specified!
 ### Applies To ###
 
 Project configurations.
 
 ### Availability ###
 
-Premake 5.0 beta3 or later.
+Premake 5.0 beta4 or later.
 
 Visual studio is the only toolset currently supported.
 
 ### Examples ###
 ```lua
 dotnetsdk "Web"
+```
+
+```lua
+dotnetsdk "Web/3.4.0"
 ```
