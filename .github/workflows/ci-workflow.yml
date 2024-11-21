@@ -15,7 +15,9 @@ jobs:
       uses: actions/checkout@v4
     - name: Install dependencies
       if: matrix.depsrc == 'system'
-      run: sudo apt-get install libcurl4-openssl-dev
+      run: |
+        sudo apt-get update 
+        sudo apt-get -y install libcurl4-openssl-dev
     - name: Build
       run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }}" ./Bootstrap.sh
     - name: Test
