@@ -1,6 +1,6 @@
 --
 -- _preload.lua
--- Define the makefile action(s).
+-- Define the Visual Studio action(s).
 -- Copyright (c) Jess Perkins and the Premake project
 --
 
@@ -607,6 +607,27 @@
 		kind = "string",
 		tokens = "true",
 	}
+
+	p.api.register {
+		name = "mfc",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Off",
+			"On",
+			"Static",
+			"Dynamic",
+		}
+	}
+
+	p.api.deprecateValue("flags", "MFC", 'Use `mfc` instead.',
+	function(value)
+		mfc("On")
+	end,
+	function(value)
+		mfc("Off")
+	end)
 
 --
 -- Decide when the full module should be loaded.

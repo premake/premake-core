@@ -3225,8 +3225,14 @@
 
 
 	function m.useOfMfc(cfg)
-		if cfg.flags.MFC then
+		if (cfg.mfc == "On") then
 			m.element("UseOfMfc", nil, iif(cfg.staticruntime == "On", "Static", "Dynamic"))
+		elseif (cfg.mfc == "Off") then
+			m.element("UseOfMfc", nil, "false")
+		elseif (cfg.mfc == "Static") then
+			m.element("UseOfMfc", nil, "Static")
+		elseif (cfg.mfc == "Dynamic") then
+			m.element("UseOfMfc", nil, "Dynamic")
 		end
 	end
 
