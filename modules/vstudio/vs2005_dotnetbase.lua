@@ -90,7 +90,7 @@
 --
 	function dotnetbase.projectConfigurations(prj)
 		if _ACTION >= "vs2022" and #prj.configurations > 0 then
-			_p(2,'<Configurations>%s</Configurations>',table.implode(prj.configurations,"", "", ";"))
+			_p(2, '<Configurations>%s</Configurations>', table.implode(prj.configurations, "", "", ";"))
 		end
 	end
 --
