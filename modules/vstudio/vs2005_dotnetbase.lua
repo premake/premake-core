@@ -826,14 +826,16 @@
             ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
             ["MSTest"] = "MSTest.Sdk",
         }
+		
 		local parts = nil
+
 		if cfg.dotnetsdk then
 			parts = cfg.dotnetsdk:explode("/", true, 1)
 		end
 
 		local sdk = (parts and #parts > 0 and parts[1]) or cfg.dotnetsdk
 		if not parts or #parts < 2 then
-			-- prioritize WPF flag for compatibility
+			-- prioritize WPF flag for compatibility, remove if statement when cfg.flags api is deprecated
 			if cfg.flags.WPF then
 				return map["WindowsDesktop"]
 			end
@@ -847,9 +849,9 @@
 			return map[sdk or "Default"]
 
 		elseif parts and #parts == 2 then
-			return string.format("%s/%s",map[parts[1]] or parts[1],parts[2])
+			return string.format("%s/%s", map[parts[1]] or parts[1], parts[2])
 		end
-		
+
 		return map["Default"]
 	end
 
