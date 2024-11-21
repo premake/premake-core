@@ -177,26 +177,26 @@
 	function suite.remove_onExactValueMatch()
 		local f = field.get("flags")
 
-		local r, err = configset.store(cset, f, { "Symbols", "WinMain", "MFC" })
+		local r, err = configset.store(cset, f, { "MFC", "MultiProcessorCompile", "NoPCH" })
 		test.isnil(err)
 
-		configset.remove(cset, f, { "WinMain" })
+		configset.remove(cset, f, { "MFC" })
 
 		local result = configset.fetch(cset, f)
-		test.isequal({ "Symbols", "MFC" }, result)
+		test.isequal({ "MultiProcessorCompile", "NoPCH" }, result)
 	end
 
 
 	function suite.remove_onMultipleValues()
 		local f = field.get("flags")
 
-		local r, err = configset.store(cset, f, { "Symbols", "Maps", "WinMain", "MFC" })
+		local r, err = configset.store(cset, f, { "Maps", "MFC", "MultiProcessorCompile", "NoPCH" })
 		test.isnil(err)
 
 		configset.remove(cset, f, { "Maps", "MFC" })
 
 		local result = configset.fetch(cset, f)
-		test.isequal({ "Symbols", "WinMain" }, result)
+		test.isequal({ "MultiProcessorCompile", "NoPCH" }, result)
 	end
 
 

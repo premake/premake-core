@@ -32,27 +32,10 @@ flags { "flag_list" }
 | OmitDefaultLibrary    | Omit the specification of a runtime library in object files.        |
 | RelativeLinks         | Forces the linker to use relative paths to libraries instead of absolute paths. |
 | ShadowedVariables     | Warn when a variable, type declaration, or function is shadowed.    |
-| StaticRuntime         | Perform a static link against the standard runtime libraries.       | Deprecated - use staticruntime "On" instead. |
 | UndefinedIdentifiers | Warn if an undefined identifier is evaluated in an #if directive.   |
-| WinMain               | Use `WinMain()` as entry point for Windows applications, rather than the default `main()`. |
 | WPF                   | Mark the project as using Windows Presentation Framework, rather than WinForms. |
-| Component             | Needs documentation                                                        |
 | DebugEnvsDontMerge    | Needs documentation                                                        |
 | DebugEnvsInherit      | Needs documentation                                                        |
-| EnableSSE             | Needs documentation                                                        |
-| EnableSSE2            | Needs documentation                                                        |
-| ExtraWarnings         | Needs documentation                                                        |
-| FloatFast             | Needs documentation                                                        |
-| FloatStrict           | Needs documentation                                                        |
-| Managed               | Needs documentation                                                        |
-| NoNativeWChar         | Needs documentation                                                        |
-| NoEditAndContinue     | Needs documentation                                                        |
-| NoWarnings            | Needs documentation                                                        |
-| Optimize              | Needs documentation                                                        |
-| OptimizeSize          | Needs documentation                                                        |
-| OptimizeSpeed         | Needs documentation                                                        |
-| ReleaseRuntime        | Needs documentation                                                        |
-| Symbols               | Needs documentation                                                        |
 | Thumb                 | Needs documentation                                                        |
 
 ### Applies To ###
