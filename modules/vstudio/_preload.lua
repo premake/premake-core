@@ -298,15 +298,37 @@
 		name = "dotnetsdk",
 		scope = "project",
 		kind = "string",
-		allowed = {
-			"Default",
-			"Web",
-			"Razor",
-			"Worker",
-			"Blazor",
-			"WindowsDesktop",
-			"MSTest"
-		}
+		allowed = function (value)
+    -- value is expected to be in the format <sdk>/<version>
+    local parts = value:explode("/", true, 1)
+	local sdk = parts[1] or value
+	local allowedSdks = {
+				"Default",
+				"Web",
+				"Razor",
+				"Worker",
+				"Blazor",
+				"WindowsDesktop",
+				"MSTest"
+			}
+    -- Only perform the check when a version is provided to avoid infinite recursing.
+    -- Check that the specified sdk is in the allowed list
+   	for _, allowed in ipairs(allowedSdks) do
+        if sdk == allowed then
+        	return value
+        end
+	end
+
+    -- The specified sdk is not recognized
+	if parts and #parts == 2 then
+		if sdk and sdk:match("^[%w%-]+$") then
+			return value
+		end
+	end
+
+	return nil
+end
+
 	}
 
 --

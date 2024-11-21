@@ -826,36 +826,35 @@
             ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
             ["MSTest"] = "MSTest.Sdk",
         }
+		local parts = nil
+		if cfg.dotnetsdk then
+			parts = cfg.dotnetsdk:explode("/", true, 1)
+		end
 
-		if cfg.flags.WPF then
-			return map["WindowsDesktop"]
-        end
+		local sdk = (parts and #parts > 0 and parts[1]) or cfg.dotnetsdk
+		if not parts or #parts < 2 then
+			-- prioritize WPF flag for compatibility
+			if cfg.flags.WPF then
+				return map["WindowsDesktop"]
+			end
 
-        return map[cfg.dotnetsdk or "Default"]
-	end
+			if sdk == "MSTest" then
+				-- If sdk is MSTest, we need exactly 2 parts
+				p.error("MSTest requires a version to be specified!")
+				return nil
+			end
 
-	function dotnetbase.netcore.dotnetsdk(cfg)
-		dotnetbase.generate_global_json(cfg)
+			return map[sdk or "Default"]
+
+		elseif parts and #parts == 2 then
+			return string.format("%s/%s",map[parts[1]] or parts[1],parts[2])
+		end
+		
+		return map["Default"]
 	end
 
 	function dotnetbase.allowUnsafeBlocks(cfg)
 		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
-		end
-	end
-
-	function dotnetbase.output_global_json(prj)
-		if prj.dotnetsdk == "MSTest" then
-			local globaljson = json.decode(io.readfile(path.join(prj.workspace.location, "global.json"))) or {}
-			globaljson["msbuild-sdks"] = globaljson["msbuild-sdks"] or {}
-			globaljson["msbuild-sdks"]["MSTest.Sdk"] = "3.6.1"
-
-			_p(json.encode(globaljson))
-		end
-	end
-	function dotnetbase.generate_global_json(prj)
-		local content = p.capture(function() dotnetbase.output_global_json(prj) end)
-		if content ~= nil and #content > 0 then
-			p.generate(prj, path.join(prj.workspace.location, "global.json"), function() p.outln(content) end)
 		end
 	end

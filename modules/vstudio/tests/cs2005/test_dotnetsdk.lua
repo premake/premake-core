@@ -50,7 +50,7 @@
 	function suite.testDefault()
 		prepare()
 		setConfig()
-		dotnetsdk "Web"
+		dotnetsdk "Default"
 		test.capture [[
 <Project Sdk="Microsoft.NET.Sdk">
 	]]
@@ -108,11 +108,11 @@
 
 	function suite.testMSTest()
 		prepare()
-		dotnetsdk "MSTest"
+		dotnetsdk "MSTest/3.4.0"
 		setConfig()
 
 		test.capture [[
-<Project Sdk="MSTest.Sdk">
+<Project Sdk="MSTest.Sdk/3.4.0">
 		]]
 	end
 
@@ -127,19 +127,62 @@
 		]]
 	end
 
-	function suite.testMSTestGlobalJSON()
+	function suite.testWebVersion()
 		prepare()
-		local cfg = test.getconfig(prj, "Debug")
-		prj.dotnetsdk = "MSTest"
-		dn2005.output_global_json(prj)
-		test.capture[[{"msbuild-sdks":{"MSTest.Sdk": "3.6.1"}}]]
+		dotnetsdk "Web/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.Web/3.4.0">
+		]]
 	end
 
-	function suite.testMSTestGlobalJSONExists()
+	function suite.testRazorVersion()
 		prepare()
-		local cfg = test.getconfig(prj, "Debug")
-		prj.dotnetsdk = "MSTest"
-		p.generate(prj, path.join(prj.workspace.location, "global.json"), function() p.outln('{"test":"global"') end)
-		dn2005.output_global_json(prj)
-		test.capture[[{"test":"global","msbuild-sdks":{"MSTest.Sdk": "3.6.1"}}]]
+		dotnetsdk "Razor/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.Razor/3.4.0">
+		]]
+	end
+
+	function suite.testWorkerVersion()
+		prepare()
+		dotnetsdk "Worker/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.Worker/3.4.0">
+		]]
+	end
+
+	function suite.testBlazorVersion()
+		prepare()
+		dotnetsdk "Blazor/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly/3.4.0">
+		]]
+	end
+
+	function suite.testWindowsDesktopVersion()
+		prepare()
+		dotnetsdk "WindowsDesktop/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop/3.4.0">
+		]]
+	end
+
+	function suite.testCustomSDKVersion()
+		prepare()
+		dotnetsdk "CustomSdk/3.4.0"
+		setConfig()
+
+		test.capture [[
+<Project Sdk="CustomSdk/3.4.0">
+		]]
 	end
