@@ -85,7 +85,14 @@
 		_p(1,'</PropertyGroup>')
 	end
 
-
+--
+-- Write the available configurations to have correct configuration mapping on vs2022 format and later.
+--
+	function dotnetbase.projectConfigurations(prj)
+		if _ACTION >= "vs2022" and #prj.configurations > 0 then
+			_p(2, '<Configurations>%s</Configurations>', table.implode(prj.configurations, "", "", ";"))
+		end
+	end
 --
 -- Write out the settings for the project configurations.
 --
