@@ -1,7 +1,7 @@
 --
 -- _preload.lua
 -- Define the makefile action(s).
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -15,12 +15,12 @@
 		trigger         = "gmake",
 		shortname       = "GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
-		toolset         = "gcc",
+		toolset         = iif(os.target() == p.MACOSX, "clang", "gcc"),
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "None" },
 		valid_languages = { "C", "C++", "C#" },
 		valid_tools     = {
-			cc     = { "clang", "gcc" },
+			cc     = { "clang", "gcc", "cosmocc" },
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 

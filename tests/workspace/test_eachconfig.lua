@@ -1,7 +1,7 @@
 --
 -- tests/workspace/test_eachconfig.lua
 -- Automated test suite for the workspace-level configuration iterator.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("workspace_eachconfig")

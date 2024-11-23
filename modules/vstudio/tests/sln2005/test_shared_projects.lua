@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/sln2005/test_shared_projects.lua
 -- Validate generation of Visual Studio 2005+ SharedMSBuildProjectFiles entries.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

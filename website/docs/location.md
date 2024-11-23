@@ -29,7 +29,7 @@ workspace "MyWorkspace"
   location "../build"
 ```
 
-If you plan to build with multiple tools from the same source tree you might want to split up the project files by toolset. The [_ACTION](premake_ACTION.md) global variable contains the current toolset identifier, as specified on the command line. Note that Lua syntax requires parenthesis around the function parameters in this case.
+If you plan to build with multiple tools from the same source tree you might want to split up the project files by toolset. The [_ACTION](globals/premake_ACTION.md) global variable contains the current toolset identifier, as specified on the command line. Note that Lua syntax requires parenthesis around the function parameters in this case.
 
 ```lua
 location ("../build/" .. _ACTION)

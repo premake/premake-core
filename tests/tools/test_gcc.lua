@@ -1,7 +1,7 @@
 --
 -- tests/test_gcc.lua
 -- Automated test suite for the GCC toolset interface.
--- Copyright (c) 2009-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -33,9 +33,18 @@
 
 	function suite.tools_onDefaults()
 		prepare()
-		test.isnil(gcc.gettoolname(cfg, "cc"))
-		test.isnil(gcc.gettoolname(cfg, "cxx"))
-		test.isnil(gcc.gettoolname(cfg, "ar"))
+		test.isequal("gcc", gcc.gettoolname(cfg, "cc"))
+		test.isequal("g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ar", gcc.gettoolname(cfg, "ar"))
+		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_withGcc()
+		toolset "gcc"
+		prepare()
+		test.isequal("gcc", gcc.gettoolname(cfg, "cc"))
+		test.isequal("g++", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ar", gcc.gettoolname(cfg, "ar"))
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
@@ -48,6 +57,14 @@
 		test.isequal("test-prefix-windres", gcc.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_forVersion()
+		toolset "gcc-16"
+		prepare()
+		test.isequal("gcc-16", gcc.gettoolname(cfg, "cc"))
+		test.isequal("g++-16", gcc.gettoolname(cfg, "cxx"))
+		test.isequal("ar-16", gcc.gettoolname(cfg, "ar"))
+		test.isequal("windres-16", gcc.gettoolname(cfg, "rc"))
+	end
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.
@@ -372,7 +389,25 @@
 		sanitize { "Address" }
 		prepare()
 		test.contains({ "-fsanitize=address" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=address" }, gcc.getcflags(cfg))
 		test.contains({ "-fsanitize=address" }, gcc.getldflags(cfg))
+	end
+
+	function suite.cxxflags_onSanitizeThread()
+		sanitize { "Thread" }
+		prepare()
+		test.contains({ "-fsanitize=thread" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=thread" }, gcc.getcflags(cfg))
+		test.contains({ "-fsanitize=thread" }, gcc.getldflags(cfg))
+	end
+
+	-- UBSan
+	function suite.cxxflags_onSanitizeUndefined()
+		sanitize { "UndefinedBehavior" }
+		prepare()
+		test.contains({ "-fsanitize=undefined" }, gcc.getcxxflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, gcc.getcflags(cfg))
+		test.contains({ "-fsanitize=undefined" }, gcc.getldflags(cfg))
 	end
 
 --
@@ -794,6 +829,17 @@
 
 
 --
+-- Check handling of linker flag.
+--
+
+function suite.ldflags_linker_lld()
+	linker "LLD"
+	prepare()
+	test.contains("-fuse-ld=lld", gcc.getldflags(cfg))
+end
+
+
+--
 -- Check handling of link time optimization flag.
 --
 
@@ -839,176 +885,204 @@
 	function suite.cflags_onCDefault()
 		cdialect "Default"
 		prepare()
-		test.contains({ }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC89()
 		cdialect "C89"
 		prepare()
 		test.contains({ "-std=c89" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC90()
 		cdialect "C90"
 		prepare()
 		test.contains({ "-std=c90" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC99()
 		cdialect "C99"
 		prepare()
 		test.contains({ "-std=c99" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC11()
 		cdialect "C11"
 		prepare()
 		test.contains({ "-std=c11" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_onC17()
 		cdialect "C17"
 		prepare()
 		test.contains({ "-std=c17" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu89()
 		cdialect "gnu89"
 		prepare()
 		test.contains({ "-std=gnu89" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu90()
 		cdialect "gnu90"
 		prepare()
 		test.contains({ "-std=gnu90" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu99()
 		cdialect "gnu99"
 		prepare()
 		test.contains({ "-std=gnu99" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu11()
 		cdialect "gnu11"
 		prepare()
 		test.contains({ "-std=gnu11" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cflags_ongnu17()
 		cdialect "gnu17"
 		prepare()
 		test.contains({ "-std=gnu17" }, gcc.getcflags(cfg))
-		test.contains({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onCppDefault()
 		cppdialect "Default"
 		prepare()
-		test.contains({ }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp98()
 		cppdialect "C++98"
 		prepare()
 		test.contains({ "-std=c++98" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp11()
 		cppdialect "C++11"
 		prepare()
 		test.contains({ "-std=c++11" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp14()
 		cppdialect "C++14"
 		prepare()
 		test.contains({ "-std=c++14" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp17()
 		cppdialect "C++17"
 		prepare()
 		test.contains({ "-std=c++17" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp2a()
 		cppdialect "C++2a"
 		prepare()
 		test.contains({ "-std=c++2a" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCpp20()
 		cppdialect "C++20"
 		prepare()
 		test.contains({ "-std=c++20" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp2b()
+		cppdialect "C++2b"
+		prepare()
+		test.contains({ "-std=c++2b" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp23()
+		cppdialect "C++23"
+		prepare()
+		test.contains({ "-std=c++23" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppLatest()
 		cppdialect "C++latest"
 		prepare()
-		test.contains({ "-std=c++20" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.contains({ "-std=c++23" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu98()
 		cppdialect "gnu++98"
 		prepare()
 		test.contains({ "-std=gnu++98" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu11()
 		cppdialect "gnu++11"
 		prepare()
 		test.contains({ "-std=gnu++11" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu14()
 		cppdialect "gnu++14"
 		prepare()
 		test.contains({ "-std=gnu++14" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu17()
 		cppdialect "gnu++17"
 		prepare()
 		test.contains({ "-std=gnu++17" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu2a()
 		cppdialect "gnu++2a"
 		prepare()
 		test.contains({ "-std=gnu++2a" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 	function suite.cxxflags_onCppGnu20()
 		cppdialect "gnu++20"
 		prepare()
 		test.contains({ "-std=gnu++20" }, gcc.getcxxflags(cfg))
-		test.contains({ }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu2b()
+		cppdialect "gnu++23"
+		prepare()
+		test.contains({ "-std=gnu++23" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu23()
+		cppdialect "gnu++2b"
+		prepare()
+		test.contains({ "-std=gnu++2b" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
 --
@@ -1066,28 +1140,28 @@
 	function suite.cxxflags_onVisibilityDefault()
 		visibility "Default"
 		prepare()
-		test.excludes({ "-fvisibility=default" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=default" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=default" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityHidden()
 		visibility "Hidden"
 		prepare()
-		test.excludes({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=hidden" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityInternal()
 		visibility "Internal"
 		prepare()
-		test.excludes({ "-fvisibility=internal" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=internal" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=internal" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onVisibilityProtected()
 		visibility "Protected"
 		prepare()
-		test.excludes({ "-fvisibility=protected" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility=protected" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility=protected" }, gcc.getcxxflags(cfg))
 	end
 
@@ -1105,7 +1179,7 @@
 	function suite.cxxflags_onInlinesVisibilityHidden()
 		inlinesvisibility "Hidden"
 		prepare()
-		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end
 

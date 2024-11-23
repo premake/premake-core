@@ -1,7 +1,7 @@
 --
 -- io.lua
 -- Additions to the I/O namespace.
--- Copyright (c) 2008-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2014 Jess Perkins and the Premake project
 --
 
 

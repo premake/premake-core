@@ -2,8 +2,8 @@
 -- xcode/xcode4_workspace.lua
 -- Generate an Xcode workspace.
 -- Author Mihai Sebea
--- Modified by Jason Perkins
--- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+-- Modified by Jess Perkins
+-- Copyright (c) 2014-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

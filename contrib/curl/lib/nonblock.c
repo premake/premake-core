@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -17,6 +17,8 @@
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
+ *
+ * SPDX-License-Identifier: curl
  *
  ***************************************************************************/
 
@@ -29,9 +31,6 @@
 #include <fcntl.h>
 #endif
 
-#if (defined(HAVE_IOCTL_FIONBIO) && defined(NETWARE))
-#include <sys/filio.h>
-#endif
 #ifdef __VMS
 #include <in.h>
 #include <inet.h>
@@ -47,23 +46,26 @@
 int curlx_nonblock(curl_socket_t sockfd,    /* operate on this */
                    int nonblock   /* TRUE or FALSE */)
 {
-#if defined(USE_BLOCKING_SOCKETS)
-
-  return 0; /* returns success */
-
-#elif defined(HAVE_FCNTL_O_NONBLOCK)
-
-  /* most recent unix versions */
+#if defined(HAVE_FCNTL_O_NONBLOCK)
+  /* most recent Unix versions */
   int flags;
   flags = sfcntl(sockfd, F_GETFL, 0);
+  if(flags < 0)
+    return -1;
+  /* Check if the current file status flags have already satisfied
+   * the request, if so, it is no need to call fcntl() to replicate it.
+   */
+  if(!!(flags & O_NONBLOCK) == !!nonblock)
+    return 0;
   if(nonblock)
-    return sfcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+    flags |= O_NONBLOCK;
   else
-    return sfcntl(sockfd, F_SETFL, flags & (~O_NONBLOCK));
+    flags &= ~O_NONBLOCK;
+  return sfcntl(sockfd, F_SETFL, flags);
 
 #elif defined(HAVE_IOCTL_FIONBIO)
 
-  /* older unix versions */
+  /* older Unix versions */
   int flags = nonblock ? 1 : 0;
   return ioctl(sockfd, FIONBIO, &flags);
 
@@ -71,7 +73,7 @@ int curlx_nonblock(curl_socket_t sockfd,    /* operate on this */
 
   /* Windows */
   unsigned long flags = nonblock ? 1UL : 0UL;
-  return ioctlsocket(sockfd, FIONBIO, &flags);
+  return ioctlsocket(sockfd, (long)FIONBIO, &flags);
 
 #elif defined(HAVE_IOCTLSOCKET_CAMEL_FIONBIO)
 
@@ -81,7 +83,7 @@ int curlx_nonblock(curl_socket_t sockfd,    /* operate on this */
 
 #elif defined(HAVE_SETSOCKOPT_SO_NONBLOCK)
 
-  /* BeOS */
+  /* Orbis OS */
   long b = nonblock ? 1L : 0L;
   return setsockopt(sockfd, SOL_SOCKET, SO_NONBLOCK, &b, sizeof(b));
 

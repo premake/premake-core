@@ -1,7 +1,7 @@
 --
 -- tests/config/test_linkinfo.lua
 -- Test the config object's link target accessor.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

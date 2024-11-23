@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_objects.lua
 -- Validate the list of objects for a makefile.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("make_cpp_objects")
@@ -232,6 +232,28 @@ endif
 		files { "hello.cpp" }
 		filter { "Debug", "files:hello.cpp" }
 		flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+OBJECTS := \
+
+RESOURCES := \
+
+CUSTOMFILES := \
+
+ifeq ($(config),release)
+  OBJECTS += \
+	$(OBJDIR)/hello.o \
+
+endif
+
+		]]
+	end
+
+	function suite.excludedFromBuild_onBuildactionNone()
+		files { "hello.cpp" }
+		filter { "Debug", "files:hello.cpp" }
+			buildaction "None"
+		filter {}
 		prepare()
 		test.capture [[
 OBJECTS := \

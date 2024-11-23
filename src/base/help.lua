@@ -1,7 +1,7 @@
 --
 -- help.lua
 -- User help, displayed on /help option.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jess Perkins and the Premake project
 --
 
 
@@ -51,12 +51,16 @@
 				printf(" --%-" .. length .. "s %s", trigger, description)
 				if (option.allowed) then
 					local function compareValue(a, b)
+						if type(a) == "function" then return false end
+						if type(b) == "function" then return true end
 						return a[1] < b[1]
 					end
 					table.sort(option.allowed, compareValue)
 
 					for _, value in ipairs(option.allowed) do
-						printf("     %-" .. length-1 .. "s %s", value[1], value[2])
+						if type(value) ~= "function" then
+							printf("     %-" .. length-1 .. "s %s", value[1], value[2])
+						end
 					end
 					printf("")
 				end

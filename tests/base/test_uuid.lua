@@ -1,7 +1,7 @@
 --
 -- tests/base/test_uuid.lua
 -- Automated test suite for UUID generation.
--- Copyright (c) 2008-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2012 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("os_uuid")

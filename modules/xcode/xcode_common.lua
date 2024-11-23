@@ -1,7 +1,7 @@
 --
 -- xcode_common.lua
 -- Functions to generate the different sections of an Xcode project.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -43,6 +43,7 @@
 			[".S"] = "Sources",
 			[".swift"] = "Sources",
 			[".metal"] = "Resources",
+			[".xcprivacy"] = "Resources",
 		}
 		if node.isResource then
 			return "Resources"
@@ -147,6 +148,7 @@
 			[".swift"]     = "sourcecode.swift",
 			[".metal"]     = "sourcecode.metal",
 			[".dylib"]     = "compiled.mach-o.dylib",
+			[".xcprivacy"] = "PrivacyInfo.xcprivacy",
 		}
 		return types[path.getextension(node.path)] or "text"
 	end
@@ -278,16 +280,8 @@
 --
 
 	function xcode.getToolSet(cfg)
-		local default = "clang"
-		local minOSVersion = project.systemversion(cfg)
-		if minOSVersion ~= nil
-			and cfg.system == p.MACOSX
-			and p.checkVersion(minOSVersion, "<10.7")
-		then
-			default = "gcc"
-		end
 
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
 			error("Invalid toolset '" .. cfg.toolset .. "'")
 		end
@@ -1067,7 +1061,7 @@
 
 			if #commands > 0 then
 				table.insert(commands, 1, 'set -e') -- Tells the shell to exit when any command fails
-				commands = os.translateCommands(commands, p.MACOSX)
+				commands = os.translateCommandsAndPaths(commands, tr.project.basedir, tr.project.location, p.MACOSX)
 				if not wrapperWritten then
 					_p('/* Begin PBXShellScriptBuildPhase section */')
 					wrapperWritten = true
@@ -1309,7 +1303,7 @@
 						-- ms this seems to work on visual studio !!!
 						-- why not in xcode ??
 						local filecfg = fileconfig.getconfig(node, cfg)
-						if filecfg and filecfg.flags.ExcludeFromBuild then
+						if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
 						--fileNameList = fileNameList .. " " ..filecfg.name
 							table.insert(fileNameList, xcode.escapeArg(node.name))
 						end
@@ -1406,6 +1400,8 @@
 		["C++17"] = "c++1z",
 		["C++2a"] = "c++2a",
 		["C++20"] = "c++2a",
+		["C++2b"] = "c++2b",
+		["C++23"] = "c++23",
 		["gnu++98"] = "gnu++98",
 		["gnu++0x"] = "gnu++0x",
 		["gnu++11"] = "gnu++0x",  -- Xcode project GUI uses gnu++0x, but gnu++11 also works
@@ -1415,6 +1411,8 @@
 		["gnu++17"] = "gnu++1z",
 		["gnu++2a"] = "gnu++2a",
 		["gnu++20"] = "gnu++2a",
+		["gnu++2b"] = "gnu++2b",
+		["gnu++23"] = "gnu++23",
 	}
 
 	function xcode.XCBuildConfiguration_CppLanguageStandard(settings, cfg)
@@ -1596,7 +1594,7 @@
 
 		settings['OTHER_LDFLAGS'] = table.join(flags, cfg.linkoptions)
 
-		if cfg.flags.StaticRuntime then
+		if cfg.staticruntime == "On" then
 			settings['STANDARD_C_PLUS_PLUS_LIBRARY_TYPE'] = 'static'
 		end
 

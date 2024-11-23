@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_platform_groups.lua
 -- Check creation of per-platform property groups in VS2005+ C# projects.
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

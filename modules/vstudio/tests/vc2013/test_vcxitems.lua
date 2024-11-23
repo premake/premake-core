@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2013/test_vcxitems.lua
 -- Validate generation of the vcxitems project.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -12,6 +12,27 @@
 -- Register the Android extension
 --
 
+	api.register {
+		name = "endian",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Little",
+			"Big",
+		},
+	}
+
+	api.register {
+		name = "fpu",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Software",
+			"Hardware",
+		}
+	}
+
 	api.addAllowed("system", p.ANDROID)
 	api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	api.addAllowed("vectorextensions", { "NEON", "MXU" })
@@ -19,6 +40,15 @@
 	api.addAllowed("flags", { "Thumb" })
 	api.addAllowed("kind", p.PACKAGING)
 
+	api.addAllowed("toolchainversion", {
+		"4.6", -- NDK GCC versions
+		"4.8",
+		"4.9",
+		"3.4", -- NDK clang versions
+		"3.5",
+		"3.6",
+		"3.8",
+		"5.0", })
 
 	premake.action._list["vs2015"].valid_kinds = table.join(premake.action._list["vs2015"].valid_kinds, { p.PACKAGING })
 	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.PACKAGING })
@@ -52,22 +82,6 @@
 		name = "androidapilevel",
 		scope = "config",
 		kind = "integer",
-	}
-
-	api.register {
-		name = "toolchainversion",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"4.6", -- NDK GCC versions
-			"4.8",
-			"4.9",
-			"3.4", -- NDK clang versions
-			"3.5",
-			"3.6",
-			"3.8",
-			"5.0",
-		},
 	}
 
 	api.register {

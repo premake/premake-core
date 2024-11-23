@@ -2,8 +2,8 @@
 -- xcode/tests/test_xcode4_workspace.lua
 -- Validate generation for Xcode workspaces.
 -- Author Mihai Sebea
--- Modified by Jason Perkins
--- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+-- Modified by Jess Perkins
+-- Copyright (c) 2014-2015 Jess Perkins and the Premake project
 ---
 
 	local suite = test.declare("xcode4_workspace")

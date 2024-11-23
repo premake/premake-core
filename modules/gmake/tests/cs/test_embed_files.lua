@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cs/test_embed_files.lua
 -- Tests embedded file listings for C# Makefiles.
--- Copyright (c) 2013-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

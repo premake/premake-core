@@ -1,7 +1,7 @@
 --
 -- _preload.lua
 -- Define the makefile action(s).
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -29,6 +29,278 @@
 	p.api.addAllowed("debugger", "VisualStudioRemote")
 	p.api.addAllowed("debugger", "VisualStudioWebBrowser")
 	p.api.addAllowed("debugger", "VisualStudioWebService")
+
+	p.api.register {
+		name = "allmodulespublic",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "assemblydebug",
+		scope = "config",
+		kind  = "boolean"
+	}
+
+	p.api.register {
+		name = "atl",
+		scope = "config",
+		kind  = "string",
+		allowed = {
+			"Off",
+			"Dynamic",
+			"Static",
+		},
+	}
+
+	p.api.register {
+		name = "buildcustomizations",
+		scope = "project",
+		kind = "list:string",
+	}
+
+	p.api.register {
+		name = "builddependencies",
+		scope = { "rule" },
+		kind = "list:string",
+		tokens = true,
+		pathVars = true,
+	}
+	p.api.alias("builddependencies", "buildDependencies") -- for backward compatibility
+
+	p.api.register {
+		name = "buildlog",
+		scope = { "config" },
+		kind = "path",
+		tokens = true,
+		pathVars = true,
+	}
+
+	p.api.register {
+		name = "callingconvention",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Cdecl",
+			"FastCall",
+			"StdCall",
+			"VectorCall",
+		}
+	}
+
+	p.api.register {
+		name = "cleanextensions",
+		scope = "config",
+		kind = "list:string",
+	}
+	p.api.alias("cleanextensions", "cleanExtensions") -- for backward compatibility
+
+	p.api.register {
+		name = "conformancemode",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "consumewinrtextension",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "customtoolnamespace",
+		scope = "config",
+		kind = "string",
+	}
+
+	p.api.register {
+		name = "debuggertype",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Mixed",
+			"NativeOnly",
+			"ManagedOnly",
+			"NativeWithManagedCore"
+		}
+	}
+
+	p.api.register {
+		name = "documentationfile",
+		scope = "project",
+		kind = "string",
+	}
+
+	p.api.register {
+		name = "dotnetframework",
+		scope = "config",
+		kind = "string",
+	}
+	p.api.alias("dotnetframework", "framework") -- for backward compatibility
+
+	p.api.register {
+		name = "dpiawareness",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"None",
+			"High",
+			"HighPerMonitor",
+		}
+	}
+
+	p.api.register {
+		name = "enabledefaultcompileitems",
+		scope = "config",
+		kind = "boolean",
+		default = false
+	}
+
+	p.api.register {
+		name = "externalanglebrackets",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off",
+		},
+	}
+
+	p.api.register {
+		name = "fastuptodate",
+		scope = "project",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "floatingpointexceptions",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "functionlevellinking",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "forceusings",
+		scope = "config",
+		kind = "list:file",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "ignoredefaultlibraries",
+		scope = "config",
+		kind = "list:mixed",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "imageoptions",
+		scope = "config",
+		kind = "list:string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "imagepath",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "inheritdependencies",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "inlining",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Disabled",
+			"Explicit",
+			"Auto"
+		}
+	}
+
+	p.api.register {
+		name = "intrinsics",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "justmycode",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.register {
+		name = "largeaddressaware",
+		scope = "config",
+		kind = "boolean",
+	}
+
+	p.api.register {
+		name = "locale",
+		scope = "config",
+		kind = "string",
+		tokens = false,
+	}
+
+	p.api.register {
+		name = "namespace",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "nativewchar",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off",
+		}
+	}
+
+	p.api.register {
+		name = "pchsource",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "preferredtoolarchitecture",
+		scope = "workspace",
+		kind = "string",
+		allowed = {
+			"Default",
+			p.X86,
+			p.X86_64,
+		}
+	}
+
+	p.api.register {
+		name = "removeunreferencedcodedata",
+		scope = "config",
+		kind = "boolean"
+	}
 
 	p.api.register {
 		name = "shaderoptions",
@@ -65,6 +337,7 @@
 			"Hull",
 			"Domain",
 			"Compute",
+			"Library",
 			"Mesh",
 			"Amplification",
 			"Texture",
@@ -92,7 +365,8 @@
 			"6.2",
 			"6.3",
 			"6.4",
-			"6.5"
+			"6.5",
+			"6.6"
 		}
 	}
 
@@ -143,13 +417,55 @@
 	}
 
 	p.api.register {
-		name = "externalanglebrackets",
+		name = "stringpooling",
 		scope = "config",
-		kind = "string",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
 		allowed = {
-			"On",
-			"Off",
-		},
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
+		}
+	}
+
+	p.api.register {
+		name = "symbolspath",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "tailcalls",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "toolsversion",
+		scope = "project",
+		kind = "string",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "usefullpaths",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "usingdirs",
+		scope = "config",
+		kind = "list:directory",
+		tokens = true,
 	}
 
 	p.api.register {   -- DEPRECATED 2019-10-21
@@ -193,6 +509,103 @@
 			"On",
 			"Off"
 		}
+	}
+
+	p.api.register {
+		name = "enablemodules",
+		scope = { "config" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.register {
+		name = "buildstlmodules",
+		scope = { "config" },
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.register {
+		name = "clangtidy",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "runcodeanalysis",
+		scope = "config",
+		kind = "boolean"
+	}
+
+	p.api.register {
+		name = "vsprops",
+		scope = "config",
+		kind = "list:table",
+		tokens = true,
+	}
+
+	p.api.register {
+		name = "toolchainversion",
+		scope = "config",
+		kind = "string",
+		allowed = {}
+	}
+
+--
+-- Register Linux properties
+--
+
+	p.api.addAllowed("toolchainversion", { "remote", "wsl", "wsl2" })
+
+	-- Directory in the remote machine where our files will be copied before compilation
+	p.api.register {
+		name = "remoterootdir",
+		scope = "config",
+		kind = "string",
+	}
+
+	-- Relative per-project directory. Set to empty for the entire project to be copied as is
+	-- Should default to empty really for the more seamless experience
+	p.api.register {
+		name = "remoteprojectrelativedir",
+		scope = "config",
+		kind = "string",
+	}
+
+	-- Directory in the remote machine where the build is deployed
+	-- Only applies to WSL projects
+	p.api.register {
+		name = "remotedeploydir",
+		scope = "config",
+		kind = "string",
+	}
+
+	p.api.register {
+		name = "remoteprojectdir",
+		scope = "config",
+		kind = "string",
+	}
+
+	-- Directory of LLVM install
+	p.api.register {
+		name = "llvmdir",
+		scope = "config",
+		kind = "directory",
+		tokens = "true",
+	}
+
+	-- Version of LLVM Install
+	p.api.register {
+		name = "llvmversion",
+		scope = "config",
+		kind = "string",
+		tokens = "true",
 	}
 
 --

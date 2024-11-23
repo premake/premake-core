@@ -6,7 +6,7 @@
 -- and actions. Fills in computed values (e.g. object directories) and
 -- optimizes the layout of the data for faster fetches.
 --
--- Copyright (c) 2002-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -536,7 +536,7 @@
 		-- external Visual Studio project files.
 
 		local system = os.target()
-		local architecture = nil
+		local architecture = os.targetarch()
 		local toolset = p.action.current().toolset
 
 		if platform then
@@ -754,7 +754,7 @@
 
 			for cfg in p.project.eachconfig(prj) do
 				local fcfg = p.fileconfig.getconfig(file, cfg)
-				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild then
+				if fcfg ~= nil and not fcfg.flags.ExcludeFromBuild and fcfg.buildaction ~= "None" then
 					oven.uniqueSequence(fcfg, cfg, sequences, bases)
 				end
 			end

@@ -1,10 +1,11 @@
 /**
 * \file   path_join.c
 * \brief  Join two or more pieces of a file system path.
-* \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+* \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
 */
 
 #include "premake.h"
+#include <assert.h>
 #include <string.h>
 #include "path_isabsolute.h"
 
@@ -137,7 +138,7 @@ int path_deferred_join(lua_State* L)
 }
 
 
-int do_path_has_deferred_join(const char* path)
+static int do_path_has_deferred_join(const char* path)
 {
 	return (strchr(path, DEFERRED_JOIN_DELIMITER) != NULL);
 }
@@ -150,6 +151,17 @@ int path_has_deferred_join(lua_State* L)
 	return 1;
 }
 
+// Copy string "in" with at most "insz" chars to buffer "out", which
+// is "outsz" bytes long. The output is always 0-terminated. Unlike
+// strncpy(), strncpy_t() does not zero fill remaining space in the
+// output buffer:
+// Credit: https://stackoverflow.com/a/58237928
+static char* strncpy_t(char* out, size_t outsz, const char* in, size_t insz){
+    assert(outsz > 0);
+    while(--outsz > 0 && insz > 0 && *in) { *out++ = *in++; insz--; }
+    *out = 0;
+    return out;
+}
 
 int path_resolve_deferred_join(lua_State* L)
 {
@@ -161,8 +173,7 @@ int path_resolve_deferred_join(lua_State* L)
 	size_t len = strlen(path);
 	int i;
 	int numParts = 0;
-	strncpy(inBuffer, path, len);
-	inBuffer[len] = '\0';
+	strncpy_t(inBuffer, sizeof(inBuffer), path, len);
 	char *parts[0x200];
 	// break up the string into parts and index the start of each part
 	nextPart = strchr(inBuffer, DEFERRED_JOIN_DELIMITER);

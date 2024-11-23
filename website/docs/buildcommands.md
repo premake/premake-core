@@ -23,11 +23,11 @@ Use [per-file custom build commands](Custom-Build-Commands.md) to compile all Lu
 ```lua
 filter 'files:**.lua'
    -- A message to display while this build step is running (optional)
-   buildmessage 'Compiling %{file.relpath}'
+   buildmessage 'Compiling %[%{file.relpath}]'
 
    -- One or more commands to run (required)
    buildcommands {
-      'luac -o "%{cfg.objdir}/%{file.basename}.out" "%{file.relpath}"'
+      'luac -o "%[%{!cfg.objdir}/%{file.basename}.out]" "%[%{file.relpath}]"'
    }
 
    -- One or more outputs resulting from the build (required)
@@ -56,6 +56,7 @@ project "MyProject"
 
 ## See Also ##
 
+* [Tokens](Tokens.md)
 * [Custom Build Commands](Custom-Build-Commands.md)
 * [Makefile Projects](Makefile-Projects.md)
 * [buildinputs](buildinputs.md)

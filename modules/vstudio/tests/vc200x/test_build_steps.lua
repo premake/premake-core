@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_build_steps.lua
 -- Test generation of custom build step elements.
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

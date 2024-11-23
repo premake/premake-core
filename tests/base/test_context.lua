@@ -1,7 +1,7 @@
 --
 -- tests/base/test_context.lua
 -- Test suite for the configuration context API.
--- Copyright (c) 2012-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -56,7 +56,7 @@ Done.
 
 The current development version of Premake 5.0 can generate C, C++, or C# projects targeting:
 
-* Microsoft Visual Studio 2005-2019
+* Microsoft Visual Studio 2005-2022
 * GNU Make, including Cygwin and MinGW
 * Xcode
 * Codelite

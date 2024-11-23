@@ -1,7 +1,7 @@
 --
 -- test_gmake2_pch.lua
 -- Validate the setup for precompiled headers in makefiles.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
@@ -20,7 +20,6 @@
 
 	local wks, prj
 	function suite.setup()
-		os.chdir(_TESTS_DIR)
 		gmake2.cpp.initialize()
 		wks, prj = test.createWorkspace()
 	end
@@ -95,15 +94,30 @@ GCH = $(PCH_PLACEHOLDER).gch
 
 
 --
--- The PCH can be specified relative the an includes search path.
+-- The PCH can be specified relative to the includes search path.
 --
 
-	function suite.pch_searchesIncludeDirs()
+	function suite.searchesIncludeDirs()
 		pchheader "premake.h"
-		includedirs { "../../../src/host" }
+		includedirs { "src/host" }
 		prepareVars()
 		test.capture [[
-PCH = ../../../src/host/premake.h
+PCH = src/host/premake.h
+		]]
+	end
+
+--
+-- The PCH can be specified relative to the includes search path.
+-- Due to the location being different from _MAIN_SCRIPT_DIR,
+-- the specified PCH path should be relative to the location.
+
+	function suite.searchesIncludeDirs_location()
+		location "MyProject"
+		pchheader "premake.h"
+		includedirs { "src/host" }
+		prepareVars()
+		test.capture [[
+PCH = ../src/host/premake.h
 		]]
 	end
 
@@ -159,23 +173,6 @@ $(OBJECTS): | prebuild
 endif
 		]]
 	end
-
-
-
-	--
-	-- If the header is located on one of the include file
-	-- search directories, it should get found automatically.
-	--
-
-		function suite.findsPCH_onIncludeDirs()
-			location "MyProject"
-			pchheader "premake.h"
-			includedirs { "../../../src/host" }
-			prepareVars()
-			test.capture [[
-PCH = ../../../../src/host/premake.h
-			]]
-		end
 
 --
 -- If the header is located on one of the include file

@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_project.lua
 -- Automated test suite for Xcode project generation.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jess Perkins and the Premake project
 --
 	local suite = test.declare("xcode_project")
 	local p = premake
@@ -183,6 +183,34 @@
 		93485EDEC2DA2DD09DE76D1E /* file1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F78562642667CD8D18C5C66 /* file1.txt */; };
 		C87AFEAA23BC521CF7169CEA /* file02.png in Resources */ = {isa = PBXBuildFile; fileRef = D54D8E32EC602964DC7C2472 /* file02.png */; };
 		EE9FC5C849E1193A1D3B6408 /* file01.png in Resources */ = {isa = PBXBuildFile; fileRef = 989B7E70AFAE19A29FCA14B0 /* file01.png */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+	function suite.PBXBuildFile_ExcludedFromBuildByFlags()
+		files { "source.cpp", "excluded.cpp" }
+		filter { "files:excluded.cpp" }
+			flags { "ExcludeFromBuild" }
+		filter {}
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
+/* End PBXBuildFile section */
+		]]
+	end
+
+	function suite.PBXBuildFile_ExcludedFromBuildByBuildactionNone()
+		files { "source.cpp", "excluded.cpp" }
+		filter { "files:excluded.cpp" }
+			buildaction "None"
+		filter {}
+		prepare()
+		xcode.PBXBuildFile(tr)
+		test.capture [[
+/* Begin PBXBuildFile section */
+		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -1290,7 +1318,7 @@
 
 	function suite.PBXShellScriptBuildPhase_OnPerConfigCmds()
 		prebuildcommands { 'ls src' }
-		configuration "Debug"
+		filter { "configurations:Debug" }
 		prebuildcommands { 'cp a b' }
 		prepare()
 		xcode.PBXShellScriptBuildPhase(tr)
@@ -2290,7 +2318,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnStaticRuntime()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -2697,7 +2725,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnFloatFast()
-		flags { "FloatFast" }
+		floatingpoint "Fast"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -2830,7 +2858,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNoFramePointer()
-		flags { "NoFramePointer" }
+		omitframepointer "On"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -3754,6 +3782,58 @@
 		]]
 	end
 
+	function suite.XCBuildConfigurationProject_OnCpp2b()
+		workspace("MyWorkspace")
+		cppdialect("C++2b")
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		A14350AC4595EE5E57CE36EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
+	function suite.XCBuildConfigurationProject_OnCpp23()
+		workspace("MyWorkspace")
+		cppdialect("C++23")
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		A14350AC4595EE5E57CE36EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++23";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+			};
+			name = Debug;
+		};
+		]]
+	end
+
 	function suite.XCBuildConfigurationProject_OnCppGnu98()
 		workspace("MyWorkspace")
 		cppdialect("gnu++98")
@@ -3987,6 +4067,58 @@
 		};
 		]]
 	end
+
+	function suite.XCBuildConfigurationProject_OnCppGnu2b()
+		workspace("MyWorkspace")
+		cppdialect("gnu++2b")
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		A14350AC4595EE5E57CE36EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++2b";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+			};
+			name = Debug;
+		};
+		]]
+    end
+
+	function suite.XCBuildConfigurationProject_OnCppGnu23()
+		workspace("MyWorkspace")
+		cppdialect("gnu++23")
+		prepare()
+		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
+		test.capture [[
+		A14350AC4595EE5E57CE36EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/Debug;
+			};
+			name = Debug;
+		};
+		]]
+    end
 
 	function suite.XCBuildConfigurationProject_OnUnsignedCharOn()
 		workspace("MyWorkspace")

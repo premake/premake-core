@@ -1,13 +1,14 @@
 --
 -- test_gmake2_linking.lua
 -- Validate the link step generation for makefiles.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_linking")
 
 	local p = premake
 	local gmake2 = p.modules.gmake2
+	local cpp = gmake2.cpp
 
 	local project = p.project
 
@@ -26,7 +27,7 @@
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
 		local toolset = p.tools.gcc
-		p.callarray(gmake2.cpp, calls, cfg, toolset)
+		p.callArray(calls, cfg, toolset)
 	end
 
 
@@ -36,7 +37,7 @@
 
 	function suite.links_onCppSharedLib()
 		kind "SharedLib"
-		prepare { "ldFlags", "linkCmd" }
+		prepare { cpp.ldFlags, cpp.linkCmd }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
@@ -46,7 +47,7 @@ LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 	function suite.links_onMacOSXCppSharedLib()
 		_OS = "macosx"
 		kind "SharedLib"
-		prepare { "ldFlags", "linkCmd" }
+		prepare { cpp.ldFlags, cpp.linkCmd }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -dynamiclib -Wl,-install_name,@rpath/libMyProject.dylib -Wl,-x
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
@@ -60,7 +61,7 @@ LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 	function suite.links_onCSharedLib()
 		language "C"
 		kind "SharedLib"
-		prepare { "ldFlags", "linkCmd" }
+		prepare { cpp.ldFlags, cpp.linkCmd }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -shared -Wl,-soname=libMyProject.so -s
 LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
@@ -74,7 +75,7 @@ LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 
 	function suite.links_onStaticLib()
 		kind "StaticLib"
-		prepare { "ldFlags", "linkCmd" }
+		prepare { cpp.ldFlags, cpp.linkCmd }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
@@ -90,7 +91,7 @@ LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 
 	function suite.links_onUtility()
 		kind "Utility"
-		prepare { "linkCmd" }
+		prepare { cpp.linkCmd }
 		test.capture [[
 LINKCMD =
 		]]
@@ -104,7 +105,7 @@ LINKCMD =
 	function suite.links_onMacUniversalStaticLib()
 		architecture "universal"
 		kind "StaticLib"
-		prepare { "ldFlags", "linkCmd" }
+		prepare { cpp.ldFlags, cpp.linkCmd }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LINKCMD = libtool -o "$@" $(OBJECTS)
@@ -123,7 +124,7 @@ LINKCMD = libtool -o "$@" $(OBJECTS)
 		kind "StaticLib"
 		location "build"
 
-		prepare { "ldFlags", "libs", "ldDeps" }
+		prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LIBS += build/bin/Debug/libMyProject2.a
@@ -143,7 +144,7 @@ LDDEPS += build/bin/Debug/libMyProject2.a
 		kind "SharedLib"
 		location "build"
 
-		prepare { "ldFlags", "libs", "ldDeps" }
+		prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
 LIBS += build/bin/Debug/libMyProject2.so
@@ -163,7 +164,7 @@ LDDEPS += build/bin/Debug/libMyProject2.so
         kind "SharedLib"
         location "build"
 
-        prepare { "ldFlags", "libs", "ldDeps" }
+        prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
         test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s
 LIBS += -lMyProject2
@@ -180,7 +181,7 @@ LDDEPS += build/bin/Debug/libMyProject2.so
         kind "SharedLib"
         location "build"
 
-        prepare { "ldFlags", "libs", "ldDeps" }
+        prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
         test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -Lbuild/bin/Debug -Wl,-rpath,'@loader_path/../../build/bin/Debug' -Wl,-x
 LIBS += -lMyProject2
@@ -204,7 +205,7 @@ LDDEPS += build/bin/Debug/libMyProject2.dylib
 		kind "StaticLib"
 		location "build"
 
-		prepare { "ldFlags", "libs", "ldDeps" }
+		prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LIBS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
@@ -229,7 +230,7 @@ LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 		kind "StaticLib"
 		location "build"
 
-		prepare { "ldFlags", "libs", "ldDeps" }
+		prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -s
 LIBS += -Wl,--start-group build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a -Wl,--end-group
@@ -246,7 +247,7 @@ LDDEPS += build/bin/Debug/libMyProject2.a build/bin/Debug/libMyProject3.a
 	function suite.onExternalLibraryWithPath()
 		location "MyProject"
 		links { "libs/SomeLib" }
-		prepare { "ldFlags", "libs" }
+		prepare { cpp.ldFlags, cpp.libs }
 		test.capture [[
 ALL_LDFLAGS += $(LDFLAGS) -L../libs -s
 LIBS += -lSomeLib
@@ -265,7 +266,7 @@ LIBS += -lSomeLib
 	function suite.onExternalLibraryWithPathAndVersion()
 		location "MyProject"
 		links { "libs/SomeLib-1.1" }
-		prepare { "libs", }
+		prepare { cpp.libs }
 		test.capture [[
 LIBS += -lSomeLib-1.1
 		]]

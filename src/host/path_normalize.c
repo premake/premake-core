@@ -1,7 +1,7 @@
 /**
 * \file   path_normalize.c
 * \brief  Removes any weirdness from a file system path string.
-* \author Copyright (c) 2013 Jason Perkins and the Premake project
+* \author Copyright (c) 2013 Jess Perkins and the Premake project
 */
 
 #include "premake.h"

@@ -5,9 +5,9 @@
 -- Modified by: Andrea Zanellato
 --              Andrew Gough
 --              Manu Evans
---              Jason Perkins
+--              Jess Perkins
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2020 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2020 Jess Perkins and the Premake project
 --
 
 	local p = premake

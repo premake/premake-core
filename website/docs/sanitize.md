@@ -8,10 +8,12 @@ sanitize { "value_list" }
 
 `value_list` specifies the desired `fsanitize` options to enable.
 
-| Value       | Description                                            |
-|-------------|--------------------------------------------------------|
-| Address     | Enables compiler support for AddressSanitizer. | Visual Studio support starts with 2019 16.9 |
-| Fuzzer      | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Visual Studio support starts with 2019 16.9 |
+| Value             | Description                                            | Notes |
+|-------------------|--------------------------------------------------------|---|
+| Address           | Enables compiler support for AddressSanitizer (ASan). | Visual Studio support starts with 2019 16.9 |
+| Fuzzer            | Enables support for LibFuzzer, a coverage-guided fuzzing library. | Unsupported with GCC. Visual Studio support starts with 2019 16.9 |
+| Thread            | Enables compiler support for ThreadSanitizer (TSan). | GCC & Clang only |
+| UndefinedBehavior | Enables compiler support for UndefinedBehaviorSanitizer (UBSan). | GCC & Clang only |
 
 ### Applies To ###
 

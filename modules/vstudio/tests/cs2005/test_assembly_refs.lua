@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_assembly_refs.lua
 -- Test the assembly linking block of a Visual Studio 2005+ C# project.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -202,7 +202,7 @@
 -- NuGet packages should get references.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.nuGetPackages_net45()
 		dotnetframework "4.5"
 		nuget { "Newtonsoft.Json:10.0.2" }
@@ -250,7 +250,7 @@ end
 -- referenced.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.nuGetPackages_multipleAssemblies()
 		dotnetframework "2.0"
 		nuget { "NUnit:3.6.1" }
@@ -285,7 +285,7 @@ end
 -- NuGet packages should respect copylocal() and the NoCopyLocal flag.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.nugetPackages_onNoCopyLocal()
 		dotnetframework "2.0"
 		nuget { "NUnit:3.6.1" }
@@ -380,7 +380,7 @@ end
 -- properly.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.nuGetPackages_netFolder()
 		dotnetframework "4.5"
 		nuget { "MetroModernUI:1.4.0" }

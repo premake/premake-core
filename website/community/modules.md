@@ -16,7 +16,7 @@ These add-on modules are available from other developers; follow the links for m
 ## Platform Modules
 
 * [Android.mk](https://github.com/Meoo/premake-androidmk) : Generator for Android NDK's [ndk-build system](https://developer.android.com/ndk/guides/build.html)
-* [Emscripten](https://github.com/TurkeyMan/premake-emscripten) : [Emscripten](http://kripken.github.io/emscripten-site/) support
+* [Emscripten](https://github.com/tritao/premake-emscripten) : [Emscripten](http://kripken.github.io/emscripten-site/) support
 * [NaCL](https://github.com/TurkeyMan/premake-nacl) : [Google Native Client](https://developer.chrome.com/native-client) support
 * [VSLinux](https://github.com/LORgames/premake-vslinux) : [VSLinux](https://visualstudiogallery.msdn.microsoft.com/725025cf-7067-45c2-8d01-1e0fd359ae6e) support
 * [VS-Tool](https://github.com/TurkeyMan/premake-vstool) : GCC and Clang toolset Visual Studio support via [vs-tool](https://github.com/juj/vs-tool)
@@ -35,11 +35,11 @@ These add-on modules are available from other developers; follow the links for m
 * [Export](https://github.com/Meoo/premake-export) : premake usage/export module
 * [Generate compile_commands.json](https://github.com/tarruda/premake-export-compile-commands) : Export clang compilation database
 * [Generate compile_commands.json](https://github.com/MattBystrin/premake-ecc) : Alternative exporter for clang compilation database
-* [GitHub Packages](https://github.com/mversluys/premake-ghp) : Consume libraries directly from GitHub releases
 * [Pkgconfig](https://github.com/tarruda/premake-pkgconfig) : Pure lua implementation of pkgconfig for premake
 * [Platform test](https://github.com/tarruda/premake-platform-test) : Perform platform checks in your premake configuration
 
 ## Library Modules
 
+* [CUDA](https://github.com/theComputeKid/premake5-cuda) : Enables CUDA development in Visual Studio using the native CUDA Toolkit integration and with nvcc on Linux
 * [Qt](https://github.com/dcourtois/premake-qt) : [Qt](https://www.qt.io) support
 * [WIX](https://github.com/mikisch81/premake-wix) : Premake extension to support [WIX](http://wixtoolset.org/) project files on Visual Studio

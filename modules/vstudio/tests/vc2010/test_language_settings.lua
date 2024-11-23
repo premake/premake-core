@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_language_settings.lua
 -- Check the import language settings block of a VS 2010 project.
--- Copyright (c) 2014 Jason Perkins and the Premake project
+-- Copyright (c) 2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

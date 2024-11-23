@@ -858,8 +858,14 @@
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 8
 
+/* The size of `long long', as computed by sizeof. */
+#define SIZEOF_LONG_LONG 8
+
 /* The size of `off_t', as computed by sizeof. */
-/* #undef SIZEOF_OFF_T */
+#define SIZEOF_OFF_T 8
+
+/* The size of `curl_off_t', as computed by sizeof. */
+#define SIZEOF_CURL_OFF_T 8
 
 /* The size of `size_t', as computed by sizeof. */
 #define SIZEOF_SIZE_T 8

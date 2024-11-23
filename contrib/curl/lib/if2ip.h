@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -20,6 +20,8 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * SPDX-License-Identifier: curl
+ *
  ***************************************************************************/
 #include "curl_setup.h"
 
@@ -27,11 +29,14 @@
 #define IPV6_SCOPE_GLOBAL       0       /* Global scope. */
 #define IPV6_SCOPE_LINKLOCAL    1       /* Link-local scope. */
 #define IPV6_SCOPE_SITELOCAL    2       /* Site-local scope (deprecated). */
-#define IPV6_SCOPE_NODELOCAL    3       /* Loopback. */
+#define IPV6_SCOPE_UNIQUELOCAL  3       /* Unique local */
+#define IPV6_SCOPE_NODELOCAL    4       /* Loopback. */
 
+#ifdef USE_IPV6
 unsigned int Curl_ipv6_scope(const struct sockaddr *sa);
-
-bool Curl_if_is_interface_name(const char *interf);
+#else
+#define Curl_ipv6_scope(x) 0
+#endif
 
 typedef enum {
   IF2IP_NOT_FOUND = 0, /* Interface not found */
@@ -39,9 +44,13 @@ typedef enum {
   IF2IP_FOUND = 2 /* The address has been stored in "buf" */
 } if2ip_result_t;
 
-if2ip_result_t Curl_if2ip(int af, unsigned int remote_scope,
-                          unsigned int remote_scope_id, const char *interf,
-                          char *buf, int buf_size);
+if2ip_result_t Curl_if2ip(int af,
+#ifdef USE_IPV6
+                          unsigned int remote_scope,
+                          unsigned int local_scope_id,
+#endif
+                          const char *interf,
+                          char *buf, size_t buf_size);
 
 #ifdef __INTERIX
 

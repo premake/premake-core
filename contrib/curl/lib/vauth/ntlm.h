@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_NTLM_H
-#define HEADER_CURL_NTLM_H
+#ifndef HEADER_VAUTH_NTLM_H
+#define HEADER_VAUTH_NTLM_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -19,6 +19,8 @@
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
+ *
+ * SPDX-License-Identifier: curl
  *
  ***************************************************************************/
 
@@ -32,7 +34,8 @@
 /* Stuff only required for curl_ntlm_msgs.c */
 #ifdef BUILDING_CURL_NTLM_MSGS_C
 
-/* Flag bits definitions based on https://davenport.sourceforge.io/ntlm.html */
+/* Flag bits definitions based on
+   https://davenport.sourceforge.net/ntlm.html */
 
 #define NTLMFLAG_NEGOTIATE_UNICODE               (1<<0)
 /* Indicates that Unicode strings are supported for use in security buffer
@@ -60,9 +63,6 @@
 #define NTLMFLAG_NEGOTIATE_LM_KEY                (1<<7)
 /* Indicates that the LAN Manager session key should be used for signing and
    sealing authenticated communications. */
-
-#define NTLMFLAG_NEGOTIATE_NETWARE               (1<<8)
-/* unknown purpose */
 
 #define NTLMFLAG_NEGOTIATE_NTLM_KEY              (1<<9)
 /* Indicates that NTLM authentication is being used. */
@@ -140,4 +140,4 @@
 
 #endif /* USE_NTLM */
 
-#endif /* HEADER_CURL_NTLM_H */
+#endif /* HEADER_VAUTH_NTLM_H */

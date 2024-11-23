@@ -1,7 +1,7 @@
 ---
 -- action.lua
 -- Work with the list of registered actions.
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake
@@ -211,10 +211,11 @@
 	function action.set(name)
 		_ACTION = name
 
-		-- Some actions imply a particular operating system
+		-- Some actions imply a particular operating system or architecture
 		local act = action.get(name)
 		if act then
 			_TARGET_OS = act.targetos or _TARGET_OS
+			_TARGET_ARCH =  act.targetarch or _TARGET_ARCH
 		end
 
 		-- Some are implemented in standalone modules
@@ -279,7 +280,6 @@
 			["C"] = "cc",
 			["C++"] = "cc",
 			["C#"] = "dotnet",
-			["D"] = "dc",
 		}
 		local language_key = language_keys_map[language]
 		if not language_key then
@@ -293,6 +293,8 @@
 		if not valid_tools then
 			return true
 		end
+		toolset = p.tools.normalize(toolset)
+		toolset = toolset:explode("-", true, 1)[1] -- get rid of version
 
 		return table.contains(valid_tools, toolset)
 	end

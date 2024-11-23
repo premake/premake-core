@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_compiler_block.lua
 -- Validate generation the VCCLCompiler element in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -135,7 +135,7 @@
 
 	function suite.looksGood_onC7DebugFormat()
 		symbols "On"
-		debugformat "C7"
+		debugformat("c7")
 		prepare()
 		test.capture [[
 <Tool

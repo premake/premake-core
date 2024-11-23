@@ -23,8 +23,10 @@ xcodebuildsettings { ["MY_KEY"] = "MY_VALUE" }
 ```
 will generate:
 
+```
     buildSettings = {
         ...
         MY_KEY = MY_VALUE;
         ...
     }
+```

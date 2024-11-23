@@ -1,9 +1,9 @@
 ---
 -- msc.lua
 -- Interface for the MS C/C++ compiler.
--- Author Jason Perkins
+-- Author Jess Perkins
 -- Modified by Manu Evans
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 ---
 
 
@@ -196,6 +196,7 @@
 			["C++14"] = "/std:c++14",
 			["C++17"] = "/std:c++17",
 			["C++20"] = "/std:c++20",
+			["C++23"] = "/std:c++latest",
 			["C++latest"] = "/std:c++latest"
 		},
 		exceptionhandling = {
@@ -280,7 +281,7 @@
 		local result = {}
 
 		table.foreachi(cfg.forceincludes, function(value)
-			local fn = project.getrelative(cfg.project, value)
+			local fn = p.tools.getrelative(cfg.project, value)
 			table.insert(result, "/FI" .. p.quoted(fn))
 		end)
 
@@ -298,12 +299,12 @@
 	function msc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		local result = {}
 		for _, dir in ipairs(dirs) do
-			dir = project.getrelative(cfg.project, dir)
+			dir = p.tools.getrelative(cfg.project, dir)
 			table.insert(result, '-I' ..  p.quoted(dir))
 		end
 
 		for _, dir in ipairs(extdirs or {}) do
-			dir = project.getrelative(cfg.project, dir)
+			dir = p.tools.getrelative(cfg.project, dir)
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
 				table.insert(result, '/external:I' ..  p.quoted(dir))
 			else
@@ -312,7 +313,7 @@
 		end
 
 		for _, dir in ipairs(includedirsafter or {}) do
-			dir = project.getrelative(cfg.project, dir)
+			dir = p.tools.getrelative(cfg.project, dir)
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
 				table.insert(result, '/external:I' ..  p.quoted(dir))
 			else
@@ -394,7 +395,7 @@
 		local flags = {}
 		local dirs = table.join(cfg.libdirs, cfg.syslibdirs)
 		for i, dir in ipairs(dirs) do
-			dir = project.getrelative(cfg.project, dir)
+			dir = p.tools.getrelative(cfg.project, dir)
 			table.insert(flags, '/LIBPATH:"' .. dir .. '"')
 		end
 		return flags

@@ -1,7 +1,7 @@
 --
 -- string.lua
 -- Additions to Lua's built-in string functions.
--- Copyright (c) 2002-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2013 Jess Perkins and the Premake project
 --
 
 

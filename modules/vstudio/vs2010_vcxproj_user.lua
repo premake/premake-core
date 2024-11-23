@@ -1,7 +1,7 @@
 --
 -- vs2010_vcxproj_user.lua
 -- Generate a Visual Studio 201x C/C++ project .user file
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,10 +1,7 @@
 ---
 title: "Community Update #1"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 Say hello to [the new Premake OpenCollective](https://opencollective.com/premake)!
@@ -22,6 +19,8 @@ The experiment is now officially underway. As long as it continues, I'll provide
 - Improve the project on-boarding experience with a new [README.md](https://github.com/premake/premake-core/blob/master/README.md) and [CONTRIBUTING.md](https://github.com/premake/premake-core/blob/master/CONTRIBUTING.md) ([#1324](https://github.com/premake/premake-core/pull/1324), [#1325](https://github.com/premake/premake-core/pull/1325))
 
 - Improve the collaboration process with new issue, feature, and pull request templates ([#1326](https://github.com/premake/premake-core/pull/1326), [#1327](https://github.com/premake/premake-core/pull/1327))
+
+{/* truncate */}
 
 I'm not charging any expenses against the collective this cycle so we can build up a balance to recognize cool or important contributions from the community. You can track our finances and transactions at any time on [our OpenCollective page](https://opencollective.com/premake).
 

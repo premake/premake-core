@@ -1,9 +1,9 @@
 ---
 -- xcode/xcode4_project.lua
 -- Generate an Xcode project file.
--- Author Jason Perkins
+-- Author Jess Perkins
 -- Modified by Mihai Sebea
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake
@@ -36,7 +36,7 @@
 		for cfg in premake.project.eachconfig(prj) do
 			local filecfg = premake.fileconfig.getconfig(node, cfg)
 			if filecfg then
-				local newValue = not not filecfg.flags.ExcludeFromBuild
+				local newValue = not not filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None"
 				if value == nil then
 					value = newValue
 				elseif value ~= newValue then

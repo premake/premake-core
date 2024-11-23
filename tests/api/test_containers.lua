@@ -1,7 +1,7 @@
 --
 -- tests/api/test_containers.lua
 -- Tests the API's workspace() and project() container definitions.
--- Copyright (c) 2013-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

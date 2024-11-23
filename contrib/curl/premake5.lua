@@ -19,15 +19,18 @@ project "curl-lib"
 
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
-		links "crypt32"
+		links { "crypt32", "bcrypt" }
 
 	filter { "system:macosx" }
-		defines { "USE_DARWINSSL" }
+		defines { "USE_SECTRANSP" }
 
 	filter { "system:not windows", "system:not macosx" }
 		defines { "USE_MBEDTLS" }
 
-	filter { "system:linux or bsd or solaris" }
+	filter { "system:linux or toolset:cosmocc"}
+		defines { "_GNU_SOURCE" }
+
+	filter { "system:linux or bsd or solaris or haiku or toolset:cosmocc" }
 		defines { "CURL_HIDDEN_SYMBOLS" }
 
 		-- find the location of the ca bundle
@@ -39,12 +42,13 @@ project "curl-lib"
 			"/usr/local/share/certs/ca-root.crt",
 			"/usr/local/share/certs/ca-root-nss.crt",
 			"/etc/certs/ca-certificates.crt",
-			"/etc/ssl/cert.pem" } do
+			"/etc/ssl/cert.pem",
+			"/boot/system/data/ssl/CARootCertificates.pem" } do
 			if os.isfile(f) then
 				ca = f
 				break
 			end
 		end
 		if ca then
-			defines { 'CURL_CA_BUNDLE="' .. ca .. '"' }
+			defines { 'CURL_CA_BUNDLE="' .. ca .. '"', 'CURL_CA_PATH="' .. path.getdirectory(ca) .. '"' }
 		end

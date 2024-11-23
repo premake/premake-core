@@ -1,8 +1,8 @@
 --
 -- api.lua
 -- Implementation of the workspace, project, and configuration APIs.
--- Author Jason Perkins
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -1139,25 +1139,6 @@
 			return true
 		end
 	})
-
-
-
----
--- Start a new block of configuration settings, using the old, "open"
--- style of matching without field prefixes.
----
-
-	function configuration(terms)
-		-- Sep 16 2021
-		premake.warnOnce("configuration", "`configuration` has been deprecated; use `filter` instead (https://premake.github.io/docs/Filters/)")
-		if terms then
-			if (type(terms) == "table" and #terms == 1 and terms[1] == "*") or (terms == "*") then
-				terms = nil
-			end
-			configset.addblock(api.scope.current, {terms}, os.getcwd())
-		end
-		return api.scope.current
-	end
 
 
 

@@ -2,7 +2,7 @@
 -- modules/vstudio/tests/dotnet2005/test_nuget_framework_folders.lua
 -- Validate parsing of framework versions from folder names for
 -- Visual Studio 2010 and newer
--- Copyright (c) 2017 Jason Perkins and the Premake project
+-- Copyright (c) 2017 Jess Perkins and the Premake project
 --
 
 	local p = premake

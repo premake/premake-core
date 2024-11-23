@@ -2,8 +2,8 @@
 -- tests/actions/vstudio/vc2010/test_floatingpoint.lua
 -- Validate handling of vectorextensions() in VS 2010 C/C++ projects.
 --
--- Created 26 Mar 2015 by Jason Perkins
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Created 26 Mar 2015 by Jess Perkins
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

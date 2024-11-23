@@ -1,7 +1,7 @@
 /**
  * \file   os_reg.c
  * \brief  Returns true if the given file exists on the file system.
- * \author Copyright (c) 2002-2016 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2016 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

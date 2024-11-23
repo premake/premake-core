@@ -1,7 +1,7 @@
 ---
 -- vs2010_rules_targets.lua
 -- Generate a Visual Studio 201x custom rules targets file.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 ---
 
 	local p = premake
