@@ -1,6 +1,6 @@
 --
 -- gmake2.lua
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p       = premake
@@ -129,6 +129,15 @@
 		_p('endif')
 	end
 
+	function gmake2.copyfile_cmds(source, dest)
+		local cmd = '$(SILENT) {COPYFILE} ' .. source .. ' ' .. dest
+		return { 'ifeq (posix,$(SHELLTYPE))',
+			'\t' .. os.translateCommands(cmd, 'posix'),
+			'else',
+			'\t' .. os.translateCommands(cmd, 'windows'),
+			'endif' }
+	end
+
 	function gmake2.mkdirRules(dirname)
 		_p('%s:', dirname)
 		_p('\t@echo Creating %s', dirname)
@@ -173,7 +182,7 @@
 
 	function gmake2.getToolSet(cfg)
 		local default = iif(cfg.system == p.MACOSX, "clang", "gcc")
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or default]
+		local toolset, version = p.tools.canonical(cfg.toolset or default)
 		if not toolset then
 			error("Invalid toolset '" .. cfg.toolset .. "'")
 		end

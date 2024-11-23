@@ -1,7 +1,7 @@
 ---
 -- tests/actions/vstudio/vc2010/test_build_log.lua
 -- Validate build log settings in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2015 Jason Perkins and the Premake project
+-- Copyright (c) 2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

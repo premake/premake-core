@@ -1,7 +1,7 @@
 --
 -- tests/base/test_table.lua
 -- Automated test suite for the new table functions.
--- Copyright (c) 2008-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2013 Jess Perkins and the Premake project
 --
 
 
@@ -95,3 +95,17 @@
 		test.istrue(t[4] == 5)
 		test.istrue(t[5] == 8)
 	end
+
+--
+-- table.merge() tests
+--
+
+function suite.merge()
+	t = { a = 1, b = 2 }
+	t2 = { c = 3, d = 4 }
+	test.isequal({ a = 1, b = 2, c = 3, d = 4 }, table.merge(t, t2))
+
+	t = { a = 1, b = 2 }
+	t2 = { c = 3, d = 4, e = { a = 5 } }
+	test.isequal({ a = 1, b = 2, c = 3, d = 4, e = { a = 5 } }, table.merge(t, t2))
+end

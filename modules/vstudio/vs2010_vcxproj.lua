@@ -1,13 +1,14 @@
 --
 -- vs2010_vcxproj.lua
 -- Generate a Visual Studio 201x C/C++ project.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake
 	p.vstudio.vc2010 = {}
 
 	local vstudio = p.vstudio
+	local vs2010 = p.vstudio.vs2010
 	local project = p.project
 	local config = p.config
 	local fileconfig = p.fileconfig
@@ -144,34 +145,67 @@
 		}
 	end
 
+	m.elements.linuxGlobals = function(prj)
+		return {
+			-- Common
+			m.projectGuid,
+			m.projectName,
+			m.preferredToolArchitecture,
+			m.toolsVersion,
+
+			-- Linux
+			m.linuxApplicationType
+		}
+	end
+
 	m.elements.globalsCondition = function(prj, cfg)
 		return {
 			m.windowsTargetPlatformVersion,
 			m.xpDeprecationWarning,
+			m.additionalProps,
 		}
+	end
+
+	m.elements.linuxGlobalsCondition = function(prj, cfg)
+		if cfg.system ~= prj.system then
+			return {
+				m.linuxApplicationType
+			}
+		end
 	end
 
 	function m.globals(prj)
 
 		-- Write out the project-level globals
 		m.propertyGroup(nil, "Globals")
-		p.callArray(m.elements.globals, prj)
+		if prj.system == p.LINUX then
+			p.callArray(m.elements.linuxGlobals, prj)
+		else
+			p.callArray(m.elements.globals, prj)
+		end
 		p.pop('</PropertyGroup>')
 
 		-- Write out the configurable globals
 		for cfg in project.eachconfig(prj) do
 
+			local globalsConditionFunction
+			if cfg.system == p.LINUX then
+				globalsConditionFunction = m.elements.linuxGlobalsCondition
+			else
+				globalsConditionFunction = m.elements.globalsCondition
+			end
+
 			-- Find out whether we're going to actually write a property out
 			local captured = p.capture(	function()
 										p.push()
-										p.callArray(m.elements.globalsCondition, prj, cfg)
+										p.callArray(globalsConditionFunction, prj, cfg)
 										p.pop()
 										end)
 
 			-- If we do have something, create the entry, skip otherwise
 			if captured ~= '' then
 				m.propertyGroup(cfg, "Globals")
-				p.callArray(m.elements.globalsCondition, prj, cfg)
+				p.callArray(globalsConditionFunction, prj, cfg)
 				p.pop('</PropertyGroup>')
 			end
 
@@ -190,6 +224,7 @@
 			return {
 				m.configurationType,
 				m.platformToolset,
+				m.llvmTools,
 				m.toolsVersion,
 			}
 		else
@@ -204,6 +239,7 @@
 				m.enableUnityBuild,
 				m.sanitizers,
 				m.toolsVersion,
+				m.llvmTools,
 				m.wholeProgramOptimization,
 				m.nmakeOutDirs,
 				m.windowsSDKDesktopARMSupport,
@@ -211,9 +247,45 @@
 		end
 	end
 
+	m.elements.linuxConfigurationProperties = function(cfg)
+		if cfg.kind == p.UTILITY then
+			return {
+				-- Common
+				m.configurationType,
+
+				-- Linux
+				m.linuxPlatformToolset,
+				m.remoteRootDir,
+				m.remoteProjectRelDir,
+				m.remoteProjectDir,
+				m.remoteDeployDir,
+			}
+		else
+			return {
+				-- Common
+				m.configurationType,
+				m.sanitizers,
+				m.nmakeOutDirs,
+
+				-- Linux
+				m.linuxStlType,
+				m.linuxPlatformToolset,
+				m.remoteRootDir,
+				m.remoteProjectRelDir,
+				m.remoteProjectDir,
+				m.remoteDeployDir,
+				m.linuxWholeProgramOptimization,
+			}
+		end
+	end
+
 	function m.configurationProperties(cfg)
 		m.propertyGroup(cfg, "Configuration")
-		p.callArray(m.elements.configurationProperties, cfg)
+		if cfg.system == p.LINUX then
+			p.callArray(m.elements.linuxConfigurationProperties, cfg)
+		else
+			p.callArray(m.elements.configurationProperties, cfg)
+		end
 		p.pop('</PropertyGroup>')
 	end
 
@@ -252,14 +324,44 @@
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
 				m.allModulesPublic,
+				m.clangtidy,
+				m.runcodeanalysis
 			}
 		end
+	end
+
+	m.elements.linuxOutputProperties = function(cfg)
+
+		if cfg.kind == p.UTILITY then
+			return {
+				m.intDir,
+				m.extensionsToDeleteOnClean,
+				m.executablePath,
+			}
+		else
+			return {
+				m.intDir,
+				m.targetName,
+				m.targetExt,
+				m.includePath,
+				m.libraryPath,
+				m.extensionsToDeleteOnClean,
+				m.executablePath,
+			}
+		end
+
 	end
 
 	function m.outputProperties(cfg)
 		if not vstudio.isMakefile(cfg) then
 			m.propertyGroup(cfg)
+
+			if cfg.system == p.LINUX then
+			p.callArray(m.elements.linuxOutputProperties, cfg)
+			else
 			p.callArray(m.elements.outputProperties, cfg)
+			end
+
 			p.pop('</PropertyGroup>')
 		end
 	end
@@ -374,6 +476,7 @@
 			m.clCompileAdditionalIncludeDirectories,
 			m.clCompileAdditionalUsingDirectories,
 			m.forceIncludes,
+			m.forceUsings,
 			m.debugInformationFormat,
 			m.optimization,
 			m.functionLevelLinking,
@@ -408,6 +511,8 @@
 			m.externalAngleBrackets,
 			m.scanSourceForModuleDependencies,
 			m.useStandardPreprocessor,
+			m.enableModules,
+			m.buildStlModules,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -417,9 +522,38 @@
 		return calls
 	end
 
+	m.elements.linuxClCompile = function(cfg)
+		local calls = {
+			m.treatWarningAsError,
+			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
+			m.clCompileAdditionalIncludeDirectories,
+			m.forceIncludes,
+			m.runtimeTypeInfo,
+			m.compileAs,
+			m.omitFramePointers,
+			m.optimization,
+
+			-- Linux
+			m.linuxDebugInformationFormat,
+			m.linuxExceptionHandling,
+			m.linuxFloatingPointModel,
+			m.gccClangAdditionalCompileOptions,
+			m.linuxLanguageStandardCpp,
+			m.linuxLanguageStandardC,
+			m.linuxWarningLevel,
+		}
+
+		return calls
+	end
+
 	function m.clCompile(cfg)
 		p.push('<ClCompile>')
-		p.callArray(m.elements.clCompile, cfg)
+		if cfg.system == p.LINUX then
+			p.callArray(m.elements.linuxClCompile, cfg)
+		else
+			p.callArray(m.elements.clCompile, cfg)
+		end
 		p.pop('</ClCompile>')
 	end
 
@@ -541,6 +675,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
+				m.LinkTimeCodeGeneration,
 			}
 		else
 			return {
@@ -548,6 +683,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
+				m.LinkTimeCodeGeneration,
 				m.additionalDependencies,
 				m.additionalLibraryDirectories,
 				m.importLibrary,
@@ -565,10 +701,29 @@
 		end
 	end
 
+	m.elements.linuxLink = function(cfg, explicit)
+		if cfg.kind == p.STATICLIB then
+			return {}
+		else
+			return {
+				-- Common
+				m.additionalDependencies,
+				m.additionalLibraryDirectories,
+				m.additionalLinkOptions,
+				m.generateMapFile,
+				m.ignoreDefaultLibraries,
+			}
+		end
+	end
+
 	function m.link(cfg, explicit)
 		local contents = p.capture(function ()
 			p.push()
-			p.callArray(m.elements.link, cfg, explicit)
+			if cfg.system == p.LINUX then
+				p.callArray(m.elements.linuxLink, cfg, explicit)
+			else
+				p.callArray(m.elements.link, cfg, explicit)
+			end
 			p.pop()
 		end)
 		if #contents > 0 then
@@ -804,6 +959,59 @@
 ---
 -- ClCompile group
 ---
+
+	m.fileConfigFunction = function(fcfg, condition)
+
+		return {
+			m.excludedFromBuild,
+			m.objectFileName,
+			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
+			m.languageStandard,
+			m.languageStandardC,
+			m.optimization,
+			m.forceIncludes,
+			m.forceUsings,
+			m.precompiledHeader,
+			m.enableEnhancedInstructionSet,
+			m.additionalCompileOptions,
+			m.disableSpecificWarnings,
+			m.treatSpecificWarningsAsErrors,
+			m.basicRuntimeChecks,
+			m.exceptionHandling,
+			m.compileAsManaged,
+			m.compileAs,
+			m.runtimeTypeInfo,
+			m.warningLevelFile,
+			m.compileAsWinRT,
+			m.externalWarningLevelFile,
+			m.externalAngleBrackets,
+		}
+
+	end
+
+	m.linuxFileConfigFunction = function(fcfg, condition)
+
+		return {
+			-- Common
+			m.excludedFromBuild,
+			m.objectFileName,
+			m.clCompilePreprocessorDefinitions,
+			m.clCompileUndefinePreprocessorDefinitions,
+			m.optimization,
+			m.forceIncludes,
+			m.additionalCompileOptions,
+			m.compileAs,
+			m.runtimeTypeInfo,
+
+			-- Linux
+			m.linuxWarningLevel,
+			m.linuxExceptionHandling,
+			m.linuxPIC
+		}
+
+	end
+
 	m.categories.ClCompile = {
 		name       = "ClCompile",
 		extensions = { ".cc", ".cpp", ".cxx", ".c++", ".c", ".s", ".m", ".mm", ".cppm", ".ixx" },
@@ -812,28 +1020,11 @@
 		emitFiles = function(prj, group)
 			local fileCfgFunc = function(fcfg, condition)
 				if fcfg then
-					return {
-						m.excludedFromBuild,
-						m.objectFileName,
-						m.clCompilePreprocessorDefinitions,
-						m.clCompileUndefinePreprocessorDefinitions,
-						m.optimization,
-						m.forceIncludes,
-						m.precompiledHeader,
-						m.enableEnhancedInstructionSet,
-						m.additionalCompileOptions,
-						m.disableSpecificWarnings,
-						m.treatSpecificWarningsAsErrors,
-						m.basicRuntimeChecks,
-						m.exceptionHandling,
-						m.compileAsManaged,
-						m.compileAs,
-						m.runtimeTypeInfo,
-						m.warningLevelFile,
-						m.compileAsWinRT,
-						m.externalWarningLevelFile,
-						m.externalAngleBrackets,
-					}
+					if fcfg.system == p.LINUX then
+						return m.linuxFileConfigFunction(fcfg, condition)
+					else
+						return m.fileConfigFunction(fcfg, condition)
+					end
 				else
 					return {
 						m.excludedFromBuild
@@ -1173,6 +1364,10 @@
 				if fcfg.buildaction then
 					return m.categories[fcfg.buildaction] or m.categories.None
 				end
+
+				if fcfg.compileas ~= nil and fcfg.compileas ~= "Default" then
+					return m.categories.ClCompile
+				end
 			end
 		end
 
@@ -1300,7 +1495,7 @@
 
 				local contents = p.capture(function ()
 					p.push()
-					p.callArray(fileFunc, cfg, file)
+					p.callArray(fileFunc, nil, file)
 					m.conditionalElements = {}
 					for cfg in project.eachconfig(prj) do
 						local fcfg = fileconfig.getconfig(file, cfg)
@@ -1354,8 +1549,8 @@
 								if value and #value > 0 then
 									m.element(prop.name, m.configPair(cfg), '%s', value)
 								end
-								end
 							end
+						end
 						if #m.conditionalElements > 0 then
 							m.emitConditionalElements(prj)
 						end
@@ -1545,27 +1740,29 @@
 	end
 
 
-	function m.languageStandard(cfg)
+	function m.languageStandard(cfg, condition)
 		if _ACTION >= "vs2017" then
 			if (cfg.cppdialect == "C++14") then
-				m.element("LanguageStandard", nil, 'stdcpp14')
+				m.element("LanguageStandard", condition, 'stdcpp14')
 			elseif (cfg.cppdialect == "C++17") then
-				m.element("LanguageStandard", nil, 'stdcpp17')
+				m.element("LanguageStandard", condition, 'stdcpp17')
 			elseif (cfg.cppdialect == "C++20") then
-				m.element("LanguageStandard", nil, iif(_ACTION == "vs2017", 'stdcpplatest', 'stdcpp20'))
+				m.element("LanguageStandard", condition, iif(_ACTION <= "vs2017", 'stdcpplatest', 'stdcpp20'))
+			elseif (cfg.cppdialect == "C++23") then
+				m.element("LanguageStandard", condition, 'stdcpplatest')
 			elseif (cfg.cppdialect == "C++latest") then
-				m.element("LanguageStandard", nil, 'stdcpplatest')
+				m.element("LanguageStandard", condition, 'stdcpplatest')
 			end
 		end
 	end
 
 
-	function m.languageStandardC(cfg)
+	function m.languageStandardC(cfg, condition)
 		if _ACTION >= "vs2019" then
 			if (cfg.cdialect == "C11") then
-				m.element("LanguageStandard_C", nil, 'stdc11')
+				m.element("LanguageStandard_C", condition, 'stdc11')
 			elseif (cfg.cdialect == "C17") then
-				m.element("LanguageStandard_C", nil, 'stdc17')
+				m.element("LanguageStandard_C", condition, 'stdc17')
 			end
 		end
 	end
@@ -2009,6 +2206,9 @@
 				m.element("ForcedIncludeFiles", condition, table.concat(includes, ';'))
 			end
 		end
+	end
+
+	function m.forceUsings(cfg, condition)
 		if #cfg.forceusings > 0 then
 			local usings = vstudio.path(cfg, cfg.forceusings)
 			if #usings > 0 then
@@ -2016,7 +2216,6 @@
 			end
 		end
 	end
-
 
 	function m.fullProgramDatabaseFile(cfg)
 		if _ACTION >= "vs2015" and cfg.symbols == "FastLink" then
@@ -2409,7 +2608,7 @@
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
 		   cfg.flags.MultiProcessorCompile or
-		   cfg.debugformat == p.C7
+		   cfg.debugformat == "c7"
 		then
 			m.element("MinimalRebuild", nil, "false")
 		end
@@ -2530,6 +2729,11 @@
 		end
 	end
 
+	function m.LinkTimeCodeGeneration(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			m.element("LinkTimeCodeGeneration", nil, "UseLinkTimeCodeGeneration")
+		end
+	end
 
 	function m.optimization(cfg, condition)
 		local map = { Off="Disabled", On="Full", Debug="Disabled", Full="Full", Size="MinSpace", Speed="MaxSpeed" }
@@ -2588,6 +2792,19 @@
 			else
 				m.element("PlatformToolset", nil, version)
 			end
+		end
+	end
+
+	function m.llvmTools(cfg)
+		local llvmdir = cfg.llvmdir
+		local llvmversion = cfg.llvmversion
+
+		if llvmdir and _ACTION >= "vs2019" then
+			m.element("LLVMInstallDir", nil, vstudio.path(cfg, llvmdir))
+		end
+
+		if llvmversion and _ACTION >= "vs2019" then
+			m.element("LLVMToolsVersion", nil, llvmversion)
 		end
 	end
 
@@ -2851,6 +3068,17 @@
 		m.element("TargetName", nil, "%s%s", cfg.buildtarget.prefix, cfg.buildtarget.basename)
 	end
 
+	function m.clangtidy(cfg)
+		if _ACTION >= "vs2019" and cfg.clangtidy ~= nil then
+			m.element("EnableClangTidyCodeAnalysis", nil, iif(cfg.clangtidy, "true", "false"))
+		end
+	end
+
+	function m.runcodeanalysis(cfg)
+		if _ACTION >= "vs2019" and cfg.runcodeanalysis ~= nil then
+			m.element("RunCodeAnalysis", nil, iif(cfg.runcodeanalysis, "true", "false"))
+		end
+	end
 
 	function m.latestTargetPlatformVersion(prj)
 		-- See https://developercommunity.visualstudio.com/content/problem/140294/windowstargetplatformversion-makes-it-impossible-t.html
@@ -2904,6 +3132,24 @@
 	function m.xpDeprecationWarning(prj, cfg)
 		if cfg.toolset == "msc-v141_xp" then
 			m.element("XPDeprecationWarning", nil, "false")
+		end
+	end
+
+
+	function m.additionalProps(prj, cfg)
+		local function recurseTableIfNeeded(tbl)
+			for key, value in spairs(tbl) do
+				if (type(value) == "table") then
+					p.push("<" .. key .. ">")
+						recurseTableIfNeeded(value)
+					p.pop("</" .. key .. ">")
+				else
+					m.element(key, nil, vs2010.esc(value))
+				end
+			end
+		end
+		for i = 1, #cfg.vsprops do
+			recurseTableIfNeeded(cfg.vsprops[i])
 		end
 	end
 
@@ -3024,6 +3270,24 @@
 			if cfg.externalwarnings then
 				local map = { Off = "TurnOffAllWarnings", High = "Level4", Extra = "Level4", Everything = "Level4" }
 				m.element("ExternalWarningLevel", condition, map[cfg.externalwarnings] or "Level3")
+			end
+		end
+	end
+
+
+	function m.enableModules(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.enablemodules then
+				m.element("EnableModules", nil, iif(cfg.enablemodules == "On", "true", "false"))
+			end
+		end
+	end
+
+
+	function m.buildStlModules(cfg)
+		if _ACTION >= "vs2022" then
+			if cfg.buildstlmodules then
+				m.element("BuildStlModules", nil, iif(cfg.buildstlmodules == "On", "true", "false"))
 			end
 		end
 	end
@@ -3217,5 +3481,195 @@
 		else
 			local format = string.format('<%s>%s</%s>', name, value, name)
 			p.w(format, table.unpack(arg))
+		end
+	end
+
+	--
+	-- Linux project generation functions
+	--
+
+	function m.linuxApplicationType(cfg)
+		m.element("Keyword", nil, "Linux")
+		m.element("RootNamespace", nil, "%s", cfg.project.name)
+		m.element("MinimumVisualStudioVersion", nil, "17.0")
+		m.element("ApplicationType", nil, "Linux")
+		m.element("TargetLinuxPlatform", nil, "Generic")
+		m.element("ApplicationTypeRevision", nil, "1.0")
+	end
+
+	function m.linuxDebugInformationFormat(cfg)
+		if cfg.symbols then
+
+			if cfg.symbols == p.OFF then
+				m.element("DebugInformationFormat", nil, "None")
+			elseif cfg.symbols == "Full" then
+				m.element("DebugInformationFormat", nil, "FullDebug")
+			else
+				m.element("DebugInformationFormat", nil, "Minimal")
+			end
+
+		end
+	end
+
+	function m.linuxExceptionHandling(cfg, condition)
+		if cfg.exceptionhandling then
+			m.element("ExceptionHandling", condition, iif(cfg.exceptionhandling == p.OFF, "Disabled", "Enabled"))
+		end
+	end
+
+	function m.linuxFloatingPointModel(cfg)
+
+		if cfg.floatingpoint then
+			m.element("RelaxIEEE", nil, iif(cfg.floatingpoint == p.OFF, "false", "true"))
+		end
+
+	end
+
+	function m.linuxLanguageStandardCpp(cfg)
+		local cpp_langmap = {
+			["C++98"]   = "c++98",
+			["C++03"]   = "c++98",
+			["C++11"]   = "c++11",
+			["C++14"]   = "c++14",
+			["C++17"]   = "c++17",
+			["C++2a"]   = "c++2a",
+			["C++20"]   = "c++20",
+			["C++2b"]   = "c++2b",
+			["C++23"]   = "c++23",
+			["C++latest"] = "c++23",
+			["gnu++98"] = "gnu++98",
+			["gnu++03"] = "gnu++03",
+			["gnu++11"] = "gnu++11",
+			["gnu++14"] = "gnu++14",
+			["gnu++17"] = "gnu++17",
+			["gnu++20"] = "gnu++20",
+			["gnu++2b"] = "gnu++2b",
+			["gnu++23"] = "gnu++23",
+		}
+
+		if cpp_langmap[cfg.cppdialect] ~= nil then
+			m.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
+		end
+	end
+
+	function m.linuxLanguageStandardC(cfg)
+		local c_langmap = {
+			["C89"]   = "c89",
+			["C99"]   = "c99",
+			["C11"]   = "c11",
+			["gnu99"] = "gnu99",
+			["gnu11"] = "gnu11",
+		}
+
+		if c_langmap[cfg.cdialect] ~= nil then
+			m.element("CLanguageStandard", nil, c_langmap[cfg.cdialect])
+		end
+	end
+
+	function m.remoteDeployDir(cfg)
+		if cfg.remotedeploydir ~= nil then
+			m.element("RemoteDeployDir", nil, cfg.remotedeploydir)
+		end
+	end
+
+	function m.remoteProjectRelDir(cfg)
+		if cfg.remoteprojectrelativedir ~= nil then
+			m.element("RemoteProjectRelDir", nil, cfg.remoteprojectrelativedir)
+		end
+	end
+
+	function m.remoteProjectDir(cfg)
+		if cfg.remoteprojectdir ~= nil then
+			m.element("RemoteProjectDir", nil, cfg.remoteprojectdir)
+		end
+	end
+
+	function m.remoteRootDir(cfg)
+		if cfg.remoterootdir ~= nil and cfg.remoterootdir ~= "" then
+			m.element("RemoteRootDir", nil, cfg.remoterootdir)
+		end
+	end
+
+	function m.linuxPIC(cfg, condition)
+		if cfg.pic ~= nil then
+			m.element("PositionIndependentCode", condition, iif(cfg.pic == "On", "true", "false"))
+		end
+	end
+
+	function m.linuxPlatformToolset(cfg)
+		local tool, version = p.config.toolset(cfg)
+
+		if not version then
+			local value = p.action.current().toolset
+			tool, version = p.tools.canonical(value)
+		end
+
+		local gcc_map = {
+			["remote"] = "Remote_GCC_1_0",
+			["wsl"] = "WSL_1_0",
+			["wsl2"] = "WSL2_1_0",
+		}
+
+		local clang_map = {
+			["remote"] = "Remote_Clang_1_0",
+			["wsl"] = "WSL_Clang_1_0",
+			["wsl2"] = "WSL2_Clang_1_0",
+		}
+
+		if cfg.toolchainversion then
+
+			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+			version  = map[cfg.toolchainversion]
+
+		end
+
+		if version then
+			m.element("PlatformToolset", nil, version)
+		else
+			p.error('Invalid toolchainversion (%s) for the selected toolset (%s).', cfg.toolchainversion, cfg.toolset)
+		end
+	end
+
+	function m.linuxStlType(cfg)
+		if cfg.staticruntime ~= nil then
+			m.element("UseOfStl", nil, iif(cfg.staticruntime == "On", "libstdc++_static", "libstdc++_shared"))
+		end
+	end
+
+	function m.linuxStrictAliasing(cfg)
+		if cfg.strictaliasing ~= nil then
+			m.element("StrictAliasing", nil, iif(cfg.strictaliasing == "Off", "false", "true"))
+		end
+	end
+
+	function m.linuxWarningLevel(cfg, condition)
+		if cfg.warnings then
+			m.element("WarningLevel", condition, iif(cfg.warnings == p.OFF, "TurnOffAllWarnings", "EnableAllWarnings"))
+		end
+	end
+
+	function m.linuxWholeProgramOptimization(cfg)
+		if cfg.flags.LinkTimeOptimization then
+			m.element("LinkTimeOptimization", nil, "true")
+		end
+	end
+
+	function m.gccClangAdditionalCompileOptions(cfg)
+		local opts = cfg.buildoptions
+
+		if cfg.disablewarnings and #cfg.disablewarnings > 0 then
+			for _, warning in ipairs(cfg.disablewarnings) do
+				table.insert(opts, '-Wno-' .. warning)
+			end
+		end
+
+		-- -fvisibility=<>
+		if cfg.visibility ~= nil then
+			table.insert(opts, p.tools.gcc.cxxflags.visibility[cfg.visibility])
+		end
+
+		if #opts > 0 then
+			opts = table.concat(opts, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', opts)
 		end
 	end

@@ -3,8 +3,8 @@
 --
 -- An automated test framework for Premake and its add-on modules.
 --
--- Author Jason Perkins
--- Copyright (c) 2008-2016 Jason Perkins and the Premake project.
+-- Author Jess Perkins
+-- Copyright (c) 2008-2016 Jess Perkins and the Premake project.
 ---
 
 

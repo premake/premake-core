@@ -1,7 +1,7 @@
 --
 -- gmake2_makefile.lua
 -- Generate a C/C++ project makefile.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
@@ -52,7 +52,7 @@
 			-- identify the toolset used by this configurations (would be nicer if
 			-- this were computed and stored with the configuration up front)
 
-			local toolset = p.tools[cfg.toolset or "gcc"]
+			local toolset, version = p.tools.canonical(cfg.toolset or p.GCC)
 			if not toolset then
 				error("Invalid toolset '" .. cfg.toolset .. "'")
 			end

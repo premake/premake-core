@@ -53,7 +53,7 @@ rule "MyCustomRule"
   }
 ```
 
-Properties may then be used in the rule commands by enclosing the name in square brackets. This, again, is a Visual Studio convention; we may switch it up if support for additional exporters becomes available.
+Properties may then be used in the rule commands by enclosing the name in square brackets. This, again, is a Visual Studio convention; we may switch it up if support for additional exporters becomes available. You might find in [Tokens](Tokens.md) some portable tokens for replacement.
 
 ```lua
 buildcommand 'MyCustomCC.exe -c "%(FullPath)" -o "%(IntDir)/%(Filename).obj" [StripDebugInfo]

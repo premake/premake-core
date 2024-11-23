@@ -1,7 +1,7 @@
 /**
  * \file   os_remove.c
  * \brief  Remove a file on Windows.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

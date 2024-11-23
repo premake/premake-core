@@ -1,4 +1,4 @@
-Specifies shell commands to run after the source files have been compiled, but before the link step.
+Specifies shell commands to run after the source files have been compiled, but before the link step (if unsupported by the action, it will be treated the same as [prebuildcommands](prebuildcommands.md)).
 
 ```lua
 prelinkcommands { "commands" }
@@ -6,7 +6,7 @@ prelinkcommands { "commands" }
 
 ### Parameters ###
 
-`commands` is one or more shell commands. These commands will be passed to the shell exactly as entered, including path separators and the like.
+`commands` is one or more shell commands.
 
 ### Applies To ###
 
@@ -19,14 +19,13 @@ Premake 4.4 or later.
 ### Examples ###
 
 ```lua
-filter { "system:windows" }
-   prelinkcommands { "copy default.config bin\\project.config" }
-
-filter { "not system:windows" }
-   prelinkcommands { "cp default.config bin/project.config" }
+prelinkcommands { "{COPYFILE} %[default.config] %[bin/project.config]" }
 ```
 
 ### See Also ###
 
+ * [Tokens](Tokens.md)
+ * [prelinkmessage](prelinkmessage.md)
  * [prebuildcommands](prebuildcommands.md)
  * [postbuildcommands](postbuildcommands.md)
+ * [Tokens](Tokens.md)

@@ -3,8 +3,8 @@
 --
 -- Execute unit tests and test suites.
 --
--- Author Jason Perkins
--- Copyright (c) 2008-2016 Jason Perkins and the Premake project.
+-- Author Jess Perkins
+-- Copyright (c) 2008-2016 Jess Perkins and the Premake project.
 ---
 
 	local p = premake
@@ -84,8 +84,11 @@
 
 	function _.runTest(test)
 		_.log(term.lightGreen, "[ RUN      ]", string.format(" %s.%s", test.suiteName, test.testName))
+
+		-- Provide a consistent working directory to the tests.
+		os.chdir(_MAIN_SCRIPT_DIR)
+
 		local startTime = os.clock()
-		local cwd = os.getcwd()
 		local hooks = _.installTestingHooks()
 
 		_TESTS_DIR = test.suite._TESTS_DIR
@@ -105,7 +108,6 @@
 		err = err or terr
 
 		_.removeTestingHooks(hooks)
-		os.chdir(cwd)
 
 		if ok then
 			_.log(term.lightGreen, "[       OK ]", string.format(" %s.%s (%.0f ms)", test.suiteName, test.testName, (os.clock() - startTime) * 1000))
@@ -172,6 +174,7 @@
 		hooks.action = _ACTION
 		hooks.options = _OPTIONS
 		hooks.targetOs = _TARGET_OS
+		hooks.targetArch = _TARGET_ARCH
 
 		hooks.io_open = io.open
 		hooks.io_output = io.output
@@ -217,6 +220,7 @@
 		p.action.set(hooks.action)
 		_OPTIONS = hooks.options
 		_TARGET_OS = hooks.targetOs
+		_TARGET_ARCH = hooks.targetArch
 
 		io.open = hooks.io_open
 		io.output = hooks.io_output

@@ -1,7 +1,7 @@
 --
 -- tests/base/test_validation.lua
 -- Verify the project information sanity checking.
--- Copyright (c) 2013-20124 Jason Perkins and the Premake project
+-- Copyright (c) 2013-20124 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("premake_validation")

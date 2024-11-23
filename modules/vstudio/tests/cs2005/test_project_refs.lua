@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_project_refs.lua
 -- Test the project dependencies block of a Visual Studio 2005+ C# project.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

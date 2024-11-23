@@ -1,7 +1,7 @@
 /**
  * \file   os_pathsearch.c
  * \brief  Locates a file, given a set of search paths.
- * \author Copyright (c) 2002-2015 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2015 Jess Perkins and the Premake project
  *
  * \note This function is required by the bootstrapping code; it must be
  *       implemented here in the host and not scripted.

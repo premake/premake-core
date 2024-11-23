@@ -1,10 +1,7 @@
 ---
 title: "Community Update #2"
 tags: [community-updates]
-author: starkos
-author_url: https://github.com/starkos
-author_image_url: https://avatars.githubusercontent.com/u/249247?v=4
-author_title: Premake Admin & Developer
+authors: starkos
 ---
 
 For this cycle (I work in eight-week cycles and fill in as much Premake work as I can), I completed a long overdue pruning of [the pull request backlog](https://github.com/starkos/premake-next/pulls). Working up from the oldest, I was able to get it down to just four, all in striking distance of merging and just needing a little follow-up (assistance welcome!). I'll drop a list of all the PRs that were moved at the bottom of this update. Because…
@@ -18,6 +15,8 @@ Which brings me to the part where I give a huge THANK YOU! to our continuing spo
 For the next cycle, I plan to start filling in the details of an improved configuration storage approach and, if possible, merge another [pull request or two](https://github.com/premake/premake-core/pulls).
 
 ~st.
+
+{/* truncate */}
 
 **Completed Tasks:**
 

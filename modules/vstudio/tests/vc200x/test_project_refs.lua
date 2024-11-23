@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc200x/test_project_refs.lua
 -- Validate project references in Visual Studio 200x C/C++ projects.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

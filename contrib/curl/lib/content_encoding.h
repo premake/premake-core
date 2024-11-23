@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -20,29 +20,15 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * SPDX-License-Identifier: curl
+ *
  ***************************************************************************/
 #include "curl_setup.h"
 
-/*
- * Comma-separated list all supported Content-Encodings ('identity' is implied)
- */
-#ifdef HAVE_LIBZ
-#define ALL_CONTENT_ENCODINGS "deflate, gzip"
-/* force a cleanup */
-void Curl_unencode_cleanup(struct connectdata *conn);
-#else
-#define ALL_CONTENT_ENCODINGS "identity"
-#define Curl_unencode_cleanup(x) Curl_nop_stmt
-#endif
+struct Curl_cwriter;
 
-CURLcode Curl_unencode_deflate_write(struct connectdata *conn,
-                                     struct SingleRequest *req,
-                                     ssize_t nread);
+void Curl_all_content_encodings(char *buf, size_t blen);
 
-CURLcode
-Curl_unencode_gzip_write(struct connectdata *conn,
-                         struct SingleRequest *k,
-                         ssize_t nread);
-
-
+CURLcode Curl_build_unencoding_stack(struct Curl_easy *data,
+                                     const char *enclist, int is_transfer);
 #endif /* HEADER_CURL_CONTENT_ENCODING_H */

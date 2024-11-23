@@ -2,7 +2,7 @@
  * \file   os_touchfile.c
  * \brief markes a file as modified without changing its contents.
  * \author Blizzard Entertainment (contact tvandijck@blizzard.com)
- * \author Copyright (c) 2015 Jason Perkins and the Premake project
+ * \author Copyright (c) 2015 Jess Perkins and the Premake project
  */
 
 #include <stdio.h>

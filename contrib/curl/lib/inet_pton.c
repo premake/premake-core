@@ -1,6 +1,6 @@
 /* This is from the BIND 4.9.4 release, modified to compile by itself */
 
-/* Copyright (c) 1996 by Internet Software Consortium.
+/* Copyright (c) Internet Software Consortium.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,6 +14,8 @@
  * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
+ *
+ * SPDX-License-Identifier: ISC
  */
 
 #include "curl_setup.h"
@@ -37,14 +39,21 @@
 #define INT16SZ          2
 
 /*
- * WARNING: Don't even consider trying to compile this on a system where
- * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
+ * If USE_IPV6 is disabled, we still want to parse IPv6 addresses, so make
+ * sure we have _some_ value for AF_INET6 without polluting our fake value
+ * everywhere.
+ */
+#if !defined(USE_IPV6) && !defined(AF_INET6)
+#define AF_INET6 (AF_INET + 1)
+#endif
+
+/*
+ * WARNING: Do not even consider trying to compile this on a system where
+ * sizeof(int) < 4. sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
 static int      inet_pton4(const char *src, unsigned char *dst);
-#ifdef ENABLE_IPV6
 static int      inet_pton6(const char *src, unsigned char *dst);
-#endif
 
 /* int
  * inet_pton(af, src, dst)
@@ -52,13 +61,13 @@ static int      inet_pton6(const char *src, unsigned char *dst);
  *      to network format (which is usually some kind of binary format).
  * return:
  *      1 if the address was valid for the specified address family
- *      0 if the address wasn't valid (`dst' is untouched in this case)
+ *      0 if the address was not valid (`dst' is untouched in this case)
  *      -1 if some other error occurred (`dst' is untouched in this case, too)
  * notice:
  *      On Windows we store the error in the thread errno, not
- *      in the winsock error code. This is to avoid losing the
- *      actual last winsock error. So use macro ERRNO to fetch the
- *      errno this function sets when returning (-1), not SOCKERRNO.
+ *      in the Winsock error code. This is to avoid losing the
+ *      actual last Winsock error. When this function returns
+ *      -1, check errno not SOCKERRNO.
  * author:
  *      Paul Vixie, 1996.
  */
@@ -68,12 +77,10 @@ Curl_inet_pton(int af, const char *src, void *dst)
   switch(af) {
   case AF_INET:
     return (inet_pton4(src, (unsigned char *)dst));
-#ifdef ENABLE_IPV6
   case AF_INET6:
     return (inet_pton6(src, (unsigned char *)dst));
-#endif
   default:
-    SET_ERRNO(EAFNOSUPPORT);
+    errno = EAFNOSUPPORT;
     return (-1);
   }
   /* NOTREACHED */
@@ -85,7 +92,7 @@ Curl_inet_pton(int af, const char *src, void *dst)
  * return:
  *      1 if `src' is a valid dotted quad, else 0.
  * notice:
- *      does not touch `dst' unless it's returning 1.
+ *      does not touch `dst' unless it is returning 1.
  * author:
  *      Paul Vixie, 1996.
  */
@@ -105,14 +112,15 @@ inet_pton4(const char *src, unsigned char *dst)
 
     pch = strchr(digits, ch);
     if(pch) {
-      unsigned int val = *tp * 10 + (unsigned int)(pch - digits);
+      unsigned int val = (unsigned int)(*tp * 10) +
+                         (unsigned int)(pch - digits);
 
       if(saw_digit && *tp == 0)
         return (0);
       if(val > 255)
         return (0);
       *tp = (unsigned char)val;
-      if(! saw_digit) {
+      if(!saw_digit) {
         if(++octets > 4)
           return (0);
         saw_digit = 1;
@@ -133,14 +141,13 @@ inet_pton4(const char *src, unsigned char *dst)
   return (1);
 }
 
-#ifdef ENABLE_IPV6
 /* int
  * inet_pton6(src, dst)
  *      convert presentation level address to network order binary form.
  * return:
  *      1 if `src' is a valid [RFC1884 2.2] address, else 0.
  * notice:
- *      (1) does not touch `dst' unless it's returning 1.
+ *      (1) does not touch `dst' unless it is returning 1.
  *      (2) :: in a full address is silently ignored.
  * credit:
  *      inspired by Mark Andrews.
@@ -153,7 +160,7 @@ inet_pton6(const char *src, unsigned char *dst)
   static const char xdigits_l[] = "0123456789abcdef",
     xdigits_u[] = "0123456789ABCDEF";
   unsigned char tmp[IN6ADDRSZ], *tp, *endp, *colonp;
-  const char *xdigits, *curtok;
+  const char *curtok;
   int ch, saw_xdigit;
   size_t val;
 
@@ -168,12 +175,13 @@ inet_pton6(const char *src, unsigned char *dst)
   saw_xdigit = 0;
   val = 0;
   while((ch = *src++) != '\0') {
+    const char *xdigits;
     const char *pch;
 
     pch = strchr((xdigits = xdigits_l), ch);
     if(!pch)
       pch = strchr((xdigits = xdigits_u), ch);
-    if(pch != NULL) {
+    if(pch) {
       val <<= 4;
       val |= (pch - xdigits);
       if(++saw_xdigit > 4)
@@ -210,10 +218,10 @@ inet_pton6(const char *src, unsigned char *dst)
     *tp++ = (unsigned char) ((val >> 8) & 0xff);
     *tp++ = (unsigned char) (val & 0xff);
   }
-  if(colonp != NULL) {
+  if(colonp) {
     /*
      * Since some memmove()'s erroneously fail to handle
-     * overlapping regions, we'll do the shift by hand.
+     * overlapping regions, we will do the shift by hand.
      */
     const ssize_t n = tp - colonp;
     ssize_t i;
@@ -231,6 +239,5 @@ inet_pton6(const char *src, unsigned char *dst)
   memcpy(dst, tmp, IN6ADDRSZ);
   return (1);
 }
-#endif /* ENABLE_IPV6 */
 
 #endif /* HAVE_INET_PTON */

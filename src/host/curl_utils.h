@@ -1,7 +1,7 @@
 /**
 * \file   curl_utils.h
 * \brief  curl utilities for the http library.
-* \author Copyright (c) 2017 Tom van Dijck, João Matos and the Premake project
+* \author Copyright (c) 2017 Tom van Dijck, JoÃ£o Matos and the Premake project
 */
 #ifndef curl_utils_h
 #define curl_utils_h
@@ -24,8 +24,13 @@ typedef struct
 	struct curl_slist*  headers;
 } curl_state;
 
-int    curlProgressCallback(curl_state* state, double dltotal, double dlnow, double ultotal, double ulnow);
-size_t curlWriteCallback(char *ptr, size_t size, size_t nmemb, curl_state* state);
+
+#if LIBCURL_VERSION_NUM >= 0x072000
+int curlProgressCallback(curl_state* state, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+#else
+int curlProgressCallback(curl_state* state, double dltotal, double dlnow, double ultotal, double ulnow);
+#endif
+size_t curlWriteCallback(char *ptr, size_t size, size_t nmemb, void* state);
 
 CURL*  curlRequest(lua_State* L, curl_state* state, int optionsIndex, int progressFnIndex, int headersIndex);
 void   curlCleanup(CURL* curl, curl_state* state);

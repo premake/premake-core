@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_filter_ids.lua
 -- Validate generation of filter unique identifiers.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -97,11 +97,11 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
-	<Filter Include="Header Files">
-		<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
-	</Filter>
 	<Filter Include="Source Files">
 		<UniqueIdentifier>{E9C7FDCE-D52A-8D73-7EB0-C5296AF258F6}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Header Files">
+		<UniqueIdentifier>{21EB8090-0D4E-1035-B6D3-48EBA215DCB7}</UniqueIdentifier>
 	</Filter>
 </ItemGroup>
 		]]

@@ -1,7 +1,7 @@
 --
 -- test_gmake2_makefile.lua
 -- Validate the makefile projects.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
   local p = premake

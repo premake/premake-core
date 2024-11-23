@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_make_pch.lua
 -- Validate the setup for precompiled headers in makefiles.
--- Copyright (c) 2010-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2010-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -17,7 +17,6 @@
 
 	local wks, prj
 	function suite.setup()
-		os.chdir(_TESTS_DIR)
 		wks, prj = test.createWorkspace()
 	end
 
@@ -71,15 +70,32 @@
 
 
 --
--- The PCH can be specified relative the an includes search path.
+-- The PCH can be specified relative to the includes search path.
 --
 
-	function suite.pch_searchesIncludeDirs()
+	function suite.searchesIncludeDirs()
 		pchheader "premake.h"
-		includedirs { "../../../src/host" }
+		includedirs { "src/host" }
 		prepareVars()
 		test.capture [[
-  PCH = ../../../src/host/premake.h
+  PCH = src/host/premake.h
+		]]
+	end
+
+
+--
+-- The PCH can be specified relative to the includes search path.
+-- Due to the location being different from _MAIN_SCRIPT_DIR,
+-- the specified PCH path should be relative to the location.
+
+
+	function suite.searchesIncludeDirs_location()
+		location "MyProject"
+		pchheader "premake.h"
+		includedirs { "src/host" }
+		prepareVars()
+		test.capture [[
+  PCH = ../src/host/premake.h
 		]]
 	end
 
@@ -123,20 +139,3 @@ $(OBJECTS): | $(OBJDIR)
 endif
 		]]
 	end
-
-
-
-	--
-	-- If the header is located on one of the include file
-	-- search directories, it should get found automatically.
-	--
-
-		function suite.findsPCH_onIncludeDirs()
-			location "MyProject"
-			pchheader "premake.h"
-			includedirs { "../../../src/host" }
-			prepareVars()
-			test.capture [[
-  PCH = ../../../../src/host/premake.h
-			]]
-		end

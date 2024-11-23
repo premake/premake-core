@@ -9,18 +9,24 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
+        depsrc: [none, contrib, system]
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+    - name: Install dependencies
+      if: matrix.depsrc == 'system'
+      run: |
+        sudo apt-get update 
+        sudo apt-get -y install libcurl4-openssl-dev
     - name: Build
-      run: make -f Bootstrap.mak linux PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib'
+      uses: actions/upload-artifact@v4
       with:
         name: premake-linux-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -32,16 +38,16 @@ jobs:
         platform: [x64]
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
-      run: make -f Bootstrap.mak macosx PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-macosx-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -51,13 +57,16 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [Win32, x64]
+        msdev: [vs2022]
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
-      run: |
-        $vcvarsall_path = vswhere.exe -find VC\Auxiliary\Build\vcvarsall.bat
-        cmd.exe /c "call ""$vcvarsall_path"" x86_amd64 && nmake -f Bootstrap.mak MSDEV=vs2019 windows-msbuild PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}"
+      shell: cmd
+      env:
+        PLATFORM: ${{ matrix.platform }}
+        CONFIG: ${{ matrix.config }}
+      run: ./Bootstrap.bat ${{ matrix.msdev }}
     - name: Test
       run: bin\${{ matrix.config }}\premake5 test --test-all
       shell: cmd
@@ -66,7 +75,7 @@ jobs:
       shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-windows-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
@@ -86,7 +95,7 @@ jobs:
         shell: msys2 {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: 'Setup MSYS2'
       uses: msys2/setup-msys2@v2
       with:
@@ -98,14 +107,51 @@ jobs:
         pacboy: >-
           toolchain:p
     - name: Build
-      run: make -f Bootstrap.mak mingw PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }}
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5.exe test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
+  cosmopolitan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: tritao/setup-cosmopolitan@v1.3
+      with:
+        version: '3.9.2'
+    - name: Build
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh -cosmo
+    - name: Test
+      run: bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-cosmopolitan-universal
+        path: bin/${{ matrix.config }}/premake5
+
+  # This job will be required for PRs to be merged.
+  # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.
+  ci:
+    runs-on: ubuntu-latest
+    needs: [linux, macosx, windows]
+    if: always()
+    steps:
+      - name: All builds ok
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some builds failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1

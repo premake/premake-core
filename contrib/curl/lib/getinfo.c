@@ -5,11 +5,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -17,6 +17,8 @@
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
+ *
+ * SPDX-License-Identifier: curl
  *
  ***************************************************************************/
 
@@ -51,9 +53,11 @@ CURLcode Curl_initinfo(struct Curl_easy *data)
   pro->t_connect = 0;
   pro->t_appconnect = 0;
   pro->t_pretransfer = 0;
+  pro->t_posttransfer = 0;
   pro->t_starttransfer = 0;
   pro->timespent = 0;
   pro->t_redirect = 0;
+  pro->is_t_startransfer_set = false;
 
   info->httpcode = 0;
   info->httpproxycode = 0;
@@ -73,10 +77,10 @@ CURLcode Curl_initinfo(struct Curl_easy *data)
   free(info->wouldredirect);
   info->wouldredirect = NULL;
 
-  info->conn_primary_ip[0] = '\0';
-  info->conn_local_ip[0] = '\0';
-  info->conn_primary_port = 0;
-  info->conn_local_port = 0;
+  memset(&info->primary, 0, sizeof(info->primary));
+  info->primary.remote_port = -1;
+  info->primary.local_port = -1;
+  info->retry_after = 0;
 
   info->conn_scheme = 0;
   info->conn_protocol = 0;
@@ -84,7 +88,6 @@ CURLcode Curl_initinfo(struct Curl_easy *data)
 #ifdef USE_SSL
   Curl_ssl_free_certinfo(data);
 #endif
-
   return CURLE_OK;
 }
 
@@ -93,7 +96,37 @@ static CURLcode getinfo_char(struct Curl_easy *data, CURLINFO info,
 {
   switch(info) {
   case CURLINFO_EFFECTIVE_URL:
-    *param_charp = data->change.url?data->change.url:(char *)"";
+    *param_charp = data->state.url ? data->state.url : (char *)"";
+    break;
+  case CURLINFO_EFFECTIVE_METHOD: {
+    const char *m = data->set.str[STRING_CUSTOMREQUEST];
+    if(!m) {
+      if(data->set.opt_no_body)
+        m = "HEAD";
+#ifndef CURL_DISABLE_HTTP
+      else {
+        switch(data->state.httpreq) {
+        case HTTPREQ_POST:
+        case HTTPREQ_POST_FORM:
+        case HTTPREQ_POST_MIME:
+          m = "POST";
+          break;
+        case HTTPREQ_PUT:
+          m = "PUT";
+          break;
+        default: /* this should never happen */
+        case HTTPREQ_GET:
+          m = "GET";
+          break;
+        case HTTPREQ_HEAD:
+          m = "HEAD";
+          break;
+        }
+      }
+#endif
+    }
+    *param_charp = m;
+  }
     break;
   case CURLINFO_CONTENT_TYPE:
     *param_charp = data->info.contenttype;
@@ -114,22 +147,43 @@ static CURLcode getinfo_char(struct Curl_easy *data, CURLINFO info,
        option had been enabled! */
     *param_charp = data->info.wouldredirect;
     break;
+  case CURLINFO_REFERER:
+    /* Return the referrer header for this request, or NULL if unset */
+    *param_charp = data->state.referer;
+    break;
   case CURLINFO_PRIMARY_IP:
     /* Return the ip address of the most recent (primary) connection */
-    *param_charp = data->info.conn_primary_ip;
+    *param_charp = data->info.primary.remote_ip;
     break;
   case CURLINFO_LOCAL_IP:
     /* Return the source/local ip address of the most recent (primary)
        connection */
-    *param_charp = data->info.conn_local_ip;
+    *param_charp = data->info.primary.local_ip;
     break;
   case CURLINFO_RTSP_SESSION_ID:
+#ifndef CURL_DISABLE_RTSP
     *param_charp = data->set.str[STRING_RTSP_SESSION_ID];
+#else
+    *param_charp = NULL;
+#endif
     break;
   case CURLINFO_SCHEME:
     *param_charp = data->info.conn_scheme;
     break;
-
+  case CURLINFO_CAPATH:
+#ifdef CURL_CA_PATH
+    *param_charp = CURL_CA_PATH;
+#else
+    *param_charp = NULL;
+#endif
+    break;
+  case CURLINFO_CAINFO:
+#ifdef CURL_CA_BUNDLE
+    *param_charp = CURL_CA_BUNDLE;
+#else
+    *param_charp = NULL;
+#endif
+    break;
   default:
     return CURLE_UNKNOWN_OPTION;
   }
@@ -147,6 +201,33 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
     long          *to_long;
   } lptr;
 
+#ifdef DEBUGBUILD
+  char *timestr = getenv("CURL_TIME");
+  if(timestr) {
+    unsigned long val = strtoul(timestr, NULL, 10);
+    switch(info) {
+    case CURLINFO_LOCAL_PORT:
+      *param_longp = (long)val;
+      return CURLE_OK;
+    default:
+      break;
+    }
+  }
+  /* use another variable for this to allow different values */
+  timestr = getenv("CURL_DEBUG_SIZE");
+  if(timestr) {
+    unsigned long val = strtoul(timestr, NULL, 10);
+    switch(info) {
+    case CURLINFO_HEADER_SIZE:
+    case CURLINFO_REQUEST_SIZE:
+      *param_longp = (long)val;
+      return CURLE_OK;
+    default:
+      break;
+    }
+  }
+#endif
+
   switch(info) {
   case CURLINFO_RESPONSE_CODE:
     *param_longp = data->info.httpcode;
@@ -155,22 +236,31 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
     *param_longp = data->info.httpproxycode;
     break;
   case CURLINFO_FILETIME:
-    *param_longp = data->info.filetime;
+    if(data->info.filetime > LONG_MAX)
+      *param_longp = LONG_MAX;
+    else if(data->info.filetime < LONG_MIN)
+      *param_longp = LONG_MIN;
+    else
+      *param_longp = (long)data->info.filetime;
     break;
   case CURLINFO_HEADER_SIZE:
-    *param_longp = data->info.header_size;
+    *param_longp = (long)data->info.header_size;
     break;
   case CURLINFO_REQUEST_SIZE:
-    *param_longp = data->info.request_size;
+    *param_longp = (long)data->info.request_size;
     break;
   case CURLINFO_SSL_VERIFYRESULT:
     *param_longp = data->set.ssl.certverifyresult;
     break;
   case CURLINFO_PROXY_SSL_VERIFYRESULT:
+#ifndef CURL_DISABLE_PROXY
     *param_longp = data->set.proxy_ssl.certverifyresult;
+#else
+    *param_longp = 0;
+#endif
     break;
   case CURLINFO_REDIRECT_COUNT:
-    *param_longp = data->set.followlocation;
+    *param_longp = data->state.followlocation;
     break;
   case CURLINFO_HTTPAUTH_AVAIL:
     lptr.to_long = param_longp;
@@ -189,8 +279,8 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
   case CURLINFO_LASTSOCKET:
     sockfd = Curl_getconnectinfo(data, NULL);
 
-    /* note: this is not a good conversion for systems with 64 bit sockets and
-       32 bit longs */
+    /* note: this is not a good conversion for systems with 64-bit sockets and
+       32-bit longs */
     if(sockfd != CURL_SOCKET_BAD)
       *param_longp = (long)sockfd;
     else
@@ -200,16 +290,23 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
     break;
   case CURLINFO_PRIMARY_PORT:
     /* Return the (remote) port of the most recent (primary) connection */
-    *param_longp = data->info.conn_primary_port;
+    *param_longp = data->info.primary.remote_port;
     break;
   case CURLINFO_LOCAL_PORT:
     /* Return the local port of the most recent (primary) connection */
-    *param_longp = data->info.conn_local_port;
+    *param_longp = data->info.primary.local_port;
+    break;
+  case CURLINFO_PROXY_ERROR:
+    *param_longp = (long)data->info.pxcode;
     break;
   case CURLINFO_CONDITION_UNMET:
-    /* return if the condition prevented the document to get transferred */
-    *param_longp = data->info.timecond ? 1L : 0L;
+    if(data->info.httpcode == 304)
+      *param_longp = 1L;
+    else
+      /* return if the condition prevented the document to get transferred */
+      *param_longp = data->info.timecond ? 1L : 0L;
     break;
+#ifndef CURL_DISABLE_RTSP
   case CURLINFO_RTSP_CLIENT_CSEQ:
     *param_longp = data->state.rtsp_next_client_CSeq;
     break;
@@ -219,6 +316,13 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
   case CURLINFO_RTSP_CSEQ_RECV:
     *param_longp = data->state.rtsp_CSeq_recv;
     break;
+#else
+  case CURLINFO_RTSP_CLIENT_CSEQ:
+  case CURLINFO_RTSP_SERVER_CSEQ:
+  case CURLINFO_RTSP_CSEQ_RECV:
+    *param_longp = 0;
+    break;
+#endif
   case CURLINFO_HTTP_VERSION:
     switch(data->info.httpversion) {
     case 10:
@@ -230,15 +334,121 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
     case 20:
       *param_longp = CURL_HTTP_VERSION_2_0;
       break;
+    case 30:
+      *param_longp = CURL_HTTP_VERSION_3;
+      break;
     default:
       *param_longp = CURL_HTTP_VERSION_NONE;
       break;
     }
     break;
   case CURLINFO_PROTOCOL:
-    *param_longp = data->info.conn_protocol;
+    *param_longp = (long)data->info.conn_protocol;
     break;
+  case CURLINFO_USED_PROXY:
+    *param_longp =
+#ifdef CURL_DISABLE_PROXY
+      0
+#else
+      data->info.used_proxy
+#endif
+      ;
+    break;
+  default:
+    return CURLE_UNKNOWN_OPTION;
+  }
 
+  return CURLE_OK;
+}
+
+#define DOUBLE_SECS(x) (double)(x)/1000000
+
+static CURLcode getinfo_offt(struct Curl_easy *data, CURLINFO info,
+                             curl_off_t *param_offt)
+{
+#ifdef DEBUGBUILD
+  char *timestr = getenv("CURL_TIME");
+  if(timestr) {
+    unsigned long val = strtoul(timestr, NULL, 10);
+    switch(info) {
+    case CURLINFO_TOTAL_TIME_T:
+    case CURLINFO_NAMELOOKUP_TIME_T:
+    case CURLINFO_CONNECT_TIME_T:
+    case CURLINFO_APPCONNECT_TIME_T:
+    case CURLINFO_PRETRANSFER_TIME_T:
+    case CURLINFO_POSTTRANSFER_TIME_T:
+    case CURLINFO_STARTTRANSFER_TIME_T:
+    case CURLINFO_REDIRECT_TIME_T:
+    case CURLINFO_SPEED_DOWNLOAD_T:
+    case CURLINFO_SPEED_UPLOAD_T:
+      *param_offt = (curl_off_t)val;
+      return CURLE_OK;
+    default:
+      break;
+    }
+  }
+#endif
+  switch(info) {
+  case CURLINFO_FILETIME_T:
+    *param_offt = (curl_off_t)data->info.filetime;
+    break;
+  case CURLINFO_SIZE_UPLOAD_T:
+    *param_offt = data->progress.ul.cur_size;
+    break;
+  case CURLINFO_SIZE_DOWNLOAD_T:
+    *param_offt = data->progress.dl.cur_size;
+    break;
+  case CURLINFO_SPEED_DOWNLOAD_T:
+    *param_offt = data->progress.dl.speed;
+    break;
+  case CURLINFO_SPEED_UPLOAD_T:
+    *param_offt = data->progress.ul.speed;
+    break;
+  case CURLINFO_CONTENT_LENGTH_DOWNLOAD_T:
+    *param_offt = (data->progress.flags & PGRS_DL_SIZE_KNOWN) ?
+      data->progress.dl.total_size : -1;
+    break;
+  case CURLINFO_CONTENT_LENGTH_UPLOAD_T:
+    *param_offt = (data->progress.flags & PGRS_UL_SIZE_KNOWN) ?
+      data->progress.ul.total_size : -1;
+    break;
+   case CURLINFO_TOTAL_TIME_T:
+    *param_offt = data->progress.timespent;
+    break;
+  case CURLINFO_NAMELOOKUP_TIME_T:
+    *param_offt = data->progress.t_nslookup;
+    break;
+  case CURLINFO_CONNECT_TIME_T:
+    *param_offt = data->progress.t_connect;
+    break;
+  case CURLINFO_APPCONNECT_TIME_T:
+    *param_offt = data->progress.t_appconnect;
+    break;
+  case CURLINFO_PRETRANSFER_TIME_T:
+    *param_offt = data->progress.t_pretransfer;
+    break;
+  case CURLINFO_POSTTRANSFER_TIME_T:
+    *param_offt = data->progress.t_posttransfer;
+    break;
+  case CURLINFO_STARTTRANSFER_TIME_T:
+    *param_offt = data->progress.t_starttransfer;
+    break;
+  case CURLINFO_QUEUE_TIME_T:
+    *param_offt = data->progress.t_postqueue;
+    break;
+  case CURLINFO_REDIRECT_TIME_T:
+    *param_offt = data->progress.t_redirect;
+    break;
+  case CURLINFO_RETRY_AFTER:
+    *param_offt = data->info.retry_after;
+    break;
+  case CURLINFO_XFER_ID:
+    *param_offt = data->id;
+    break;
+  case CURLINFO_CONN_ID:
+    *param_offt = data->conn ?
+      data->conn->connection_id : data->state.recent_conn_id;
+    break;
   default:
     return CURLE_UNKNOWN_OPTION;
   }
@@ -249,47 +459,68 @@ static CURLcode getinfo_long(struct Curl_easy *data, CURLINFO info,
 static CURLcode getinfo_double(struct Curl_easy *data, CURLINFO info,
                                double *param_doublep)
 {
+#ifdef DEBUGBUILD
+  char *timestr = getenv("CURL_TIME");
+  if(timestr) {
+    unsigned long val = strtoul(timestr, NULL, 10);
+    switch(info) {
+    case CURLINFO_TOTAL_TIME:
+    case CURLINFO_NAMELOOKUP_TIME:
+    case CURLINFO_CONNECT_TIME:
+    case CURLINFO_APPCONNECT_TIME:
+    case CURLINFO_PRETRANSFER_TIME:
+    case CURLINFO_STARTTRANSFER_TIME:
+    case CURLINFO_REDIRECT_TIME:
+    case CURLINFO_SPEED_DOWNLOAD:
+    case CURLINFO_SPEED_UPLOAD:
+      *param_doublep = (double)val;
+      return CURLE_OK;
+    default:
+      break;
+    }
+  }
+#endif
   switch(info) {
   case CURLINFO_TOTAL_TIME:
-    *param_doublep = data->progress.timespent;
+    *param_doublep = DOUBLE_SECS(data->progress.timespent);
     break;
   case CURLINFO_NAMELOOKUP_TIME:
-    *param_doublep = data->progress.t_nslookup;
+    *param_doublep = DOUBLE_SECS(data->progress.t_nslookup);
     break;
   case CURLINFO_CONNECT_TIME:
-    *param_doublep = data->progress.t_connect;
+    *param_doublep = DOUBLE_SECS(data->progress.t_connect);
     break;
   case CURLINFO_APPCONNECT_TIME:
-    *param_doublep = data->progress.t_appconnect;
+    *param_doublep = DOUBLE_SECS(data->progress.t_appconnect);
     break;
   case CURLINFO_PRETRANSFER_TIME:
-    *param_doublep =  data->progress.t_pretransfer;
+    *param_doublep = DOUBLE_SECS(data->progress.t_pretransfer);
     break;
   case CURLINFO_STARTTRANSFER_TIME:
-    *param_doublep = data->progress.t_starttransfer;
+    *param_doublep = DOUBLE_SECS(data->progress.t_starttransfer);
     break;
   case CURLINFO_SIZE_UPLOAD:
-    *param_doublep =  (double)data->progress.uploaded;
+    *param_doublep = (double)data->progress.ul.cur_size;
     break;
   case CURLINFO_SIZE_DOWNLOAD:
-    *param_doublep = (double)data->progress.downloaded;
+    *param_doublep = (double)data->progress.dl.cur_size;
     break;
   case CURLINFO_SPEED_DOWNLOAD:
-    *param_doublep =  (double)data->progress.dlspeed;
+    *param_doublep = (double)data->progress.dl.speed;
     break;
   case CURLINFO_SPEED_UPLOAD:
-    *param_doublep = (double)data->progress.ulspeed;
+    *param_doublep = (double)data->progress.ul.speed;
     break;
   case CURLINFO_CONTENT_LENGTH_DOWNLOAD:
-    *param_doublep = (data->progress.flags & PGRS_DL_SIZE_KNOWN)?
-      (double)data->progress.size_dl:-1;
+    *param_doublep = (data->progress.flags & PGRS_DL_SIZE_KNOWN) ?
+      (double)data->progress.dl.total_size : -1;
     break;
   case CURLINFO_CONTENT_LENGTH_UPLOAD:
-    *param_doublep = (data->progress.flags & PGRS_UL_SIZE_KNOWN)?
-      (double)data->progress.size_ul:-1;
+    *param_doublep = (data->progress.flags & PGRS_UL_SIZE_KNOWN) ?
+      (double)data->progress.ul.total_size : -1;
     break;
   case CURLINFO_REDIRECT_TIME:
-    *param_doublep =  data->progress.t_redirect;
+    *param_doublep = DOUBLE_SECS(data->progress.t_redirect);
     break;
 
   default:
@@ -326,46 +557,19 @@ static CURLcode getinfo_slist(struct Curl_easy *data, CURLINFO info,
       struct curl_tlssessioninfo **tsip = (struct curl_tlssessioninfo **)
                                           param_slistp;
       struct curl_tlssessioninfo *tsi = &data->tsi;
-      struct connectdata *conn = data->easy_conn;
+#ifdef USE_SSL
+      struct connectdata *conn = data->conn;
+#endif
 
       *tsip = tsi;
       tsi->backend = Curl_ssl_backend();
       tsi->internals = NULL;
 
+#ifdef USE_SSL
       if(conn && tsi->backend != CURLSSLBACKEND_NONE) {
-        unsigned int i;
-        for(i = 0; i < (sizeof(conn->ssl) / sizeof(conn->ssl[0])); ++i) {
-          if(conn->ssl[i].use) {
-#if defined(USE_AXTLS)
-            tsi->internals = (void *)conn->ssl[i].ssl;
-#elif defined(USE_CYASSL)
-            tsi->internals = (void *)conn->ssl[i].handle;
-#elif defined(USE_DARWINSSL)
-            tsi->internals = (void *)conn->ssl[i].ssl_ctx;
-#elif defined(USE_GNUTLS)
-            tsi->internals = (void *)conn->ssl[i].session;
-#elif defined(USE_GSKIT)
-            tsi->internals = (void *)conn->ssl[i].handle;
-#elif defined(USE_MBEDTLS)
-            tsi->internals = (void *)&conn->ssl[i].ssl;
-#elif defined(USE_NSS)
-            tsi->internals = (void *)conn->ssl[i].handle;
-#elif defined(USE_OPENSSL)
-            /* Legacy: CURLINFO_TLS_SESSION must return an SSL_CTX pointer. */
-            tsi->internals = ((info == CURLINFO_TLS_SESSION) ?
-                              (void *)conn->ssl[i].ctx :
-                              (void *)conn->ssl[i].handle);
-#elif defined(USE_POLARSSL)
-            tsi->internals = (void *)&conn->ssl[i].ssl;
-#elif defined(USE_SCHANNEL)
-            tsi->internals = (void *)&conn->ssl[i].ctxt->ctxt_handle;
-#elif defined(USE_SSL)
-#error "SSL backend specific information missing for CURLINFO_TLS_SSL_PTR"
-#endif
-            break;
-          }
-        }
+        tsi->internals = Curl_ssl_get_internals(data, FIRSTSOCKET, info, 0);
       }
+#endif
     }
     break;
   default:
@@ -394,6 +598,7 @@ CURLcode Curl_getinfo(struct Curl_easy *data, CURLINFO info, ...)
   va_list arg;
   long *param_longp = NULL;
   double *param_doublep = NULL;
+  curl_off_t *param_offt = NULL;
   const char **param_charp = NULL;
   struct curl_slist **param_slistp = NULL;
   curl_socket_t *param_socketp = NULL;
@@ -401,7 +606,7 @@ CURLcode Curl_getinfo(struct Curl_easy *data, CURLINFO info, ...)
   CURLcode result = CURLE_UNKNOWN_OPTION;
 
   if(!data)
-    return result;
+    return CURLE_BAD_FUNCTION_ARGUMENT;
 
   va_start(arg, info);
 
@@ -421,6 +626,11 @@ CURLcode Curl_getinfo(struct Curl_easy *data, CURLINFO info, ...)
     param_doublep = va_arg(arg, double *);
     if(param_doublep)
       result = getinfo_double(data, info, param_doublep);
+    break;
+  case CURLINFO_OFF_T:
+    param_offt = va_arg(arg, curl_off_t *);
+    if(param_offt)
+      result = getinfo_offt(data, info, param_offt);
     break;
   case CURLINFO_SLIST:
     param_slistp = va_arg(arg, struct curl_slist **);

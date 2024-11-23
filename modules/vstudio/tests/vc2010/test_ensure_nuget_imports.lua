@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_ensure_nuget_imports.lua
 -- Check the EnsureNuGetPackageBuildImports block of a VS 2010 project.
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Copyright (c) 2016 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -42,7 +42,7 @@
 -- Writes the pre-build check that makes sure that all packages are installed.
 --
 
-if _OPTIONS["test-all"] then
+if http ~= nil and _OPTIONS["test-all"] then
 	function suite.structureIsCorrect()
 		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3", "WinPixEventRuntime:1.0.220810001", "Microsoft.Direct3D.D3D12:1.608.2" }
 		prepare()

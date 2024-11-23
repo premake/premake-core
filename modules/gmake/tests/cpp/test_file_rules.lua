@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_file_rules.lua
 -- Validate the makefile source building rules.
--- Copyright (c) 2009-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake

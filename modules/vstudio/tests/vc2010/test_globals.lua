@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_globals.lua
 -- Validate generation of the Globals property group.
--- Copyright (c) 2011-2014 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2014 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -121,6 +121,12 @@ end
 		test.capture [[
 <PropertyGroup Label="Globals">
 	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<Keyword>Linux</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+	<MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+	<ApplicationType>Linux</ApplicationType>
+	<TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+	<ApplicationTypeRevision>1.0</ApplicationTypeRevision>
 </PropertyGroup>
 		]]
 	end
@@ -494,6 +500,83 @@ end
 		]]
 	end
 
+
+	function suite.additionalProps()
+		p.action.set("vs2022")
+
+		vsprops {
+			-- https://devblogs.microsoft.com/directx/gettingstarted-dx12agility/#2-set-agility-sdk-parameters
+			Microsoft_Direct3D_D3D12_D3D12SDKPath = "custom_path",
+			ValueRequiringEscape = "if (age > 3 && age < 8)",
+		}
+		filter "Debug"
+			vsprops {
+				CustomParam = "DebugParam",
+			}
+		filter "Release"
+			vsprops {
+				CustomParam = "ReleaseParam",
+			}
+		filter {}
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<Microsoft_Direct3D_D3D12_D3D12SDKPath>custom_path</Microsoft_Direct3D_D3D12_D3D12SDKPath>
+	<ValueRequiringEscape>if (age &gt; 3 &amp;&amp; age &lt; 8)</ValueRequiringEscape>
+	<CustomParam>DebugParam</CustomParam>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<Microsoft_Direct3D_D3D12_D3D12SDKPath>custom_path</Microsoft_Direct3D_D3D12_D3D12SDKPath>
+	<ValueRequiringEscape>if (age &gt; 3 &amp;&amp; age &lt; 8)</ValueRequiringEscape>
+	<CustomParam>ReleaseParam</CustomParam>
+</PropertyGroup>
+		]]
+	end
+
+
+	function suite.additionalPropsNested()
+		p.action.set("vs2022")
+		filter "Debug"
+			vsprops {
+				Key3 = {
+					NestedKey = "NestedValue"
+				}
+			}
+		filter "Release"
+			vsprops {
+				Key1 = "Value1",
+				Key2 = {
+					NestedKey = "NestedValue"
+				}
+			}
+		filter {}
+		prepare()
+		test.capture [[
+<PropertyGroup Label="Globals">
+	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
+	<IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+	<Keyword>Win32Proj</Keyword>
+	<RootNamespace>MyProject</RootNamespace>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Globals">
+	<Key3>
+		<NestedKey>NestedValue</NestedKey>
+	</Key3>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Globals">
+	<Key1>Value1</Key1>
+	<Key2>
+		<NestedKey>NestedValue</NestedKey>
+	</Key2>
+</PropertyGroup>
+		]]
+	end
 
 	function suite.disableFastUpToDateCheck()
 		fastuptodate "Off"

@@ -1,7 +1,7 @@
 --
 -- tests/actions/xcode/test_xcode_dependencies.lua
 -- Automated test suite for Xcode project dependencies.
--- Copyright (c) 2009-2011 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2011 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("xcode_deps")
@@ -31,7 +31,7 @@
 
 		prj2 = test.createproject(wks)
 		kind "StaticLib"
-		configuration "Debug"
+		filter { "configurations:Debug" }
 		targetsuffix "-d"
 	end
 

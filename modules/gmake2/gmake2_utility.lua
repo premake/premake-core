@@ -1,7 +1,7 @@
 --
 -- gmake2_utility.lua
 -- Generate a C/C++ project makefile.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
@@ -88,7 +88,7 @@
 
 	function utility.addFile(cfg, node, prj)
 		local filecfg = fileconfig.getconfig(node, cfg)
-		if not filecfg or filecfg.flags.ExcludeFromBuild then
+		if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
 			return
 		end
 

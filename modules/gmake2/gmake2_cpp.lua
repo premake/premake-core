@@ -1,7 +1,7 @@
 --
 -- gmake2_cpp.lua
 -- Generate a C/C++ project makefile.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
@@ -109,7 +109,7 @@
 			['.c']   = 'SOURCES',
 			['.s']   = 'SOURCES',
 			['.m']   = 'SOURCES',
-			['.rc']  = 'RESOURCES',
+			['.res'] = 'RESOURCES',
 		}
 
 		-- cache the result.
@@ -152,7 +152,7 @@
 
 	function cpp.addFile(cfg, node)
 		local filecfg = fileconfig.getconfig(node, cfg)
-		if not filecfg or filecfg.flags.ExcludeFromBuild then
+		if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
 			return
 		end
 
@@ -181,6 +181,17 @@
 					cpp.addGeneratedFile(cfg, node, output)
 				end
 			end
+		elseif filecfg.buildaction == "Copy" then
+			local output = '$(TARGETDIR)/' .. node.name
+			local file = {
+				buildoutputs  = { output },
+				source        = node.relpath,
+				buildmessage  = '$(notdir $<)',
+				verbatimbuildcommands = gmake2.copyfile_cmds('"$<"', '"$@"'),
+				buildinputs = {'$(TARGETDIR)'}
+			}
+			table.insert(cfg._gmake.fileRules, file)
+			cpp.addGeneratedFile(cfg, node, output)
 		else
 			cpp.addRuleFile(cfg, node)
 		end
@@ -750,7 +761,11 @@
 				end
 			end
 		end
-
+		if file.verbatimbuildcommands then
+			for _, cmd in ipairs(file.verbatimbuildcommands) do
+				_p('%s', cmd);
+			end
+		end
 		-- TODO: this is a hack with some imperfect side-effects.
 		--       better solution would be to emit a dummy file for the rule, and then outputs depend on it (must clean up dummy in 'clean')
 		--       better yet, is to use pattern rules, but we need to detect that all outputs have the same stem

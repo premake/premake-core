@@ -1,8 +1,8 @@
 ---
 -- project.lua
 -- Premake project object API
--- Author Jason Perkins
--- Copyright (c) 2011-2015 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2011-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake
@@ -270,9 +270,16 @@
 --
 
 	function project.getsourcetree(prj, sorter)
-
+		-- Reuse the previously generated tree if we have it.
 		if prj._.sourcetree then
-			return prj._.sourcetree
+			tr = prj._.sourcetree
+
+			-- But sort it if necessary, as it is always unsorted.
+			if sorter then
+				tree.sort(tr, sorter)
+			end
+
+			return tr
 		end
 
 		local tr = tree.new(prj.name)
@@ -324,9 +331,11 @@
 		end)
 
 		tree.trimroot(tr)
-		tree.sort(tr, sorter)
-
 		prj._.sourcetree = tr
+
+		if sorter then
+			tree.sort(tr, sorter)
+		end
 		return tr
 	end
 

@@ -35,8 +35,12 @@ You can tell Premake where to search for libraries with the [`libdirs`](libdirs.
 libdirs { "libs", "../mylibs" }
 ```
 
-If you need to discover the location of a library, use the [`os.findlib`](os.findlib.md) function.
+If you need to discover the location of a library, use the [`os.findlib`](os/os.findlib.md) function.
 
 ```lua
 libdirs { os.findlib("X11") }
 ```
+
+### Linker
+
+The linker defaults to the specified toolset default linker, but can be changed with the [`linker`](linker.md) flag.

@@ -1,7 +1,7 @@
 --
 -- tests/workspace/test_location.lua
 -- Test handling of the workspace's location field.
--- Copyright (c) 2013-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2013-2015 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("workspace_location")

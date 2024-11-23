@@ -1,7 +1,7 @@
 --
 -- test_gmake2_file_rules.lua
 -- Validate the makefile source building rules.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_file_rules")
@@ -409,3 +409,27 @@ test2.obj: test2.rule
 	$(SILENT) dorule       S1 "test2.rule"
 		]]
 	end
+
+	function suite.fileRulesOnBuildactionCopy()
+		files { "hello.dll" }
+		filter { "Debug", "files:hello.dll" }
+			buildaction "Copy"
+		filter {}
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+ifeq ($(config),debug)
+$(TARGETDIR)/hello.dll: hello.dll $(TARGETDIR)
+	@echo "$(notdir $<)"
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) cp -f "$<" "$@"
+else
+	$(SILENT) copy /B /Y "$<" "$@"
+endif
+
+endif
+]]
+	end
+

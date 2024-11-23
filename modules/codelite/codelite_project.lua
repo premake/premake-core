@@ -6,7 +6,7 @@
 --              Manu Evans
 --              Tom van Dijck
 -- Created:     2013/05/06
--- Copyright:   (c) 2008-2016 Jason Perkins and the Premake project
+-- Copyright:   (c) 2008-2016 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -33,35 +33,33 @@
 	m.elements = {}
 
 	m.ctools = {
-		gcc = "gnu gcc",
-		clang = "clang",
-		msc = "Visual C++",
+		[p.tools.gcc] = "gnu gcc",
+		[p.tools.clang] = "clang",
+		[p.tools.msc] = "Visual C++",
 	}
 	m.cxxtools = {
-		gcc = "gnu g++",
-		clang = "clang++",
-		msc = "Visual C++",
+		[p.tools.gcc] = "gnu g++",
+		[p.tools.clang] = "clang++",
+		[p.tools.msc] = "Visual C++",
 	}
 
 	function m.getcompilername(cfg)
-		local tool = _OPTIONS.cc or cfg.toolset or p.CLANG
-
-		local toolset = p.tools[tool]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
-			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
+			error("Invalid toolset '" + cfg.toolset + "'")
 		end
 
 		if p.languages.isc(cfg.language) then
-			return m.ctools[tool]
+			return m.ctools[toolset]
 		elseif p.languages.iscpp(cfg.language) then
-			return m.cxxtools[tool]
+			return m.cxxtools[toolset]
 		end
 	end
 
 	function m.getcompiler(cfg)
-		local toolset = p.tools[_OPTIONS.cc or cfg.toolset or p.CLANG]
+		local toolset, version = p.tools.canonical(cfg.toolset)
 		if not toolset then
-			error("Invalid toolset '" + (_OPTIONS.cc or cfg.toolset) + "'")
+			error("Invalid toolset '" + cfg.toolset + "'")
 		end
 		return toolset
 	end
@@ -135,7 +133,7 @@
 				for cfg in project.eachconfig(prj) do
 					local cfgname = codelite.cfgname(cfg)
 					local fcfg = p.fileconfig.getconfig(node, cfg)
-					if not fcfg or fcfg.flags.ExcludeFromBuild then
+					if not fcfg or fcfg.flags.ExcludeFromBuild or fcfg.buildaction == "None" then
 						table.insert(excludesFromBuild, cfgname)
 					end
 				end
@@ -327,7 +325,7 @@
 	end
 
 	function m.preBuild(cfg)
-		if #cfg.prebuildcommands > 0 or cfg.prebuildmessage then
+		if #cfg.prebuildcommands > 0 or cfg.prebuildmessage or #cfg.prelinkcommands > 0 or cfg.prelinkmessage then
 			_p(3, '<PreBuild>')
 			p.escaper(codelite.escElementText)
 			if cfg.prebuildmessage then
@@ -335,6 +333,17 @@
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
 			local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
+			for _, command in ipairs(commands) do
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			if #cfg.prelinkcommands then
+				p.warnOnce("codelite_prelink", "prelinkcommands is treated as prebuildcommands by Codelite")
+			end
+			if cfg.prelinkmessage then
+				local command = os.translateCommandsAndPaths("@{ECHO} " .. p.quote(cfg.prelinkmessage), cfg.project.basedir, cfg.project.location)
+				_x(4, '<Command Enabled="yes">%s</Command>', command)
+			end
+			local commands = os.translateCommandsAndPaths(cfg.prelinkcommands, cfg.project.basedir, cfg.project.location)
 			for _, command in ipairs(commands) do
 				_x(4, '<Command Enabled="yes">%s</Command>', command)
 			end
@@ -407,22 +416,31 @@
 		local dependencies = {}
 		local makefilerules = {}
 		local function addrule(dependencies, makefilerules, config, filename)
-			if #config.buildcommands == 0 or #config.buildoutputs == 0 then
+			if #config.buildcommands > 0 and #config.buildoutputs > 0 then
+				local inputs = table.implode(project.getrelative(cfg.project, config.buildinputs), "", "", " ")
+				if filename ~= "" and inputs ~= "" then
+					filename = filename .. " "
+				end
+				local outputs = project.getrelative(cfg.project, config.buildoutputs[1])
+				local buildmessage = ""
+				if config.buildmessage then
+					buildmessage = "\t@{ECHO} " .. p.quote(config.buildmessage) .. "\n"
+				end
+				local commands = table.implode(config.buildcommands,"\t","\n","")
+				table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. "\t@$(MakeDirCommand) $(@D)\n" .. commands, cfg.project.basedir, cfg.project.location))
+				table.insertflat(dependencies, outputs)
+				return true
+			elseif config.buildaction == "Copy" and filename ~= "" then
+				local output = project.getrelative(cfg.workspace, path.join(cfg.targetdir, config.name))
+				local create_directory_command = '\t@$(MakeDirCommand) $(@D)\n'
+				local command = '\t' .. os.translateCommands('{COPYFILE} "' .. filename .. '" "' .. output ..'"') .. '\n'
+
+				table.insert(makefilerules, output .. ": " .. filename .. '\n' .. create_directory_command .. command)
+				table.insert(dependencies, output)
+				return true
+			else
 				return false
 			end
-			local inputs = table.implode(project.getrelative(cfg.project, config.buildinputs), "", "", " ")
-			if filename ~= "" and inputs ~= "" then
-				filename = filename .. " "
-			end
-			local outputs = project.getrelative(cfg.project, config.buildoutputs[1])
-			local buildmessage = ""
-			if config.buildmessage then
-				buildmessage = "\t@{ECHO} " .. p.quote(config.buildmessage) .. "\n"
-			end
-			local commands = table.implode(config.buildcommands,"\t","\n","")
-			table.insert(makefilerules, os.translateCommandsAndPaths(outputs .. ": " .. filename .. inputs .. "\n" .. buildmessage .. "\t@$(MakeDirCommand) $(@D)\n" .. commands, cfg.project.basedir, cfg.project.location))
-			table.insertflat(dependencies, outputs)
-			return true
 		end
 		local tr = project.getsourcetree(cfg.project)
 		p.tree.traverse(tr, {

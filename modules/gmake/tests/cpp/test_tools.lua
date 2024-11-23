@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/cpp/test_tools.lua
 -- Tests for tools support in makefiles.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -30,6 +30,15 @@
 	function suite.usesCorrectTools()
 		make.cppTools(cfg, p.tools.gcc)
 		test.capture [[
+  ifeq ($(origin CC), default)
+    CC = gcc
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = g++
+  endif
+  ifeq ($(origin AR), default)
+    AR = ar
+  endif
   RESCOMP = windres
 		]]
 	end

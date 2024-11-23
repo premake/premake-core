@@ -1,7 +1,7 @@
 --
 -- tests/test_msc.lua
 -- Automated test suite for the Microsoft C toolset interface.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -64,12 +64,6 @@
 		optimize "Debug"
 		prepare()
 		test.contains("/Od", msc.getcflags(cfg))
-	end
-
-	function suite.cflags_onNoFramePointers()
-		flags "NoFramePointer"
-		prepare()
-		test.contains("/Oy", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_onOmitFramePointer()
@@ -399,6 +393,12 @@ end
 		cppdialect "C++20"
 		prepare()
 		test.contains('/std:c++20', msc.getcxxflags(cfg))
+	end
+
+	function suite.cppdialectCpp23()
+		cppdialect "C++23"
+		prepare()
+		test.contains('/std:c++latest', msc.getcxxflags(cfg))
 	end
 
 	function suite.cppdialectCppLatest()

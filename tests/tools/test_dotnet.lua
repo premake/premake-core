@@ -1,7 +1,7 @@
 --
 -- tests/tools/test_dotnet.lua
 -- Automated test suite for the .NET toolset interface.
--- Copyright (c) 2012-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

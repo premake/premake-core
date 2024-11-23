@@ -6,6 +6,7 @@ return {
 	"dotnet2005/test_nuget_framework_folders.lua",
 
 	-- Visual Studio 2005+ C# projects
+	"cs2005/test_additional_props.lua",
 	"cs2005/test_assembly_refs.lua",
 	"cs2005/test_build_events.lua",
 	"cs2005/test_common_props.lua",
@@ -13,6 +14,7 @@ return {
 	"cs2005/test_no_warn.lua",
 	"cs2005/test_debug_props.lua",
 	"cs2005/test_debug_props_2019.lua",
+	"cs2005/test_documentation_file.lua",
 	"cs2005/test_files.lua",
 	"cs2005/test_icon.lua",
 	"cs2005/test_netcore.lua",
@@ -101,6 +103,7 @@ return {
 	-- Visual Studio 2019+ C/C++ Projects
 	"vc2019/test_compile_settings.lua",
 	"vc2019/test_link.lua",
+	"vc2019/test_output_props.lua",
 	"vc2019/test_toolset_settings.lua",
 
 	-- Visual Studio 2022+ C/C++ Projects

@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_resource_compile.lua
 -- Validate resource compiler settings in Visual Studio 2010 C/C++ projects.
--- Copyright (c) 2011-2013 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2013 Jess Perkins and the Premake project
 --
 
 	local p = premake

@@ -1,7 +1,7 @@
 --
 -- tests/actions/make/test_config_maps.lua
 -- Validate handling of configuration maps in makefiles.
--- Copyright (c) 2012 Jason Perkins and the Premake project
+-- Copyright (c) 2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

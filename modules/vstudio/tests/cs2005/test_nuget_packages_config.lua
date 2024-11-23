@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_assembly_refs.lua
 -- Validate generation of NuGet packages.config file for Visual Studio 2010 and newer.
--- Copyright (c) 2012-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake

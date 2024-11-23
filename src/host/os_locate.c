@@ -1,7 +1,7 @@
 /**
  * \file   os_locate.c
  * \brief  Locates files along the standard built-in search paths.
- * \author Copyright (c) 2014-2015 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014-2015 Jess Perkins and the Premake project
  */
 
 #include <stdlib.h>

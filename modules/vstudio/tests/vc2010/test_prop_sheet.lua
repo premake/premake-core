@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2010/test_prop_sheet.lua
 -- Validate generation of the property sheet import groups.
--- Copyright (c) 2011-2012 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2012 Jess Perkins and the Premake project
 --
 
 	local p = premake

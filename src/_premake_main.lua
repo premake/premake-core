@@ -1,15 +1,18 @@
 --
 -- _premake_main.lua
 -- Script-side entry point for the main program logic.
--- Copyright (c) 2002-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2002-2024 Jess Perkins and the Premake project
 --
 
 	local shorthelp     = "Type 'premake5 --help' for help"
 	local versionhelp   = "premake5 (Premake Build Script Generator) %s"
 	local startTime     = os.clock()
 
--- set a global.
+-- set main globals.
 	_PREMAKE_STARTTIME = startTime
+
+	-- default the target OS to the host OS
+	_TARGET_OS = os.host()
 
 -- Load the collection of core scripts, required for everything else to work
 
@@ -333,6 +336,13 @@
 		end
 	end
 
+---
+-- Run git integration part.
+---
+
+	function m.gitHookInstallation()
+		p.git_integration.gitHookInstallation()
+	end
 
 ---
 -- Override point, for logic that should run after validation and
@@ -387,6 +397,7 @@
 		m.bake,
 		m.postBake,
 		m.validate,
+		m.gitHookInstallation,
 		m.preAction,
 		m.callAction,
 		m.postAction,

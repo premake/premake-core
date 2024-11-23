@@ -1,7 +1,7 @@
 ---
 -- global.lua
 -- The global container holds workspaces and rules.
--- Copyright (c) 2014-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2014-2015 Jess Perkins and the Premake project
 ---
 
 	local p = premake

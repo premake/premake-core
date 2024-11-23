@@ -8,7 +8,7 @@
 -- Run it like normal, i.e. `premake5 --file=test_stress.lua gmake`. The
 -- profile results will be placed at `build/profile.txt`.
 --
--- Copyright (c) 2009-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2009-2015 Jess Perkins and the Premake project
 ---
 
 --

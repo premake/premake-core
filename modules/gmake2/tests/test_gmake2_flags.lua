@@ -1,13 +1,14 @@
 --
 -- test_gmake2_flags.lua
 -- Tests compiler and linker flags for Makefiles.
--- (c) 2016-2017 Jason Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local suite = test.declare("gmake2_flags")
 
 	local p = premake
 	local gmake2 = p.modules.gmake2
+	local cpp = gmake2.cpp
 
 	local project = p.project
 
@@ -25,7 +26,7 @@
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
 		local toolset = p.tools.gcc
-		p.callarray(gmake2.cpp, calls, cfg, toolset)
+		p.callArray(calls, cfg, toolset)
 	end
 
 
@@ -35,7 +36,7 @@
 
 	function suite.includeDirs()
 		includedirs { "src/include", "../include" }
-		prepare { "includes" }
+		prepare { cpp.includes }
 		test.capture [[
 INCLUDES += -Isrc/include -I../include
 		]]
@@ -46,7 +47,7 @@ INCLUDES += -Isrc/include -I../include
 --
 	function suite.symbols_on()
 		symbols "on"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
@@ -58,7 +59,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 --
 	function suite.symbols_default()
 		symbols "default"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
@@ -70,7 +71,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
 --
 	function suite.symbols_off()
 		symbols "off"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
@@ -82,7 +83,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)
 --
 	function suite.symbols_fastlink()
 		symbols "FastLink"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
@@ -91,7 +92,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 
 	function suite.symbols_full()
 		symbols "full"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
@@ -104,7 +105,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 	function suite.symbols_on_default()
 		symbols "on"
 		debugformat "Default"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
@@ -114,7 +115,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 	function suite.symbols_on_dwarf()
 		symbols "on"
 		debugformat "Dwarf"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -gdwarf
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gdwarf
@@ -124,7 +125,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gdwarf
 	function suite.symbols_on_split_dwarf()
 		symbols "on"
 		debugformat "SplitDwarf"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -gsplit-dwarf
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gsplit-dwarf
@@ -137,7 +138,7 @@ ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -gsplit-dwarf
 	function suite.symbols_off_dwarf()
 		symbols "off"
 		debugformat "Dwarf"
-		prepare { "cFlags", "cxxFlags" }
+		prepare { cpp.cFlags, cpp.cxxFlags }
 		test.capture [[
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)

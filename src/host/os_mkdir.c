@@ -1,7 +1,7 @@
 /**
  * \file   os_mkdir.c
  * \brief  Create a subdirectory.
- * \author Copyright (c) 2002-2008 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2008 Jess Perkins and the Premake project
  */
 
 #include <sys/stat.h>

@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2017, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -20,77 +20,80 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * SPDX-License-Identifier: curl
+ *
  ***************************************************************************/
 
 #include "curl_setup.h"
+#include <curl/curl.h>
 
 #ifdef USE_GNUTLS
 
-#include "urldata.h"
+#include <gnutls/gnutls.h>
+#include "timeval.h"
 
-int Curl_gtls_init(void);
-int Curl_gtls_cleanup(void);
-CURLcode Curl_gtls_connect(struct connectdata *conn, int sockindex);
-CURLcode Curl_gtls_connect_nonblocking(struct connectdata *conn,
-                                       int sockindex,
-                                       bool *done);
-bool Curl_gtls_data_pending(const struct connectdata *conn,
-                            int connindex);
+#ifdef HAVE_GNUTLS_SRP
+/* the function exists */
+#ifdef USE_TLS_SRP
+/* the functionality is not disabled */
+#define USE_GNUTLS_SRP
+#endif
+#endif
 
- /* close a SSL connection */
-void Curl_gtls_close(struct connectdata *conn, int sockindex);
+struct Curl_easy;
+struct Curl_cfilter;
+struct ssl_primary_config;
+struct ssl_config_data;
+struct ssl_peer;
 
-void Curl_gtls_session_free(void *ptr);
-size_t Curl_gtls_version(char *buffer, size_t size);
-int Curl_gtls_shutdown(struct connectdata *conn, int sockindex);
-CURLcode Curl_gtls_random(struct Curl_easy *data,
-                          unsigned char *entropy,
-                          size_t length);
-void Curl_gtls_md5sum(unsigned char *tmp, /* input */
-                      size_t tmplen,
-                      unsigned char *md5sum, /* output */
-                      size_t md5len);
-void Curl_gtls_sha256sum(const unsigned char *tmp, /* input */
-                      size_t tmplen,
-                      unsigned char *sha256sum, /* output */
-                      size_t sha256len);
+struct gtls_shared_creds {
+  gnutls_certificate_credentials_t creds;
+  char *CAfile; /* CAfile path used to generate X509 store */
+  struct curltime time; /* when the shared creds was created */
+  size_t refcount;
+  BIT(trust_setup); /* x509 anchors + CRLs have been set up */
+};
 
-bool Curl_gtls_cert_status_request(void);
+CURLcode Curl_gtls_shared_creds_create(struct Curl_easy *data,
+                                       struct gtls_shared_creds **pcreds);
+CURLcode Curl_gtls_shared_creds_up_ref(struct gtls_shared_creds *creds);
+void Curl_gtls_shared_creds_free(struct gtls_shared_creds **pcreds);
 
-/* Support HTTPS-proxy */
-#define HTTPS_PROXY_SUPPORT 1
+struct gtls_ctx {
+  gnutls_session_t session;
+  struct gtls_shared_creds *shared_creds;
+#ifdef USE_GNUTLS_SRP
+  gnutls_srp_client_credentials_t srp_client_cred;
+#endif
+  CURLcode io_result; /* result of last IO cfilter operation */
+  BIT(sent_shutdown);
+};
 
-/* Set the API backend definition to GnuTLS */
-#define CURL_SSL_BACKEND CURLSSLBACKEND_GNUTLS
+typedef CURLcode Curl_gtls_ctx_setup_cb(struct Curl_cfilter *cf,
+                                        struct Curl_easy *data,
+                                        void *user_data);
 
-/* this backend supports the CAPATH option */
-#define have_curlssl_ca_path 1
+CURLcode Curl_gtls_ctx_init(struct gtls_ctx *gctx,
+                            struct Curl_cfilter *cf,
+                            struct Curl_easy *data,
+                            struct ssl_peer *peer,
+                            const unsigned char *alpn, size_t alpn_len,
+                            Curl_gtls_ctx_setup_cb *cb_setup,
+                            void *cb_user_data,
+                            void *ssl_user_data);
 
-/* this backend supports CURLOPT_CERTINFO */
-#define have_curlssl_certinfo 1
+CURLcode Curl_gtls_client_trust_setup(struct Curl_cfilter *cf,
+                                      struct Curl_easy *data,
+                                      struct gtls_ctx *gtls);
 
-/* this backend supports CURLOPT_PINNEDPUBLICKEY */
-#define have_curlssl_pinnedpubkey 1
+CURLcode Curl_gtls_verifyserver(struct Curl_easy *data,
+                                gnutls_session_t session,
+                                struct ssl_primary_config *config,
+                                struct ssl_config_data *ssl_config,
+                                struct ssl_peer *peer,
+                                const char *pinned_key);
 
-/* API setup for GnuTLS */
-#define curlssl_init Curl_gtls_init
-#define curlssl_cleanup Curl_gtls_cleanup
-#define curlssl_connect Curl_gtls_connect
-#define curlssl_connect_nonblocking Curl_gtls_connect_nonblocking
-#define curlssl_session_free(x)  Curl_gtls_session_free(x)
-#define curlssl_close_all(x) ((void)x)
-#define curlssl_close Curl_gtls_close
-#define curlssl_shutdown(x,y) Curl_gtls_shutdown(x,y)
-#define curlssl_set_engine(x,y) ((void)x, (void)y, CURLE_NOT_BUILT_IN)
-#define curlssl_set_engine_default(x) ((void)x, CURLE_NOT_BUILT_IN)
-#define curlssl_engines_list(x) ((void)x, (struct curl_slist *)NULL)
-#define curlssl_version Curl_gtls_version
-#define curlssl_check_cxn(x) ((void)x, -1)
-#define curlssl_data_pending(x,y) Curl_gtls_data_pending(x,y)
-#define curlssl_random(x,y,z) Curl_gtls_random(x,y,z)
-#define curlssl_md5sum(a,b,c,d) Curl_gtls_md5sum(a,b,c,d)
-#define curlssl_sha256sum(a,b,c,d) Curl_gtls_sha256sum(a,b,c,d)
-#define curlssl_cert_status_request() Curl_gtls_cert_status_request()
+extern const struct Curl_ssl Curl_ssl_gnutls;
 
 #endif /* USE_GNUTLS */
 #endif /* HEADER_CURL_GTLS_H */

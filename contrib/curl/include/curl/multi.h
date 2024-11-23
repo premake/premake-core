@@ -1,5 +1,5 @@
-#ifndef __CURL_MULTI_H
-#define __CURL_MULTI_H
+#ifndef CURLINC_MULTI_H
+#define CURLINC_MULTI_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,11 +7,11 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2016, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
- * are also available at https://curl.haxx.se/docs/copyright.html.
+ * are also available at https://curl.se/docs/copyright.html.
  *
  * You may opt to use, copy, modify, merge, publish, distribute and/or sell
  * copies of the Software, and permit persons to whom the Software is
@@ -20,9 +20,11 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
+ * SPDX-License-Identifier: curl
+ *
  ***************************************************************************/
 /*
-  This is an "external" header file. Don't give away any internals here!
+  This is an "external" header file. Do not give away any internals here!
 
   GOALS
 
@@ -64,12 +66,18 @@ typedef enum {
   CURLM_OK,
   CURLM_BAD_HANDLE,      /* the passed-in handle is not a valid CURLM handle */
   CURLM_BAD_EASY_HANDLE, /* an easy handle was not good/valid */
-  CURLM_OUT_OF_MEMORY,   /* if you ever get this, you're in deep sh*t */
+  CURLM_OUT_OF_MEMORY,   /* if you ever get this, you are in deep sh*t */
   CURLM_INTERNAL_ERROR,  /* this is a libcurl bug */
   CURLM_BAD_SOCKET,      /* the passed in socket argument did not match */
   CURLM_UNKNOWN_OPTION,  /* curl_multi_setopt() with unsupported option */
   CURLM_ADDED_ALREADY,   /* an easy handle already added to a multi handle was
                             attempted to get added - again */
+  CURLM_RECURSIVE_API_CALL, /* an api function was called from inside a
+                               callback */
+  CURLM_WAKEUP_FAILURE,  /* wakeup is unavailable or failed */
+  CURLM_BAD_FUNCTION_ARGUMENT, /* function called with a bad parameter */
+  CURLM_ABORTED_BY_CALLBACK,
+  CURLM_UNRECOVERABLE_POLL,
   CURLM_LAST
 } CURLMcode;
 
@@ -101,7 +109,7 @@ struct CURLMsg {
 typedef struct CURLMsg CURLMsg;
 
 /* Based on poll(2) structure and values.
- * We don't use pollfd and POLL* constants explicitly
+ * We do not use pollfd and POLL* constants explicitly
  * to cover platforms without poll(). */
 #define CURL_WAIT_POLLIN    0x0001
 #define CURL_WAIT_POLLPRI   0x0002
@@ -110,13 +118,13 @@ typedef struct CURLMsg CURLMsg;
 struct curl_waitfd {
   curl_socket_t fd;
   short events;
-  short revents; /* not supported yet */
+  short revents;
 };
 
 /*
  * Name:    curl_multi_init()
  *
- * Desc:    inititalize multi-style curl usage
+ * Desc:    initialize multi-style curl usage
  *
  * Returns: a new CURLM handle to use in all 'curl_multi' functions.
  */
@@ -171,10 +179,33 @@ CURL_EXTERN CURLMcode curl_multi_wait(CURLM *multi_handle,
                                       int timeout_ms,
                                       int *ret);
 
+/*
+ * Name:     curl_multi_poll()
+ *
+ * Desc:     Poll on all fds within a CURLM set as well as any
+ *           additional fds passed to the function.
+ *
+ * Returns:  CURLMcode type, general multi error code.
+ */
+CURL_EXTERN CURLMcode curl_multi_poll(CURLM *multi_handle,
+                                      struct curl_waitfd extra_fds[],
+                                      unsigned int extra_nfds,
+                                      int timeout_ms,
+                                      int *ret);
+
+/*
+ * Name:     curl_multi_wakeup()
+ *
+ * Desc:     wakes up a sleeping curl_multi_poll call.
+ *
+ * Returns:  CURLMcode type, general multi error code.
+ */
+CURL_EXTERN CURLMcode curl_multi_wakeup(CURLM *multi_handle);
+
  /*
   * Name:    curl_multi_perform()
   *
-  * Desc:    When the app thinks there's data available for curl it calls this
+  * Desc:    When the app thinks there is data available for curl it calls this
   *          function to read/write whatever there is right now. This returns
   *          as soon as the reads and writes are done. This function does not
   *          require that there actually is data available for reading or that
@@ -184,8 +215,8 @@ CURL_EXTERN CURLMcode curl_multi_wait(CURLM *multi_handle,
   *
   * Returns: CURLMcode type, general multi error code. *NOTE* that this only
   *          returns errors etc regarding the whole multi stack. There might
-  *          still have occurred problems on invidual transfers even when this
-  *          returns OK.
+  *          still have occurred problems on individual transfers even when
+  *          this returns OK.
   */
 CURL_EXTERN CURLMcode curl_multi_perform(CURLM *multi_handle,
                                          int *running_handles);
@@ -205,7 +236,7 @@ CURL_EXTERN CURLMcode curl_multi_cleanup(CURLM *multi_handle);
 /*
  * Name:    curl_multi_info_read()
  *
- * Desc:    Ask the multi handle if there's any messages/informationals from
+ * Desc:    Ask the multi handle if there is any messages/informationals from
  *          the individual transfers. Messages include informationals such as
  *          error code from the transfer or just the fact that a transfer is
  *          completed. More details on these should be written down as well.
@@ -218,11 +249,11 @@ CURL_EXTERN CURLMcode curl_multi_cleanup(CURLM *multi_handle);
  *          curl_multi_cleanup().
  *
  *          The 'CURLMsg' struct is meant to be very simple and only contain
- *          very basic informations. If more involved information is wanted,
+ *          very basic information. If more involved information is wanted,
  *          we will provide the particular "transfer handle" in that struct
  *          and that should/could/would be used in subsequent
  *          curl_easy_getinfo() calls (or similar). The point being that we
- *          must never expose complex structs to applications, as then we'll
+ *          must never expose complex structs to applications, as then we will
  *          undoubtably get backwards compatibility problems in the future.
  *
  * Returns: A pointer to a filled-in struct, or NULL if it failed or ran out
@@ -237,10 +268,10 @@ CURL_EXTERN CURLMsg *curl_multi_info_read(CURLM *multi_handle,
  * Name:    curl_multi_strerror()
  *
  * Desc:    The curl_multi_strerror function may be used to turn a CURLMcode
- *          value into the equivalent human readable error string.  This is
+ *          value into the equivalent human readable error string. This is
  *          useful for printing meaningful error messages.
  *
- * Returns: A pointer to a zero-terminated error message.
+ * Returns: A pointer to a null-terminated error message.
  */
 CURL_EXTERN const char *curl_multi_strerror(CURLMcode);
 
@@ -251,7 +282,7 @@ CURL_EXTERN const char *curl_multi_strerror(CURLMcode);
  * Desc:    An alternative version of curl_multi_perform() that allows the
  *          application to pass in one of the file descriptors that have been
  *          detected to have "action" on them and let libcurl perform.
- *          See man page for details.
+ *          See manpage for details.
  */
 #define CURL_POLL_NONE   0
 #define CURL_POLL_IN     1
@@ -287,16 +318,16 @@ typedef int (*curl_multi_timer_callback)(CURLM *multi,    /* multi handle */
                                          void *userp);    /* private callback
                                                              pointer */
 
-CURL_EXTERN CURLMcode curl_multi_socket(CURLM *multi_handle, curl_socket_t s,
-                                        int *running_handles);
+CURL_EXTERN CURLMcode CURL_DEPRECATED(7.19.5, "Use curl_multi_socket_action()")
+curl_multi_socket(CURLM *multi_handle, curl_socket_t s, int *running_handles);
 
 CURL_EXTERN CURLMcode curl_multi_socket_action(CURLM *multi_handle,
                                                curl_socket_t s,
                                                int ev_bitmask,
                                                int *running_handles);
 
-CURL_EXTERN CURLMcode curl_multi_socket_all(CURLM *multi_handle,
-                                            int *running_handles);
+CURL_EXTERN CURLMcode CURL_DEPRECATED(7.19.5, "Use curl_multi_socket_action()")
+curl_multi_socket_all(CURLM *multi_handle, int *running_handles);
 
 #ifndef CURL_ALLOW_OLD_MULTI_SOCKET
 /* This macro below was added in 7.16.3 to push users who recompile to use
@@ -317,68 +348,56 @@ CURL_EXTERN CURLMcode curl_multi_socket_all(CURLM *multi_handle,
 CURL_EXTERN CURLMcode curl_multi_timeout(CURLM *multi_handle,
                                          long *milliseconds);
 
-#undef CINIT /* re-using the same name as in curl.h */
-
-#ifdef CURL_ISOCPP
-#define CINIT(name,type,num) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + num
-#else
-/* The macro "##" is ISO C, we assume pre-ISO C doesn't support it. */
-#define LONG          CURLOPTTYPE_LONG
-#define OBJECTPOINT   CURLOPTTYPE_OBJECTPOINT
-#define FUNCTIONPOINT CURLOPTTYPE_FUNCTIONPOINT
-#define OFF_T         CURLOPTTYPE_OFF_T
-#define CINIT(name,type,number) CURLMOPT_/**/name = type + number
-#endif
-
 typedef enum {
   /* This is the socket callback function pointer */
-  CINIT(SOCKETFUNCTION, FUNCTIONPOINT, 1),
+  CURLOPT(CURLMOPT_SOCKETFUNCTION, CURLOPTTYPE_FUNCTIONPOINT, 1),
 
   /* This is the argument passed to the socket callback */
-  CINIT(SOCKETDATA, OBJECTPOINT, 2),
+  CURLOPT(CURLMOPT_SOCKETDATA, CURLOPTTYPE_OBJECTPOINT, 2),
 
     /* set to 1 to enable pipelining for this multi handle */
-  CINIT(PIPELINING, LONG, 3),
+  CURLOPT(CURLMOPT_PIPELINING, CURLOPTTYPE_LONG, 3),
 
    /* This is the timer callback function pointer */
-  CINIT(TIMERFUNCTION, FUNCTIONPOINT, 4),
+  CURLOPT(CURLMOPT_TIMERFUNCTION, CURLOPTTYPE_FUNCTIONPOINT, 4),
 
   /* This is the argument passed to the timer callback */
-  CINIT(TIMERDATA, OBJECTPOINT, 5),
+  CURLOPT(CURLMOPT_TIMERDATA, CURLOPTTYPE_OBJECTPOINT, 5),
 
   /* maximum number of entries in the connection cache */
-  CINIT(MAXCONNECTS, LONG, 6),
+  CURLOPT(CURLMOPT_MAXCONNECTS, CURLOPTTYPE_LONG, 6),
 
   /* maximum number of (pipelining) connections to one host */
-  CINIT(MAX_HOST_CONNECTIONS, LONG, 7),
+  CURLOPT(CURLMOPT_MAX_HOST_CONNECTIONS, CURLOPTTYPE_LONG, 7),
 
   /* maximum number of requests in a pipeline */
-  CINIT(MAX_PIPELINE_LENGTH, LONG, 8),
+  CURLOPT(CURLMOPT_MAX_PIPELINE_LENGTH, CURLOPTTYPE_LONG, 8),
 
   /* a connection with a content-length longer than this
      will not be considered for pipelining */
-  CINIT(CONTENT_LENGTH_PENALTY_SIZE, OFF_T, 9),
+  CURLOPT(CURLMOPT_CONTENT_LENGTH_PENALTY_SIZE, CURLOPTTYPE_OFF_T, 9),
 
   /* a connection with a chunk length longer than this
      will not be considered for pipelining */
-  CINIT(CHUNK_LENGTH_PENALTY_SIZE, OFF_T, 10),
+  CURLOPT(CURLMOPT_CHUNK_LENGTH_PENALTY_SIZE, CURLOPTTYPE_OFF_T, 10),
 
-  /* a list of site names(+port) that are blacklisted from
-     pipelining */
-  CINIT(PIPELINING_SITE_BL, OBJECTPOINT, 11),
+  /* a list of site names(+port) that are blocked from pipelining */
+  CURLOPT(CURLMOPT_PIPELINING_SITE_BL, CURLOPTTYPE_OBJECTPOINT, 11),
 
-  /* a list of server types that are blacklisted from
-     pipelining */
-  CINIT(PIPELINING_SERVER_BL, OBJECTPOINT, 12),
+  /* a list of server types that are blocked from pipelining */
+  CURLOPT(CURLMOPT_PIPELINING_SERVER_BL, CURLOPTTYPE_OBJECTPOINT, 12),
 
   /* maximum number of open connections in total */
-  CINIT(MAX_TOTAL_CONNECTIONS, LONG, 13),
+  CURLOPT(CURLMOPT_MAX_TOTAL_CONNECTIONS, CURLOPTTYPE_LONG, 13),
 
    /* This is the server push callback function pointer */
-  CINIT(PUSHFUNCTION, FUNCTIONPOINT, 14),
+  CURLOPT(CURLMOPT_PUSHFUNCTION, CURLOPTTYPE_FUNCTIONPOINT, 14),
 
   /* This is the argument passed to the server push callback */
-  CINIT(PUSHDATA, OBJECTPOINT, 15),
+  CURLOPT(CURLMOPT_PUSHDATA, CURLOPTTYPE_OBJECTPOINT, 15),
+
+  /* maximum number of concurrent streams to support on a connection */
+  CURLOPT(CURLMOPT_MAX_CONCURRENT_STREAMS, CURLOPTTYPE_LONG, 16),
 
   CURLMOPT_LASTENTRY /* the last unused */
 } CURLMoption;
@@ -407,17 +426,30 @@ CURL_EXTERN CURLMcode curl_multi_setopt(CURLM *multi_handle,
 CURL_EXTERN CURLMcode curl_multi_assign(CURLM *multi_handle,
                                         curl_socket_t sockfd, void *sockp);
 
+/*
+ * Name:    curl_multi_get_handles()
+ *
+ * Desc:    Returns an allocated array holding all handles currently added to
+ *          the multi handle. Marks the final entry with a NULL pointer. If
+ *          there is no easy handle added to the multi handle, this function
+ *          returns an array with the first entry as a NULL pointer.
+ *
+ * Returns: NULL on failure, otherwise a CURL **array pointer
+ */
+CURL_EXTERN CURL **curl_multi_get_handles(CURLM *multi_handle);
 
 /*
  * Name: curl_push_callback
  *
  * Desc: This callback gets called when a new stream is being pushed by the
- *       server. It approves or denies the new stream.
+ *       server. It approves or denies the new stream. It can also decide
+ *       to completely fail the connection.
  *
- * Returns: CURL_PUSH_OK or CURL_PUSH_DENY.
+ * Returns: CURL_PUSH_OK, CURL_PUSH_DENY or CURL_PUSH_ERROROUT
  */
-#define CURL_PUSH_OK   0
-#define CURL_PUSH_DENY 1
+#define CURL_PUSH_OK       0
+#define CURL_PUSH_DENY     1
+#define CURL_PUSH_ERROROUT 2 /* added in 7.72.0 */
 
 struct curl_pushheaders;  /* forward declaration only */
 
@@ -431,6 +463,20 @@ typedef int (*curl_push_callback)(CURL *parent,
                                   size_t num_headers,
                                   struct curl_pushheaders *headers,
                                   void *userp);
+
+/*
+ * Name:    curl_multi_waitfds()
+ *
+ * Desc:    Ask curl for fds for polling. The app can use these to poll on.
+ *          We want curl_multi_perform() called as soon as one of them are
+ *          ready. Passing zero size allows to get just a number of fds.
+ *
+ * Returns: CURLMcode type, general multi error code.
+ */
+CURL_EXTERN CURLMcode curl_multi_waitfds(CURLM *multi,
+                                         struct curl_waitfd *ufds,
+                                         unsigned int size,
+                                         unsigned int *fd_count);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

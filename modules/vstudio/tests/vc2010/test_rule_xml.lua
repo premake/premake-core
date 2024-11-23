@@ -1,8 +1,8 @@
 --
 -- tests/actions/vstudio/vc2010/test_rule_xml.lua
 -- Validate generation of custom rules
--- Author Jason Perkins
--- Copyright (c) 2016 Jason Perkins and the Premake project
+-- Author Jess Perkins
+-- Copyright (c) 2016 Jess Perkins and the Premake project
 --
 
 	local p = premake

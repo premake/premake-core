@@ -118,3 +118,31 @@
   </VirtualDirectory>
 		]]
 	end
+
+	function suite.OnProject_SourceFiles_excluded_by_flag()
+		files { "a.cpp" }
+		filter {"files:a.cpp"}
+			flags "ExcludeFromBuild"
+		filter {}
+		prepare()
+		codelite.project.files(prj)
+		test.capture [[
+  <VirtualDirectory Name="MyProject">
+    <File Name="a.cpp" ExcludeProjConfig="Debug;Release" />
+  </VirtualDirectory>
+		]]
+	end
+
+	function suite.OnProject_SourceFiles_excluded_by_buildaction()
+		files { "a.cpp" }
+		filter {"files:a.cpp"}
+			buildaction "None"
+		filter {}
+		prepare()
+		codelite.project.files(prj)
+		test.capture [[
+  <VirtualDirectory Name="MyProject">
+    <File Name="a.cpp" ExcludeProjConfig="Debug;Release" />
+  </VirtualDirectory>
+		]]
+	end

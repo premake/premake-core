@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/vc2022/test_compile_settings.lua
 -- Validate compiler settings in Visual Studio 2022 C/C++ projects.
--- Copyright (c) 2011-2021 Jason Perkins and the Premake project
+-- Copyright (c) 2011-2021 Jess Perkins and the Premake project
 --
 
 local p = premake
@@ -158,5 +158,31 @@ function suite.TreatAngleIncludeAsExternalOffFile()
 	<ClCompile Include="hello1.cpp" />
 	<ClCompile Include="hello2.cpp">
 		<TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+	]]
+end
+
+function suite.BuildStlModulesOff()
+	buildstlmodules 'Off'
+	prepare()
+	test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<BuildStlModules>false</BuildStlModules>
+	]]
+end
+
+function suite.BuildStlModulesOn()
+	buildstlmodules 'On'
+	prepare()
+	test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+	<BuildStlModules>true</BuildStlModules>
 	]]
 end

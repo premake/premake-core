@@ -32,7 +32,7 @@ project "luasocket"
 		links { 'ws2_32' }
 		characterset "MBCS"
 		
-		defines { "LUASOCKET_API=__declspec(dllexport)" }
+		defines { "LUASOCKET_API=__declspec(dllexport)", "_WINSOCK_DEPRECATED_NO_WARNINGS" }
 	
 	filter "system:not windows"
 		removefiles

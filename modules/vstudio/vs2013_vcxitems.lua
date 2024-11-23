@@ -1,7 +1,7 @@
 --
 -- vs2013_vcxitems.lua
 -- Generate a Visual Studio 201x C/C++ shared items project.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 	local p = premake

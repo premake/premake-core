@@ -1,7 +1,7 @@
 --
 -- tests/test_premake.lua
 -- Automated test suite for the Premake support functions.
--- Copyright (c) 2008-2015 Jason Perkins and the Premake project
+-- Copyright (c) 2008-2015 Jess Perkins and the Premake project
 --
 
 
@@ -16,6 +16,7 @@
 
 	local wks, prj
 	function suite.setup()
+		os.chdir(_TESTS_DIR)
 		wks = test.createWorkspace()
 		location "MyLocation"
 		prj = p.workspace.getproject(wks, 1)

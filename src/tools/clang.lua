@@ -1,7 +1,7 @@
 --
 -- clang.lua
 -- Clang toolset adapter for Premake
--- Copyright (c) 2013 Jason Perkins and the Premake project
+-- Copyright (c) 2013 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -65,7 +65,12 @@
 		symbols = gcc.shared.symbols,
 		unsignedchar = gcc.shared.unsignedchar,
 		omitframepointer = gcc.shared.omitframepointer,
-		compileas = gcc.shared.compileas
+		compileas = gcc.shared.compileas,
+		sanitize = table.merge(gcc.shared.sanitize, {
+			Fuzzer = "-fsanitize=fuzzer",
+		}),
+		visibility = gcc.shared.visibility,
+		inlinesvisibility = gcc.shared.inlinesvisibility
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {
@@ -86,7 +91,7 @@
 	end
 
 --
--- Returns C/C++ system version related build flags
+-- Returns system version related build flags
 --
 
 	function clang.getsystemversionflags(cfg)
@@ -115,9 +120,6 @@
 --
 
 	clang.cxxflags = table.merge(gcc.cxxflags, {
-		sanitize = {
-			Fuzzer = "-fsanitize=fuzzer",
-		},
 	})
 
 	function clang.getcxxflags(cfg)
@@ -250,9 +252,10 @@
 				if cfg.system == p.WINDOWS then return "-mwindows" end
 			end,
 		},
-		sanitize = {
-			Address = "-fsanitize=address",
-		},
+		linker = gcc.ldflags.linker,
+		sanitize = table.merge(gcc.ldflags.sanitize, {
+			Fuzzer = "-fsanitize=fuzzer",
+		}),
 		system = {
 			wii = "$(MACHDEP)",
 		}
@@ -340,13 +343,18 @@
 	clang.tools = {
 		cc = "clang",
 		cxx = "clang++",
-		ar = function(cfg) return iif(cfg.flags.LinkTimeOptimization, "llvm-ar", "ar") end
+		ar = function(cfg) return iif(cfg.flags.LinkTimeOptimization, "llvm-ar", "ar") end,
+		rc = "windres"
 	}
 
 	function clang.gettoolname(cfg, tool)
+		local toolset, version = p.tools.canonical(cfg.toolset or p.CLANG)
 		local value = clang.tools[tool]
 		if type(value) == "function" then
 			value = value(cfg)
+		end
+		if toolset == p.tools.clang and version ~= nil then
+			value = value .. "-" .. version
 		end
 		return value
 	end

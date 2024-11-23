@@ -1,7 +1,7 @@
 --
 -- test_tokens.lua
 -- Generate a NuGet packages.config file.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 

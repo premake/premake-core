@@ -1,7 +1,7 @@
 --
 -- tests/test_string.lua
 -- Automated test suite for the new string functions.
--- Copyright (c) 2008 Jason Perkins and the Premake project
+-- Copyright (c) 2008 Jess Perkins and the Premake project
 --
 
 	local suite = test.declare("string")

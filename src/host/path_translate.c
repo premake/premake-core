@@ -1,7 +1,7 @@
 /**
  * \file   path_translate.c
  * \brief  Translates between path separators.
- * \author Copyright (c) 2002-2013 Jason Perkins and the Premake project
+ * \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

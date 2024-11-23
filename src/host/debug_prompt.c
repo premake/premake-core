@@ -1,7 +1,7 @@
 /**
  * \file   debug_prompt.c
  * \brief  Display a prompt and enter interactive REPL mode.
- * \author Copyright (c) 2014 Jason Perkins and the Premake project
+ * \author Copyright (c) 2014 Jess Perkins and the Premake project
  */
 
 #include "premake.h"

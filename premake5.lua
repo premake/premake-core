@@ -79,9 +79,24 @@
 
 
 	newoption {
+		trigger = "curl-src",
+		description = "Specify the source of the Curl 3rd party library",
+		allowed = {
+			{ "none", "Disables Curl" },
+			{ "contrib", "Uses Curl in contrib folder" },
+			{ "system", "Uses Curl from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
 		trigger = "no-curl",
 		description = "Disable Curl 3rd party lib"
 	}
+	if _OPTIONS["no-curl"] then
+		premake.warn("--no-curl is deprecated, please use --curl-src=none")
+		_OPTIONS["curl-src"] = "none"
+	end
 
 
 	newoption {
@@ -112,10 +127,9 @@
 			--
 			{ "Win32", "Same as x86" },
 			{ "x64", "Same as x86_64" },
-			--
-			{ "default", "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
 		},
-		default = "default",
+		-- "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
+		default = nil,
 	}
 
 --
@@ -140,9 +154,10 @@
 			defines { "PREMAKE_COMPRESSION" }
 		end
 
-		if not _OPTIONS["no-curl"] then
-			defines { "CURL_STATICLIB", "PREMAKE_CURL"}
-		end
+		filter { "options:not curl-src=none" }
+			defines { "PREMAKE_CURL" }
+		filter { "options:curl-src=contrib" }
+			defines { "CURL_STATICLIB" }
 
 		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
 			buildoptions { "-arch arm64" }
@@ -168,12 +183,12 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:arch=default" }
+		filter { "system:windows", "options:not arch" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"
 			defines     "_DEBUG"
-			flags       { "Symbols" }
+			symbols	    "On"
 
 		filter "configurations:Release"
 			defines     "NDEBUG"
@@ -207,10 +222,12 @@
 			links { "zip-lib", "zlib-lib" }
 		end
 
-		if not _OPTIONS["no-curl"] then
+		filter { "options:curl-src=contrib" }
 			includedirs { "contrib/curl/include" }
 			links { "curl-lib" }
-		end
+		filter { "options:curl-src=system" }
+			links { "curl" }
+		filter {}
 
 		files
 		{
@@ -238,7 +255,7 @@
 			files { "src/**.rc" }
 
 		filter "toolset:mingw"
-			links		{ "crypt32" }
+			links		{ "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
@@ -248,16 +265,14 @@
 		filter "system:linux or hurd"
 			links       { "dl", "rt" }
 
-		filter { "system:not windows", "system:not macosx" }
-			if not _OPTIONS["no-curl"] then
-				links   { "mbedtls-lib" }
-			end
+		filter { "system:not windows", "system:not macosx", "options:curl-src=contrib" }
+			links       { "mbedtls-lib" }
 
 		filter "system:macosx"
 			defines     { "LUA_USE_MACOSX" }
 			links       { "CoreServices.framework", "Foundation.framework", "Security.framework", "readline" }
 
-		filter "system:linux"
+		filter { "system:linux", "toolset:not cosmocc" }
 			links		{ "uuid" }
 
 		filter { "system:macosx", "action:gmake" }
@@ -274,7 +289,26 @@
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN", "_BSD_SOURCE" }
 			links       { "network", "bsd" }
 
+if premake.action.supports("None") then
+	project "Web"
+		kind "None"
 
+		files
+		{
+			"website/blog/**",
+			"website/community/**",
+			"website/doc/**",
+			"website/src/**",
+			"website/static/**",
+			"website/*"
+		}
+		-- ensure that "website/node_modules/**" is not there (generated files)
+
+	project "Github"
+		kind "None"
+
+		files ".github/**"
+end
 	-- optional 3rd party libraries
 	group "contrib"
 		include "contrib/lua"
@@ -285,18 +319,19 @@
 			include "contrib/libzip"
 		end
 
-		if not _OPTIONS["no-curl"] then
+		if _OPTIONS["curl-src"] == "contrib" then
 			include "contrib/mbedtls"
 			include "contrib/curl"
 		end
 
-	group "Binary Modules"
-		include "binmodules/example"
+	if _OPTIONS["cc"] ~= "cosmocc" then
+		group "Binary Modules"
+			include "binmodules/example"
 
-		if not _OPTIONS["no-luasocket"] then
-			include "binmodules/luasocket"
-		end
-
+			if not _OPTIONS["no-luasocket"] then
+				include "binmodules/luasocket"
+			end
+	end
 --
 -- A more thorough cleanup.
 --

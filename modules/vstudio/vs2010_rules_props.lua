@@ -1,7 +1,7 @@
 ---
 -- vs2010_rules_props.lua
 -- Generate a Visual Studio 201x custom rules properties file.
--- Copyright (c) Jason Perkins and the Premake project
+-- Copyright (c) Jess Perkins and the Premake project
 --
 
 
@@ -150,7 +150,7 @@
 
 		-- write out the result.
 		if buildcommands and #buildcommands > 0 then
-			local cmds = os.translateCommands(buildcommands, p.WINDOWS)
+			local cmds = os.translateCommandsAndPaths(buildcommands, r.basedir, r.location, p.WINDOWS)
 			cmds = table.concat(cmds, p.eol())
 			p.x('<CommandLineTemplate>%s</CommandLineTemplate>', cmds)
 		end
