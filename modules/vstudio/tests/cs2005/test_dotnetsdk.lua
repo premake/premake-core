@@ -10,7 +10,7 @@
 -- Setup
 --
 
-	local wks, prj, cwd
+	local wks, prj
 
 --
 -- Setup and teardown
