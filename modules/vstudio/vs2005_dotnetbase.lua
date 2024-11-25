@@ -826,7 +826,7 @@
             ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
             ["MSTest"] = "MSTest.Sdk",
         }
-		
+
 		local parts = nil
 
 		if cfg.dotnetsdk then
@@ -835,19 +835,7 @@
 
 		local sdk = (parts and #parts > 0 and parts[1]) or cfg.dotnetsdk
 		if not parts or #parts < 2 then
-			-- prioritize WPF flag for compatibility, remove if statement when cfg.flags api is deprecated
-			if cfg.flags.WPF then
-				return map["WindowsDesktop"]
-			end
-
-			if sdk == "MSTest" then
-				-- If sdk is MSTest, we need exactly 2 parts
-				p.error("MSTest requires a version to be specified!")
-				return nil
-			end
-
 			return map[sdk or "Default"]
-
 		elseif parts and #parts == 2 then
 			return string.format("%s/%s", map[parts[1]] or parts[1], parts[2])
 		end

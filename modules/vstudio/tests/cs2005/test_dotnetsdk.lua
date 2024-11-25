@@ -16,9 +16,6 @@
 -- Setup and teardown
 --
 	function suite.setup()
-		cwd = os.getcwd()
-		os.chdir(_TESTS_DIR)
-
 		p.action.set("vs2010")
 		wks = test.createWorkspace()
 	 	configurations { "Debug", "Release" }
@@ -26,9 +23,6 @@
 		dotnetframework "net8.0"
 	end
 
-	function suite.teardown()
-		os.chdir(cwd)
-	end
 	local function setConfig()
 		local cfg = test.getconfig(prj, "Debug")
 		dn2005.projectElement(cfg);
@@ -118,7 +112,6 @@
 
 	function suite.testWPFFlag()
 		prepare()
-		dotnetsdk "Web"
 		flags { "WPF" }
 		setConfig()
 
@@ -179,6 +172,7 @@
 
 	function suite.testCustomSDKVersion()
 		prepare()
+		premake.api.addAllowed("dotnetsdk", "CustomSdk")
 		dotnetsdk "CustomSdk/3.4.0"
 		setConfig()
 
