@@ -20,6 +20,7 @@ local wks, prj
 function suite.setup()
     p.action.set("vs2005")
     wks, prj = test.createWorkspace()
+	configurations { "Debug", "Release", "Distribution"}
     language "C#"
 end
 
@@ -31,6 +32,10 @@ end
 local function targetFrameworkVersionPrepare()
     local cfg = test.getconfig(prj, "Debug")
     dn2005.targetFrameworkVersion(cfg)
+end
+
+local function projectConfigurationsPrepare()
+    dn2005.projectConfigurations(prj)
 end
 
 local function prepareNetcore()
@@ -131,4 +136,15 @@ function suite.allowUnsafeProperty_core()
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 	</PropertyGroup>
     ]]
+end
+
+function suite.project_element_configurations()
+	p.action.set("vs2022")
+	dotnetframework "net8.0"
+
+	projectConfigurationsPrepare()
+
+test.capture [[
+		<Configurations>Debug;Release;Distribution</Configurations>
+	]]
 end

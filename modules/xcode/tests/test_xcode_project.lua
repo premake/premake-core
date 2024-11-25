@@ -2318,7 +2318,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnStaticRuntime()
-		flags { "StaticRuntime" }
+		staticruntime "On"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -2725,7 +2725,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnFloatFast()
-		flags { "FloatFast" }
+		floatingpoint "Fast"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
@@ -2858,7 +2858,7 @@
 
 
 	function suite.XCBuildConfigurationProject_OnNoFramePointer()
-		flags { "NoFramePointer" }
+		omitframepointer "On"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[

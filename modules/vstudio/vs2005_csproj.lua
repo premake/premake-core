@@ -52,6 +52,7 @@
 				dotnetbase.bindingRedirects,
 				dotnetbase.netcore.useWpf,
 				dotnetbase.csversion,
+				dotnetbase.projectConfigurations,
 				dotnetbase.netcore.enableDefaultCompileItems,
 				dotnetbase.netcore.dotnetsdk
 			}

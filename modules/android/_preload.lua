@@ -12,6 +12,27 @@
 -- Register the Android extension
 --
 
+	api.register {
+		name = "endian",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Little",
+			"Big",
+		},
+	}
+
+	api.register {
+		name = "fpu",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Software",
+			"Hardware",
+		}
+	}
+
 	api.addAllowed("system", p.ANDROID)
 	api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	api.addAllowed("vectorextensions", { "NEON", "MXU" })

@@ -645,7 +645,7 @@
 --
 
 	function suite.wchar_onNative()
-		flags "NativeWChar"
+		nativewchar "On"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -657,7 +657,7 @@
 	end
 
 	function suite.wchar_onNoNative()
-		flags "NoNativeWChar"
+		nativewchar "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -1632,19 +1632,6 @@
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
 	<OmitFramePointers>false</OmitFramePointers>
-</ClCompile>
-		]]
-	end
-
-	function suite.omitFramePointer_DeprecationFlag()
-		flags "NoFramePointer"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<OmitFramePointers>true</OmitFramePointers>
 </ClCompile>
 		]]
 	end

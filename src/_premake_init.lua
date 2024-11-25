@@ -38,17 +38,6 @@
 	}
 
 	api.register {
-		name = "atl",
-		scope = "config",
-		kind  = "string",
-		allowed = {
-			"Off",
-			"Dynamic",
-			"Static",
-		},
-	}
-
-	api.register {
 		name = "basedir",
 		scope = "project",
 		kind = "path"
@@ -64,28 +53,6 @@
 		name = "buildcommands",
 		scope = { "config", "rule" },
 		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "buildcustomizations",
-		scope = "project",
-		kind = "list:string",
-	}
-
-	api.register {
-		name = "builddependencies",
-		scope = { "rule" },
-		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "buildlog",
-		scope = { "config" },
-		kind = "path",
 		tokens = true,
 		pathVars = true,
 	}
@@ -150,12 +117,6 @@
 	}
 
 	api.register {
-		name = "cleanextensions",
-		scope = "config",
-		kind = "list:string",
-	}
-
-	api.register {
 		name = "clr",
 		scope = "config",
 		kind = "string",
@@ -192,12 +153,6 @@
 	}
 
 	api.register {
-		name = "allmodulespublic",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "configmap",
 		scope = "project",
 		kind = "list:keyed:array:string",
@@ -207,12 +162,6 @@
 		name = "configurations",
 		scope = "project",
 		kind = "list:string",
-	}
-
-	api.register {
-		name = "consumewinrtextension",
-		scope = "config",
-		kind = "boolean",
 	}
 
 	api.register {
@@ -240,13 +189,6 @@
 	}
 
 	api.register {
-		name = "debugconnectcommands",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
 		name = "debugdir",
 		scope = "config",
 		kind = "path",
@@ -260,12 +202,6 @@
 		kind = "list:string",
 		tokens = true,
 		pathVars = true,
-	}
-
-	api.register {
-		name = "debugextendedprotocol",
-		scope = "config",
-		kind = "boolean",
 	}
 
 	api.register {
@@ -289,68 +225,6 @@
 			"GDB",
 			"LLDB",
 		}
-	}
-
-	api.register {
-		name = "debuggertype",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Mixed",
-			"NativeOnly",
-			"ManagedOnly",
-			"NativeWithManagedCore"
-		}
-	}
-
-	api.register {
-		name = "debugpathmap",
-		scope = "config",
-		kind = "list:keyed:path",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugport",
-		scope = "config",
-		kind = "integer",
-	}
-
-	api.register {
-		name = "debugremotehost",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugsearchpaths",
-		scope = "config",
-		kind = "list:path",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugstartupcommands",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "debugtoolargs",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-		pathVars = true,
-	}
-
-	api.register {
-		name = "debugtoolcommand",
-		scope = "config",
-		kind = "path",
-		tokens = true,
-		pathVars = true,
 	}
 
 	api.register {
@@ -390,18 +264,6 @@
 	}
 
 	api.register {
-		name = "dpiawareness",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"None",
-			"High",
-			"HighPerMonitor",
-		}
-	}
-
-	api.register {
 		name = "editandcontinue",
 		scope = "config",
 		kind = "string",
@@ -433,26 +295,9 @@
 	}
 
 	api.register {
-		name = "endian",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Little",
-			"Big",
-		},
-	}
-
-	api.register {
 		name = "entrypoint",
 		scope = "config",
 		kind = "string",
-	}
-
-	api.register {
-		name = "fastuptodate",
-		scope = "project",
-		kind = "boolean",
 	}
 
 	api.register {
@@ -483,70 +328,37 @@
 	}
 
 	api.register {
-		name = "functionlevellinking",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "flags",
 		scope = "config",
 		kind  = "list:string",
 		allowed = {
-			"Component",           -- DEPRECATED
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
-			"EnableSSE",           -- DEPRECATED
-			"EnableSSE2",          -- DEPRECATED
 			"ExcludeFromBuild",
-			"ExtraWarnings",       -- DEPRECATED
 			"FatalCompileWarnings",
 			"FatalLinkWarnings",
-			"FloatFast",           -- DEPRECATED
-			"FloatStrict",         -- DEPRECATED
 			"LinkTimeOptimization",
-			"Managed",             -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
-			"NativeWChar",         -- DEPRECATED
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoEditAndContinue",   -- DEPRECATED
-			"NoFramePointer",      -- DEPRECATED
 			"NoImplicitLink",
 			"NoImportLib",         -- DEPRECATED
 			"NoIncrementalLink",
 			"NoManifest",
 			"NoMinimalRebuild",
-			"NoNativeWChar",       -- DEPRECATED
 			"NoPCH",
 			"NoRuntimeChecks",
 			"NoBufferSecurityCheck",
-			"NoWarnings",          -- DEPRECATED
 			"OmitDefaultLibrary",
-			"Optimize",            -- DEPRECATED
-			"OptimizeSize",        -- DEPRECATED
-			"OptimizeSpeed",       -- DEPRECATED
 			"RelativeLinks",
-			"ReleaseRuntime",      -- DEPRECATED
 			"ShadowedVariables",
-			"StaticRuntime",       -- DEPRECATED
-			"Symbols",             -- DEPRECATED
 			"UndefinedIdentifiers",
-			"WinMain",             -- DEPRECATED
 			"WPF",
-			"C++11",               -- DEPRECATED
-			"C++14",               -- DEPRECATED
-			"C90",                 -- DEPRECATED
-			"C99",                 -- DEPRECATED
-			"C11",                 -- DEPRECATED
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
-			Optimise = 'Optimize',
-			OptimiseSize = 'OptimizeSize',
-			OptimiseSpeed = 'OptimizeSpeed',
 		},
 	}
 
@@ -562,36 +374,6 @@
 	}
 
 	api.register {
-		name = "floatingpointexceptions",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "inlining",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Disabled",
-			"Explicit",
-			"Auto"
-		}
-	}
-
-	api.register {
-		name = "callingconvention",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Cdecl",
-			"FastCall",
-			"StdCall",
-			"VectorCall",
-		}
-	}
-
-	api.register {
 		name = "forceincludes",
 		scope = "config",
 		kind = "list:mixed",
@@ -599,79 +381,9 @@
 	}
 
 	api.register {
-		name = "forceusings",
-		scope = "config",
-		kind = "list:file",
-		tokens = true,
-	}
-
-	api.register {
-		name = "fpu",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Software",
-			"Hardware",
-		}
-	}
-
-	api.register {
-		name = "dotnetframework",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
-		name = "enabledefaultcompileitems",
-		scope = "config",
-		kind = "boolean",
-		default = false
-	}
-
-	api.register {
-		name = "csversion",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
-		name = "gccprefix",
-		scope = "config",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "ignoredefaultlibraries",
-		scope = "config",
-		kind = "list:mixed",
-		tokens = true,
-	}
-
-	api.register {
-		name = "inheritdependencies",
-		scope = "config",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "icon",
 		scope = "project",
 		kind = "file",
-		tokens = true,
-	}
-
-	api.register {
-		name = "imageoptions",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "imagepath",
-		scope = "config",
-		kind = "path",
 		tokens = true,
 	}
 
@@ -718,12 +430,6 @@
 	}
 
 	api.register {
-		name = "intrinsics",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "bindirs",
 		scope = "config",
 		kind = "list:directory",
@@ -767,12 +473,6 @@
 			"C#",
 			"F#"
 		}
-	}
-
-	api.register {
-		name = "documentationfile",
-		scope = "project",
-		kind = "string",
 	}
 
 	api.register {
@@ -823,35 +523,6 @@
 			"gnu++20",
 			"gnu++2b",
 			"gnu++23",
-		}
-	}
-
-	api.register {
-		name = "conformancemode",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "usefullpaths",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "removeunreferencedcodedata",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
-		name = "swiftversion",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"4.0",
-			"4.2",
-			"5.0",
 		}
 	}
 
@@ -910,13 +581,6 @@
 	}
 
 	api.register {
-		name = "locale",
-		scope = "config",
-		kind = "string",
-		tokens = false,
-	}
-
-	api.register {
 		name = "location",
 		scope = { "project", "rule" },
 		kind = "path",
@@ -928,24 +592,6 @@
 		scope = "config",
 		kind = "list:string",
 		tokens = true,
-	}
-
-	api.register {
-		name = "namespace",
-		scope = "project",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "nativewchar",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"On",
-			"Off",
-		}
 	}
 
 	api.register {
@@ -1004,13 +650,6 @@
 		name = "pchheader",
 		scope = "config",
 		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "pchsource",
-		scope = "config",
-		kind = "path",
 		tokens = true,
 	}
 
@@ -1116,16 +755,6 @@
 	}
 
 	api.register {
-		name = "resourcegenerator",
-		scope = "project",
-		kind = "string",
-        allowed = {
-            "internal",
-            "public"
-        }
-	}
-
-	api.register {
 		name = "rtti",
 		scope = "config",
 		kind = "string",
@@ -1149,6 +778,8 @@
 		allowed = {
 			"Address",
 			"Fuzzer",              -- Visual Studio 2022+ only
+			"Thread",
+			"UndefinedBehavior",
 		}
 	}
 
@@ -1183,12 +814,6 @@
 	}
 
 	api.register {
-		name = "stringpooling",
-		scope = "config",
-		kind = "boolean"
-	}
-
-	api.register {
 		name = "symbols",
 		scope = "config",
 		kind = "string",
@@ -1199,13 +824,6 @@
 			"FastLink",    -- Visual Studio 2015+ only, considered 'On' for all other cases.
 			"Full",        -- Visual Studio 2017+ only, considered 'On' for all other cases.
 		},
-	}
-
-	api.register {
-		name = "symbolspath",
-		scope = "config",
-		kind = "path",
-		tokens = true,
 	}
 
 	api.register {
@@ -1243,12 +861,6 @@
 		name = "tags",
 		scope = "config",
 		kind = "list:string",
-	}
-
-	api.register {
-		name = "tailcalls",
-		scope = "config",
-		kind = "boolean"
 	}
 
 	api.register {
@@ -1302,29 +914,9 @@
 	}
 
 	api.register {
-		name = "toolsversion",
-		scope = "project",
-		kind = "string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "customtoolnamespace",
-		scope = "config",
-		kind = "string",
-	}
-
-	api.register {
 		name = "undefines",
 		scope = "config",
 		kind = "list:string",
-		tokens = true,
-	}
-
-	api.register {
-		name = "usingdirs",
-		scope = "config",
-		kind = "list:directory",
 		tokens = true,
 	}
 
@@ -1409,45 +1001,15 @@
 	}
 
 	api.register {
-		name = "largeaddressaware",
-		scope = "config",
-		kind = "boolean",
-	}
-
-	api.register {
 		name = "editorintegration",
 		scope = "workspace",
 		kind = "boolean",
 	}
 
 	api.register {
-		name = "preferredtoolarchitecture",
-		scope = "workspace",
-		kind = "string",
-		allowed = {
-			"Default",
-			p.X86,
-			p.X86_64,
-		}
-	}
-
-	api.register {
 		name = "unsignedchar",
 		scope = "config",
 		kind = "boolean",
-	}
-
-	p.api.register {
-		name = "structmemberalign",
-		scope = "config",
-		kind = "integer",
-		allowed = {
-			"1",
-			"2",
-			"4",
-			"8",
-			"16",
-		}
 	}
 
 	api.register {
@@ -1480,22 +1042,6 @@
 		allowed = {
 			"Default",
 			"Hidden"
-		}
-	}
-
-	api.register {
-		name = "assemblydebug",
-		scope = "config",
-		kind  = "boolean"
-	}
-
-	api.register {
-		name = "justmycode",
-		scope = "project",
-		kind = "string",
-		allowed = {
-			"On",
-			"Off"
 		}
 	}
 
@@ -1555,11 +1101,8 @@
 -----------------------------------------------------------------------------
 
 	api.alias("buildcommands", "buildCommands")
-	api.alias("builddependencies", "buildDependencies")
 	api.alias("buildmessage", "buildMessage")
 	api.alias("buildoutputs", "buildOutputs")
-	api.alias("cleanextensions", "cleanExtensions")
-	api.alias("dotnetframework", "framework")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
 	api.alias("propertydefinition", "propertyDefinition")
@@ -1581,230 +1124,6 @@
 		end
 		buildcommands(value.commands)
 		buildoutputs(value.outputs)
-	end)
-
-
-	api.deprecateValue("flags", "Component", 'Use `buildaction "Component"` instead.',
-	function(value)
-		buildaction "Component"
-	end)
-
-
-	api.deprecateValue("flags", "EnableSSE", 'Use `vectorextensions "SSE"` instead.',
-	function(value)
-		vectorextensions("SSE")
-	end,
-	function(value)
-		vectorextensions "Default"
-	end)
-
-
-	api.deprecateValue("flags", "EnableSSE2", 'Use `vectorextensions "SSE2"` instead.',
-	function(value)
-		vectorextensions("SSE2")
-	end,
-	function(value)
-		vectorextensions "Default"
-	end)
-
-
-	api.deprecateValue("flags", "FloatFast", 'Use `floatingpoint "Fast"` instead.',
-	function(value)
-		floatingpoint("Fast")
-	end,
-	function(value)
-		floatingpoint "Default"
-	end)
-
-
-	api.deprecateValue("flags", "FloatStrict", 'Use `floatingpoint "Strict"` instead.',
-	function(value)
-		floatingpoint("Strict")
-	end,
-	function(value)
-		floatingpoint "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NativeWChar", 'Use `nativewchar "On"` instead."',
-	function(value)
-		nativewchar("On")
-	end,
-	function(value)
-		nativewchar "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NoNativeWChar", 'Use `nativewchar "Off"` instead."',
-	function(value)
-		nativewchar("Off")
-	end,
-	function(value)
-		nativewchar "Default"
-	end)
-
-
-	api.deprecateValue("flags", "Optimize", 'Use `optimize "On"` instead.',
-	function(value)
-		optimize ("On")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "OptimizeSize", 'Use `optimize "Size"` instead.',
-	function(value)
-		optimize ("Size")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "OptimizeSpeed", 'Use `optimize "Speed"` instead.',
-	function(value)
-		optimize ("Speed")
-	end,
-	function(value)
-		optimize "Off"
-	end)
-
-
-	api.deprecateValue("flags", "ReleaseRuntime", 'Use `runtime "Release"` instead.',
-	function(value)
-		runtime "Release"
-	end,
-	function(value)
-	end)
-
-
-	api.deprecateValue("flags", "ExtraWarnings", 'Use `warnings "Extra"` instead.',
-	function(value)
-		warnings "Extra"
-	end,
-	function(value)
-		warnings "Default"
-	end)
-
-
-	api.deprecateValue("flags", "NoWarnings", 'Use `warnings "Off"` instead.',
-	function(value)
-		warnings "Off"
-	end,
-	function(value)
-		warnings "Default"
-	end)
-
-	api.deprecateValue("flags", "Managed", 'Use `clr "On"` instead.',
-	function(value)
-		clr "On"
-	end,
-	function(value)
-		clr "Off"
-	end)
-
-
-	api.deprecateValue("flags", "NoEditAndContinue", 'Use editandcontinue "Off"` instead.',
-	function(value)
-		editandcontinue "Off"
-	end,
-	function(value)
-		editandcontinue "On"
-	end)
-
-
-	-- 21 June 2016
-
-	api.deprecateValue("flags", "Symbols", 'Use `symbols "On"` instead',
-	function(value)
-		symbols "On"
-	end,
-	function(value)
-		symbols "Default"
-	end)
-
-
-	-- 31 January 2017
-
-	api.deprecateValue("flags", "C++11", 'Use `cppdialect "C++11"` instead',
-	function(value)
-		cppdialect "C++11"
-	end,
-	function(value)
-		cppdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C++14", 'Use `cppdialect "C++14"` instead',
-	function(value)
-		cppdialect "C++14"
-	end,
-	function(value)
-		cppdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C90",   'Use `cdialect "gnu90"` instead',
-	function(value)
-		cdialect "gnu90"
-	end,
-	function(value)
-		cdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C99",   'Use `cdialect "gnu99"` instead',
-	function(value)
-		cdialect "gnu99"
-	end,
-	function(value)
-		cdialect "Default"
-	end)
-
-	api.deprecateValue("flags", "C11",   'Use `cdialect "gnu11"` instead',
-	function(value)
-		cdialect "gnu11"
-	end,
-	function(value)
-		cdialect "Default"
-	end)
-
-
-	-- 13 April 2017
-
-	api.deprecateValue("flags", "WinMain", 'Use `entrypoint "WinMainCRTStartup"` instead',
-	function(value)
-		entrypoint "WinMainCRTStartup"
-	end,
-	function(value)
-		entrypoint "mainCRTStartup"
-	end)
-
-	-- 31 October 2017
-
-	api.deprecateValue("flags", "StaticRuntime", 'Use `staticruntime "On"` instead',
-	function(value)
-		staticruntime "On"
-	end,
-	function(value)
-		staticruntime "Default"
-	end)
-
-	-- 08 April 2018
-
-	api.deprecateValue("flags", "NoFramePointer", 'Use `omitframepointer "On"` instead.',
-	function(value)
-		omitframepointer("On")
-	end,
-	function(value)
-		omitframepointer("Default")
-	end)
-
-	--25 November 2024
-	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
-	function(value)
-	dotnetsdk "WindowsDesktop"
-	end,
-	function(value)
-	dotnetsdk "Default"
 	end)
 
 -----------------------------------------------------------------------------

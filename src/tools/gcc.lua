@@ -12,6 +12,12 @@
 	local project = p.project
 	local config = p.config
 
+	p.api.register {
+		name = "gccprefix",
+		scope = "config",
+		kind = "string",
+		tokens = true,
+	}
 
 --
 -- Returns list of C preprocessor flags for a configuration.
@@ -141,6 +147,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			UndefinedBehavior = "-fsanitize=undefined",
 		},
 		visibility = {
 			Default = "-fvisibility=default",
@@ -488,6 +496,8 @@
 		},
 		sanitize = {
 			Address = "-fsanitize=address",
+			Thread = "-fsanitize=thread",
+			UndefinedBehavior = "-fsanitize=undefined",
 		},
 		system = {
 			wii = "$(MACHDEP)",

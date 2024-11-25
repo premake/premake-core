@@ -410,7 +410,7 @@
 
 	function nuget2010.NuGetHasHTTP(prj)
 		if not http and #prj.nuget > 0 and not nuget2010.supportsPackageReferences(prj) then
-			p.error("Premake was compiled with --no-curl, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
+			p.error("Premake was compiled with --curl-src=none, but Curl is required for NuGet support (project '%s' is referencing NuGet packages)", prj.name)
 		end
 	end
 

@@ -5,6 +5,7 @@
  */
 
 #include "premake.h"
+#include <assert.h>
 
 
 static int chunk_wrapper(lua_State* L);
@@ -29,11 +30,15 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	const char* script_dir;
 	const char* test_name;
 
-	/* this function can be called with from 1 to 3 arguments on the stack,
+	/* this function is usually called with from 1 to 3 arguments on the stack,
 	 * the filename, the mode and an environment table */
 
-  	int env = (!lua_isnone(L, 3) ? 1 : 0);  /* 1 if there is an env or 0 if no 'env' */
+	/* however, in the case of require, we end up being called from searcher_Lua,
+	   which sets up extra values on the stack */
 	int bottom = lua_gettop(L);
+	int is_require = bottom >= 4;
+
+  	int env = (!is_require && !lua_isnone(L, 3)) ? 1 : 0;  /* 1 if there is an env or 0 if no 'env' */
 	int z = !OKAY;
 
 	/* If filename starts with "$/" then we want to load the version that
@@ -50,6 +55,7 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	if (z != OKAY) {
 		lua_getglobal(L, "_SCRIPT_DIR");
 		script_dir = lua_tostring(L, -1);
+		int script_dir_index = lua_gettop(L);
 
 		if (script_dir && script_dir[0] == '$') {
 			/* Call `path.getabsolute(filename, _SCRIPT_DIR)` to resolve any
@@ -59,16 +65,17 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 			lua_pushvalue(L, -3);
 			lua_call(L, 2, 1);
 			test_name = lua_tostring(L, -1);
+			int test_name_index = lua_gettop(L);
 
 			/* if successful, filename and chunk will be on top of stack */
 			z = premake_load_embedded_script(L, test_name + 2); /* Skip over leading "$/" */
 
 			/* remove test_name */
-			lua_remove(L, -3);
+			lua_remove(L, test_name_index);
 		}
 
 		/* remove _SCRIPT_DIR */
-		lua_remove(L, bottom + env);
+		lua_remove(L, script_dir_index);
 	}
 
 	/* Try to locate the script on the filesystem */
@@ -103,6 +110,9 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 	/* Either way I should have ended up with the file name followed by the
 	 * script chunk on the stack. Turn these into a closure that will call my
 	 * wrapper below when the loaded script needs to be executed. */
+
+	assert(lua_gettop(L) == bottom + 2);
+
 	if (z == OKAY) {
 		/* if we are called with an env, then our caller, luaB_loadfile, will
 		 * call load_aux, which sets up our env as the first up value via
