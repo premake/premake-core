@@ -37,4 +37,16 @@ dotnetsdk "Web"
 
 ```lua
 dotnetsdk "Web/3.4.0"
+
+```
+## CustomSDK
+
+```lua
+premake.api.addAllowed("dotnetsdk", "CustomSDK") -- add the customSDK to allowed values for dotnetsdk
+dotnetsdk "CustomSDK/3.4.0"
+```
+
+```lua
+premake.api.addAllowed("dotnetsdk", "CustomSDK") -- add the customSDK to allowed values for dotnetsdk
+dotnetsdk "CustomSDK"
 ```
