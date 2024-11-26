@@ -298,3 +298,11 @@
 	function fcfg_mt.extension(fcfg)
 		return path.getextension(fcfg.abspath)
 	end
+
+
+	function fcfg_mt.ruleinputs(fcfg)
+		-- fallback for batch rule inputs
+		return fcfg.relpath
+	end
+
+

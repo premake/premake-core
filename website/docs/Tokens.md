@@ -54,6 +54,7 @@ file.reldirectory
 file.name
 file.basename -- (file part without extension)
 file.extension -- (including '.'; eg ".cpp")
+file.ruleinputs -- (see custom rules)
 
 -- These values are available on build and link targets
 -- Replace [target] with one of "cfg.buildtarget" or "cfg.linktarget"
