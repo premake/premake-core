@@ -190,6 +190,7 @@ module.exports = {
 						'llvmdir',
 						'llvmversion',
 						'makesettings',
+						'mfc',
 						'namespace',
 						'nativewchar',
 						'newaction',
