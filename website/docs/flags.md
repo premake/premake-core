@@ -14,9 +14,9 @@ flags { "flag_list" }
 | FatalCompileWarnings  | Treat compiler warnings as errors.                                  |
 | FatalLinkWarnings     | Treat linker warnings as errors.                                    |
 | FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings |
-| LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations.                |
+| LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations. Deprecated in Premake 5.0.0-beta4. Use `linktimeoptimization` API instead. |
 | Maps                  | Enable Generate Map File for Visual Studio                          |
-| MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. |
+| MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. |
 | MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. |
 | No64BitChecks         | Disable 64-bit portability warnings.                                |
 | NoBufferSecurityCheck | Turn off stack protection checks.                                   |

@@ -63,7 +63,8 @@
 			Fuzzer = "-fsanitize=fuzzer",
 		}),
 		visibility = gcc.shared.visibility,
-		inlinesvisibility = gcc.shared.inlinesvisibility
+		inlinesvisibility = gcc.shared.inlinesvisibility,
+		linktimeoptimization = gcc.shared.linktimeoptimization
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {
@@ -226,9 +227,7 @@
 			x86 = "-m32",
 			x86_64 = "-m64",
 		},
-		flags = {
-			LinkTimeOptimization = "-flto",
-		},
+		linktimeoptimization = clang.shared.linktimeoptimization,
 		kind = {
 			SharedLib = function(cfg)
 				local r = { clang.getsharedlibarg(cfg) }
@@ -336,7 +335,7 @@
 	clang.tools = {
 		cc = "clang",
 		cxx = "clang++",
-		ar = function(cfg) return iif(cfg.flags.LinkTimeOptimization, "llvm-ar", "ar") end,
+		ar = function(cfg) return iif(cfg.linktimeoptimization == "On", "llvm-ar", "ar") end,
 		rc = "windres"
 	}
 

@@ -337,7 +337,7 @@
 			"ExcludeFromBuild",
 			"FatalCompileWarnings",
 			"FatalLinkWarnings",
-			"LinkTimeOptimization",
+			"LinkTimeOptimization", -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
@@ -1093,6 +1093,26 @@
 	function(value)
 		externalincludedirs(value)
 	end)
+
+	api.register {
+		name = "linktimeoptimization",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.deprecateValue("flags", "LinkTimeOptimization", "Use `linktimeoptimization` instead.",
+	function(value)
+		linktimeoptimization("On")
+	end,
+	function(value)
+		linktimeoptimization("Default")
+	end)
+
 
 -----------------------------------------------------------------------------
 --

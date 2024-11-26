@@ -185,6 +185,7 @@ module.exports = {
 						'linkgroups',
 						'linkoptions',
 						'links',
+						'linktimeoptimization',
 						'locale',
 						'location',
 						'llvmdir',

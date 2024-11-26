@@ -78,14 +78,26 @@
 		test.excludes("/Oy", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_onLinkTimeOptimizations()
+	function suite.cflags_onLinkTimeOptimizationsViaFlag()
 		flags "LinkTimeOptimization"
 		prepare()
 		test.contains("/GL", msc.getcflags(cfg))
 	end
 
-	function suite.ldflags_onLinkTimeOptimizations()
+	function suite.cflags_onLinkTimeOptimizationsViaAPI()
+		linktimeoptimization "On"
+		prepare()
+		test.contains("/GL", msc.getcflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimizationsViaFlag()
 		flags "LinkTimeOptimization"
+		prepare()
+		test.contains("/LTCG", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimizationsViaAPI()
+		linktimeoptimization "On"
 		prepare()
 		test.contains("/LTCG", msc.getldflags(cfg))
 	end
