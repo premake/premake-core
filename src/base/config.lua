@@ -153,7 +153,7 @@
 		if cfg.kind == "StaticLib"
 				or config.isOptimizedBuild(cfg)
 				or cfg.flags.NoIncrementalLink
-				or cfg.flags.LinkTimeOptimization then
+				or cfg.linktimeoptimization == "On" then
 			return false
 		end
 		return true

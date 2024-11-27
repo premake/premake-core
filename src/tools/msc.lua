@@ -63,7 +63,6 @@
 		},
 		flags = {
 			FatalCompileWarnings = "/WX",
-			LinkTimeOptimization = "/GL",
 			MultiProcessorCompile = "/MP",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl"
@@ -88,6 +87,9 @@
 		},
 		intrinsics = {
 			On = "/Oi",
+		},
+		linktimeoptimization = {
+			On = "/GL",
 		},
 		optimize = {
 			Off = "/Od",
@@ -332,7 +334,6 @@
 	msc.linkerFlags = {
 		flags = {
 			FatalLinkWarnings = "/WX",
-			LinkTimeOptimization = "/LTCG",
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
@@ -340,6 +341,9 @@
 		kind = {
 			SharedLib = "/DLL",
 			WindowedApp = "/SUBSYSTEM:WINDOWS"
+		},
+		linktimeoptimization = {
+			On = "/LTCG"
 		},
 		symbols = {
 			On = "/DEBUG"

@@ -570,8 +570,20 @@
 -- Check the LinkTimeOptimization flag.
 --
 
-	function suite.flags_onLinkTimeOptimization()
+	function suite.flags_onLinkTimeOptimizationViaFlag()
 		flags { "LinkTimeOptimization" }
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	WholeProgramOptimization="true"
+		]]
+
+	end
+
+	function suite.flags_onLinkTimeOptimization()
+		linktimeoptimization "On"
 		prepare()
 		test.capture [[
 <Tool

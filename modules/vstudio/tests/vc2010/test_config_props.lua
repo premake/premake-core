@@ -338,8 +338,21 @@
 -- Check the LinkTimeOptimization flag
 --
 
-	function suite.useOfLinkTimeOptimization()
+	function suite.useOfLinkTimeOptimizationViaFlag()
 		flags { "LinkTimeOptimization" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+	<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
+
+	function suite.useOfLinkTimeOptimizationViaAPI()
+		linktimeoptimization "On"
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

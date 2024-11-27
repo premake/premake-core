@@ -59,13 +59,15 @@
 		},
 		flags = {
 			FatalCompileWarnings = "-Werror",
-			LinkTimeOptimization = "-flto",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
 		floatingpoint = {
 			Fast = "-ffast-math",
 			Strict = "-ffloat-store",
+		},
+		linktimeoptimization = {
+			On = "-flto",
 		},
 		strictaliasing = {
 			Off = "-fno-strict-aliasing",
@@ -471,9 +473,7 @@
 			x86 = "-m32",
 			x86_64 = "-m64",
 		},
-		flags = {
-			LinkTimeOptimization = "-flto",
-		},
+		linktimeoptimization = gcc.shared.linktimeoptimization,
 		kind = {
 			SharedLib = function(cfg)
 				local r = { gcc.getsharedlibarg(cfg) }

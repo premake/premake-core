@@ -1614,8 +1614,10 @@
 
 
 	function m.wholeProgramOptimization(cfg)
-		if cfg.flags.LinkTimeOptimization then
+		if cfg.linktimeoptimization == "On" then
 			p.x('WholeProgramOptimization="true"')
+		elseif cfg.linktimeoptimization == "Off" then
+			p.x('WholeProgramOptimization="false"')
 		end
 	end
 
