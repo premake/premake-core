@@ -60,6 +60,8 @@
 #elif defined(__arm__) || defined(__thumb__) || defined(__TARGET_ARCH_ARM) || defined(__TARGET_ARCH_THUMB) || \
     defined(__ARM) || defined(_M_ARM) || defined(_M_ARM_T) || defined(__ARM_ARCH)
 #define PLATFORM_ARCHITECTURE "ARM"
+#elif defined(__e2k__)
+#define PLATFORM_ARCHITECTURE "e2k"
 #endif
 
 /* Pull in platform-specific headers required by built-in functions */
