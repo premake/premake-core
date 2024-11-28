@@ -174,7 +174,18 @@
 --
 
 	function suite.useOfMfc_onDynamicRuntime()
-		flags "MFC"
+		mfc "On"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Dynamic</UseOfMfc>
+		]]
+	end
+
+	function suite.useOfMfc_onDynamicRuntimeViaFlag()
+		flags { "MFC" }
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -185,6 +196,18 @@
 	end
 
 	function suite.useOfMfc_onStaticRuntime()
+		mfc "On"
+		staticruntime "On"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Static</UseOfMfc>
+		]]
+	end
+	
+	function suite.useOfMfc_onStaticRuntimeViaFlag()
 		flags { "MFC" }
 		staticruntime "On"
 		prepare()
@@ -193,6 +216,29 @@
 	<ConfigurationType>Application</ConfigurationType>
 	<UseDebugLibraries>false</UseDebugLibraries>
 	<UseOfMfc>Static</UseOfMfc>
+		]]
+	end
+	
+	function suite.useOfMfc_forceStatic()
+		mfc "Static"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Static</UseOfMfc>
+		]]
+	end
+
+	function suite.useOfMfc_forceDynamic()
+		mfc "Dynamic"
+		staticruntime "On"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<UseOfMfc>Dynamic</UseOfMfc>
 		]]
 	end
 
@@ -292,8 +338,21 @@
 -- Check the LinkTimeOptimization flag
 --
 
-	function suite.useOfLinkTimeOptimization()
+	function suite.useOfLinkTimeOptimizationViaFlag()
 		flags { "LinkTimeOptimization" }
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+	<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
+
+	function suite.useOfLinkTimeOptimizationViaAPI()
+		linktimeoptimization "On"
 		prepare()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

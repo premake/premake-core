@@ -1,6 +1,6 @@
 --
 -- _preload.lua
--- Define the makefile action(s).
+-- Define the Visual Studio action(s).
 -- Copyright (c) Jess Perkins and the Premake project
 --
 
@@ -627,7 +627,7 @@
 
 
 				if parts and #parts == 2 then
-					if p.api.checkValue(p.field.get("dotnetsdk"), parts[1],"string") then
+					if p.api.checkValue(p.field.get("dotnetsdk"), parts[1], "string") then
 						return value
 					end
 				end
@@ -636,6 +636,27 @@
 			end,
 		}
 	}
+
+	p.api.register {
+		name = "mfc",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Off",
+			"On",
+			"Static",
+			"Dynamic",
+		}
+	}
+
+	p.api.deprecateValue("flags", "MFC", 'Use `mfc` instead.',
+	function(value)
+		mfc("On")
+	end,
+	function(value)
+		mfc("Off")
+	end)
 
 --
 -- Decide when the full module should be loaded.

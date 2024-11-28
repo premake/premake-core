@@ -337,7 +337,7 @@
 			"ExcludeFromBuild",
 			"FatalCompileWarnings",
 			"FatalLinkWarnings",
-			"LinkTimeOptimization",
+			"LinkTimeOptimization", -- DEPRECATED
 			"Maps",
 			"MFC",
 			"MultiProcessorCompile",
@@ -361,14 +361,6 @@
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
 		},
 	}
-	--25 November 2024
-	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
-	function(value)
-		dotnetsdk "WindowsDesktop"
-	end,
-	function(value)
-		dotnetsdk "Default"
-	end)
 
 	api.register {
 		name = "floatingpoint",
@@ -1100,6 +1092,35 @@
 	api.deprecateField("sysincludedirs", 'Use `externalincludedirs` instead.',
 	function(value)
 		externalincludedirs(value)
+	end)
+
+	api.register {
+		name = "linktimeoptimization",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	--27 November 2024
+	api.deprecateValue("flags", "LinkTimeOptimization", "Use `linktimeoptimization` instead.",
+	function(value)
+		linktimeoptimization("On")
+	end,
+	function(value)
+		linktimeoptimization("Default")
+	end)
+
+	--25 November 2024
+	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
+	function(value)
+		dotnetsdk "WindowsDesktop"
+	end,
+	function(value)
+		dotnetsdk "Default"
 	end)
 
 -----------------------------------------------------------------------------

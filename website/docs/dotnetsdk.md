@@ -15,11 +15,8 @@ For more information see the MSDN documentation [here](https://learn.microsoft.c
  * [Worker](https://learn.microsoft.com/en-us/dotnet/core/extensions/workers)
  * [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor/)
  * [WindowsDesktop](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-desktop?view=aspnetcore-8.0)
- * [MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-sdk)
+ * [MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-sdk):  Requires a version be specified.
 
-
-## mstest ##
-when using MSTest sdk a version has to be specified!
 ### Applies To ###
 
 Project configurations.
@@ -37,16 +34,12 @@ dotnetsdk "Web"
 
 ```lua
 dotnetsdk "Web/3.4.0"
-
-```
-## CustomSDK
-
-```lua
-premake.api.addAllowed("dotnetsdk", "CustomSDK") -- add the customSDK to allowed values for dotnetsdk
-dotnetsdk "CustomSDK/3.4.0"
 ```
 
+A custom SDK can be specified using the following:
 ```lua
-premake.api.addAllowed("dotnetsdk", "CustomSDK") -- add the customSDK to allowed values for dotnetsdk
+premake.api.addAllowed("dotnetsdk", "CustomSDK") -- add the custom SDK to allowed values for dotnetsdk
 dotnetsdk "CustomSDK"
+
+dotnetsdk "CustomSDK/3.4.0" -- Specifying a version with a custom SDK is also supported
 ```

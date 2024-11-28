@@ -1964,8 +1964,10 @@
 
 
 	function m.wholeProgramOptimization(cfg)
-		if cfg.flags.LinkTimeOptimization then
+		if cfg.linktimeoptimization == "On" then
 			m.element("WholeProgramOptimization", nil, "true")
+		elseif cfg.linktimeoptimization == "Off" then
+			m.element("WholeProgramOptimization", nil, "false")
 		end
 	end
 
@@ -2730,7 +2732,7 @@
 	end
 
 	function m.LinkTimeCodeGeneration(cfg)
-		if cfg.flags.LinkTimeOptimization then
+		if cfg.linktimeoptimization == "On" then
 			m.element("LinkTimeCodeGeneration", nil, "UseLinkTimeCodeGeneration")
 		end
 	end
@@ -3225,8 +3227,14 @@
 
 
 	function m.useOfMfc(cfg)
-		if cfg.flags.MFC then
+		if (cfg.mfc == "On") then
 			m.element("UseOfMfc", nil, iif(cfg.staticruntime == "On", "Static", "Dynamic"))
+		elseif (cfg.mfc == "Off") then
+			m.element("UseOfMfc", nil, "false")
+		elseif (cfg.mfc == "Static") then
+			m.element("UseOfMfc", nil, "Static")
+		elseif (cfg.mfc == "Dynamic") then
+			m.element("UseOfMfc", nil, "Dynamic")
 		end
 	end
 
@@ -3649,8 +3657,10 @@
 	end
 
 	function m.linuxWholeProgramOptimization(cfg)
-		if cfg.flags.LinkTimeOptimization then
+		if cfg.linktimeoptimization == "On" then
 			m.element("LinkTimeOptimization", nil, "true")
+		elseif cfg.linktimeoptimization == "Off" then
+			m.element("LinkTimeOptimization", nil, "false")
 		end
 	end
 
