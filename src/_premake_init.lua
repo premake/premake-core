@@ -355,7 +355,7 @@
 			"RelativeLinks",
 			"ShadowedVariables",
 			"UndefinedIdentifiers",
-			"WPF",
+			"WPF", 				   -- DEPRECATED
 		},
 		aliases = {
 			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
@@ -1105,6 +1105,7 @@
 		}
 	}
 
+	--27 November 2024
 	api.deprecateValue("flags", "LinkTimeOptimization", "Use `linktimeoptimization` instead.",
 	function(value)
 		linktimeoptimization("On")
@@ -1113,6 +1114,14 @@
 		linktimeoptimization("Default")
 	end)
 
+	--25 November 2024
+	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
+	function(value)
+		dotnetsdk "WindowsDesktop"
+	end,
+	function(value)
+		dotnetsdk "Default"
+	end)
 
 -----------------------------------------------------------------------------
 --

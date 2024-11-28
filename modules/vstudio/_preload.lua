@@ -609,6 +609,35 @@
 	}
 
 	p.api.register {
+		name = "dotnetsdk",
+		scope = "project",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Web",
+			"Razor",
+			"Worker",
+			"Blazor",
+			"WindowsDesktop",
+			"MSTest",
+			function (value)
+				-- value is expected to be in the format <sdk>/<version>
+				local parts = value:explode("/", true, 1)
+				local sdk = parts[1] or value
+
+
+				if parts and #parts == 2 then
+					if p.api.checkValue(p.field.get("dotnetsdk"), parts[1], "string") then
+						return value
+					end
+				end
+
+				return nil
+			end,
+		}
+	}
+
+	p.api.register {
 		name = "mfc",
 		scope = "config",
 		kind = "string",
