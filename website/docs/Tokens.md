@@ -106,6 +106,8 @@ The available tokens, and their replacements:
 | {COPYDIR}  | xcopy /Q /E /Y /I {args}                    | cp -rf {args}   |
 | {DELETE}   | del {args}                                  | rm -rf {args}   |
 | {ECHO}     | echo {args}                                 | echo {args}     |
+| {LINKDIR}  | mklink /d {args}                            | ln -s {args}    |
+| {LINKFILE} | mklink {args}                               | ln -s {args}    |
 | {MKDIR}    | IF NOT EXIST {args} (mkdir {args})          | mkdir -p {args} |
 | {MOVE}     | move /Y {args}                              | mv -f {args}    |
 | {RMDIR}    | rmdir /S /Q {args}                          | rm -rf {args}   |
@@ -132,6 +134,10 @@ buildcommands {
 	"{COPYFILE} %[%{!file.abspath}] %[%{!sln.location}/%{file.basename}]"
 }
 ```
+
+### Symbolic Links and Windows
+
+For Windows, it is required to create symbolic links from an elevated context or to have Developer Mode enabled. The minimum required Windows version to execute symbolic links is Windows 10.
 
 ## Tokens and Filters
 

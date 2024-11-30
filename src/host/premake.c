@@ -76,6 +76,8 @@ static const luaL_Reg os_functions[] = {
 	{ "hostarch",               os_hostarch             },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
+	{ "linkdir",                os_linkdir              },
+	{ "linkfile",               os_linkfile             },
 	{ "locate",                 os_locate               },
 	{ "matchdone",              os_matchdone            },
 	{ "matchisfile",            os_matchisfile          },
