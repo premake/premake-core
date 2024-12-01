@@ -3179,7 +3179,7 @@
 
 
 	function m.treatLinkerWarningAsErrors(cfg)
-		if cfg.flags.FatalLinkWarnings then
+		if p.hasFatalLinkWarnings(cfg.fatalwarnings) then
 			local el = iif(cfg.kind == p.STATICLIB, "Lib", "Linker")
 			m.element("Treat" .. el .. "WarningAsErrors", nil, "true")
 		end
@@ -3196,7 +3196,7 @@
 
 
 	function m.treatWarningAsError(cfg)
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
+		if p.hasFatalCompileWarnings(cfg.fatalwarnings) and cfg.warnings ~= p.OFF then
 			m.element("TreatWarningAsError", nil, "true")
 		end
 	end
@@ -3212,8 +3212,10 @@
 
 
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
-		if #cfg.fatalwarnings > 0 then
-			local fatal = table.concat(cfg.fatalwarnings, ";")
+		local filteredWarnings = p.filterFatalWarnings(cfg.fatalwarnings)
+
+		if #filteredWarnings > 0 then
+			local fatal = table.concat(filteredWarnings, ";")
 			fatal = fatal .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
 		end

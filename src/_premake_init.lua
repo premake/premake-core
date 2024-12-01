@@ -335,8 +335,9 @@
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"ExcludeFromBuild",
-			"FatalCompileWarnings",
-			"FatalLinkWarnings",
+			"FatalCompileWarnings",	-- DEPRECATED
+			"FatalLinkWarnings",	-- DEPRECATED
+			"FatalWarnings",		-- DEPRECATED
 			"LinkTimeOptimization", -- DEPRECATED
 			"Maps",
 			"MFC",
@@ -356,9 +357,6 @@
 			"ShadowedVariables",
 			"UndefinedIdentifiers",
 			"WPF",
-		},
-		aliases = {
-			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
 		},
 	}
 
@@ -1112,6 +1110,56 @@
 	function(value)
 		linktimeoptimization("Default")
 	end)
+
+	api.deprecateValue("flags", "FatalWarnings", "Use `fatalwarnings { \"Compile\", \"Link\" }` instead.",
+	function(value)
+		fatalwarnings({ "Compile", "Link" })
+	end,
+	function(value)
+		removefatalwarnings({ "Compile", "Link" })
+	end)
+
+	api.deprecateValue("flags", "FatalCompileWarnings", "Use `fatalwarnings { \"Compile\" }` instead.",
+	function(value)
+		fatalwarnings({ "Compile" })
+	end,
+	function(value)
+		removefatalwarnings({ "Compile" })
+	end)
+
+	api.deprecateValue("flags", "FatalLinkWarnings", "Use `fatalwarnings { \"Link\" }` instead.",
+	function(value)
+		fatalwarnings({ "Link" })
+	end,
+	function(value)
+		removefatalwarnings({ "Link" })
+	end)
+
+	premake.filterFatalWarnings = function(tbl)
+		if type(tbl) == "table" then
+			return table.filter(tbl, function(warning)
+				return not (warning == "Compile" or warning == "Link")
+			end)
+		else
+			return tbl
+		end
+	end
+
+	premake.hasFatalCompileWarnings = function(tbl)
+		if (type(tbl) == "table") then
+			return table.contains(tbl, "Compile")
+		else
+			return false
+		end
+	end
+
+	premake.hasFatalLinkWarnings = function(tbl)
+		if (type(tbl) == "table") then
+			return table.contains(tbl, "Link")
+		else
+			return false
+		end
+	end
 
 
 -----------------------------------------------------------------------------

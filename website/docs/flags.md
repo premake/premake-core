@@ -11,9 +11,9 @@ flags { "flag_list" }
 | Flag                  | Description                                                         | Notes |
 |-----------------------|---------------------------------------------------------------------|----------------|
 | ExcludeFromBuild      | Exclude a source code file from the build, for the current configuration. |
-| FatalCompileWarnings  | Treat compiler warnings as errors.                                  |
-| FatalLinkWarnings     | Treat linker warnings as errors.                                    |
-| FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings |
+| FatalCompileWarnings  | Treat compiler warnings as errors. Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
+| FatalLinkWarnings     | Treat linker warnings as errors.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
+| FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
 | LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations. Deprecated in Premake 5.0.0-beta4. Use `linktimeoptimization` API instead. |
 | Maps                  | Enable Generate Map File for Visual Studio                          |
 | MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. |
@@ -56,3 +56,10 @@ flags { "LinkTimeOptimization" }
 
 [1]: https://docs.microsoft.com/en-us/cpp/build/reference/gm-enable-minimal-rebuild?view=vs-2017
 [2]: http://msdn.microsoft.com/en-us/library/8wtf2dfz.aspx
+
+### See Also ###
+
+* [fatalwarnings](fatalwarnings.md)
+* [linktimeoptimization](linktimeoptimization.md)
+* [mfc](mfc.md)
+
