@@ -18,7 +18,6 @@ void do_translate(char* value, const char sep)
 	}
 }
 
-
 static void translate(char* result, const char* value, const char sep)
 {
 	strcpy(result, value);

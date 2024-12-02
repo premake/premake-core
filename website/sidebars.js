@@ -379,6 +379,8 @@ module.exports = {
 						'os/os.isfile',
 						'os/os.islink',
 						'os/os.istarget',
+						'os/os.linkdir',
+						'os/os.linkfile',
 						'os/os.locate',
 						'os/os.matchdirs',
 						'os/os.matchfiles',

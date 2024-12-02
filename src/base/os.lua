@@ -575,21 +575,24 @@
 
 	local builtin_rmdir = os.rmdir
 	function os.rmdir(p)
-		-- recursively remove subdirectories
-		local dirs = os.matchdirs(p .. "/*")
-		for _, dname in ipairs(dirs) do
-			local ok, err = os.rmdir(dname)
-			if not ok then
-				return ok, err
+		-- Only delete children if the path is not a symlink
+		if not os.islink(p) then
+			-- recursively remove subdirectories
+			local dirs = os.matchdirs(p .. "/*")
+			for _, dname in ipairs(dirs) do
+				local ok, err = os.rmdir(dname)
+				if not ok then
+					return ok, err
+				end
 			end
-		end
 
-		-- remove any files
-		local files = os.matchfiles(p .. "/*")
-		for _, fname in ipairs(files) do
-			local ok, err = os.remove(fname)
-			if not ok then
-				return ok, err
+			-- remove any files
+			local files = os.matchfiles(p .. "/*")
+			for _, fname in ipairs(files) do
+				local ok, err = os.remove(fname)
+				if not ok then
+					return ok, err
+				end
 			end
 		end
 
@@ -632,6 +635,12 @@
 			end,
 			echo = function(v)
 				return "echo " .. v
+			end,
+			linkdir = function(v)
+				return "ln -s " .. path.normalize(v)
+			end,
+			linkfile = function(v)
+				return "ln -s " .. path.normalize(v)
 			end,
 			mkdir = function(v)
 				return "mkdir -p " .. path.normalize(v)
@@ -677,6 +686,12 @@
 			end,
 			echo = function(v)
 				return "echo " .. v
+			end,
+			linkdir = function(v)
+				return "mklink /d " .. path.translate(path.normalize(v))
+			end,
+			linkfile = function(v)
+				return "mklink " .. path.translate(path.normalize(v))
 			end,
 			mkdir = function(v)
 				v = path.translate(path.normalize(v))
