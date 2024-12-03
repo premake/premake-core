@@ -100,9 +100,24 @@
 
 
 	newoption {
+		trigger = "zlib-src",
+		description = "Specify the source of the Zlib/Zip 3rd party library",
+		allowed = {
+			{ "none", "Disables Zlib/Zip" },
+			{ "contrib", "Uses Zlib/Zip in contrib folder" },
+			{ "system", "Uses Zlib/Zip from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
 		trigger = "no-zlib",
 		description = "Disable Zlib/Zip 3rd party lib"
 	}
+	if _OPTIONS["no-zlib"] then
+		premake.warn("--no-zlib is deprecated, please use --zlib-src=none")
+		_OPTIONS["zlib-src"] = "none"
+	end
 
 	newoption {
 		trigger = "no-luasocket",
@@ -150,9 +165,8 @@
 		flags { "MultiProcessorCompile" }
 		warnings "Extra"
 
-		if not _OPTIONS["no-zlib"] then
+		filter { "options:not zlib-src=none" }
 			defines { "PREMAKE_COMPRESSION" }
-		end
 
 		filter { "options:not curl-src=none" }
 			defines { "PREMAKE_CURL" }
@@ -217,10 +231,12 @@
 		links       { "lua-lib" }
 
 		-- optional 3rd party libraries
-		if not _OPTIONS["no-zlib"] then
+		filter { "options:zlib-src=contrib" }
 			includedirs { "contrib/zlib", "contrib/libzip" }
 			links { "zip-lib", "zlib-lib" }
-		end
+		filter { "options:zlib-src=system" }
+			links { "zip", "z" }
+		filter {}
 
 		filter { "options:curl-src=contrib" }
 			includedirs { "contrib/curl/include" }
@@ -314,7 +330,7 @@ end
 		include "contrib/lua"
 		include "contrib/luashim"
 
-		if not _OPTIONS["no-zlib"] then
+		if _OPTIONS["zlib-src"] == "contrib" then
 			include "contrib/zlib"
 			include "contrib/libzip"
 		end
