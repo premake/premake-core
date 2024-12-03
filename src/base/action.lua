@@ -98,6 +98,10 @@
 	function action.call(name)
 		local a = action._list[name]
 
+		if a.onDeprecate then
+			a.onDeprecate()
+		end
+
 		if a.onStart then
 			a.onStart()
 		end

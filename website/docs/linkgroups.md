@@ -1,4 +1,4 @@
-Turns on/off linkgroups for gcc/clang in the gmake backend.
+Turns on/off linkgroups for gcc/clang in the gmake and gmake2 backend.
 
 ```lua
 linkgroups ("value")

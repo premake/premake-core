@@ -7,7 +7,7 @@ Stores the name of the architecture currently being targeted; see [architecture(
 The current architecture may be overridden on the command line with the `--arch` option.
 
 ```
-$ premake5 --arch=x86 gmake
+$ premake5 --arch=x86 gmake2
 ```
 
 ### Availability ###

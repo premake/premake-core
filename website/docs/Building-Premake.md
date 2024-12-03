@@ -36,7 +36,7 @@ On other platforms, if the bootstrap fails to build, you will need to have a wor
 Once you have a working Premake available, you can generate the project files for your toolset by running a command like the following in the top-level Premake directory:
 
 ```bash
-premake5 gmake  # for makefiles
+premake5 gmake2 # for makefiles
 premake5 vs2012 # for a Visual Studio 2012 solution
 premake --help  # to see a list of supported toolsets
 ```

@@ -11,7 +11,7 @@ Stores the name of the operating system currently being targeted; see [system()]
 The current OS may be overridden on the command line with the `--os` option.
 
 ```
-$ premake5 --os=linux gmake
+$ premake5 --os=linux gmake2
 ```
 
 ### Availability ###

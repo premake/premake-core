@@ -48,7 +48,7 @@ This particular command will generate `HelloWorld.sln` and `HelloWorld.vcxproj` 
 If you happened to be on Linux, you could generate and build a makefile like so:
 
 ```bash
-$ premake5 gmake
+$ premake5 gmake2
 $ make                # build default (Debug) configuration
 $ make config=release # build release configuration
 $ make help           # show available configurations

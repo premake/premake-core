@@ -6,7 +6,7 @@ staticruntime "value"
 
 ### Parameters ###
 
-| Value      | Visual Studio                                 | XCode     | gmake     |
+| Value      | Visual Studio                                 | XCode     | gmake/gmake2 |
 |------------|-----------------------------------------------|-----------|-----------|
 | `Default`  | Does not set a value for `<RuntimeLibrary>`   | No Effect | No Effect |
 | `On`       | Sets `<RuntimeLibrary>` to "MultiThreaded"    | No Effect | No Effect |

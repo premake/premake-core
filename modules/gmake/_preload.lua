@@ -24,6 +24,10 @@
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
+		onDeprecate = function()
+			p.warnOnce("gmake-deprecate", "The gmake action has been deprecated in favor of gmake2. Please update your scripts to use the new action.")
+		end,
+
 		onWorkspace = function(wks)
 			p.escaper(p.make.esc)
 			wks.projects = table.filter(wks.projects, function(prj) return p.action.supports(prj.kind) and prj.kind ~= p.NONE end)
