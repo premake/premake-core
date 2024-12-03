@@ -13,7 +13,6 @@ project "lua-lib"
 
 	excludes
 	{
-		"src/lauxlib.c",
 		"src/lua.c",
 		"src/luac.c",
 		"src/print.c",
