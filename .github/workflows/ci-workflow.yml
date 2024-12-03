@@ -18,9 +18,9 @@ jobs:
       if: matrix.depsrc == 'system'
       run: |
         sudo apt-get update 
-        sudo apt-get -y install libcurl4-openssl-dev libzip-dev
+        sudo apt-get -y install libcurl4-openssl-dev libzip-dev liblua5.3-dev
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }} --zlib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--lib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
