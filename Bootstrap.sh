@@ -38,7 +38,7 @@ case "$(uname -s)" in
      ;;
    FreeBSD|OpenBSD|NetBSD)
      NPROC=$(sysctl -n hw.ncpu)
-     make -f Bootstrap.mak ${COSMO_FLAG:-bsd} $PLATFORM_ARG $CONFIG_ARG $PREMAKE_OPTS_ARG -j$NPROC
+     gmake -f Bootstrap.mak ${COSMO_FLAG:-bsd} $PLATFORM_ARG $CONFIG_ARG $PREMAKE_OPTS_ARG -j$NPROC
      ;;
    CYGWIN*|MINGW32*|MSYS*|MINGW*)
      make -f Bootstrap.mak ${COSMO_FLAG:-mingw} $PLATFORM_ARG $CONFIG_ARG $PREMAKE_OPTS_ARG -j$NPROC
