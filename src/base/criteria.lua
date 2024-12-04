@@ -117,6 +117,19 @@
 					end
 				end
 
+				-- Check if the prefix is an action
+				if prefix == "action" or prefix == "_action" then
+					local actname = word[1]
+					-- Resolve the action alias
+					word[1] = p.action.resolvealias(actname)
+
+					-- Check if the action was deprecated
+					local actiondeprecation = p.action.deprecatedalias(actname)
+					if actiondeprecation ~= nil and actiondeprecation.filter ~= nil and type(actiondeprecation.filter) == "function" then
+						actiondeprecation.filter()
+					end
+				end
+
 				table.insert(pattern, word)
 			end
 
