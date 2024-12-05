@@ -60,6 +60,10 @@
 #elif defined(__arm__) || defined(__thumb__) || defined(__TARGET_ARCH_ARM) || defined(__TARGET_ARCH_THUMB) || \
     defined(__ARM) || defined(_M_ARM) || defined(_M_ARM_T) || defined(__ARM_ARCH)
 #define PLATFORM_ARCHITECTURE "ARM"
+#elif defined(_M_RISCV64) || (defined(__riscv) && __riscv_xlen == 64)
+#define PLATFORM_ARCHITECTURE "RISCV64"
+#elif !defined(RC_INVOKED)
+#error Unknown architecture detected
 #endif
 
 /* Pull in platform-specific headers required by built-in functions */
