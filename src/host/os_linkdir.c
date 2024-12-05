@@ -34,8 +34,9 @@ int do_linkdir(lua_State* L, const char* src, const char* dst)
 		GetCurrentDirectoryW(MAX_PATH, cwd);
 
 		// Convert the source path to a relative path
-		wchar_t relSrcPath[MAX_PATH];
-		swprintf(relSrcPath, MAX_PATH, L"%c:%s", cwd[0], wSrcPath);
+		wchar_t relSrcPath[MAX_PATH + 2];
+		swprintf(relSrcPath, MAX_PATH + 2, L"%c:%s", cwd[0], wSrcPath);
+		relSrcPath[MAX_PATH + 1] = L'\0';
 
 		BOOLEAN res = CreateSymbolicLinkW(wDstPath, relSrcPath, SYMBOLIC_LINK_FLAG_DIRECTORY | SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
 		return res != 0;
@@ -46,8 +47,27 @@ int do_linkdir(lua_State* L, const char* src, const char* dst)
 		return res != 0;
 	}
 #else
-    int res = symlink(src, dst);
-    return res == 0;
+	(void)L;
+	if (!do_isabsolute(src))
+	{
+		char cwd[PATH_MAX];
+		if (!do_getcwd(cwd, PATH_MAX))
+		{
+			return FALSE;
+		}
+
+		char relSrcPath[2 * PATH_MAX + 1];
+		snprintf(relSrcPath, 2 * PATH_MAX + 1, "%s/%s", cwd, src);
+		relSrcPath[2 * PATH_MAX] = '\0';
+
+		int res = symlink(relSrcPath, dst);
+		return res == 0;
+	}
+	else
+	{
+		int res = symlink(src, dst);
+    	return res == 0;
+	}
 #endif
 }
 

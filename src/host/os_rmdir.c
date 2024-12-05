@@ -4,6 +4,7 @@
  * \author Copyright (c) 2002-2013 Jess Perkins and the Premake project
  */
 
+#include <sys/stat.h>
 #include <stdlib.h>
 #include "premake.h"
 
@@ -23,7 +24,15 @@ int os_rmdir(lua_State* L)
 
 	z = RemoveDirectoryW(wide_path);
 #else
-	z = (0 == rmdir(path));
+	struct stat buf;
+	if (lstat(path, &buf) == 0 && S_ISLNK(buf.st_mode))
+	{
+		z = (0 == unlink(path));
+	}
+	else
+	{
+		z = (0 == rmdir(path));
+	}
 #endif
 
 	if (!z)
