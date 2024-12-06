@@ -1,3 +1,4 @@
 *.html
 *.pdf
-!PSACryptoDriverModelSpec.pdf
+_build/
+api/

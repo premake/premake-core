@@ -5,30 +5,15 @@
  */
 /*
  *  Copyright The Mbed TLS Contributors
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may
- *  not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
  */
-
-#ifndef MBEDTLS_CONFIG_H
-#define MBEDTLS_CONFIG_H
 
 /* System support */
 //#define MBEDTLS_HAVE_ASM
 #define MBEDTLS_HAVE_TIME
 #define MBEDTLS_HAVE_TIME_DATE
 
-/* Mbed Crypto feature support */
+/* Mbed TLS feature support */
 #define MBEDTLS_CIPHER_MODE_CBC
 #define MBEDTLS_CIPHER_MODE_CFB
 #define MBEDTLS_CIPHER_MODE_CTR
@@ -45,13 +30,11 @@
 #define MBEDTLS_USE_PSA_CRYPTO
 #define MBEDTLS_VERSION_FEATURES
 
-/* Mbed Crypto modules */
+/* Mbed TLS modules */
 #define MBEDTLS_AES_C
-#define MBEDTLS_ARC4_C
 #define MBEDTLS_ASN1_PARSE_C
 #define MBEDTLS_ASN1_WRITE_C
 #define MBEDTLS_BASE64_C
-#define MBEDTLS_BLOWFISH_C
 #define MBEDTLS_CAMELLIA_C
 #define MBEDTLS_ARIA_C
 #define MBEDTLS_CCM_C
@@ -64,13 +47,10 @@
 #define MBEDTLS_ENTROPY_C
 #define MBEDTLS_ERROR_C
 #define MBEDTLS_GCM_C
-//#define MBEDTLS_HAVEGE_C
 #define MBEDTLS_HKDF_C
 #define MBEDTLS_HMAC_DRBG_C
 #define MBEDTLS_NIST_KW_C
 #define MBEDTLS_MD_C
-#define MBEDTLS_MD2_C
-#define MBEDTLS_MD4_C
 #define MBEDTLS_MD5_C
 #define MBEDTLS_OID_C
 #define MBEDTLS_PEM_PARSE_C
@@ -85,15 +65,11 @@
 #define MBEDTLS_PSA_ITS_FILE_C
 #define MBEDTLS_RIPEMD160_C
 #define MBEDTLS_SHA1_C
+#define MBEDTLS_SHA224_C
 #define MBEDTLS_SHA256_C
+#define MBEDTLS_SHA384_C
 #define MBEDTLS_SHA512_C
+#define MBEDTLS_SHA3_C
 //#define MBEDTLS_THREADING_C
 #define MBEDTLS_TIMING_C
 #define MBEDTLS_VERSION_C
-#define MBEDTLS_XTEA_C
-
-#include "mbedtls/config_psa.h"
-
-#include "check_config.h"
-
-#endif /* MBEDTLS_CONFIG_H */
