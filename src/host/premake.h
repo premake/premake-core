@@ -62,6 +62,8 @@
 #define PLATFORM_ARCHITECTURE "ARM"
 #elif defined(_M_RISCV64) || (defined(__riscv) && __riscv_xlen == 64)
 #define PLATFORM_ARCHITECTURE "RISCV64"
+#elif (defined(__loongarch__) && __loongarch_grlen == 64) || defined(__loongarch64)
+#define PLATFORM_ARCHITECTURE "loongarch64"
 #elif !defined(RC_INVOKED)
 #error Unknown architecture detected
 #endif

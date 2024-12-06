@@ -29,6 +29,7 @@
 			p.ARM,
 			p.ARM64,
 			p.RISCV64,
+			p.LOONGARCH64
 		},
 		aliases = {
 			i386  = p.X86,
