@@ -8,25 +8,14 @@ This is a harness to help regression testing, not a functional tester.
 Sample usage:
 
     test_config_script.py -d old
-    ## Modify config.py and/or config.h ##
+    ## Modify config.py and/or mbedtls_config.h ##
     test_config_script.py -d new
     diff -ru old new
 """
 
 ## Copyright The Mbed TLS Contributors
-## SPDX-License-Identifier: Apache-2.0
+## SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
 ##
-## Licensed under the Apache License, Version 2.0 (the "License"); you may
-## not use this file except in compliance with the License.
-## You may obtain a copy of the License at
-##
-## http://www.apache.org/licenses/LICENSE-2.0
-##
-## Unless required by applicable law or agreed to in writing, software
-## distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-## WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-## See the License for the specific language governing permissions and
-## limitations under the License.
 
 import argparse
 import glob
@@ -170,7 +159,7 @@ def main():
                         dest='output_directory', required=True,
                         help="""Output directory.""")
     parser.add_argument('-f', metavar='FILE',
-                        dest='input_file', default='include/mbedtls/config.h',
+                        dest='input_file', default='include/mbedtls/mbedtls_config.h',
                         help="""Config file (default: %(default)s).""")
     parser.add_argument('-p', metavar='PRESET,...',
                         dest='presets',

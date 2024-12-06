@@ -5,9 +5,8 @@
  * This file contains common definitions shared by all PSA crypto drivers.
  * Do not include it directly: instead, include the header file(s) for
  * the type(s) of driver that you are implementing. For example, if
- * you are writing a driver for a chip that provides both a hardware
- * random generator and an accelerator for some cryptographic algorithms,
- * include `psa/crypto_entropy_driver.h` and `psa/crypto_accel_driver.h`.
+ * you are writing a dynamically registered driver for a secure element,
+ * include `psa/crypto_se_driver.h`.
  *
  * This file is part of the PSA Crypto Driver Model, containing functions for
  * driver developers to implement to enable hardware to be called in a
@@ -18,19 +17,7 @@
 
 /*
  *  Copyright The Mbed TLS Contributors
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may
- *  not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
  */
 #ifndef PSA_CRYPTO_DRIVER_COMMON_H
 #define PSA_CRYPTO_DRIVER_COMMON_H
@@ -43,6 +30,9 @@
  * of these types. */
 #include "crypto_types.h"
 #include "crypto_values.h"
+/* Include size definitions which are used to size some arrays in operation
+ * structures. */
+#include <psa/crypto_sizes.h>
 
 /** For encrypt-decrypt functions, whether the operation is an encryption
  * or a decryption. */
