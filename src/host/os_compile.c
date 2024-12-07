@@ -8,8 +8,6 @@
 #include "lundump.h"
 #include "lstate.h"
 
-extern int original_luaL_loadfilex(lua_State* L, const char* filename, const char* mode);
-
 static int writer(lua_State* L, const void* p, size_t size, void* u)
 {
 	UNUSED(L);
@@ -22,7 +20,7 @@ int os_compile(lua_State* L)
 	const char* output = luaL_checkstring(L, 2);
 	lua_State* P = luaL_newstate();
 
-	if (original_luaL_loadfilex(P, input, NULL) != LUA_OK)
+	if (luaL_loadfilex(P, input, NULL) != LUA_OK)
 	{
 		const char* msg = lua_tostring(P, -1);
 		if (msg == NULL)

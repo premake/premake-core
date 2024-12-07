@@ -7,6 +7,7 @@ PREMAKE_OPTS =
 
 SRC		= src/host/*.c			\
 		$(LUA_DIR)/lapi.c		\
+		$(LUA_DIR)/lauxlib.c	\
 		$(LUA_DIR)/lbaselib.c	\
 		$(LUA_DIR)/lbitlib.c	\
 		$(LUA_DIR)/lcode.c		\

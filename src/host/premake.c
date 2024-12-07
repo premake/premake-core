@@ -182,6 +182,21 @@ int premake_init(lua_State* L)
 {
 	const char* value;
 
+	// Replace Lua functions
+	lua_pushcfunction(L, premake_luaB_loadfile);
+	lua_setglobal(L, "loadfile");
+
+	lua_pushcfunction(L, premake_luaB_dofile);
+	lua_setglobal(L, "dofile");
+
+	lua_getglobal(L, "package"); /* Load 'package' */
+	lua_getfield(L, -1, "searchers"); /* Load 'package.searchers' */
+	lua_pushinteger(L, 2); /* Prepare 'package.searchers[2]' for replacement */
+	lua_pushvalue(L, -3);  /* set 'package' as upvalue for all searchers */
+	lua_pushcclosure(L, premake_searcher_Lua, 1);
+	lua_settable(L, -3);
+	lua_pop(L, 2);
+
 	luaL_register(L, "premake",  premake_functions);
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
@@ -635,7 +650,7 @@ static int run_premake_main(lua_State* L, const char* script)
 
 	if (z == OKAY) {
 		const char* filename = lua_tostring(L, -1);
-		z = luaL_dofile(L, filename);
+		z = premake_luaL_dofile(L, filename);
 	}
 
 	return z;

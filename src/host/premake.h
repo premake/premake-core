@@ -218,3 +218,13 @@ const buildin_mapping* premake_find_embedded_script(const char* filename);
 int premake_locate_executable(lua_State* L, const char* argv0);
 int premake_locate_file(lua_State* L, const char* filename, int searchMask);
 void premake_handle_lua_error(lua_State* L);
+
+// Overridden Lua functions
+int premake_luaL_loadfilex(lua_State *L, const char *filename, const char *mode);
+int premake_luaB_loadfile(lua_State* L);
+int premake_luaB_dofile(lua_State* L);
+int premake_searcher_Lua(lua_State *L);
+
+#define premake_luaL_loadfile(L,f)	premake_luaL_loadfilex(L,f,NULL)
+#define premake_luaL_dofile(L, fn) \
+	(premake_luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))
