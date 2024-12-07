@@ -38,6 +38,7 @@ project "curl-lib"
 		local ca = nil
 		for _, f in ipairs {
 			"/etc/ssl/certs/ca-certificates.crt",
+			"/etc/openssl/certs/ca-certificates.crt",
 			"/etc/pki/tls/certs/ca-bundle.crt",
 			"/usr/share/ssl/certs/ca-bundle.crt",
 			"/usr/local/share/certs/ca-root.crt",
