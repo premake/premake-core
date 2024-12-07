@@ -256,8 +256,8 @@
 	function sln2005.deploy0(cfg, context)
 
 		local allowDeployment =
-			(context.prjCfg.system == p.UWP and not context.excluded and (context.prjCfg.kind == p.WINDOWEDAPP or context.prjCfg.kind == p.CONSOLEAPP)) or
-			(context.prjCfg.kind == p.PACKAGING and _ACTION >= "vs2015")
+			(context.prjCfg.system == p.UWP and not context.excluded and (context.prjCfg.kind == p.WINDOWEDAPP or context.prjCfg.kind == p.CONSOLEAPP))
+		or	(cfg.system == p.ANDROID and context.prjCfg.kind == p.PACKAGING and _ACTION >= "vs2015")
 
 		if allowDeployment then
 			p.w('{%s}.%s.Deploy.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
