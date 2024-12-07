@@ -3858,7 +3858,7 @@
 	end
 
 	function m.linuxDebugInformationFormat(cfg)
-		if cfg.symbols ~= nil then
+		if cfg.symbols ~= "Default" then
 
 			if cfg.symbols == p.OFF then
 				m.element("DebugInformationFormat", nil, "None")
@@ -4061,7 +4061,7 @@
 	end
 
 	function m.androidDebugInformationFormat(cfg)
-		if cfg.symbols ~= nil then
+		if cfg.symbols ~= "Default" then
 
 			if cfg.symbols == p.OFF then
 				m.element("DebugInformationFormat", nil, "None")
