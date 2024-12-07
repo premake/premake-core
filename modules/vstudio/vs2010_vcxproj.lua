@@ -3851,7 +3851,7 @@
 	function m.linuxApplicationType(cfg)
 		m.element("Keyword", nil, "Linux")
 		m.element("RootNamespace", nil, "%s", cfg.project.name)
-		m.element("MinimumVisualStudioVersion", nil, "17.0")
+		m.element("MinimumVisualStudioVersion", nil, "15.0")
 		m.element("ApplicationType", nil, "Linux")
 		m.element("TargetLinuxPlatform", nil, "Generic")
 		m.element("ApplicationTypeRevision", nil, "1.0")
