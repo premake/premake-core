@@ -682,8 +682,9 @@
 			m.omitFramePointers,
 
 			-- Android
-			m.androidClCompilePreprocessorDefinitions,
 			m.precompiledHeader, -- Overwrite a portion of it for Android
+			m.androidClCompilePreprocessorDefinitions,
+			m.androidDebugInformationFormat,
 			m.androidDebugInformation,
 			m.androidStrictAliasing,
 			m.androidFpu,
@@ -3857,7 +3858,7 @@
 	end
 
 	function m.linuxDebugInformationFormat(cfg)
-		if cfg.symbols then
+		if cfg.symbols ~= nil then
 
 			if cfg.symbols == p.OFF then
 				m.element("DebugInformationFormat", nil, "None")
@@ -4056,6 +4057,20 @@
 	function m.androidDebugInformation(cfg)
 		if cfg.flags.Symbols then
 			m.element("GenerateDebugInformation", "true")
+		end
+	end
+
+	function m.androidDebugInformationFormat(cfg)
+		if cfg.symbols ~= nil then
+
+			if cfg.symbols == p.OFF then
+				m.element("DebugInformationFormat", nil, "None")
+			elseif cfg.symbols == "Full" then
+				m.element("DebugInformationFormat", nil, "FullDebug")
+			else
+				m.element("DebugInformationFormat", nil, "LineNumber")
+			end
+
 		end
 	end
 
