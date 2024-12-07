@@ -62,6 +62,7 @@
 	premake.ARM         = "ARM"
 	premake.ARM64       = "ARM64"
 	premake.RISCV64     = "RISCV64"
+	premake.LOONGARCH64 = "loongarch64"
 
 
 
