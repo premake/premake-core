@@ -17,8 +17,6 @@ project "lua-lib"
 		"src/lua.c",
 		"src/luac.c",
 		"src/print.c",
-		"**.lua",
-		"etc/*.c"
 	}
 
 	filter "system:linux or bsd or hurd or aix or solaris or haiku"

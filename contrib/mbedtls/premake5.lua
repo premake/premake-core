@@ -10,5 +10,3 @@ project "mbedtls-lib"
 		"include/**.h",
 		"library/*.c",
 	}
-
-

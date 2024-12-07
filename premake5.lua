@@ -230,21 +230,6 @@
 		includedirs { "contrib/lua/src", "contrib/luashim" }
 		links       { "lua-lib" }
 
-		-- optional 3rd party libraries
-		filter { "options:zlib-src=contrib" }
-			includedirs { "contrib/zlib", "contrib/libzip" }
-			links { "zip-lib", "zlib-lib" }
-		filter { "options:zlib-src=system" }
-			links { "zip", "z" }
-		filter {}
-
-		filter { "options:curl-src=contrib" }
-			includedirs { "contrib/curl/include" }
-			links { "curl-lib" }
-		filter { "options:curl-src=system" }
-			links { "curl" }
-		filter {}
-
 		files
 		{
 			"*.txt", "**.lua",
@@ -257,6 +242,21 @@
 			"contrib/**.*",
 			"binmodules/**.*"
 		}
+
+		-- optional 3rd party libraries
+		filter { "options:zlib-src=contrib" }
+			includedirs { "contrib/zlib", "contrib/libzip" }
+			links { "zip-lib", "zlib-lib" }
+
+		filter { "options:zlib-src=system" }
+			links { "zip", "z" }
+
+		filter { "options:curl-src=contrib" }
+			includedirs { "contrib/curl/include" }
+			links { "curl-lib" }
+
+		filter { "options:curl-src=system" }
+			links { "curl" }
 
 		filter "configurations:Debug"
 			targetdir   "bin/debug"
@@ -325,6 +325,7 @@ if premake.action.supports("None") then
 
 		files ".github/**"
 end
+
 	-- optional 3rd party libraries
 	group "contrib"
 		include "contrib/lua"
@@ -348,6 +349,7 @@ end
 				include "binmodules/luasocket"
 			end
 	end
+
 --
 -- A more thorough cleanup.
 --
