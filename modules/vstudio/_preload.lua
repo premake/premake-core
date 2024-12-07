@@ -630,6 +630,94 @@
 	end)
 
 --
+-- Register Android properties
+--
+
+	p.api.register {
+		name = "endian",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Little",
+			"Big",
+		},
+	}
+
+	p.api.register {
+		name = "fpu",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Software",
+			"Hardware",
+		}
+	}
+
+	p.api.addAllowed("toolchainversion", {
+		"4.6", -- NDK GCC versions
+		"4.8",
+		"4.9",
+		"3.4", -- NDK clang versions
+		"3.5",
+		"3.6",
+		"3.8",
+		"5.0", })
+
+	p.api.register {
+		name = "floatabi",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"soft",
+			"softfp",
+			"hard",
+		},
+	}
+
+	p.api.register {
+		name = "androidapilevel",
+		scope = "config",
+		kind = "integer",
+	}
+
+	p.api.register {
+		name = "stl",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"none",
+			"gabi++",
+			"stlport",
+			"gnu",
+			"libc++",
+		},
+	}
+
+	p.api.register {
+		name = "thumbmode",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"thumb",
+			"arm",
+			"disabled",
+		},
+	}
+
+	p.api.register {
+		name = "androidapplibname",
+		scope = "config",
+		kind = "string"
+	}
+
+	p.api.addAllowed("system", p.ANDROID)
+	p.api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
+	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
+	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
+	p.api.addAllowed("flags", { "Thumb", "DataLevelLinking" })
+	p.api.addAllowed("kind", p.PACKAGING)
+--
 -- Decide when the full module should be loaded.
 --
 

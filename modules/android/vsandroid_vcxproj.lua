@@ -4,43 +4,43 @@
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local p = premake
-
-	p.modules.vsandroid = { }
-
-	local android = p.modules.android
-	local vsandroid = p.modules.vsandroid
-	local vc2010 = p.vstudio.vc2010
-	local vstudio = p.vstudio
-	local project = p.project
-	local config = p.config
+	--local p = premake
+	--
+	--p.modules.vsandroid = { }
+	--
+	--local android = p.modules.android
+	--local vsandroid = p.modules.vsandroid
+	--local vc2010 = p.vstudio.vc2010
+	--local vstudio = p.vstudio
+	--local project = p.project
+	--local config = p.config
 
 
 --
 -- Utility functions
 --
-	local function setBoolOption(optionName, flag, value)
+	--[[local function setBoolOption(optionName, flag, value)
 		if flag ~= nil then
 			vc2010.element(optionName, nil, value)
 		end
-	end
+	end]]--
 
 --
 -- Add android tools to vstudio actions.
 --
 
-	if vstudio.vs2010_architectures ~= nil then
-		if _ACTION >= "vs2015" then
-			vstudio.vs2010_architectures.arm = "ARM"
-		else
-			vstudio.vs2010_architectures.android = "Android"
-		end
-	end
+	--if vstudio.vs2010_architectures ~= nil then
+	--	if _ACTION >= "vs2015" then
+	--		vstudio.vs2010_architectures.arm = "ARM"
+	--	else
+	--		vstudio.vs2010_architectures.android = "Android"
+	--	end
+	--end
 
 --
 -- Extend global properties
 --
-	premake.override(vc2010.elements, "globals", function (oldfn, prj)
+	--[[premake.override(vc2010.elements, "globals", function (oldfn, prj)
 		local elements = oldfn(prj)
 
 		if prj.system == premake.ANDROID and prj.kind ~= premake.PACKAGING then
@@ -53,9 +53,9 @@
 		end
 
 		return elements
-	end)
+	end)]]--
 
-	premake.override(vc2010.elements, "globalsCondition", function (oldfn, prj, cfg)
+	--[[premake.override(vc2010.elements, "globalsCondition", function (oldfn, prj, cfg)
 		local elements = oldfn(prj, cfg)
 
 		if cfg.system == premake.ANDROID and cfg.system ~= prj.system and cfg.kind ~= premake.PACKAGING then
@@ -65,9 +65,9 @@
 		end
 
 		return elements
-	end)
+	end)]]--
 
-	function android.androidApplicationType(cfg)
+	--[[function android.androidApplicationType(cfg)
 		vc2010.element("Keyword", nil, "Android")
 		vc2010.element("RootNamespace", nil, "%s", cfg.project.name)
 		if _ACTION >= "vs2019" then
@@ -85,13 +85,13 @@
 		else
 			vc2010.element("ApplicationTypeRevision", nil, "1.0")
 		end
-	end
+	end]]--
 
 --
 -- Extend configurationProperties.
 --
 
-	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 
 		if cfg.kind ~= p.UTILITY and cfg.kind ~= p.PACKAGING and cfg.system == premake.ANDROID then
@@ -111,9 +111,9 @@
 			end
 		end
 		return elements
-	end)
+	end)]]--
 
-	function android.androidAPILevel(cfg)
+	--[[function android.androidAPILevel(cfg)
 		if cfg.androidapilevel ~= nil then
 			vc2010.element("AndroidAPILevel", nil, "android-" .. cfg.androidapilevel)
 		end
@@ -150,10 +150,10 @@
 			}
 			vc2010.element("ThumbMode", nil, thumbMode[cfg.thumbmode])
 		end
-	end
+	end]]--
 
 	-- Note: this function is already patched in by vs2012...
-	premake.override(vc2010, "platformToolset", function(oldfn, cfg)
+	--[[premake.override(vc2010, "platformToolset", function(oldfn, cfg)
 		if cfg.system ~= premake.ANDROID then
 			return oldfn(cfg)
 		end
@@ -217,14 +217,14 @@
 				vc2010.element("AndroidArch", nil, archMap[arch])
 			end
 		end
-	end)
+	end)]]--
 
 
 --
 -- Extend clCompile.
 --
 
-	premake.override(vc2010.elements, "clCompile", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "clCompile", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.system == premake.ANDROID then
 			elements = table.join(elements, {
@@ -253,58 +253,58 @@
 			end
 		end
 		return elements
-	end)
+	end)]]--
 
-	function android.precompiledHeaderFile(fileName, cfg)
+	--[[function android.precompiledHeaderFile(fileName, cfg)
 		-- Doesn't work for project-relative paths.
 		vc2010.element("PrecompiledHeaderFile", nil, "%s", path.getabsolute(path.rebase(fileName, cfg.basedir, cfg.location)))
-	end
+	end]]--
 
-	function android.debugInformation(cfg)
+	--[[function android.debugInformation(cfg)
 		if cfg.flags.Symbols then
 			_p(3,'<GenerateDebugInformation>true</GenerateDebugInformation>')
 		end
-	end
+	end]]--
 
-	function android.strictAliasing(cfg)
+	--[[function android.strictAliasing(cfg)
 		if cfg.strictaliasing ~= nil then
 			vc2010.element("StrictAliasing", nil, iif(cfg.strictaliasing == "Off", "false", "true"))
 		end
-	end
+	end]]--
 
-	function android.fpu(cfg)
+	--[[function android.fpu(cfg)
 		if cfg.fpu ~= nil then
 			_p(3,'<SoftFloat>true</SoftFloat>', iif(cfg.fpu == "Software", "true", "false"))
 		end
-	end
+	end]]--
 
-	function android.pic(cfg)
+	--[[function android.pic(cfg)
 		if cfg.pic ~= nil then
 			vc2010.element("PositionIndependentCode", nil, iif(cfg.pic == "On", "true", "false"))
 		end
-	end
+	end]]--
 
-	function android.verboseCompiler(cfg)
+	--[[function android.verboseCompiler(cfg)
 		setBoolOption("Verbose", cfg.flags.VerboseCompiler, "true")
-	end
+	end]]--
 
-	function android.undefineAllPreprocessorDefinitions(cfg)
+	--[[function android.undefineAllPreprocessorDefinitions(cfg)
 		setBoolOption("UndefineAllPreprocessorDefinitions", cfg.flags.UndefineAllPreprocessorDefinitions, "true")
-	end
+	end]]--
 
-	function android.showIncludes(cfg)
+	--[[function android.showIncludes(cfg)
 		setBoolOption("ShowIncludes", cfg.flags.ShowIncludes, "true")
-	end
+	end]]--
 
-	function android.dataLevelLinking(cfg)
+	--[[function android.dataLevelLinking(cfg)
 		setBoolOption("DataLevelLinking", cfg.flags.DataLevelLinking, "true")
-	end
+	end]]--
 
-	function android.shortEnums(cfg)
+	--[[function android.shortEnums(cfg)
 		setBoolOption("UseShortEnums", cfg.flags.UseShortEnums, "true")
-	end
+	end]]--
 
-	function android.cStandard(cfg)
+	--[[function android.cStandard(cfg)
 		local c_langmap = {
 			["C98"]   = "c98",
 			["C99"]   = "c99",
@@ -315,9 +315,9 @@
 		if c_langmap[cfg.cdialect] ~= nil then
 			vc2010.element("CLanguageStandard", nil, c_langmap[cfg.cdialect])
 		end
-	end
+	end]]--
 
-	function android.cppStandard(cfg)
+	--[[function android.cppStandard(cfg)
 		local cpp_langmap = {
 			["C++98"]   = "c++98",
 			["C++11"]   = "c++11",
@@ -332,9 +332,9 @@
 		if cpp_langmap[cfg.cppdialect] ~= nil then
 			vc2010.element("CppLanguageStandard", nil, cpp_langmap[cfg.cppdialect])
 		end
-	end
+	end]]--
 
-	p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
+	--[[p.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			local opts = cfg.buildoptions
 
@@ -356,25 +356,25 @@
 		else
 			oldfn(cfg, condition)
 		end
-	end)
+	end)]]--
 
-	p.override(vc2010, "warningLevel", function(oldfn, cfg)
+	--[[p.override(vc2010, "warningLevel", function(oldfn, cfg)
 		if _ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings and cfg.warnings ~= "Off" then
 			vc2010.element("WarningLevel", nil, "EnableAllWarnings")
 		elseif (_ACTION >= "vs2015" and cfg.system == p.ANDROID and cfg.warnings) or not (_ACTION >= "vs2015" and cfg.system == p.ANDROID) then
 			oldfn(cfg)
 		end
-	end)
+	end)]]--
 
-	premake.override(vc2010, "clCompilePreprocessorDefinitions", function(oldfn, cfg, condition)
+	--[[premake.override(vc2010, "clCompilePreprocessorDefinitions", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			vc2010.preprocessorDefinitions(cfg, cfg.defines, false, condition)
 		else
 			oldfn(cfg, condition)
 		end
-	end)
+	end)]]--
 
-	premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
+	--[[premake.override(vc2010, "exceptionHandling", function(oldfn, cfg, condition)
 		if cfg.system == p.ANDROID then
 			-- Note: Android defaults to 'off'
 			local exceptions = {
@@ -394,15 +394,15 @@
 		else
 			oldfn(cfg, condition)
 		end
-	end)
+	end)]]--
 
-	function android.enableEnhancedInstructionSet(cfg)
+	--[[function android.enableEnhancedInstructionSet(cfg)
 		if cfg.vectorextensions == "NEON" then
 			vc2010.element("EnableNeonCodegen", nil, "true")
 		end
-	end
+	end]]--
 
-	premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
+	--[[premake.override(vc2010, "runtimeTypeInfo", function(oldfn, cfg, condition)
 		if cfg.system == premake.ANDROID then
 			-- Note: Android defaults to 'off'
 			if cfg.rtti == premake.ON then
@@ -411,26 +411,26 @@
 		else
 			oldfn(cfg, condition)
 		end
-	end)
+	end)]]--
 
 
 --
 -- Extend Link.
 --
 
-	premake.override(vc2010, "generateDebugInformation", function(oldfn, cfg)
+	--[[premake.override(vc2010, "generateDebugInformation", function(oldfn, cfg)
 		-- Note: Android specifies the debug info in the clCompile section
 		if cfg.system ~= premake.ANDROID then
 			oldfn(cfg)
 		end
-	end)
+	end)]]--
 
 
 --
 -- Add android tools to vstudio actions.
 --
 
-	premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.system == premake.ANDROID and _ACTION < "vs2015" then
 			elements = table.join(elements, {
@@ -440,17 +440,6 @@
 		return elements
 	end)
 
-	function android.antPackage(cfg)
-		p.push('<AntPackage>')
-		if cfg.androidapplibname ~= nil then
-			vc2010.element("AndroidAppLibName", nil, cfg.androidapplibname)
-		else
-			vc2010.element("AndroidAppLibName", nil, "$(RootNamespace)")
-		end
-		vc2010.element("AntTarget", nil, iif(premake.config.isDebugBuild(cfg), "debug", "release"))
-		p.pop('</AntPackage>')
-	end
-
 	function android.antBuild(cfg)
 		if cfg.kind == premake.STATICLIB or cfg.kind == premake.SHAREDLIB then
 			return
@@ -459,27 +448,27 @@
 		_p(2,'<AntBuild>')
 		_p(3,'<AntBuildType>%s</AntBuildType>', iif(premake.config.isDebugBuild(cfg), "Debug", "Release"))
 		_p(2,'</AntBuild>')
-	end
+	end]]--
 
-	premake.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
+	--[[premake.override(vc2010, "additionalCompileOptions", function(oldfn, cfg, condition)
 		if cfg.system == premake.ANDROID then
 			vsandroid.additionalOptions(cfg, condition)
 		end
 		return oldfn(cfg, condition)
-	end)
+	end)]]--
 
-	premake.override(vc2010.elements, "user", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "user", function(oldfn, cfg)
 		if cfg.system == p.ANDROID then
 			return {}
 		else
 			return oldfn(cfg)
 		end
-	end)
+	end)]]--
 
 --
 -- Add options unsupported by vs-android UI to <AdvancedOptions>.
 --
-	function vsandroid.additionalOptions(cfg)
+	--[[function vsandroid.additionalOptions(cfg)
 		if _ACTION >= "vs2015" then
 
 		else
@@ -572,23 +561,23 @@
 
 			end
 		end
-	end
+	end]]--
 
 --
 -- Disable subsystem.
 --
 
-	p.override(vc2010, "subSystem", function(oldfn, cfg)
+	--[[p.override(vc2010, "subSystem", function(oldfn, cfg)
 		if cfg.system ~= p.ANDROID then
 			return oldfn(cfg)
 		end
-	end)
+	end)]]--
 
 --
 -- Remove .lib and list in LibraryDependencies instead of AdditionalDependencies.
 --
 
-	p.override(vc2010, "additionalDependencies", function(oldfn, cfg, explicit)
+	--[[p.override(vc2010, "additionalDependencies", function(oldfn, cfg, explicit)
 		if cfg.system == p.ANDROID then
 			local links = {}
 
@@ -613,9 +602,9 @@
 		else
 			return oldfn(cfg, explicit)
 		end
-	end)
+	end)]]--
 
-function android.useMultiToolTask(cfg)
+--[[function android.useMultiToolTask(cfg)
 	-- Android equivalent of 'MultiProcessorCompilation'
 	if cfg.flags.MultiProcessorCompile then
 		vc2010.element("UseMultiToolTask", nil, "true")
@@ -630,23 +619,23 @@ premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
 	else
 		return oldfn(cfg)
 	end
-end)
+end)]]--
 
 --
 -- Disable override of OutDir.  This is breaking deployment.
 --
 
-	p.override(vc2010, "outDir", function(oldfn, cfg)
+	--[[p.override(vc2010, "outDir", function(oldfn, cfg)
 		if cfg.system ~= p.ANDROID then
 			return oldfn(cfg)
 		end
-	end)
+	end)]]--
 
 --
 -- Disable usage of ExternalIncludePath, Android project format ignores it.
 --
 
-	p.override(vc2010, "includePath", function(oldfn, cfg)
+	--[[p.override(vc2010, "includePath", function(oldfn, cfg)
 		if cfg.system == p.ANDROID then
 			local dirs = vstudio.path(cfg, cfg.externalincludedirs)
 			if #dirs > 0 then
@@ -655,4 +644,4 @@ end)
 		else
 			oldfn(cfg)
 		end
-	end)
+	end)]]--

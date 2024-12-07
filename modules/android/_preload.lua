@@ -5,14 +5,14 @@
 -- Copyright:   (c) 2013-2015 Manu Evans and the Premake project
 --
 
-	local p = premake
-	local api = p.api
+	--local p = premake
+	--local api = p.api
 
 --
 -- Register the Android extension
 --
 
-	api.register {
+	--[[api.register {
 		name = "endian",
 		scope = "config",
 		kind = "string",
@@ -31,16 +31,16 @@
 			"Software",
 			"Hardware",
 		}
-	}
+	}]]--
 
-	api.addAllowed("system", p.ANDROID)
+	--[[api.addAllowed("system", p.ANDROID)
 	api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	api.addAllowed("exceptionhandling", {"UnwindTables"})
 	api.addAllowed("flags", { "Thumb" })
-	api.addAllowed("kind", p.PACKAGING)
+	api.addAllowed("kind", p.PACKAGING)]]--
 
-	api.addAllowed("toolchainversion", {
+	--[[api.addAllowed("toolchainversion", {
 		"4.6", -- NDK GCC versions
 		"4.8",
 		"4.9",
@@ -54,20 +54,20 @@
 	premake.action._list["vs2017"].valid_kinds = table.join(premake.action._list["vs2017"].valid_kinds, { p.PACKAGING })
 	premake.action._list["vs2019"].valid_kinds = table.join(premake.action._list["vs2019"].valid_kinds, { p.PACKAGING })
 	premake.action._list["vs2022"].valid_kinds = table.join(premake.action._list["vs2022"].valid_kinds, { p.PACKAGING })
-
-	local osoption = p.option.get("os")
+	]]--
+	--[[local osoption = p.option.get("os")
 	if osoption ~= nil then
 		table.insert(osoption.allowed, { "android",  "Android" })
-	end
+	end]]--
 
 	-- add system tags for android.
-	os.systemTags[p.ANDROID] = { "android", "mobile" }
+	--[[os.systemTags[p.ANDROID] = { "android", "mobile" }]]--
 
 --
 -- Register Android properties
 --
 
-	api.register {
+	--[[api.register {
 		name = "floatabi",
 		scope = "config",
 		kind = "string",
@@ -112,8 +112,8 @@
 		name = "androidapplibname",
 		scope = "config",
 		kind = "string"
-	}
+	}]]--
 
-	return function(cfg)
-		return (cfg.system == p.ANDROID)
-	end
+	--return function(cfg)
+	--	return (cfg.system == p.ANDROID)
+	--end

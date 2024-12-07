@@ -4,11 +4,11 @@
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local p = premake
-
-	local android = p.modules.android
-	local vsandroid = p.modules.vsandroid
-	local sln2005 = p.vstudio.sln2005
+	--local p = premake
+	--
+	--local android = p.modules.android
+	--local vsandroid = p.modules.vsandroid
+	--local sln2005 = p.vstudio.sln2005
 
 
 --
@@ -16,7 +16,7 @@
 --
 
 
-	premake.override(sln2005.elements, "projectConfigurationPlatforms", function(oldfn, cfg, context)
+	--[[premake.override(sln2005.elements, "projectConfigurationPlatforms", function(oldfn, cfg, context)
 		local elements = oldfn(cfg, context)
 
 		if cfg.system == premake.ANDROID and _ACTION >= "vs2015" then
@@ -33,4 +33,4 @@
 		if context.prjCfg.kind == p.PACKAGING and _ACTION >= "vs2015" then
 			p.w('{%s}.%s.Deploy.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
 		end
-	end
+	end]]--

@@ -4,21 +4,31 @@
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local p = premake
-
-	local android = p.modules.android
-	local vsandroid = p.modules.vsandroid
-	local vc2010 = p.vstudio.vc2010
-	local vstudio = p.vstudio
-	local project = p.project
+	--local p = premake
+	--
+	--local android = p.modules.android
+	--local vsandroid = p.modules.vsandroid
+	--local vc2010 = p.vstudio.vc2010
+	--local vstudio = p.vstudio
+	--local project = p.project
 
 
 --
 -- Add android tools to vstudio actions.
 --
 
+	--[[function android.antPackage(cfg)
+		p.push('<AntPackage>')
+		if cfg.androidapplibname ~= nil then
+			vc2010.element("AndroidAppLibName", nil, cfg.androidapplibname)
+		else
+			vc2010.element("AndroidAppLibName", nil, "$(RootNamespace)")
+		end
+		vc2010.element("AntTarget", nil, iif(premake.config.isDebugBuild(cfg), "debug", "release"))
+		p.pop('</AntPackage>')
+	end]]--
 
-	premake.override(vstudio.vs2010, "generateProject", function(oldfn, prj)
+	--[[premake.override(vstudio.vs2010, "generateProject", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			p.eol("\r\n")
 			p.indent("  ")
@@ -36,28 +46,28 @@
 		else
 			oldfn(prj)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vstudio, "projectfile", function(oldfn, prj)
+	--[[premake.override(vstudio, "projectfile", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			return premake.filename(prj, ".androidproj")
 		else
 			return oldfn(prj)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vstudio, "tool", function(oldfn, prj)
+	--[[premake.override(vstudio, "tool", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			return "39E2626F-3545-4960-A6E8-258AD8476CE5"
 		else
 			return oldfn(prj)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vc2010.elements, "globals", function (oldfn, cfg)
+	--[[premake.override(vc2010.elements, "globals", function (oldfn, cfg)
 		local elements = oldfn(cfg)
 
 		if cfg.kind == premake.PACKAGING then
@@ -77,10 +87,10 @@
 		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
 		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
 		_p(2, "<ProjectVersion>1.0</ProjectVersion>")
-	end
+	end]]--
 
 
-	premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "configurationProperties", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.kind == p.PACKAGING then
 			elements = {
@@ -89,10 +99,10 @@
 			}
 		end
 		return elements
-	end)
+	end)]]--
 
 
-	premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "itemDefinitionGroup", function(oldfn, cfg)
 		local elements = oldfn(cfg)
 		if cfg.kind == p.PACKAGING then
 			elements = {
@@ -100,35 +110,36 @@
 			}
 		end
 		return elements
-	end)
+	end)]]--
 
 
-	premake.override(vc2010, "importDefaultProps", function(oldfn, prj)
+	--[[premake.override(vc2010, "importDefaultProps", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.Default.props" />')
 		else
 			oldfn(prj)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vc2010, "importLanguageSettings", function(oldfn, prj)
+	--[[premake.override(vc2010, "importLanguageSettings", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.props" />')
 		else
 			oldfn(prj)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vc2010, "propertySheets", function(oldfn, cfg)
+	--[[premake.override(vc2010, "propertySheets", function(oldfn, cfg)
 		if cfg.kind ~= p.PACKAGING then
 			oldfn(cfg)
 		end
-	end)
+	end)]]--
 
 
-	premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
+	--[[premake.override(vc2010.elements, "outputProperties", function(oldfn, cfg)
+
 		if cfg.kind == p.PACKAGING then
 			return {
 				android.outDir,
@@ -143,18 +154,18 @@
 
 	function android.outDir(cfg)
 		vc2010.element("OutDir", nil, "%s\\", cfg.buildtarget.directory)
-	end
+	end]]--
 
 
-	premake.override(vc2010, "importLanguageTargets", function(oldfn, prj)
+	--[[premake.override(vc2010, "importLanguageTargets", function(oldfn, prj)
 		if prj.kind == p.PACKAGING then
 			p.w('<Import Project="$(AndroidTargetsPath)\\Android.targets" />')
 		else
 			oldfn(prj)
 		end
-	end)
+	end)]]--
 
-	function android.link(cfg, file)
+	--[[function android.link(cfg, file)
 		-- default the separator to '/' as that is what is searched for
 		-- below. Otherwise the function will use target separator which
 		-- could be '\\' and result in failure to create links.
@@ -247,9 +258,9 @@
 		emitFilter = function(prj, group)
 			vc2010.filterGroup(prj, group, "Content")
 		end
-	}
+	}]]--
 
-	premake.override(vc2010, "categorizeFile", function(base, prj, file)
+	--[[premake.override(vc2010, "categorizeFile", function(base, prj, file)
 		if prj.kind ~= p.PACKAGING then
 			return base(prj, file)
 		end
@@ -268,4 +279,4 @@
 		else
 			return vc2010.categories.Content
 		end
-	end)
+	end)]]--

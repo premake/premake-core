@@ -36,6 +36,12 @@
 		win32   = "x86",
 	}
 
+	if _ACTION >= "vs2015" then
+		vstudio.vs2010_architectures.arm = "ARM"
+	else
+		vstudio.vs2010_architectures.android = "Android"
+	end
+
 
 	local function architecture(system, arch)
 		local result
@@ -449,6 +455,8 @@
 		elseif project.isc(prj) or project.iscpp(prj) then
 			if prj.kind == p.SHAREDITEMS then
 				extension = ".vcxitems"
+			elseif prj.kind == p.PACKAGING then
+				extension = ".androidproj"
 			else
 				extension = iif(_ACTION > "vs2008", ".vcxproj", ".vcproj")
 			end
@@ -623,7 +631,11 @@
 		elseif project.isfsharp(prj) then
 			return "F2A71F9B-5D33-465A-A702-920D77279786"
 		elseif project.isc(prj) or project.iscpp(prj) then
-			return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
+			if prj.kind == p.PACKAGING then
+				return "39E2626F-3545-4960-A6E8-258AD8476CE5"
+			else
+				return "8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942"
+			end
 		end
 	end
 
