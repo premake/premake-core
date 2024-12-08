@@ -4,18 +4,18 @@
 -- Copyright (c) 2012-2015 Manu Evans and the Premake project
 --
 
-	local p = premake
-
-	local android = p.modules.android
-	local vsandroid = p.modules.vsandroid
-	local vstudio = p.vstudio
+	--local p = premake
+	--
+	--local android = p.modules.android
+	--local vsandroid = p.modules.vsandroid
+	--local vstudio = p.vstudio
 
 --
 -- Add android tools to vstudio actions.
 --
 
 
-	premake.override(vstudio, "solutionPlatform", function (oldfn, cfg)
+	--[[premake.override(vstudio, "solutionPlatform", function (oldfn, cfg)
 		local platform = oldfn(cfg)
 
 		-- Bypass that pesky Win32 hack
