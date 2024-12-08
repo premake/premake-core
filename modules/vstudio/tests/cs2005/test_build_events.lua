@@ -19,6 +19,8 @@
 		p.action.set("vs2005")
 		p.escaper(p.vstudio.vs2010.esc)
 		wks = test.createWorkspace()
+		language "C#"
+		architecture("x86")
 	end
 
 	local function prepare(platform)

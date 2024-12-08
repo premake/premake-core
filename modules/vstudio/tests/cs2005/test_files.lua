@@ -18,6 +18,8 @@
 	function suite.setup()
 		p.action.set("vs2005")
 		wks = test.createWorkspace()
+		language "C#"
+		architecture("x86")
 	end
 
 	local function prepare()

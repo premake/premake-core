@@ -836,6 +836,7 @@
 		["solaris"]  = { "solaris", "posix", "desktop" },
 		["uwp"]      = { "uwp", "windows", "desktop" },
 		["windows"]  = { "windows", "win32", "desktop" },
+		[premake.ANDROID]  = { "android", "mobile" },
 	}
 
 	function os.getSystemTags(name)

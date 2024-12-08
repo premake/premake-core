@@ -49,7 +49,6 @@
 		test.capture [[
 <PropertyGroup Label="Globals">
 	<ProjectGuid>{42B5DBC6-AE1F-903D-F75D-41E363076E92}</ProjectGuid>
-	<LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
 	<Keyword>Android</Keyword>
 	<RootNamespace>MyProject</RootNamespace>
 	<MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
@@ -127,8 +126,8 @@
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<Optimization>Disabled</Optimization>
 	<CppLanguageStandard>c++11</CppLanguageStandard>
+	<Optimization>Disabled</Optimization>
 ]]
 	end
 
@@ -138,8 +137,8 @@
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<Optimization>Disabled</Optimization>
 	<CppLanguageStandard>c++1y</CppLanguageStandard>
+	<Optimization>Disabled</Optimization>
 ]]
 	end
 
@@ -149,8 +148,8 @@
 		test.capture [[
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<Optimization>Disabled</Optimization>
 	<CppLanguageStandard>c++1z</CppLanguageStandard>
+	<Optimization>Disabled</Optimization>
 ]]
 	end
 
@@ -159,7 +158,6 @@
 		prepareOutputProperties()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
-	<LinkIncremental>true</LinkIncremental>
 	<IntDir>obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>
