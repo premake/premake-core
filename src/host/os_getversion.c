@@ -286,7 +286,9 @@ int getversion(struct OsVersionInfo* info)
 	info->minorversion = 0;
 	info->revision = 0;
 
-	if (uname(&u))
+	// uname returns -1 on error, and returns 0 on success for most platforms
+	// except Solaris, which returns non-negative.
+	if (uname(&u) < 0)
 	{
 		// error
 		info->description = PLATFORM_OS;
