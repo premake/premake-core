@@ -35,4 +35,4 @@
 			return oldfn(cfg)
 		end
 		return oldfn(cfg, win32)
-	end)
+	end)]]--
