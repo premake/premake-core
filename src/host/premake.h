@@ -64,6 +64,8 @@
 #define PLATFORM_ARCHITECTURE "RISCV64"
 #elif (defined(__loongarch__) && __loongarch_grlen == 64) || defined(__loongarch64)
 #define PLATFORM_ARCHITECTURE "loongarch64"
+#elif defined(__e2k__)
+#define PLATFORM_ARCHITECTURE "e2k"
 #elif !defined(RC_INVOKED)
 #error Unknown architecture detected
 #endif
