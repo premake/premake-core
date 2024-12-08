@@ -661,6 +661,7 @@
 	include("vs2010_rules_props.lua")
 	include("vs2010_rules_targets.lua")
 	include("vs2010_rules_xml.lua")
+	include("vs2010_androidproj.lua")
 	include("vs2013_vcxitems.lua")
 
 	return p.modules.vstudio

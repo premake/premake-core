@@ -171,19 +171,6 @@
 
 	end
 
-	m.elements.packagingGlobals = function(prj)
-
-		return {
-			-- Common
-			m.projectGuid,
-			m.projectName,
-
-			-- Android Packaging
-			m.androidProjectVersion
-		}
-
-	end
-
 	m.elements.globalsCondition = function(prj, cfg)
 		return {
 			m.windowsTargetPlatformVersion,
@@ -201,7 +188,7 @@
 	end
 
 	m.elements.androidGlobalsCondition = function(prj, cfg)
-		if cfg.system ~= prj.system and cfg.kind ~= p.PACKAGING then
+		if cfg.system ~= prj.system then
 			return {
 				m.androidApplicationType
 			}
@@ -215,16 +202,12 @@
 
 		local globalElements
 
-		if prj.kind == p.PACKAGING then
-			p.callArray(m.elements.packagingGlobals, prj)
+		if prj.system == p.LINUX then
+			p.callArray(m.elements.linuxGlobals, prj)
+		elseif prj.system == p.ANDROID then
+			p.callArray(m.elements.androidGlobals, prj)
 		else
-			if prj.system == p.LINUX then
-				p.callArray(m.elements.linuxGlobals, prj)
-			elseif prj.system == p.ANDROID then
-				p.callArray(m.elements.androidGlobals, prj)
-			else
-				p.callArray(m.elements.globals, prj)
-			end
+			p.callArray(m.elements.globals, prj)
 		end
 
 		p.pop('</PropertyGroup>')
@@ -334,11 +317,6 @@
 				-- Android
 				m.androidPlatformToolset,
 			}
-		elseif cfg.kind == p.PACKAGING then
-			return {
-				m.useDebugLibraries,
-				m.androidAPILevel,
-			}
 		else
 			return {
 				-- Common
@@ -438,12 +416,6 @@
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
 			}
-		elseif cfg.kind == p.PACKAGING then
-			return {
-				m.androidOutDir,
-				m.intDir,
-				m.targetName,
-			}
 		else
 			return {
 				m.intDir,
@@ -532,10 +504,6 @@
 				m.ruleVars,
 				m.buildEvents,
 				m.buildLog,
-			}
-		elseif cfg.kind == p.PACKAGING then
-			return {
-				m.androidAntPackage
 			}
 		else
 
@@ -2655,11 +2623,7 @@
 
 
 	function m.importLanguageTargets(prj)
-		if prj.kind == p.PACKAGING then
-			p.w('<Import Project="$(AndroidTargetsPath)\\Android.targets" />')
-		else
-			p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
-		end
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.targets" />')
 	end
 
 	m.elements.importExtensionTargets = function(prj)
@@ -2752,21 +2716,13 @@
 
 
 	function m.importDefaultProps(prj)
-		if prj.kind == p.PACKAGING then
-			p.w('<Import Project="$(AndroidTargetsPath)\\Android.Default.props" />')
-		else
-			p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
-		end
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.Default.props" />')
 	end
 
 
 
 	function m.importLanguageSettings(prj)
-		if prj.kind == p.PACKAGING then
-			p.w('<Import Project="$(AndroidTargetsPath)\\Android.props" />')
-		else
-			p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
-		end
+		p.w('<Import Project="$(VCTargetsPath)\\Microsoft.Cpp.props" />')
 	end
 
 	m.elements.importExtensionSettings = function(prj)
@@ -3276,11 +3232,9 @@
 
 
 	function m.propertySheets(cfg)
-		if cfg.kind ~= p.PACKAGING then
-			p.push('<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
-			p.w('<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
-			p.pop('</ImportGroup>')
-		end
+		p.push('<ImportGroup Label="PropertySheets" %s>', m.condition(cfg))
+		p.w('<Import Project="$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />')
+		p.pop('</ImportGroup>')
 	end
 
 
@@ -4447,21 +4401,6 @@
 		_p(2,'<AntBuild>')
 		_p(3,'<AntBuildType>%s</AntBuildType>', iif(premake.config.isDebugBuild(cfg), "Debug", "Release"))
 		_p(2,'</AntBuild>')
-	end
-
-	function m.androidOutDir(cfg)
-		m.element("OutDir", nil, "%s\\", cfg.buildtarget.directory)
-	end
-
-	function m.androidAntPackage(cfg)
-		p.push('<AntPackage>')
-		if cfg.androidapplibname ~= nil then
-			m.element("AndroidAppLibName", nil, cfg.androidapplibname)
-		else
-			m.element("AndroidAppLibName", nil, "$(RootNamespace)")
-		end
-		m.element("AntTarget", nil, iif(premake.config.isDebugBuild(cfg), "debug", "release"))
-		p.pop('</AntPackage>')
 	end
 
 	--
