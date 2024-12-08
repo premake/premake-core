@@ -20,6 +20,11 @@
 #include <sys/sysctl.h>
 #endif
 
+#ifdef PREMAKE_DEBUGGER
+#define DEBUGGER_LUA_IMPLEMENTATION
+#include <debugger_lua.h>
+#endif
+
 #define ERROR_MESSAGE  "Error: %s\n"
 
 
@@ -212,6 +217,10 @@ int premake_init(lua_State* L)
 
 #ifdef PREMAKE_COMPRESSION
 	luaL_register(L, "zip",     zip_functions);
+#endif
+
+#ifdef PREMAKE_DEBUGGER
+	dbg_setup_default(L);
 #endif
 
 	lua_pushlightuserdata(L, &s_shimTable);
