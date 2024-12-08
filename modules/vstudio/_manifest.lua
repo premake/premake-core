@@ -19,7 +19,7 @@ return {
 	"vs2010_rules_props.lua",
 	"vs2010_rules_targets.lua",
 	"vs2010_rules_xml.lua",
-	"vs2010_androidproj.lua"
+	"vs2010_androidproj.lua",
 	"vs2012.lua",
 	"vs2013.lua",
 	"vs2013_vcxitems.lua",
