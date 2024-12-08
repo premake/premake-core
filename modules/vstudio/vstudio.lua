@@ -282,8 +282,12 @@
 			arch = iif(isnative, "x86", "Any CPU")
 		end
 
-		if win32 and isnative and arch == "x86" then
-			arch = "Win32"
+		if cfg.system == p.WINDOWS or cfg.system == p.UWP then
+
+			if win32 and isnative and arch == "x86" then
+				arch = "Win32"
+			end
+
 		end
 
 		return arch
