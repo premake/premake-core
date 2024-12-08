@@ -1,7 +1,7 @@
-*.o
 fuzz_client
 fuzz_dtlsclient
 fuzz_dtlsserver
+fuzz_pkcs7
 fuzz_privkey
 fuzz_pubkey
 fuzz_server

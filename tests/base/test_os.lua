@@ -62,6 +62,23 @@
 		test.isfalse(os.isfile("no_such_file.lua"))
 	end
 
+--
+-- os.linkdir() and os.linkfile() tests
+--
+
+	function suite.linkdir()
+		test.istrue(os.linkdir("folder/subfolder", "folder/subfolder2"))
+		test.istrue(os.islink("folder/subfolder2"))
+		test.istrue(os.rmdir("folder/subfolder2"))
+		test.isfalse(os.islink("folder/subfolder2"))
+	end
+
+	function suite.linkfile()
+		test.istrue(os.linkfile("folder/ok.lua", "folder/ok2.lua"))
+		test.istrue(os.islink("folder/ok2.lua"))
+		test.istrue(os.remove("folder/ok2.lua"))
+		test.isfalse(os.islink("folder/ok2.lua"))
+	end
 
 
 --
@@ -273,6 +290,24 @@
 		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
 	end
 
+--
+-- os.translateCommand() LINKDIR/LINKFILE tests
+--
+	function suite.translateCommand_windowsLinkDir()
+		test.isequal('mklink /d a b', os.translateCommands('{LINKDIR} a b', "windows"))
+	end
+
+	function suite.translateCommand_windowsLinkFile()
+		test.isequal('mklink a b', os.translateCommands('{LINKFILE} a b', "windows"))
+	end
+
+	function suite.translateCommand_posixLinkDir()
+		test.isequal('ln -s a b', os.translateCommands('{LINKDIR} a b', "posix"))
+	end
+
+	function suite.translateCommand_posixLinkFile()
+		test.isequal('ln -s a b', os.translateCommands('{LINKFILE} a b', "posix"))
+	end
 --
 -- os.getWindowsRegistry windows tests
 --

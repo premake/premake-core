@@ -1,27 +1,15 @@
 #!/bin/sh
 #
 # Copyright The Mbed TLS Contributors
-# SPDX-License-Identifier: Apache-2.0
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
 #
 # Purpose
 #
-# This script determines ROM size (or code size) for the standard mbed TLS
+# This script determines ROM size (or code size) for the standard Mbed TLS
 # configurations, when built for a Cortex M3/M4 target.
 #
 # Configurations included:
-#   default    include/mbedtls/config.h
+#   default    include/mbedtls/mbedtls_config.h
 #   thread     configs/config-thread.h
 #   suite-b    configs/config-suite-b.h
 #   psk        configs/config-ccm-psk-tls1_2.h
@@ -30,7 +18,7 @@
 #
 set -eu
 
-CONFIG_H='include/mbedtls/config.h'
+CONFIG_H='include/mbedtls/mbedtls_config.h'
 
 if [ -r $CONFIG_H ]; then :; else
     echo "$CONFIG_H not found" >&2
@@ -108,11 +96,11 @@ else
 fi
 
 log ""
-log "mbed TLS $MBEDTLS_VERSION$GIT_VERSION"
+log "Mbed TLS $MBEDTLS_VERSION$GIT_VERSION"
 log "$( arm-none-eabi-gcc --version | head -n1 )"
 log "CFLAGS=$ARMGCC_FLAGS"
 
-doit default    include/mbedtls/config.h
+doit default    include/mbedtls/mbedtls_config.h
 doit thread     configs/config-thread.h
 doit suite-b    configs/config-suite-b.h
 doit psk        configs/config-ccm-psk-tls1_2.h

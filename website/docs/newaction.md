@@ -28,6 +28,8 @@ newaction { description }
 | onCleanProject  | A callback for each project, when the clean action is selected. |
 | onCleanTarget   | A callback for each target, when the clean action is selected. |
 | pathVars    | A map of Premake tokens to toolset specific identifiers. |
+| aliases | A list of action names to alias to this action. |
+| deprecatedaliases | A table containing a mapping of aliases to callbacks to invoke on action invocation and filters containing the deprecated alias. Each value in the deprecatedaliases table is a table optionally containing an "action" and "filter" key. The values in this table are functions taking zero arguments. See the example below. |
 
 The callbacks will fire in this order:
 
@@ -63,6 +65,26 @@ newaction {
    execute     = function ()
       os.copyfile("bin/debug/myprogram", "/usr/local/bin/myprogram")
    end
+}
+```
+
+Register a new action with aliases and deprecations.
+
+```lua
+newaction {
+   trigger           = "myaction",
+   description       = "Custom action",
+   aliases           = { "myalias", "deprecatedalias" },
+   deprecatedaliases = {
+      ["deprecatedalias" ] = {
+         [ "action" ] = function()
+                           p.warn("Use myaction instead of deprecatedalias.") 
+                        end,
+         [ "filter" ] = function()
+                           p.warn("deprecatedalias has been deprecated. Filter on myaction instead.") 
+                        end
+      }
+   }
 }
 ```
 

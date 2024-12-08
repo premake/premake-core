@@ -1585,7 +1585,7 @@
 
 
 	function m.warnAsError(cfg)
-		if cfg.flags.FatalCompileWarnings and cfg.warnings ~= p.OFF then
+		if p.hasFatalCompileWarnings(cfg.fatalwarnings) and cfg.warnings ~= p.OFF then
 			p.w('WarnAsError="true"')
 		end
 	end

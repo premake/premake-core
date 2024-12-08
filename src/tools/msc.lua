@@ -61,8 +61,10 @@
 			["C"] = "/TC",
 			["C++"] = "/TP",
 		},
+		fatalwarnings = {
+			Compile = "/WX",
+		},
 		flags = {
-			FatalCompileWarnings = "/WX",
 			MultiProcessorCompile = "/MP",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl"
@@ -332,8 +334,10 @@
 --
 
 	msc.linkerFlags = {
+		fatalwarnings = {
+			Link = "/WX",
+		},
 		flags = {
-			FatalLinkWarnings = "/WX",
 			NoIncrementalLink = "/INCREMENTAL:NO",
 			NoManifest = "/MANIFEST:NO",
 			OmitDefaultLibrary = "/NODEFAULTLIB",
@@ -351,8 +355,8 @@
 	}
 
 	msc.librarianFlags = {
-		flags = {
-			FatalLinkWarnings = "/WX",
+		fatalwarnings = {
+			Link = "/WX",
 		}
 	}
 
@@ -484,7 +488,7 @@
 			table.insert(result, '/wd"' .. disable .. '"')
 		end
 
-		for _, fatal in ipairs(cfg.fatalwarnings) do
+		for _, fatal in ipairs(p.filterFatalWarnings(cfg.fatalwarnings)) do
 			table.insert(result, '/we"' .. fatal .. '"')
 		end
 

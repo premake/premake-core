@@ -10,6 +10,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         depsrc: [none, contrib, system]
+        cc: [gcc, clang]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -17,15 +18,15 @@ jobs:
       if: matrix.depsrc == 'system'
       run: |
         sudo apt-get update 
-        sudo apt-get -y install libcurl4-openssl-dev
+        sudo apt-get -y install libcurl4-openssl-dev libzip-dev
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }}" ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }} --zlib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release' && matrix.depsrc == 'contrib'
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v4
       with:
         name: premake-linux-${{ matrix.platform }}
@@ -141,6 +142,44 @@ jobs:
       with:
         name: premake-cosmopolitan-universal
         path: bin/${{ matrix.config }}/premake5
+  freebsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc, clang]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start FreeBSD VM
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg install -y gmake ca_root_nss gcc
+    - name: Build
+      shell: freebsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      shell: freebsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      shell: freebsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'clang'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-freebsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
 
   # This job will be required for PRs to be merged.
   # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.

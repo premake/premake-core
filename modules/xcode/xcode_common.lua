@@ -1506,7 +1506,7 @@
 			settings['GCC_CHAR_IS_UNSIGNED_CHAR'] = iif(cfg.unsignedchar, "YES", "NO")
 		end
 
-		if cfg.flags.FatalWarnings then
+		if p.hasFatalCompileWarnings(cfg.fatalwarnings) and p.hasFatalLinkWarnings(cfg.fatalwarnings) then
 			settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'YES'
 		end
 
