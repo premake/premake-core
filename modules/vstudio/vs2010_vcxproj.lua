@@ -4002,12 +4002,6 @@
 		end
 	end
 
-	function m.androidProjectVersion(cfg)
-		_p(2, "<RootNamespace>%s</RootNamespace>", cfg.project.name)
-		_p(2, "<MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>")
-		_p(2, "<ProjectVersion>1.0</ProjectVersion>")
-	end
-
 	function m.androidDebugInformation(cfg)
 		if cfg.flags.Symbols then
 			m.element("GenerateDebugInformation", "true")
