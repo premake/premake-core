@@ -400,9 +400,6 @@
 				m.libraryPath,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
-
-				m.androidLinuxIncludePath,
-				m.linuxMultiProcNumber,
 			}
 		end
 
@@ -3967,14 +3964,6 @@
 			m.element("LinkTimeOptimization", nil, "true")
 		elseif cfg.linktimeoptimization == "Off" then
 			m.element("LinkTimeOptimization", nil, "false")
-		end
-	end
-
-	function m.linuxMultiProcNumber(cfg)
-		-- Linux equivalent of 'MultiProcessorCompilation'
-		-- Default to 8 parallel jobs
-		if cfg.flags.MultiProcessorCompile then
-			m.element("MultiProcNumber", nil, "8")
 		end
 	end
 
