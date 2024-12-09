@@ -651,7 +651,6 @@
 			m.precompiledHeader, -- Overwrite a portion of it for Android
 			m.androidClCompilePreprocessorDefinitions,
 			m.androidDebugInformationFormat,
-			m.androidDebugInformation,
 			m.androidStrictAliasing,
 			m.androidFpu,
 			m.androidPIC,
@@ -1170,7 +1169,7 @@
 			m.compileAs,
 
 			-- Android
-			m.androidDebugInformation,
+			m.androidDebugInformationFormat,
 			m.androidStrictAliasing,
 			m.androidFpu,
 			m.androidPIC,
@@ -3990,12 +3989,6 @@
 			m.element("ApplicationTypeRevision", nil, "2.0")
 		else
 			m.element("ApplicationTypeRevision", nil, "1.0")
-		end
-	end
-
-	function m.androidDebugInformation(cfg)
-		if cfg.flags.Symbols then
-			m.element("GenerateDebugInformation", "true")
 		end
 	end
 
