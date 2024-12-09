@@ -1144,6 +1144,7 @@
 			m.clCompileUndefinePreprocessorDefinitions,
 			m.optimization,
 			m.forceIncludes,
+			m.additionalCompileOptions,
 			m.compileAs,
 			m.runtimeTypeInfo,
 
