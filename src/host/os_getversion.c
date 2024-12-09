@@ -293,15 +293,8 @@ int getversion(struct OsVersionInfo* info)
 		return 0;
 	}
 
-#if __GLIBC__
-	// When using glibc, info->description gets set to u.sysname,
-	// but it isn't passed out of this function, so we need to copy
-	// the string.
 	info->description = strdup(u.sysname);
 	info->isalloc = 1;
-#else
-	info->description = u.sysname;
-#endif
 
 	if ((ver = strtok(u.release, ".-")) != NULL)
 	{
