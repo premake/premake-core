@@ -828,6 +828,7 @@
 	os.systemTags =
 	{
 		["aix"]      = { "aix",     "posix", "desktop" },
+		["android"]  = { "android", "mobile" },
 		["bsd"]      = { "bsd",     "posix", "desktop" },
 		["haiku"]    = { "haiku",   "posix", "desktop" },
 		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
@@ -836,7 +837,6 @@
 		["solaris"]  = { "solaris", "posix", "desktop" },
 		["uwp"]      = { "uwp", "windows", "desktop" },
 		["windows"]  = { "windows", "win32", "desktop" },
-		[premake.ANDROID]  = { "android", "mobile" },
 	}
 
 	function os.getSystemTags(name)
