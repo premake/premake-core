@@ -4312,7 +4312,7 @@
 
 	function m.androidDataLevelLinking(cfg)
 		-- Enables linker optimizations to remove unused data by emitting each data item in a separate section
-		if cfg.flags.DataLevelLinking ~= nil then
+		if cfg.datalevellinking == 'On' then
 			m.element("DataLevelLinking", nil, "true")
 		end
 	end

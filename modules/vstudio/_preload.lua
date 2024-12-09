@@ -705,6 +705,17 @@
 		},
 	}
 
+	-- Enables linker optimizations to remove unused data by emitting each data item in a separate section
+	p.api.register {
+		name = "datalevellinking",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
 	p.api.register {
 		name = "androidapplibname",
 		scope = "config",
@@ -715,7 +726,6 @@
 	p.api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
-	p.api.addAllowed("flags", { "DataLevelLinking" })
 	p.api.addAllowed("kind", p.PACKAGING)
 --
 -- Decide when the full module should be loaded.
