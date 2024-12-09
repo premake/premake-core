@@ -424,7 +424,6 @@
 				m.executablePath,
 
 				-- Android
-				m.androidLinuxIncludePath,
 				m.androidUseMultiToolTask,
 			}
 		end
@@ -4384,14 +4383,6 @@
 	--
 	-- Shared project generation functions
 	--
-
-	function m.androidLinuxIncludePath(cfg)
-		-- Disable usage of ExternalIncludePath, Android project format ignores it
-		local dirs = vstudio.path(cfg, cfg.externalincludedirs)
-		if #dirs > 0 then
-			m.element("IncludePath", nil, "%s;$(IncludePath)", table.concat(dirs, ";"))
-		end
-	end
 
 	function m.gccClangAdditionalCompileOptions(cfg)
 		local opts = cfg.buildoptions
