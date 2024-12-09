@@ -715,7 +715,7 @@
 	p.api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
-	p.api.addAllowed("flags", { "Thumb", "DataLevelLinking" })
+	p.api.addAllowed("flags", { "DataLevelLinking" })
 	p.api.addAllowed("kind", p.PACKAGING)
 --
 -- Decide when the full module should be loaded.

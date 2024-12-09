@@ -36,7 +36,6 @@ flags { "flag_list" }
 | WPF                   | Mark the project as using Windows Presentation Framework, rather than WinForms. |
 | DebugEnvsDontMerge    | Needs documentation                                                        |
 | DebugEnvsInherit      | Needs documentation                                                        |
-| Thumb                 | Android Only. Generate code that executes for thumb microarchitecture. This is applicable for arm architecture only. |
 | DataLevelLinking      | Android Only. Enables linker optimizations to remove unused data by emitting each data item in a separate section. |
 
 ### Applies To ###
