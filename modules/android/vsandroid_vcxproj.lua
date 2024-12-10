@@ -346,7 +346,7 @@
 
 			-- -fvisibility=<>
 			if cfg.visibility ~= nil then
-				table.insert(opts, p.tools.gcc.cxxflags.visibility[cfg.visibility])
+				table.insert(opts, p.tools.gcc.shared.visibility[cfg.visibility])
 			end
 
 			if #opts > 0 then
