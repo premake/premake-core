@@ -185,7 +185,7 @@
 #define HAVE_GETHOSTBYNAME 1
 
 /* Define to 1 if you have the gethostbyname_r function. */
-#if !defined(__OpenBSD__)
+#if !defined(__OpenBSD__) && !defined(__NetBSD__)
 #define HAVE_GETHOSTBYNAME_R 1
 #endif
 
