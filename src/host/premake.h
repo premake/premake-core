@@ -5,9 +5,15 @@
  */
 
 #define lua_c
+#ifdef LUA_STATICLIB
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
+#else
+#include <lua5.3/lua.h>
+#include <lua5.3/lauxlib.h>
+#include <lua5.3/lualib.h>
+#endif
 
 #include <stdint.h>
 #include <stdlib.h>
