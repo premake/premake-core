@@ -39,7 +39,7 @@ case "${SYSTEM}" in
      NPROC=$(sysctl -n hw.ncpu)
      make -f Bootstrap.mak ${COSMO_FLAG:-osx} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
      ;;
-   FreeBSD|OpenBSD|NetBSD)
+   FreeBSD|OpenBSD|NetBSD|DragonFly)
      NPROC=$(sysctl -n hw.ncpu)
      gmake -f Bootstrap.mak ${COSMO_FLAG:-bsd} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
      ;;
