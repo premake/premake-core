@@ -252,9 +252,25 @@
 		end
 	end
 
+	function sln2005.allowDeployment(cfg, context)
+
+		if not context.excluded then
+
+			if context.prjCfg.system == p.UWP and (context.prjCfg.kind == p.WINDOWEDAPP or context.prjCfg.kind == p.CONSOLEAPP) then
+				return true
+			elseif cfg.system == p.ANDROID and context.prjCfg.kind == p.PACKAGING then
+				return true
+			end
+
+		end
+
+		return false
+
+	end
 
 	function sln2005.deploy0(cfg, context)
-		if context.prjCfg.system == p.UWP and not context.excluded and (context.prjCfg.kind == p.WINDOWEDAPP or context.prjCfg.kind == p.CONSOLEAPP) then
+
+		if sln2005.allowDeployment(cfg, context) then
 			p.w('{%s}.%s.Deploy.0 = %s|%s', context.prj.uuid, context.descriptor, context.platform, context.architecture)
 		end
 	end
