@@ -83,6 +83,10 @@
 
 			elseif prj.kind == p.PACKAGING then
 
+				if prj.system ~= p.ANDROID then
+					p.error("System must be set to Android for a project of type Packaging")
+				end
+
 				if project.iscpp(prj) then
 					p.generate(prj, ".androidproj", vstudio.androidproj.generate)
 				
