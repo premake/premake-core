@@ -705,9 +705,19 @@
 		},
 	}
 
-	-- Enables linker optimizations to remove unused data by emitting each data item in a separate section
+	-- Emit each data item in a separate section. This help linker optimizations to remove unused data
 	p.api.register {
-		name = "datalevellinking",
+		name = "linksectiondata",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.register {
+		name = "linksectionfunction",
 		scope = "config",
 		kind = "string",
 		allowed = {

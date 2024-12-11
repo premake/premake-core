@@ -654,7 +654,7 @@
 			m.androidFpu,
 			m.androidPIC,
 			m.androidShortEnums,
-			m.androidDataLevelLinking,
+			m.androidLinkSections,
 			m.androidLanguageStandardC,
 			m.androidLanguageStandardCpp,
 			m.androidOptimization,
@@ -1173,7 +1173,7 @@
 			m.androidFpu,
 			m.androidPIC,
 			m.androidShortEnums,
-			m.androidDataLevelLinking,
+			m.androidLinkSections,
 			m.androidLanguageStandardC,
 			m.androidLanguageStandardCpp,
 			m.androidOptimization,
@@ -4310,11 +4310,20 @@
 		end
 	end
 
-	function m.androidDataLevelLinking(cfg)
-		-- Enables linker optimizations to remove unused data by emitting each data item in a separate section
-		if cfg.datalevellinking == 'On' then
+	function m.androidLinkSections(cfg)
+
+		if cfg.linksectiondata == 'On' then
 			m.element("DataLevelLinking", nil, "true")
+		elseif cfg.linksectiondata == 'Off' then
+			m.element("DataLevelLinking", nil, "false")
 		end
+
+		if cfg.linksectionfunction == 'On' then
+			m.element("FunctionLevelLinking", nil, "true")
+		elseif cfg.linksectionfunction == 'Off' then
+			m.element("FunctionLevelLinking", nil, "false")
+		end
+
 	end
 
 	function m.thumbMode(cfg)
