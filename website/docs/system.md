@@ -13,6 +13,7 @@ If no system is specified, Premake will identify and target the current operatin
 * aix
 * android
 * bsd
+* [emscripten](https://emscripten.org/)
 * [haiku](http://www.haiku-os.org)
 * ios
 * linux
