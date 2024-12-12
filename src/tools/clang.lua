@@ -229,6 +229,8 @@
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
+			WASM32 = "-m32",
+			WASM64 = "-m64",
 		},
 		fatalwarnings = {
 			Link = "-Wl,--fatal-warnings",

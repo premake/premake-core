@@ -65,6 +65,7 @@
 		"tools/clang.lua",
 		"tools/mingw.lua",
 		"tools/cosmocc.lua",
+		"tools/emcc.lua",
 
 		-- Clean action
 		"actions/clean/_clean.lua",
