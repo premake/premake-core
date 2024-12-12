@@ -30,6 +30,17 @@
 			test.istrue(os.findlib("user32"))
 		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
+		elseif os.istarget("bsd") and os.getversion().description == "OpenBSD" then
+			-- OpenBSD doesn't have a 'libm.so' symlink like other systems,
+			-- it only has the versioned files, 'libm.so.X.Y' which will
+			-- change between versions of OpenBSD. os.findlib currently won't
+			-- find these versioned files without the version info.
+
+			-- libm should be '/usr/lib/libm.so.X.Y' find the exact filename
+			-- and use that.
+			local libms = os.matchfiles("/usr/lib/libm.so.*")
+			test.isfalse(0 == #libms)
+			test.istrue(os.findlib(path.getname(libms[1])))
 		else
 			test.istrue(os.findlib("m"))
 		end

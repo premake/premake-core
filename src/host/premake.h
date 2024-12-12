@@ -5,9 +5,15 @@
  */
 
 #define lua_c
+#ifdef LUA_STATICLIB
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
+#else
+#include <lua5.3/lua.h>
+#include <lua5.3/lauxlib.h>
+#include <lua5.3/lualib.h>
+#endif
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -64,6 +70,8 @@
 #define PLATFORM_ARCHITECTURE "RISCV64"
 #elif (defined(__loongarch__) && __loongarch_grlen == 64) || defined(__loongarch64)
 #define PLATFORM_ARCHITECTURE "loongarch64"
+#elif defined(__e2k__)
+#define PLATFORM_ARCHITECTURE "e2k"
 #elif !defined(RC_INVOKED)
 #error Unknown architecture detected
 #endif

@@ -18,9 +18,9 @@ jobs:
       if: matrix.depsrc == 'system'
       run: |
         sudo apt-get update 
-        sudo apt-get -y install libcurl4-openssl-dev libzip-dev
+        sudo apt-get -y install libcurl4-openssl-dev libzip-dev liblua5.3-dev
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }} --zlib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--lib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
@@ -179,6 +179,142 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: premake-freebsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
+  openbsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [clang]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start OpenBSD VM
+      uses: vmactions/openbsd-vm@v1
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg_add gmake
+    - name: Build
+      shell: openbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      shell: openbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      shell: openbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'clang'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-openbsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
+  netbsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start NetBSD VM
+      uses: vmactions/netbsd-vm@v1
+      with:
+        prepare: |
+          pkg_add gmake
+    - name: Build
+      shell: netbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      shell: netbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      shell: netbsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+  dragonflybsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start DragonflyBSD VM
+      uses: vmactions/dragonflybsd-vm@v1
+      with:
+        prepare: |
+          pkg install -y gmake
+    - name: Build
+      shell: dragonflybsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      shell: dragonflybsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      shell: dragonflybsd {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+  solaris:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start Solaris VM
+      uses: vmactions/solaris-vm@v1
+      with:
+        usesh: true
+        cpu: 4
+        mem: 8192
+        release: 11.4-gcc
+    - name: Build
+      shell: solaris {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      shell: solaris {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      shell: solaris {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'gcc'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-solaris-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
 
   # This job will be required for PRs to be merged.

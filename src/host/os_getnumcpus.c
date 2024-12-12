@@ -12,8 +12,10 @@
 
 #if PLATFORM_LINUX | PLATFORM_COSMO
 #include <sched.h>
-#elif PLATFORM_SOLARIS | PLATFORM_AIX | PLATFORM_MACOSX | PLATFORM_BSD
+#elif PLATFORM_AIX | PLATFORM_MACOSX | PLATFORM_BSD
 #include <sys/sysctl.h>
+#elif PLATFORM_SOLARIS
+#include <unistd.h>
 #elif PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

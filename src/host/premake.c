@@ -9,7 +9,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "premake.h"
+#ifdef LUA_STATICLIB
 #include "lua_shimtable.h"
+#endif
 
 #if PLATFORM_MACOSX
 #include <CoreFoundation/CFBundle.h>
@@ -97,7 +99,9 @@ static const luaL_Reg os_functions[] = {
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
 	{ "touchfile",              os_touchfile            },
+#ifdef LUA_STATICLIB
 	{ "compile",                os_compile              },
+#endif
 	{ NULL, NULL }
 };
 
@@ -214,8 +218,10 @@ int premake_init(lua_State* L)
 	luaL_register(L, "zip",     zip_functions);
 #endif
 
+#ifdef LUA_STATICLIB
 	lua_pushlightuserdata(L, &s_shimTable);
 	lua_rawseti(L, LUA_REGISTRYINDEX, 0x5348494D); // equal to 'SHIM'
+#endif
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);

@@ -4,6 +4,7 @@
  * \author Copyright (c) 2002-2012 Jess Perkins and the Premake project
  */
 
+#ifdef LUA_STATICLIB
 #include "premake.h"
 #include "lundump.h"
 #include "lstate.h"
@@ -52,3 +53,4 @@ int os_compile(lua_State* L)
 		return 1;
 	}
 }
+#endif

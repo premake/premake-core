@@ -125,6 +125,40 @@
 	}
 
 	newoption {
+		trigger = "lua-src",
+		description = "Specify the source of the Lua 3rd party library",
+		allowed = {
+			{ "contrib", "Uses Lua in contrib folder" },
+			{ "system", "Uses Lua from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
+		trigger = "lib-src",
+		description = "Specify the source of all 3rd party libraries",
+		allowed = {
+			{ "none", "Disables all optional 3rd party libraries" },
+			{ "contrib", "Uses 3rd party libraries in contrib folder" },
+			{ "system", "Uses 3rd party libraries from the host system" },
+		}
+	}
+
+	if _OPTIONS["lib-src"] == "none" then
+		_OPTIONS["curl-src"] = "none"
+		_OPTIONS["zlib-src"] = "none"
+		-- Lua is not optional
+	elseif _OPTIONS["lib-src"] == "contrib" then
+		_OPTIONS["curl-src"] = "contrib"
+		_OPTIONS["zlib-src"] = "contrib"
+		_OPTIONS["lua-src"] = "contrib"
+	elseif _OPTIONS["lib-src"] == "system" then
+		_OPTIONS["curl-src"] = "system"
+		_OPTIONS["zlib-src"] = "system"
+		_OPTIONS["lua-src"] = "system"
+	end
+
+	newoption {
 		trigger     = "bytecode",
 		description = "Embed scripts as bytecode instead of stripped source code"
 	}
@@ -172,6 +206,9 @@
 			defines { "PREMAKE_CURL" }
 		filter { "options:curl-src=contrib" }
 			defines { "CURL_STATICLIB" }
+
+		filter { "options:lua-src=contrib" }
+			defines { "LUA_STATICLIB" }
 
 		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
 			buildoptions { "-arch arm64" }
@@ -227,8 +264,6 @@
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
-		includedirs { "contrib/lua/src", "contrib/luashim" }
-		links       { "lua-lib" }
 
 		files
 		{
@@ -242,6 +277,13 @@
 			"contrib/**.*",
 			"binmodules/**.*"
 		}
+
+		filter { "options:lua-src=contrib" }
+			includedirs { "contrib/lua/src", "contrib/luashim" }
+			links       { "lua-lib" }
+
+		filter { "options:lua-src=system" }
+			links { "lua5.3" }
 
 		-- optional 3rd party libraries
 		filter { "options:zlib-src=contrib" }
@@ -328,8 +370,10 @@ end
 
 	-- optional 3rd party libraries
 	group "contrib"
-		include "contrib/lua"
-		include "contrib/luashim"
+		if _OPTIONS["lua-src"] == "contrib" then
+			include "contrib/lua"
+			include "contrib/luashim"
+		end
 
 		if _OPTIONS["zlib-src"] == "contrib" then
 			include "contrib/zlib"
@@ -341,7 +385,7 @@ end
 			include "contrib/curl"
 		end
 
-	if _OPTIONS["cc"] ~= "cosmocc" then
+	if _OPTIONS["lua-src"] == "contrib" and _OPTIONS["cc"] ~= "cosmocc" then
 		group "Binary Modules"
 			include "binmodules/example"
 
