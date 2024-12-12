@@ -36,7 +36,6 @@ flags { "flag_list" }
 | WPF                   | Mark the project as using Windows Presentation Framework, rather than WinForms. |
 | DebugEnvsDontMerge    | Needs documentation                                                        |
 | DebugEnvsInherit      | Needs documentation                                                        |
-| Thumb                 | Needs documentation                                                        |
 
 ### Applies To ###
 

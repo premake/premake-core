@@ -25,7 +25,7 @@ newaction {
 
 	-- The capabilities of this action
 
-	valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility", "SharedItems" },
+	valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility", "SharedItems", p.PACKAGING },
 	valid_languages = { "C", "C++", "C#", "F#" },
 	valid_tools     = {
 		cc     = { "msc", "clang" },
