@@ -827,16 +827,17 @@
 
 	os.systemTags =
 	{
-		["aix"]      = { "aix",     "posix", "desktop" },
-		["android"]  = { "android", "mobile" },
-		["bsd"]      = { "bsd",     "posix", "desktop" },
-		["haiku"]    = { "haiku",   "posix", "desktop" },
-		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
-		["linux"]    = { "linux",   "posix", "desktop" },
-		["macosx"]   = { "macosx",  "darwin", "posix", "desktop" },
-		["solaris"]  = { "solaris", "posix", "desktop" },
-		["uwp"]      = { "uwp", "windows", "desktop" },
-		["windows"]  = { "windows", "win32", "desktop" },
+		["aix"]        = { "aix",     "posix", "desktop" },
+		["android"]    = { "android", "mobile" },
+		["bsd"]        = { "bsd",     "posix", "desktop" },
+		["emscripten"] = { "emscripten", "web" },
+		["haiku"]      = { "haiku",   "posix", "desktop" },
+		["ios"]        = { "ios",     "darwin", "posix", "mobile" },
+		["linux"]      = { "linux",   "posix", "desktop" },
+		["macosx"]     = { "macosx",  "darwin", "posix", "desktop" },
+		["solaris"]    = { "solaris", "posix", "desktop" },
+		["uwp"]        = { "uwp", "windows", "desktop" },
+		["windows"]    = { "windows", "win32", "desktop" },
 	}
 
 	function os.getSystemTags(name)
