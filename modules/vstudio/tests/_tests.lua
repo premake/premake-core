@@ -113,5 +113,8 @@ return {
 	
 	-- Android projects
 	"android/test_android_files.lua",
-	"android/test_android_project.lua"
+	"android/test_android_project.lua",
+
+	-- Linux projects
+	"linux/test_linux_files.lua",
 }

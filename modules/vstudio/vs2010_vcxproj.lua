@@ -400,6 +400,9 @@
 				m.libraryPath,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
+
+				-- Linux
+				m.linuxMultiProcNumber
 			}
 		end
 
@@ -631,6 +634,7 @@
 			m.linuxLanguageStandardCpp,
 			m.linuxLanguageStandardC,
 			m.linuxWarningLevel,
+			m.linuxLinkTimeCodeGeneration,
 		}
 
 		return calls
@@ -799,7 +803,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
-				m.LinkTimeCodeGeneration,
+				m.linkTimeCodeGeneration,
 			}
 		else
 			return {
@@ -807,7 +811,7 @@
 				m.fullProgramDatabaseFile,
 				m.generateDebugInformation,
 				m.optimizeReferences,
-				m.LinkTimeCodeGeneration,
+				m.linkTimeCodeGeneration,
 				m.additionalDependencies,
 				m.additionalLibraryDirectories,
 				m.importLibrary,
@@ -1152,6 +1156,7 @@
 			m.linuxExceptionHandling,
 			m.linuxPIC,
 			m.gccClangAdditionalCompileOptions,
+			m.linuxLinkTimeCodeGeneration,
 		}
 
 	end
@@ -3027,7 +3032,7 @@
 		end
 	end
 
-	function m.LinkTimeCodeGeneration(cfg)
+	function m.linkTimeCodeGeneration(cfg)
 		if cfg.linktimeoptimization == "On" then
 			m.element("LinkTimeCodeGeneration", nil, "UseLinkTimeCodeGeneration")
 		end
@@ -3964,6 +3969,20 @@
 			m.element("LinkTimeOptimization", nil, "true")
 		elseif cfg.linktimeoptimization == "Off" then
 			m.element("LinkTimeOptimization", nil, "false")
+		end
+	end
+
+	function m.linuxMultiProcNumber(cfg)
+		-- Linux equivalent of 'MultiProcessorCompilation'
+		-- Default to 8 parallel jobs
+		if cfg.flags.MultiProcessorCompile then
+			m.element("MultiProcNumber", nil, "8")
+		end
+	end
+
+	function m.linuxLinkTimeCodeGeneration(cfg)
+		if cfg.linktimeoptimization == "On" then
+			m.element("LinkTimeOptimization", nil, "true")
 		end
 	end
 
