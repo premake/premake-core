@@ -22,10 +22,10 @@ local vc2010 = p.vstudio.vc2010
 
 
 --
--- Test filtering of source files into the correct categories.
+-- Test link time optimization.
 --
 
-	function suite.none_onLinkTimeOptimization()
+	function suite.linkTimeOptimization_On()
 		linktimeoptimization('on')
 		prepare()
 		test.capture [[
