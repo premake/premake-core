@@ -14,12 +14,17 @@ local vc2010 = p.vstudio.vc2010
 		wks, prj = test.createWorkspace()
 	end
 
-	local function prepare()
+	local function prepareOutputProperties()
+		system "linux"
+		local cfg = test.getconfig(prj, "Debug")
+		vc2010.outputProperties(cfg)
+	end
+
+	local function prepareConfigProperties()
 		system "linux"
 		local cfg = test.getconfig(prj, "Debug", platform)
 		vc2010.configurationProperties(cfg)
 	end
-
 
 --
 -- Test link time optimization.
@@ -27,12 +32,30 @@ local vc2010 = p.vstudio.vc2010
 
 	function suite.linkTimeOptimization_On()
 		linktimeoptimization('on')
-		prepare()
+		prepareConfigProperties()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
 	<PlatformToolset>v142</PlatformToolset>
 	<LinkTimeOptimization>true</LinkTimeOptimization>
+</PropertyGroup>
+		]]
+	end
+
+--
+-- Test multiprocessor compilation.
+--
+
+	function suite.multiProcessorCompile_On()
+		flags { "MultiProcessorCompile" }
+		prepareOutputProperties()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+	<IntDir>obj\Debug\</IntDir>
+	<TargetName>MyProject</TargetName>
+	<TargetExt>
+	</TargetExt>
+	<MultiProcNumber>8</MultiProcNumber>
 </PropertyGroup>
 		]]
 	end
