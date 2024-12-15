@@ -149,6 +149,9 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc, clang]
+    defaults:
+      run:
+        shell: freebsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -160,17 +163,14 @@ jobs:
         prepare: |
           pkg install -y gmake ca_root_nss gcc
     - name: Build
-      shell: freebsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
-      shell: freebsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
-      shell: freebsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 docs-check
@@ -187,6 +187,9 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [clang]
+    defaults:
+      run:
+        shell: openbsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -198,17 +201,14 @@ jobs:
         prepare: |
           pkg_add gmake
     - name: Build
-      shell: openbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
-      shell: openbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
-      shell: openbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 docs-check
@@ -225,6 +225,9 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    defaults:
+      run:
+        shell: netbsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -234,17 +237,14 @@ jobs:
         prepare: |
           pkg_add gmake
     - name: Build
-      shell: netbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
-      shell: netbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
-      shell: netbsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 docs-check
@@ -255,6 +255,9 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    defaults:
+      run:
+        shell: dragonflybsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -264,17 +267,14 @@ jobs:
         prepare: |
           pkg install -y gmake
     - name: Build
-      shell: dragonflybsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
-      shell: dragonflybsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
-      shell: dragonflybsd {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 docs-check
@@ -285,6 +285,9 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    defaults:
+      run:
+        shell: solaris {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -296,17 +299,14 @@ jobs:
         mem: 8192
         release: 11.4-gcc
     - name: Build
-      shell: solaris {0}
       run: |
         cd $GITHUB_WORKSPACE
         CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
-      shell: solaris {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
-      shell: solaris {0}
       run: |
         cd $GITHUB_WORKSPACE
         bin/${{ matrix.config }}/premake5 docs-check
