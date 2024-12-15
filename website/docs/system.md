@@ -24,6 +24,8 @@ If no system is specified, Premake will identify and target the current operatin
 * windows
 * xbox360
 
+To note: `emscripten` at the moment is only supported for the `gmake` and `gmake2` actions.
+
 ### Applies To ###
 
 Project configurations.
