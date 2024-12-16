@@ -34,6 +34,7 @@
 	premake.GCC         = "gcc"
 	premake.HAIKU       = "haiku"
 	premake.ANDROID     = "android"
+	premake.EMSCRIPTEN  = "emscripten"
 	premake.IOS         = "ios"
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
@@ -63,7 +64,8 @@
 	premake.ARM64       = "ARM64"
 	premake.RISCV64     = "RISCV64"
 	premake.LOONGARCH64 = "loongarch64"
-
+	premake.WASM32 = "wasm32"
+	premake.WASM64 = "wasm64"
 
 
 ---
