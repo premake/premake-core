@@ -29,7 +29,9 @@
 			p.ARM,
 			p.ARM64,
 			p.RISCV64,
-			p.LOONGARCH64
+			p.LOONGARCH64,
+			p.WASM32,
+			p.WASM64
 		},
 		aliases = {
 			i386  = p.X86,
@@ -851,6 +853,7 @@
 		allowed = {
 			"aix",
 			"bsd",
+			"emscripten",
 			"haiku",
 			"ios",
 			"linux",
@@ -1295,16 +1298,17 @@
 		value       = "VALUE",
 		description = "Generate files for a different operating system",
 		allowed = {
-			{ "aix",      "IBM AIX" },
-			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
-			{ "haiku",    "Haiku" },
-			{ "hurd",     "GNU/Hurd" },
-			{ "ios",      "iOS" },
-			{ "linux",    "Linux" },
-			{ "macosx",   "Apple Mac OS X" },
-			{ "solaris",  "Solaris" },
-			{ "uwp",      "Microsoft Universal Windows Platform"},
-			{ "windows",  "Microsoft Windows" },
+			{ "aix",        "IBM AIX" },
+			{ "bsd",        "OpenBSD, NetBSD, or FreeBSD" },
+			{ "emscripten", "Emscripten" },
+			{ "haiku",      "Haiku" },
+			{ "hurd",       "GNU/Hurd" },
+			{ "ios",        "iOS" },
+			{ "linux",      "Linux" },
+			{ "macosx",     "Apple Mac OS X" },
+			{ "solaris",    "Solaris" },
+			{ "uwp",        "Microsoft Universal Windows Platform"},
+			{ "windows",    "Microsoft Windows" },
 		}
 	}
 
@@ -1438,6 +1442,13 @@
 
 	filter { "system:darwin" }
 		toolset "clang"
+
+	filter { "system:emscripten" }
+		toolset "emcc"
+		architecture "wasm32"
+
+	filter { "system:emscripten", "kind:ConsoleApp or WindowedApp" }
+		targetextension ".wasm"
 
 	filter { "platforms:Win32" }
 		architecture "x86"
