@@ -12,7 +12,7 @@
 		if target == p.MACOSX then
 			return "clang"
 		elseif target == p.EMSCRIPTEN then
-			return "emmcc"
+			return "emcc"
 		else
 			return "gcc"
 		end
