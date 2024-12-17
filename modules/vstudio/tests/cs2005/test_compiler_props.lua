@@ -84,7 +84,7 @@
 
 
 	function suite.treatWarningsAsErrors_onFatalWarningsAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		prepare()
 		test.capture [[
 		<DefineConstants></DefineConstants>

@@ -62,7 +62,7 @@
 			["C++"] = "/TP",
 		},
 		fatalwarnings = {
-			Compile = "/WX",
+			All = "/WX"
 		},
 		flags = {
 			MultiProcessorCompile = "/MP",
@@ -334,8 +334,8 @@
 --
 
 	msc.linkerFlags = {
-		fatalwarnings = {
-			Link = "/WX",
+		linkerfatalwarnings = {
+			All = "/WX",
 		},
 		flags = {
 			NoIncrementalLink = "/INCREMENTAL:NO",
@@ -355,8 +355,8 @@
 	}
 
 	msc.librarianFlags = {
-		fatalwarnings = {
-			Link = "/WX",
+		linkerfatalwarnings = {
+			All = "/WX",
 		}
 	}
 

@@ -182,6 +182,7 @@ module.exports = {
 						'libdirs',
 						'linkbuildoutputs',
 						'linker',
+						'linkerfatalwarnings',
 						'linkgroups',
 						'linkoptions',
 						'links',

@@ -2162,9 +2162,39 @@
 
 
 	function m.additionalLinkOptions(cfg)
+
+		local opts = {}
+
+		-- Get manually added link options
 		if #cfg.linkoptions > 0 then
-			local opts = table.concat(cfg.linkoptions, " ")
-			m.element("AdditionalOptions", nil, "%s %%(AdditionalOptions)", opts)
+			opts = cfg.linkoptions
+		end
+
+		-- Fatal warnings are only available from VS2022 onwards
+		-- https://learn.microsoft.com/en-us/cpp/build/reference/wx-treat-linker-warnings-as-errors?view=msvc-170
+
+		if _ACTION >= "vs2022" then
+			local filteredFatalWarnings = p.filterFatalWarnings(cfg.linkerfatalwarnings)
+
+			if #filteredFatalWarnings > 0 then
+				-- Create a comma-separated set of warnings to elevate as errors
+				local fatalWarningString = '/wx:'
+			
+				for i, fatal in ipairs(filteredFatalWarnings) do
+					if i ~= 1 then
+						fatalWarningString = fatalWarningString..","
+					end
+
+					fatalWarningString = fatalWarningString..fatal
+				end
+
+				table.insert(opts, fatalWarningString)
+			end
+		end
+
+		if #opts > 0 then
+			local additionalOptions = table.concat(opts, " ")
+			m.element("AdditionalOptions", condition, '%s %%(AdditionalOptions)', additionalOptions)
 		end
 	end
 
@@ -3485,7 +3515,7 @@
 
 
 	function m.treatLinkerWarningAsErrors(cfg)
-		if p.hasFatalLinkWarnings(cfg.fatalwarnings) then
+		if p.hasFatalLinkWarnings(cfg.linkerfatalwarnings) then
 			local el = iif(cfg.kind == p.STATICLIB, "Lib", "Linker")
 			m.element("Treat" .. el .. "WarningAsErrors", nil, "true")
 		end

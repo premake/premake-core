@@ -5,7 +5,7 @@
 --
 
 local p = premake
-local suite = test.declare("vstudio_vs2019_link")
+local suite = test.declare("vstudio_vs2022_link")
 local vc2010 = p.vstudio.vc2010
 local project = p.project
 
@@ -16,7 +16,7 @@ local project = p.project
 	local wks, prj
 
 	function suite.setup()
-		p.action.set("vs2019")
+		p.action.set("vs2022")
 		wks, prj = test.createWorkspace()
 	end
 
@@ -29,13 +29,12 @@ local project = p.project
 -- Check link command for a static library using a clang toolset
 --
 
-	function suite.toolsetClangAdditionalDependencies()
-		links { "lua", "zlib" }
-		toolset "clang"
+	function suite.linkerFatalWarnings()
+		linkerfatalwarnings { "4123", "4124" }
 		prepare()
 		test.capture [[
 <Link>
 	<SubSystem>Console</SubSystem>
-	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<AdditionalOptions>/wx:4123,4124 %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end

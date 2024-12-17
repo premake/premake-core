@@ -1,7 +1,7 @@
-Specifies specific compiler warnings that should be interpreted as errors.
+Specifies specific linker warnings that should be interpreted as errors.
 
 ```lua
-fatalwarnings { "warnings" }
+linkerfatalwarnings { "warnings" }
 ```
 
 ### Parameters ###
@@ -14,7 +14,7 @@ In addition, Premake provides two special values to turn on all compiler and lin
 
 | Value   | Description                   |
 -------------------------------------------
-| All | Treat all compiler warnings as errors |
+| All | Treat all linker warnings as errors   |
 
 ### Applies To ###
 
@@ -23,8 +23,3 @@ Project configurations.
 ### Availability ###
 
 Premake 5.0 or later. Special value `All` available since Premake 5.0-beta5 or later.
-
-### See Also ###
-
-* [enablewarnings](enablewarnings.md)
-* [disablewarnings](disablewarnings.md)
