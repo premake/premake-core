@@ -11,6 +11,7 @@ jobs:
         platform: [x64]
         depsrc: [none, contrib, system]
         cc: [gcc, clang]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -37,6 +38,7 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -59,6 +61,7 @@ jobs:
         config: [debug, release]
         platform: [Win32, x64]
         msdev: [vs2022]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -91,6 +94,7 @@ jobs:
             msystem: mingw32
           - platform: x64
             msystem: mingw64
+    timeout-minutes: 30
     defaults:
       run:
         shell: msys2 {0}
@@ -124,6 +128,7 @@ jobs:
     strategy:
       matrix:
         config: [debug, release]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -149,6 +154,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc, clang]
+    timeout-minutes: 30
     defaults:
       run:
         shell: freebsd {0}
@@ -187,6 +193,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [clang]
+    timeout-minutes: 30
     defaults:
       run:
         shell: openbsd {0}
@@ -225,6 +232,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    timeout-minutes: 30
     defaults:
       run:
         shell: netbsd {0}
@@ -255,6 +263,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    timeout-minutes: 30
     defaults:
       run:
         shell: dragonflybsd {0}
@@ -285,6 +294,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
+    timeout-minutes: 30
     defaults:
       run:
         shell: solaris {0}
