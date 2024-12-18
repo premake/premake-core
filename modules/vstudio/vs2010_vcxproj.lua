@@ -2178,17 +2178,7 @@
 
 			if #filteredFatalWarnings > 0 then
 				-- Create a comma-separated set of warnings to elevate as errors
-				local fatalWarningString = '/wx:'
-			
-				for i, fatal in ipairs(filteredFatalWarnings) do
-					if i ~= 1 then
-						fatalWarningString = fatalWarningString..","
-					end
-
-					fatalWarningString = fatalWarningString..fatal
-				end
-
-				table.insert(opts, fatalWarningString)
+				table.insert(opts, '/wx:'..table.implode(filteredFatalWarnings, "", "", ","))
 			end
 		end
 
