@@ -10,7 +10,7 @@ fatalwarnings { "warnings" }
 
 For Visual Studio, the MSC warning number should be used to specify the warning. On other compilers, the warning should be identified by name.
 
-In addition, Premake provides two special values to turn on all compiler and linker warnings.
+In addition, Premake provides a special value to turn on all compiler warnings.
 
 | Value   | Description                   |
 -------------------------------------------
@@ -23,6 +23,16 @@ Project configurations.
 ### Availability ###
 
 Premake 5.0 or later. Special value `All` available since Premake 5.0-beta5 or later.
+
+### Examples ###
+
+```lua
+filter { "toolset:msc" }
+	fatalwarnings { "4035" }
+
+filter { "toolset:clang" }
+	fatalwarnings { "-Wreturn-type" }
+```
 
 ### See Also ###
 
