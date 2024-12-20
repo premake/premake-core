@@ -374,7 +374,7 @@
 
 
 	function suite.runtimeLibraryIsDebug_onFatalWarningsViaAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		prepare()
 		test.capture [[
 <Tool
@@ -416,7 +416,7 @@
 
 
 	function suite.runtimeLibraryIsDebug_onNoWarnings_whichDisablesAllOtherWarningsFlagsViaAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		warnings "Off"
 		prepare()
 		test.capture [[

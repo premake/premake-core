@@ -128,7 +128,7 @@
 	end
 
 	function suite.cflags_onFatalWarningsViaAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		prepare()
 		test.contains({ "-Werror" }, gcc.getcflags(cfg))
 	end
@@ -420,7 +420,7 @@
 -- Check the basic translation of LDFLAGS for a Posix system.
 --
 	function suite.ldflags_onFatalLinkWarningsAPI()
-		fatalwarnings { "Link" }
+		linkerfatalwarnings { "All" }
 		prepare()
 		test.contains({ "-Wl,--fatal-warnings" }, gcc.getldflags(cfg))
 	end

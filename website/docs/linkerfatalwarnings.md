@@ -1,7 +1,7 @@
-Specifies specific compiler warnings that should be interpreted as errors.
+Specifies specific linker warnings that should be interpreted as errors.
 
 ```lua
-fatalwarnings { "warnings" }
+linkerfatalwarnings { "warnings" }
 ```
 
 ### Parameters ###
@@ -10,11 +10,11 @@ fatalwarnings { "warnings" }
 
 For Visual Studio, the MSC warning number should be used to specify the warning. On other compilers, the warning should be identified by name.
 
-In addition, Premake provides a special value to turn on all compiler warnings.
+In addition, Premake provides a special value to turn on all linker warnings.
 
 | Value   | Description                   |
 -------------------------------------------
-| All | Treat all compiler warnings as errors |
+| All | Treat all linker warnings as errors   |
 
 ### Applies To ###
 
@@ -28,15 +28,7 @@ Premake 5.0 or later. Special value `All` available since Premake 5.0-beta5 or l
 
 ```lua
 filter { "toolset:msc" }
-	fatalwarnings { "4035" } -- 'function': no return value
-
-filter { "toolset:clang" }
-	fatalwarnings { "-Wreturn-type" }
+	fatalwarnings { "4044" } -- unrecognized option 'option'; ignored
 
 filter {}
 ```
-
-### See Also ###
-
-* [enablewarnings](enablewarnings.md)
-* [disablewarnings](disablewarnings.md)

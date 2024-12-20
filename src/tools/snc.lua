@@ -17,7 +17,7 @@
 
 	snc.shared = {
 		fatalwarnings = {
-			Compile = "-Xquit=2",
+			All = "-Xquit=2",
 		},
 		optimize = {
 			Off = "-O0",

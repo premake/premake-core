@@ -42,31 +42,31 @@
 --
 
 	function suite.filterFatalWarnings()
-		local warnings = { "Link", "4996" }
+		local warnings = { "All", "4996" }
 		local filtered = p.filterFatalWarnings(warnings)
 		test.isequal({ "4996" }, filtered)
 	end
 
 	function suite.hasFatalCompileWarnings()
-		local warnings = { "Compile", "4996" }
+		local warnings = { "All", "4996" }
 		local hasFatal = p.hasFatalCompileWarnings(warnings)
 		test.istrue(hasFatal)
 	end
 
 	function suite.hasFatalCompileWarningsNotPresent()
-		local warnings = { "Link", "4996" }
+		local warnings = { "4996" }
 		local hasFatal = p.hasFatalCompileWarnings(warnings)
 		test.isfalse(hasFatal)
 	end
 
 	function suite.hasFatalLinkWarnings()
-		local warnings = { "Link", "4996" }
+		local warnings = { "All", "4996" }
 		local hasFatal = p.hasFatalLinkWarnings(warnings)
 		test.istrue(hasFatal)
 	end
 
 	function suite.hasFatalLinkWarningsNotPresent()
-		local warnings = { "Compile", "4996" }
+		local warnings = { "4996" }
 		local hasFatal = p.hasFatalLinkWarnings(warnings)
 		test.isfalse(hasFatal)
 	end

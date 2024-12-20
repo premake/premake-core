@@ -108,6 +108,7 @@ return {
 
 	-- Visual Studio 2022+ C/C++ Projects
 	"vc2022/test_compile_settings.lua",
+	"vc2022/test_link.lua",
 	"vc2022/test_output_props.lua",
 	"vc2022/test_toolset_settings.lua",
 	

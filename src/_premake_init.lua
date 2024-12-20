@@ -308,7 +308,9 @@
 		name = "fatalwarnings",
 		scope = "config",
 		kind = "list:string",
-		tokens = true,
+		reserved = {
+			"All"
+		}
 	}
 
 	api.register {
@@ -579,6 +581,15 @@
 		allowed = {
 			"Default",
 			"LLD",
+		}
+	}
+
+	api.register {
+		name = "linkerfatalwarnings",
+		scope = "config",
+		kind = "list:string",
+		reserved = {
+			"All"
 		}
 	}
 
@@ -1116,34 +1127,34 @@
 		linktimeoptimization("Default")
 	end)
 
-	api.deprecateValue("flags", "FatalWarnings", "Use `fatalwarnings { \"Compile\", \"Link\" }` instead.",
+	api.deprecateValue("flags", "FatalWarnings", "Use `fatalwarnings { \"All\" }` instead.",
 	function(value)
-		fatalwarnings({ "Compile", "Link" })
+		fatalwarnings({ "All" })
 	end,
 	function(value)
-		removefatalwarnings({ "Compile", "Link" })
+		removefatalwarnings({ "All" })
 	end)
 
-	api.deprecateValue("flags", "FatalCompileWarnings", "Use `fatalwarnings { \"Compile\" }` instead.",
+	api.deprecateValue("flags", "FatalCompileWarnings", "Use `fatalwarnings { \"All\" }` instead.",
 	function(value)
-		fatalwarnings({ "Compile" })
+		fatalwarnings({ "All" })
 	end,
 	function(value)
-		removefatalwarnings({ "Compile" })
+		removefatalwarnings({ "All" })
 	end)
 
-	api.deprecateValue("flags", "FatalLinkWarnings", "Use `fatalwarnings { \"Link\" }` instead.",
+	api.deprecateValue("flags", "FatalLinkWarnings", "Use `linkerfatalwarnings { \"All\" }` instead.",
 	function(value)
-		fatalwarnings({ "Link" })
+		linkerfatalwarnings({ "All" })
 	end,
 	function(value)
-		removefatalwarnings({ "Link" })
+		removelinkerfatalwarnings({ "All" })
 	end)
 
 	premake.filterFatalWarnings = function(tbl)
 		if type(tbl) == "table" then
 			return table.filter(tbl, function(warning)
-				return not (warning == "Compile" or warning == "Link")
+				return not (warning == "All")
 			end)
 		else
 			return tbl
@@ -1152,7 +1163,7 @@
 
 	premake.hasFatalCompileWarnings = function(tbl)
 		if (type(tbl) == "table") then
-			return table.contains(tbl, "Compile")
+			return table.contains(tbl, "All")
 		else
 			return false
 		end
@@ -1160,7 +1171,7 @@
 
 	premake.hasFatalLinkWarnings = function(tbl)
 		if (type(tbl) == "table") then
-			return table.contains(tbl, "Link")
+			return table.contains(tbl, "All")
 		else
 			return false
 		end

@@ -58,7 +58,7 @@
 			x86_64 = "-m64",
 		},
 		fatalwarnings = {
-			Compile = "-Werror",
+			All = "-Werror",
 		},
 		flags = {
 			ShadowedVariables = "-Wshadow",
@@ -475,8 +475,8 @@
 			x86 = "-m32",
 			x86_64 = "-m64",
 		},
-		fatalwarnings = {
-			Link = "-Wl,--fatal-warnings",
+		linkerfatalwarnings = {
+			All = "-Wl,--fatal-warnings",
 		},
 		linktimeoptimization = gcc.shared.linktimeoptimization,
 		kind = {
