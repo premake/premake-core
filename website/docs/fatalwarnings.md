@@ -28,10 +28,12 @@ Premake 5.0 or later. Special value `All` available since Premake 5.0-beta5 or l
 
 ```lua
 filter { "toolset:msc" }
-	fatalwarnings { "4035" }
+	fatalwarnings { "4035" } -- 'function': no return value
 
 filter { "toolset:clang" }
 	fatalwarnings { "-Wreturn-type" }
+
+filter {}
 ```
 
 ### See Also ###

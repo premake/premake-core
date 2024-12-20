@@ -28,5 +28,7 @@ Premake 5.0 or later. Special value `All` available since Premake 5.0-beta5 or l
 
 ```lua
 filter { "toolset:msc" }
-	fatalwarnings { "4044" }
+	fatalwarnings { "4044" } -- unrecognized option 'option'; ignored
+
+filter {}
 ```
