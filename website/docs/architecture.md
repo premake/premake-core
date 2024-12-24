@@ -17,6 +17,7 @@ architecture ("value")
 * `loongarch64`
 * `wasm32`,
 * `wasm64`,
+* `e2k`,
 * `armv5`: Only supported in VSAndroid projects
 * `armv7`: Only supported in VSAndroid projects
 * `aarch64`: Only supported in VSAndroid projects

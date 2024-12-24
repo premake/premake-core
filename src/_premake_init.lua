@@ -31,7 +31,8 @@
 			p.RISCV64,
 			p.LOONGARCH64,
 			p.WASM32,
-			p.WASM64
+			p.WASM64,
+			p.E2K
 		},
 		aliases = {
 			i386  = p.X86,
