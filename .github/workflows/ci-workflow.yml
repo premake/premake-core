@@ -15,6 +15,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Install booststrap's dependencies
+      run: |
+        sudo apt-get update 
+        sudo apt-get -y install uuid-dev
     - name: Install dependencies
       if: matrix.depsrc == 'system'
       run: |
