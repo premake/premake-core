@@ -287,9 +287,9 @@
 			flags       { "NoIncrementalLink" }
 
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
-		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
+		filter { "system:windows", "configurations:Release", "toolset:not gcc" }
 			linktimeoptimization "On"
-		
+
 		filter { "system:windows", "configurations:Release", "toolset:clang", "action:not vs*" }
 			linkoptions { "-fuse-ld=lld" }
 
@@ -355,7 +355,7 @@
 		filter { "system:windows", "toolset:msc*" }
 			files       { "src/**.rc" }
 
-		filter "toolset:mingw"
+		filter { "system:windows", "toolset:not msc" }
 			links		{ "crypt32", "bcrypt" }
 
 		filter { "system:windows", "toolset:clang", "action:not vs*" }
