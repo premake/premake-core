@@ -93,6 +93,8 @@ jobs:
       matrix:
         config: [debug, release]
         msystem: [mingw32, mingw64]
+        depsrc: [none, contrib, system]
+        cc: [mingw]
         include:
           - platform: x86
             msystem: mingw32
@@ -115,14 +117,22 @@ jobs:
           make
         pacboy: >-
           toolchain:p
+    - name: Install dependencies
+      if: matrix.depsrc == 'system' && matrix.platform == 'x64'
+      run: |
+        pacman -Suy --noconfirm mingw-w64-x86_64-curl mingw-w64-x86_64-lua53 mingw-w64-x86_64-libzip mingw-w64-x86_64-zlib
+    - name: Install dependencies
+      if: matrix.depsrc == 'system' && matrix.platform == 'x86'
+      run: |
+        pacman -Suy --noconfirm mingw-w64-i686-curl mingw-w64-i686-lua53 mingw-w64-i686-libzip mingw-w64-i686-zlib
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--lib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5.exe test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release'
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'mingw'
       uses: actions/upload-artifact@v4
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
