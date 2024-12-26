@@ -13,11 +13,11 @@ SET "PlatformArg="
 SET "ConfigArg="
 
 IF NOT "%PLATFORM%" == "" (
-    SET "PlatformArg=PLATFORM=%PLATFORM%"
+	SET "PlatformArg=PLATFORM=%PLATFORM%"
 )
 
 IF NOT "%CONFIG%" == "" (
-    SET "ConfigArg=CONFIG=%CONFIG%"
+	SET "ConfigArg=CONFIG=%CONFIG%"
 )
 
 SET vsversion=%1
