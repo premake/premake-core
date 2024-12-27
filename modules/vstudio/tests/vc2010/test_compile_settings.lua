@@ -164,7 +164,7 @@
 
 
 	function suite.warningLevel_onNoWarningsOverOtherWarningsAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		warnings "Off"
 		prepare()
 		test.capture [[
@@ -571,7 +571,7 @@
 
 
 	function suite.treatWarningsAsError_onFatalWarningsViaAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		prepare()
 		test.capture [[
 <ClCompile>

@@ -68,7 +68,7 @@
 
 
 	function suite.cflag_onFatalWarningsViaAPI()
-		fatalwarnings { "Compile" }
+		fatalwarnings { "All" }
 		prepare()
 		test.isequal({ "-Xquit=2" }, snc.getcflags(cfg))
 	end

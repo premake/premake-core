@@ -2725,7 +2725,8 @@
 
 
 	function suite.XCBuildConfigurationProject_OnFatalWarningsViaAPI()
-		fatalwarnings { "Compile", "Link" }
+		fatalwarnings { "All" }
+		linkerfatalwarnings { "All" }
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
