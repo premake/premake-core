@@ -65,6 +65,7 @@ jobs:
         config: [debug, release]
         platform: [Win32, x64]
         msdev: [vs2022]
+        cc: [msc, clang]
     timeout-minutes: 15
     steps:
     - name: Checkout
@@ -74,7 +75,7 @@ jobs:
       env:
         PLATFORM: ${{ matrix.platform }}
         CONFIG: ${{ matrix.config }}
-      run: ./Bootstrap.bat ${{ matrix.msdev }}
+      run: ./Bootstrap.bat ${{ matrix.msdev }} "PREMAKE_OPTS=--cc=${{ matrix.cc }}"
     - name: Test
       run: bin\${{ matrix.config }}\premake5 test --test-all
       shell: cmd
@@ -82,7 +83,7 @@ jobs:
       run: bin\${{ matrix.config }}\premake5 docs-check
       shell: cmd
     - name: Upload Artifacts
-      if: matrix.config == 'release'
+      if: matrix.config == 'release' && matrix.cc == 'msc'
       uses: actions/upload-artifact@v6
       with:
         name: premake-windows-${{ matrix.platform }}
