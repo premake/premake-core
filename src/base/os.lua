@@ -637,10 +637,38 @@
 				return "echo " .. v
 			end,
 			linkdir = function(v)
-				return "ln -s " .. path.normalize(v)
+				-- split the source and target
+				-- source and target may be quoted with spaces
+				-- if the source or target was quoted, retain the quotes
+				local src, tgt = v:match("^%s*\"(.-)\"%s+\"(.-)\"%s*$")
+				if not src then
+					src, _ = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					src = '"' .. src .. '"'
+				end
+				if not tgt then
+					_, tgt = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					tgt = '"' .. tgt .. '"'
+				end
+				return "ln -s " .. path.normalize(tgt) .. " " .. path.normalize(src)
 			end,
 			linkfile = function(v)
-				return "ln -s " .. path.normalize(v)
+				-- split the source and target
+				-- source and target may be quoted with spaces
+				-- if the source or target was quoted, retain the quotes
+				local src, tgt = v:match("^%s*\"(.-)\"%s+\"(.-)\"%s*$")
+				if not src then
+					src, _ = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					src = '"' .. src .. '"'
+				end
+				if not tgt then
+					_, tgt = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					tgt = '"' .. tgt .. '"'
+				end
+				return "ln -s " .. path.normalize(tgt) .. " " .. path.normalize(src)
 			end,
 			mkdir = function(v)
 				return "mkdir -p " .. path.normalize(v)
