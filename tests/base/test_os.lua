@@ -313,11 +313,15 @@
 	end
 
 	function suite.translateCommand_posixLinkDir()
-		test.isequal('ln -s a b', os.translateCommands('{LINKDIR} a b', "posix"))
+		test.isequal('ln -s b a', os.translateCommands('{LINKDIR} a b', "posix"))
 	end
 
 	function suite.translateCommand_posixLinkFile()
-		test.isequal('ln -s a b', os.translateCommands('{LINKFILE} a b', "posix"))
+		test.isequal('ln -s b a', os.translateCommands('{LINKFILE} a b', "posix"))
+	end
+
+	function suite.translateCommand_posixLinkDirWithSpaces()
+		test.isequal('ln -s "b b" "a a"', os.translateCommands('{LINKDIR} "a a" "b b"', "posix"))
 	end
 --
 -- os.getWindowsRegistry windows tests
