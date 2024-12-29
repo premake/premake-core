@@ -248,7 +248,7 @@
 
 
 	function make.preLinkRules(prj)
-		_p('prelink: $(OBJECTS)')
+		_p('prelink: $(CUSTOMFILES) $(OBJECTS)')
 		_p('\t$(PRELINKCMDS)')
 		_p('')
 	end
