@@ -143,14 +143,14 @@
 		test.capture [[
 /* Begin PBXBuildFile section */
 		12F1B82D44EB02DFBECA3E6D /* E.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; };
-		6557012668C7D358EA347766 /* E.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		773ADFBAA9342A6C231365FA /* E.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3C98627697D9B5E86B3400B6 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
-		AC7C2020DB2274123463CE60 /* libB.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
+		3369CB838EAB1EF5620569C3 /* libB.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
 		91686CDFDECB631154EA631F /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; };
-		E054F1BF0EFB45B1683C9FFF /* libA.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9C3456CCE9974CFE5FB64D0C /* libA.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		A7E42B5676077F08FD15D196 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0547FE2A469B70FDA0E63E /* libC.dylib */; };
 		F56B754B2764BFFDA143FB8B /* D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; };
-		966D8A4599DE5C771B4B0085 /* D.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		59B49CD88BADE78A058D2318 /* D.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -629,8 +629,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E054F1BF0EFB45B1683C9FFF /* libA.dylib in Frameworks */,
-				966D8A4599DE5C771B4B0085 /* D.framework in Frameworks */,
+				9C3456CCE9974CFE5FB64D0C /* libA.dylib in Frameworks */,
+				59B49CD88BADE78A058D2318 /* D.framework in Frameworks */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;

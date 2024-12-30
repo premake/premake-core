@@ -80,7 +80,7 @@
 		test.capture [[
 /* Begin PBXBuildFile section */
 		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
-		6514841E8D4F3CD074EACA5E /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+		3C920BDD1B34A74FD016AA1D /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -96,7 +96,7 @@
 		test.capture [[
 /* Begin PBXBuildFile section */
 		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
-		6514841E8D4F3CD074EACA5E /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3C920BDD1B34A74FD016AA1D /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -236,7 +236,7 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6514841E8D4F3CD074EACA5E /* MyProject2 in Projects */,
+				3C920BDD1B34A74FD016AA1D /* MyProject2 in Projects */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;

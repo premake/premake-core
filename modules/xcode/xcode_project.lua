@@ -161,7 +161,7 @@
 					node.buildid = xcode.newid(node.name, "build", nodePath)
 
 					if xcode.shouldembed(tr, node) then
-						node.embedid = xcode.newid(node.name, "embed", nodepath)
+						node.embedid = xcode.newid(node.name, "embed", nodePath)
 					end
 				end
 
