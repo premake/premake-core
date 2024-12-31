@@ -27,8 +27,8 @@ Premake defines the following list of actions out of the box; projects may also 
 | vs2010      | Generate Visual Studio 2010 project files         |
 | vs2008      | Generate Visual Studio 2008 project files         |
 | vs2005      | Generate Visual Studio 2005 project files         |
-| gmake       | Generate GNU Makefiles (This generator is deprecated by gmake2) |
-| gmake2      | Generate GNU Makefiles (including [Cygwin][1] and [MinGW][2]) |
+| gmake       | Generate GNU Makefiles (including [Cygwin][1] and [MinGW][2]) |
+| gmakelegacy | Generate GNU Makefiles (deprecated exporter) |
 | xcode4      | XCode projects |
 | codelite    | CodeLite projects |
 

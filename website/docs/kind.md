@@ -28,8 +28,8 @@ Project configurations.
 ### Availability ###
 
 The **Makefile** kind is available in Premake 5.0 and later, and are supported for Visual Studio and Codelite.
-The **None** kind is available in Premake 5.0 and later, and are supported for gmake, gmake2, Codelite and Visual Studio.
-The **Utility** kind is only available for Visual Studio, Codelite and gmake2, as well as very limited support in gmake.
+The **None** kind is available in Premake 5.0 and later, and are supported for gmakelegacy, gmake, Codelite and Visual Studio.
+The **Utility** kind is only available for Visual Studio, Codelite and gmake, as well as very limited support in gmakelegacy.
 The **SharedItems** kind is only available for Visual Studio 2013 and later.
 
 ### Examples ###

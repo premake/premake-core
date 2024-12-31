@@ -23,7 +23,7 @@ Project configurations
 
 ### Availability ###
 
-Premake 5.0-alpha10 or later. GCC and Clang toolsets only. Codelite, gmake, and gmake2 exporters only.
+Premake 5.0-alpha10 or later. GCC and Clang toolsets only. Codelite, gmakelegacy, and gmake exporters only.
 
 ### Examples ###
 
