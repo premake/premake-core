@@ -340,6 +340,44 @@ jobs:
       with:
         name: premake-solaris-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
+  omnios:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: omnios {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start OmniOS VM
+      uses: vmactions/omnios-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install build-essential web/ca-bundle
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'gcc'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-omnios-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
 
   # This job will be required for PRs to be merged.
   # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.

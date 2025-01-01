@@ -45,6 +45,7 @@ project "curl-lib"
 			"/usr/local/share/certs/ca-root-nss.crt",
 			"/etc/certs/ca-certificates.crt",
 			"/etc/ssl/cert.pem",
+			"/etc/ssl/cacert.pem",
 			"/boot/system/data/ssl/CARootCertificates.pem" } do
 			if os.isfile(f) then
 				ca = f
