@@ -1,11 +1,7 @@
 --
--- Name:        gmake2/_preload.lua
--- Purpose:     Define the gmake2 action.
--- Author:      Blizzard Entertainment (Tom van Dijck)
--- Modified by: Aleksi Juvani
---              Vlad Ivanov
--- Created:     2016/01/01
--- Copyright:   (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
+-- _preload.lua
+-- Define the makefile action(s).
+-- Copyright (c) 2002-2015 Jess Perkins and the Premake project
 --
 
 	local p = premake
@@ -22,68 +18,62 @@
 		end
 	end
 
+---
+-- The GNU make action, with support for the new platforms API
+---
+
 	newaction {
-		trigger         = "gmake2",
-		shortname       = "Alternative GNU Make",
+		trigger         = "gmakelegacy",
+		shortname       = "GNU Make (Legacy)",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
 		toolset         = defaultToolset(),
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "None" },
-
 		valid_languages = { "C", "C++", "C#" },
-
 		valid_tools     = {
 			cc     = { "clang", "gcc", "cosmocc", "emcc" },
 			dotnet = { "mono", "msnet", "pnet" }
 		},
 
-		aliases = {
-			"gmake",
-		},
-
-		onInitialize = function()
-			require("gmake2")
-			p.modules.gmake2.cpp.initialize()
-		end,
-
 		onWorkspace = function(wks)
-			p.escaper(p.modules.gmake2.esc)
+			p.escaper(p.makelegacy.esc)
 			wks.projects = table.filter(wks.projects, function(prj) return p.action.supports(prj.kind) and prj.kind ~= p.NONE end)
-			p.generate(wks, p.modules.gmake2.getmakefilename(wks, false), p.modules.gmake2.generate_workspace)
+			p.generate(wks, p.makelegacy.getmakefilename(wks, false), p.makelegacy.generate_workspace)
 		end,
 
 		onProject = function(prj)
-			p.escaper(p.modules.gmake2.esc)
-			local makefile = p.modules.gmake2.getmakefilename(prj, true)
+			p.escaper(p.makelegacy.esc)
+			local makefile = p.makelegacy.getmakefilename(prj, true)
 
 			if not p.action.supports(prj.kind) or prj.kind == p.NONE then
 				return
 			elseif prj.kind == p.UTILITY then
-				p.generate(prj, makefile, p.modules.gmake2.utility.generate)
+				p.generate(prj, makefile, p.makelegacy.utility.generate)
 			elseif prj.kind == p.MAKEFILE then
-				p.generate(prj, makefile, p.modules.gmake2.makefile.generate)
+				p.generate(prj, makefile, p.makelegacy.makefile.generate)
 			else
 				if project.isdotnet(prj) then
-					p.generate(prj, makefile, p.modules.gmake2.cs.generate)
+					p.generate(prj, makefile, p.makelegacy.cs.generate)
 				elseif project.isc(prj) or project.iscpp(prj) then
-					p.generate(prj, makefile, p.modules.gmake2.cpp.generate)
+					p.generate(prj, makefile, p.makelegacy.cpp.generate)
 				end
 			end
 		end,
 
 		onCleanWorkspace = function(wks)
-			p.clean.file(wks, p.modules.gmake2.getmakefilename(wks, false))
+			p.clean.file(wks, p.makelegacy.getmakefilename(wks, false))
 		end,
 
 		onCleanProject = function(prj)
-			p.clean.file(prj, p.modules.gmake2.getmakefilename(prj, true))
+			p.clean.file(prj, p.makelegacy.getmakefilename(prj, true))
 		end
 	}
+
 
 --
 -- Decide when the full module should be loaded.
 --
 
 	return function(cfg)
-		return (_ACTION == "gmake2")
+		return (_ACTION == "gmakelegacy")
 	end
