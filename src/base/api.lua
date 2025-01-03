@@ -265,7 +265,11 @@
 
 		if type(field.allowed) == "table" then
 			for i, item in ipairs(field.allowed) do
-				field.allowed[item:lower()] = item
+				if type(item) == "string" then
+            		field.allowed[item:lower()] = item
+				elseif type(item) == "function" then
+					field.allowed["_function_" .. i .."_"] = item
+        		end
 			end
 		end
 

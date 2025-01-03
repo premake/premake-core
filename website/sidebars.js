@@ -122,6 +122,7 @@ module.exports = {
 						'display',
 						'documentationfile',
 						'dotnetframework',
+						'dotnetsdk',
 						'dpiawareness',
 						'editandcontinue',
 						'editorintegration',
