@@ -30,6 +30,17 @@
 			test.istrue(os.findlib("user32"))
 		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
+		elseif os.istarget("bsd") and os.getversion().description == "OpenBSD" then
+			-- OpenBSD doesn't have a 'libm.so' symlink like other systems,
+			-- it only has the versioned files, 'libm.so.X.Y' which will
+			-- change between versions of OpenBSD. os.findlib currently won't
+			-- find these versioned files without the version info.
+
+			-- libm should be '/usr/lib/libm.so.X.Y' find the exact filename
+			-- and use that.
+			local libms = os.matchfiles("/usr/lib/libm.so.*")
+			test.isfalse(0 == #libms)
+			test.istrue(os.findlib(path.getname(libms[1])))
 		else
 			test.istrue(os.findlib("m"))
 		end
@@ -62,6 +73,23 @@
 		test.isfalse(os.isfile("no_such_file.lua"))
 	end
 
+--
+-- os.linkdir() and os.linkfile() tests
+--
+
+	function suite.linkdir()
+		test.istrue(os.linkdir("folder/subfolder", "folder/subfolder2"))
+		test.istrue(os.islink("folder/subfolder2"))
+		test.istrue(os.rmdir("folder/subfolder2"))
+		test.isfalse(os.islink("folder/subfolder2"))
+	end
+
+	function suite.linkfile()
+		test.istrue(os.linkfile("folder/ok.lua", "folder/ok2.lua"))
+		test.istrue(os.islink("folder/ok2.lua"))
+		test.istrue(os.remove("folder/ok2.lua"))
+		test.isfalse(os.islink("folder/ok2.lua"))
+	end
 
 
 --
@@ -273,6 +301,28 @@
 		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
 	end
 
+--
+-- os.translateCommand() LINKDIR/LINKFILE tests
+--
+	function suite.translateCommand_windowsLinkDir()
+		test.isequal('mklink /d a b', os.translateCommands('{LINKDIR} a b', "windows"))
+	end
+
+	function suite.translateCommand_windowsLinkFile()
+		test.isequal('mklink a b', os.translateCommands('{LINKFILE} a b', "windows"))
+	end
+
+	function suite.translateCommand_posixLinkDir()
+		test.isequal('ln -s b a', os.translateCommands('{LINKDIR} a b', "posix"))
+	end
+
+	function suite.translateCommand_posixLinkFile()
+		test.isequal('ln -s b a', os.translateCommands('{LINKFILE} a b', "posix"))
+	end
+
+	function suite.translateCommand_posixLinkDirWithSpaces()
+		test.isequal('ln -s "b b" "a a"', os.translateCommands('{LINKDIR} "a a" "b b"', "posix"))
+	end
 --
 -- os.getWindowsRegistry windows tests
 --

@@ -9,7 +9,11 @@
 #ifdef PREMAKE_CURL
 
 #include "buffered_io.h"
+#ifdef LUA_STATICLIB
 #include "lua.h"
+#else
+#include <lua5.3/lua.h>
+#endif
 
 #define _MPRINTF_REPLACE /* use curl functions only */
 #include <curl/curl.h>

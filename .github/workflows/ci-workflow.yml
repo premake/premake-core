@@ -10,22 +10,28 @@ jobs:
         config: [debug, release]
         platform: [x64]
         depsrc: [none, contrib, system]
+        cc: [gcc, clang]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Install booststrap's dependencies
+      run: |
+        sudo apt-get update 
+        sudo apt-get -y install uuid-dev
     - name: Install dependencies
       if: matrix.depsrc == 'system'
       run: |
         sudo apt-get update 
-        sudo apt-get -y install libcurl4-openssl-dev
+        sudo apt-get -y install libcurl4-openssl-dev libzip-dev liblua5.3-dev
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--curl-src=${{ matrix.depsrc }}" ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--lib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5 test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release' && matrix.depsrc == 'contrib'
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v4
       with:
         name: premake-linux-${{ matrix.platform }}
@@ -36,6 +42,7 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [x64]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -58,6 +65,7 @@ jobs:
         config: [debug, release]
         platform: [Win32, x64]
         msdev: [vs2022]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -85,11 +93,14 @@ jobs:
       matrix:
         config: [debug, release]
         msystem: [mingw32, mingw64]
+        depsrc: [none, contrib, system]
+        cc: [mingw]
         include:
           - platform: x86
             msystem: mingw32
           - platform: x64
             msystem: mingw64
+    timeout-minutes: 30
     defaults:
       run:
         shell: msys2 {0}
@@ -106,14 +117,22 @@ jobs:
           make
         pacboy: >-
           toolchain:p
+    - name: Install dependencies
+      if: matrix.depsrc == 'system' && matrix.platform == 'x64'
+      run: |
+        pacman -Suy --noconfirm mingw-w64-x86_64-curl mingw-w64-x86_64-lua53 mingw-w64-x86_64-libzip mingw-w64-x86_64-zlib
+    - name: Install dependencies
+      if: matrix.depsrc == 'system' && matrix.platform == 'x86'
+      run: |
+        pacman -Suy --noconfirm mingw-w64-i686-curl mingw-w64-i686-lua53 mingw-w64-i686-libzip mingw-w64-i686-zlib
     - name: Build
-      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
+      run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--lib-src=${{ matrix.depsrc }} --cc=${{ matrix.cc }}" ./Bootstrap.sh
     - name: Test
       run: bin/${{ matrix.config }}/premake5.exe test --test-all
     - name: Docs check
       run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
-      if: matrix.config == 'release'
+      if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'mingw'
       uses: actions/upload-artifact@v4
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
@@ -123,6 +142,7 @@ jobs:
     strategy:
       matrix:
         config: [debug, release]
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -141,6 +161,223 @@ jobs:
       with:
         name: premake-cosmopolitan-universal
         path: bin/${{ matrix.config }}/premake5
+  freebsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc, clang]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: freebsd {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start FreeBSD VM
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg install -y gmake ca_root_nss gcc
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'clang'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-freebsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
+  openbsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [clang]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: openbsd {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start OpenBSD VM
+      uses: vmactions/openbsd-vm@v1
+      with:
+        usesh: true
+        sync: sshfs
+        prepare: |
+          pkg_add gmake
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'clang'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-openbsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
+  netbsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: netbsd {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start NetBSD VM
+      uses: vmactions/netbsd-vm@v1
+      with:
+        prepare: |
+          pkg_add gmake
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+  dragonflybsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: dragonflybsd {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start DragonflyBSD VM
+      uses: vmactions/dragonflybsd-vm@v1
+      with:
+        prepare: |
+          pkg install -y gmake
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+  solaris:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: solaris {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start Solaris VM
+      uses: vmactions/solaris-vm@v1
+      with:
+        usesh: true
+        cpu: 4
+        mem: 8192
+        release: 11.4-gcc
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'gcc'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-solaris-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
+  omnios:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform: [x64]
+        cc: [gcc]
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: omnios {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Start OmniOS VM
+      uses: vmactions/omnios-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install build-essential web/ca-bundle
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE
+        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 test --test-all
+    - name: Docs check
+      run: |
+        cd $GITHUB_WORKSPACE
+        bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'gcc'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-omnios-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
 
   # This job will be required for PRs to be merged.
   # This should depend on (via needs) all jobs that need to be successful for the PR to be merged.

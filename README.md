@@ -5,16 +5,13 @@
 <p align="center">
     <img src="https://img.shields.io/github/release/premake/premake-core/all.svg" alt="Latest release" />
     <img src="https://img.shields.io/github/release-date-pre/premake/premake-core.svg" alt="Release date" />
-    <img src="https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-beta3.svg" alt="Commits" />
+    <img src="https://img.shields.io/github/commits-since/premake/premake-core/v5.0.0-beta4.svg" alt="Commits" />
     <a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">
         <img src="https://img.shields.io/github/license/premake/premake-core" alt="BSD 3-Clause" />
     </a>
     <br/>
-    <a href="https://travis-ci.org/premake/premake-core" target="_blank">
-        <img src="https://img.shields.io/travis/premake/premake-core/master.svg?label=linux" alt="Linux" />
-    </a>
-    <a href="https://ci.appveyor.com/project/PremakeOrganization/premake-core" target="_blank">
-        <img src="https://img.shields.io/appveyor/ci/PremakeOrganization/premake-core?label=windows" alt="Windows" />
+    <a href="https://github.com/premake/premake-core" target="_blank">
+        <img src="https://github.com/premake/premake-core/actions/workflows/ci-workflow.yml/badge.svg?branch=master" alt="master" />
     </a>
     <a href="https://github.com/premake/premake-core/graphs/contributors" target="_blank">
         <img src="https://img.shields.io/github/contributors/premake/premake-core?label=code+contributors" alt="Contributors" />

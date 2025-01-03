@@ -1,9 +1,56 @@
 --------------------
-  5.0-beta3
+  5.0-beta4
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-beta3:
+
+* PR #2327  Removes deprecated language version flags (@nickclark2016)
+* PR #2329  Use `_SC_NPROCESSORS_ONLN` for CPU detection in BSDs. (@tritao)
+* PR #2331  Remove Deprecated Flags with Replacements, Fix Tests (@nickclark2016)
+* PR #2333  Update package repos before installing deps on Linux (@nickclark2016)
+* PR #2334  Replace MFC flag with a dedicated API (@nickclark2016)
+* PR #2341  fix documentationfile bug (@lolrobbe2)
+* PR #2342  Fix debug optimization flag for Clang (@nickclark2016)
+* PR #2343  Replace LTO flag with dedicated API (@nickclark2016)
+* PR #2347  Deprecate FatalWarnings flags in favor of fatalwarnings API (@nickclark2016)
+* PR #2349  premake.h - added e2k definition (@r-a-sattarov)
+* PR #2352  Symbolic link support in Premake (@nickclark2016)
+* PR #2355  Added ability to use system zlib (@LORgames)
+* PR #2356  Added support for riscv64 (@kxxt)
+* PR #2357  Added API for Action Deprecation (@nickclark2016)
+* PR #2358  Fixed creation of links on Unix-like OSes (@nickclark2016)
+* PR #2359  Added FreeBSD CI job (@LORgames)
+* PR #2360  Updated mbedTLS to 3.6.2 (@LORgames)
+* PR #2361  Added Clang CI jobs to Linux and FreeBSD (@LORgames)
+* PR #2362  Cleaned up minor issues in premake5.lua scripts (@LORgames)
+* PR #2363  Add support for loongarch64 (@Leoforever123)
+* PR #2364  Override Lua functions without injecting code into the library (@LORgames)
+* PR #2366  Integrated Android module into vstudio module (@LORgames)
+* PR #2367  Fixed potential use-after-free bug when calling os.getversion (@LORgames)
+* PR #2368  Add SunOS support to Bootstrap.sh (@LORgames)
+* PR #2369  Fix documentation for linkgroups (@nickclark2016)
+* PR #2370  Add ability to use system lua (@LORgames)
+* PR #2371  Add OpenBSD CI job (@LORgames)
+* PR #2372  Add NetBSD CI job (@LORgames)
+* PR #2373  Add DragonflyBSD CI job (@LORgames)
+* PR #2374  Add Solaris CI job (@LORgames)
+* PR #2375  Cleaned up VM-based CI jobs (@LORgames)
+* PR #2376  Add Emscripten system and emcc toolset support (@tritao)
+* PR #2378  Fixed configuration properties on VS Linux (@redorav)
+* PR #2381  Fix gmake/gmake2 Emscripten default toolset type. (@tritao)
+* PR #2382  Fatal warnings API fixes (@redorav)
+* PR #2383  Added CI timeout to 30 minutes (@nickclark2016)
+* PR #2385  Road to 5.0 Roadmap Publishing (@nickclark2016)
+* PR #2388  Add support for e2k (@r-a-sattarov)
+* PR #2390  [CI] Fix dependencies as ubuntu-latest becomes ubuntu-24.04 (@Jarod42)
+* PR #2392  [CI] Add depsrc matrix to mingw build (@Jarod42)
+* PR #2394  Bump jinja2 from 3.1.4 to 3.1.5 in /contrib/mbedtls/docs (@dependabot)
+* PR #2395  Fix line endings of `Bootstrap.bat`. (@tritao)
+* PR #2397  Fixes XCode Compiler C++ Version/Dialect Output (@nickclark2016)
+* PR #2400  Fix token ordering for LINKFILE/LINKDIR (@nickclark2016)
 
 Since 5.0-beta2:
 

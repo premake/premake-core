@@ -286,22 +286,17 @@ int getversion(struct OsVersionInfo* info)
 	info->minorversion = 0;
 	info->revision = 0;
 
-	if (uname(&u))
+	// uname returns -1 on error, and returns 0 on success for most platforms
+	// except Solaris, which returns non-negative.
+	if (uname(&u) < 0)
 	{
 		// error
 		info->description = PLATFORM_OS;
 		return 0;
 	}
 
-#if __GLIBC__
-	// When using glibc, info->description gets set to u.sysname,
-	// but it isn't passed out of this function, so we need to copy
-	// the string.
 	info->description = strdup(u.sysname);
 	info->isalloc = 1;
-#else
-	info->description = u.sysname;
-#endif
 
 	if ((ver = strtok(u.release, ".-")) != NULL)
 	{

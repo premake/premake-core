@@ -22,7 +22,7 @@ local project = p.project
 
 	local function prepare(platform)
 		local cfg = test.getconfig(prj, "Debug", platform)
-		vc2010.configurationProperties(cfg)
+		vc2010.linker(cfg)
 	end
 
 --
@@ -30,14 +30,12 @@ local project = p.project
 --
 
 	function suite.toolsetClangAdditionalDependencies()
-		function suite.additionalDependencies_onSystemLinks()
-			links { "lua", "zlib" }
-			toolset "clang"
-			prepare()
-			test.capture [[
-	<Link>
-		<SubSystem>Windows</SubSystem>
-		<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-			]]
-		end
+		links { "lua", "zlib" }
+		toolset "clang"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Console</SubSystem>
+	<AdditionalDependencies>lua.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
 	end

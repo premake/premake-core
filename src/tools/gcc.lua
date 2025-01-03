@@ -57,8 +57,10 @@
 			x86 = "-m32",
 			x86_64 = "-m64",
 		},
+		fatalwarnings = {
+			All = "-Werror",
+		},
 		flags = {
-			FatalCompileWarnings = "-Werror",
 			ShadowedVariables = "-Wshadow",
 			UndefinedIdentifiers = "-Wundef",
 		},
@@ -194,7 +196,7 @@
 		for _, disable in ipairs(cfg.disablewarnings) do
 			table.insert(result, '-Wno-' .. disable)
 		end
-		for _, fatal in ipairs(cfg.fatalwarnings) do
+		for _, fatal in ipairs(p.filterFatalWarnings(cfg.fatalwarnings)) do
 			table.insert(result, '-Werror=' .. fatal)
 		end
 		return result
@@ -472,6 +474,9 @@
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
+		},
+		linkerfatalwarnings = {
+			All = "-Wl,--fatal-warnings",
 		},
 		linktimeoptimization = gcc.shared.linktimeoptimization,
 		kind = {

@@ -11,19 +11,34 @@
 	local p = premake
 	local project = p.project
 
+	local function defaultToolset()
+		local target = os.target()
+		if target == p.MACOSX then
+			return "clang"
+		elseif target == p.EMSCRIPTEN then
+			return "emcc"
+		else
+			return "gcc"
+		end
+	end
+
 	newaction {
 		trigger         = "gmake2",
 		shortname       = "Alternative GNU Make",
 		description     = "Generate GNU makefiles for POSIX, MinGW, and Cygwin",
-		toolset         = iif(os.target() == p.MACOSX, "clang", "gcc"),
+		toolset         = defaultToolset(),
 
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Utility", "Makefile", "None" },
 
 		valid_languages = { "C", "C++", "C#" },
 
 		valid_tools     = {
-			cc     = { "clang", "gcc", "cosmocc" },
+			cc     = { "clang", "gcc", "cosmocc", "emcc" },
 			dotnet = { "mono", "msnet", "pnet" }
+		},
+
+		aliases = {
+			"gmake",
 		},
 
 		onInitialize = function()

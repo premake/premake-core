@@ -28,6 +28,11 @@
 			p.X86_64,
 			p.ARM,
 			p.ARM64,
+			p.RISCV64,
+			p.LOONGARCH64,
+			p.WASM32,
+			p.WASM64,
+			p.E2K
 		},
 		aliases = {
 			i386  = p.X86,
@@ -304,7 +309,9 @@
 		name = "fatalwarnings",
 		scope = "config",
 		kind = "list:string",
-		tokens = true,
+		reserved = {
+			"All"
+		}
 	}
 
 	api.register {
@@ -335,8 +342,9 @@
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"ExcludeFromBuild",
-			"FatalCompileWarnings",
-			"FatalLinkWarnings",
+			"FatalCompileWarnings",	-- DEPRECATED
+			"FatalLinkWarnings",	-- DEPRECATED
+			"FatalWarnings",		-- DEPRECATED
 			"LinkTimeOptimization", -- DEPRECATED
 			"Maps",
 			"MFC",
@@ -355,10 +363,7 @@
 			"RelativeLinks",
 			"ShadowedVariables",
 			"UndefinedIdentifiers",
-			"WPF", 				   -- DEPRECATED
-		},
-		aliases = {
-			FatalWarnings = { "FatalWarnings", "FatalCompileWarnings", "FatalLinkWarnings" },
+			"WPF",
 		},
 	}
 
@@ -577,6 +582,15 @@
 		allowed = {
 			"Default",
 			"LLD",
+		}
+	}
+
+	api.register {
+		name = "linkerfatalwarnings",
+		scope = "config",
+		kind = "list:string",
+		reserved = {
+			"All"
 		}
 	}
 
@@ -840,6 +854,7 @@
 		allowed = {
 			"aix",
 			"bsd",
+			"emscripten",
 			"haiku",
 			"ios",
 			"linux",
@@ -1122,6 +1137,56 @@
 	function(value)
 		dotnetsdk "Default"
 	end)
+	api.deprecateValue("flags", "FatalWarnings", "Use `fatalwarnings { \"All\" }` instead.",
+	function(value)
+		fatalwarnings({ "All" })
+	end,
+	function(value)
+		removefatalwarnings({ "All" })
+	end)
+
+	api.deprecateValue("flags", "FatalCompileWarnings", "Use `fatalwarnings { \"All\" }` instead.",
+	function(value)
+		fatalwarnings({ "All" })
+	end,
+	function(value)
+		removefatalwarnings({ "All" })
+	end)
+
+	api.deprecateValue("flags", "FatalLinkWarnings", "Use `linkerfatalwarnings { \"All\" }` instead.",
+	function(value)
+		linkerfatalwarnings({ "All" })
+	end,
+	function(value)
+		removelinkerfatalwarnings({ "All" })
+	end)
+
+	premake.filterFatalWarnings = function(tbl)
+		if type(tbl) == "table" then
+			return table.filter(tbl, function(warning)
+				return not (warning == "All")
+			end)
+		else
+			return tbl
+		end
+	end
+
+	premake.hasFatalCompileWarnings = function(tbl)
+		if (type(tbl) == "table") then
+			return table.contains(tbl, "All")
+		else
+			return false
+		end
+	end
+
+	premake.hasFatalLinkWarnings = function(tbl)
+		if (type(tbl) == "table") then
+			return table.contains(tbl, "All")
+		else
+			return false
+		end
+	end
+
 
 -----------------------------------------------------------------------------
 --
@@ -1243,16 +1308,17 @@
 		value       = "VALUE",
 		description = "Generate files for a different operating system",
 		allowed = {
-			{ "aix",      "IBM AIX" },
-			{ "bsd",      "OpenBSD, NetBSD, or FreeBSD" },
-			{ "haiku",    "Haiku" },
-			{ "hurd",     "GNU/Hurd" },
-			{ "ios",      "iOS" },
-			{ "linux",    "Linux" },
-			{ "macosx",   "Apple Mac OS X" },
-			{ "solaris",  "Solaris" },
-			{ "uwp",      "Microsoft Universal Windows Platform"},
-			{ "windows",  "Microsoft Windows" },
+			{ "aix",        "IBM AIX" },
+			{ "bsd",        "OpenBSD, NetBSD, or FreeBSD" },
+			{ "emscripten", "Emscripten" },
+			{ "haiku",      "Haiku" },
+			{ "hurd",       "GNU/Hurd" },
+			{ "ios",        "iOS" },
+			{ "linux",      "Linux" },
+			{ "macosx",     "Apple Mac OS X" },
+			{ "solaris",    "Solaris" },
+			{ "uwp",        "Microsoft Universal Windows Platform"},
+			{ "windows",    "Microsoft Windows" },
 		}
 	}
 
@@ -1386,6 +1452,13 @@
 
 	filter { "system:darwin" }
 		toolset "clang"
+
+	filter { "system:emscripten" }
+		toolset "emcc"
+		architecture "wasm32"
+
+	filter { "system:emscripten", "kind:ConsoleApp or WindowedApp" }
+		targetextension ".wasm"
 
 	filter { "platforms:Win32" }
 		architecture "x86"

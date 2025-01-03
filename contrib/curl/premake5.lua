@@ -6,16 +6,17 @@ project "curl-lib"
 	defines     { "BUILDING_LIBCURL", "CURL_STATICLIB", "HTTP_ONLY" }
 	warnings    "off"
 
-	if not _OPTIONS["no-zlib"] then
-		defines     { 'USE_ZLIB' }
-		includedirs { '../zlib' }
-	end
-
 	files
 	{
 		"**.h",
 		"**.c"
 	}
+
+	filter { "options:not zlib-src=none" }
+		defines     { 'USE_ZLIB' }
+
+	filter { "options:zlib-src=contrib" }
+		includedirs { '../zlib' }
 
 	filter { "system:windows" }
 		defines { "USE_SCHANNEL", "USE_WINDOWS_SSPI" }
@@ -37,12 +38,14 @@ project "curl-lib"
 		local ca = nil
 		for _, f in ipairs {
 			"/etc/ssl/certs/ca-certificates.crt",
+			"/etc/openssl/certs/ca-certificates.crt",
 			"/etc/pki/tls/certs/ca-bundle.crt",
 			"/usr/share/ssl/certs/ca-bundle.crt",
 			"/usr/local/share/certs/ca-root.crt",
 			"/usr/local/share/certs/ca-root-nss.crt",
 			"/etc/certs/ca-certificates.crt",
 			"/etc/ssl/cert.pem",
+			"/etc/ssl/cacert.pem",
 			"/boot/system/data/ssl/CARootCertificates.pem" } do
 			if os.isfile(f) then
 				ca = f

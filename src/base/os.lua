@@ -575,21 +575,24 @@
 
 	local builtin_rmdir = os.rmdir
 	function os.rmdir(p)
-		-- recursively remove subdirectories
-		local dirs = os.matchdirs(p .. "/*")
-		for _, dname in ipairs(dirs) do
-			local ok, err = os.rmdir(dname)
-			if not ok then
-				return ok, err
+		-- Only delete children if the path is not a symlink
+		if not os.islink(p) then
+			-- recursively remove subdirectories
+			local dirs = os.matchdirs(p .. "/*")
+			for _, dname in ipairs(dirs) do
+				local ok, err = os.rmdir(dname)
+				if not ok then
+					return ok, err
+				end
 			end
-		end
 
-		-- remove any files
-		local files = os.matchfiles(p .. "/*")
-		for _, fname in ipairs(files) do
-			local ok, err = os.remove(fname)
-			if not ok then
-				return ok, err
+			-- remove any files
+			local files = os.matchfiles(p .. "/*")
+			for _, fname in ipairs(files) do
+				local ok, err = os.remove(fname)
+				if not ok then
+					return ok, err
+				end
 			end
 		end
 
@@ -632,6 +635,40 @@
 			end,
 			echo = function(v)
 				return "echo " .. v
+			end,
+			linkdir = function(v)
+				-- split the source and target
+				-- source and target may be quoted with spaces
+				-- if the source or target was quoted, retain the quotes
+				local src, tgt = v:match("^%s*\"(.-)\"%s+\"(.-)\"%s*$")
+				if not src then
+					src, _ = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					src = '"' .. src .. '"'
+				end
+				if not tgt then
+					_, tgt = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					tgt = '"' .. tgt .. '"'
+				end
+				return "ln -s " .. path.normalize(tgt) .. " " .. path.normalize(src)
+			end,
+			linkfile = function(v)
+				-- split the source and target
+				-- source and target may be quoted with spaces
+				-- if the source or target was quoted, retain the quotes
+				local src, tgt = v:match("^%s*\"(.-)\"%s+\"(.-)\"%s*$")
+				if not src then
+					src, _ = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					src = '"' .. src .. '"'
+				end
+				if not tgt then
+					_, tgt = v:match("^%s*(.-)%s+(.-)%s*$")
+				else
+					tgt = '"' .. tgt .. '"'
+				end
+				return "ln -s " .. path.normalize(tgt) .. " " .. path.normalize(src)
 			end,
 			mkdir = function(v)
 				return "mkdir -p " .. path.normalize(v)
@@ -677,6 +714,12 @@
 			end,
 			echo = function(v)
 				return "echo " .. v
+			end,
+			linkdir = function(v)
+				return "mklink /d " .. path.translate(path.normalize(v))
+			end,
+			linkfile = function(v)
+				return "mklink " .. path.translate(path.normalize(v))
 			end,
 			mkdir = function(v)
 				v = path.translate(path.normalize(v))
@@ -812,15 +855,17 @@
 
 	os.systemTags =
 	{
-		["aix"]      = { "aix",     "posix", "desktop" },
-		["bsd"]      = { "bsd",     "posix", "desktop" },
-		["haiku"]    = { "haiku",   "posix", "desktop" },
-		["ios"]      = { "ios",     "darwin", "posix", "mobile" },
-		["linux"]    = { "linux",   "posix", "desktop" },
-		["macosx"]   = { "macosx",  "darwin", "posix", "desktop" },
-		["solaris"]  = { "solaris", "posix", "desktop" },
-		["uwp"]      = { "uwp", "windows", "desktop" },
-		["windows"]  = { "windows", "win32", "desktop" },
+		["aix"]        = { "aix",     "posix", "desktop" },
+		["android"]    = { "android", "mobile" },
+		["bsd"]        = { "bsd",     "posix", "desktop" },
+		["emscripten"] = { "emscripten", "web" },
+		["haiku"]      = { "haiku",   "posix", "desktop" },
+		["ios"]        = { "ios",     "darwin", "posix", "mobile" },
+		["linux"]      = { "linux",   "posix", "desktop" },
+		["macosx"]     = { "macosx",  "darwin", "posix", "desktop" },
+		["solaris"]    = { "solaris", "posix", "desktop" },
+		["uwp"]        = { "uwp", "windows", "desktop" },
+		["windows"]    = { "windows", "win32", "desktop" },
 	}
 
 	function os.getSystemTags(name)

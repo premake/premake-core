@@ -36,3 +36,37 @@
 		p.generate(prj, ".prj", function () end)
 		test.closedfile(true)
 	end
+
+--
+-- Fatal Warnings related tests
+--
+
+	function suite.filterFatalWarnings()
+		local warnings = { "All", "4996" }
+		local filtered = p.filterFatalWarnings(warnings)
+		test.isequal({ "4996" }, filtered)
+	end
+
+	function suite.hasFatalCompileWarnings()
+		local warnings = { "All", "4996" }
+		local hasFatal = p.hasFatalCompileWarnings(warnings)
+		test.istrue(hasFatal)
+	end
+
+	function suite.hasFatalCompileWarningsNotPresent()
+		local warnings = { "4996" }
+		local hasFatal = p.hasFatalCompileWarnings(warnings)
+		test.isfalse(hasFatal)
+	end
+
+	function suite.hasFatalLinkWarnings()
+		local warnings = { "All", "4996" }
+		local hasFatal = p.hasFatalLinkWarnings(warnings)
+		test.istrue(hasFatal)
+	end
+
+	function suite.hasFatalLinkWarningsNotPresent()
+		local warnings = { "4996" }
+		local hasFatal = p.hasFatalLinkWarnings(warnings)
+		test.isfalse(hasFatal)
+	end

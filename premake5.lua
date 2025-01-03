@@ -100,14 +100,63 @@
 
 
 	newoption {
+		trigger = "zlib-src",
+		description = "Specify the source of the Zlib/Zip 3rd party library",
+		allowed = {
+			{ "none", "Disables Zlib/Zip" },
+			{ "contrib", "Uses Zlib/Zip in contrib folder" },
+			{ "system", "Uses Zlib/Zip from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
 		trigger = "no-zlib",
 		description = "Disable Zlib/Zip 3rd party lib"
 	}
+	if _OPTIONS["no-zlib"] then
+		premake.warn("--no-zlib is deprecated, please use --zlib-src=none")
+		_OPTIONS["zlib-src"] = "none"
+	end
 
 	newoption {
 		trigger = "no-luasocket",
 		description = "Disable Luasocket 3rd party lib"
 	}
+
+	newoption {
+		trigger = "lua-src",
+		description = "Specify the source of the Lua 3rd party library",
+		allowed = {
+			{ "contrib", "Uses Lua in contrib folder" },
+			{ "system", "Uses Lua from the host system" },
+		},
+		default = "contrib",
+	}
+
+	newoption {
+		trigger = "lib-src",
+		description = "Specify the source of all 3rd party libraries",
+		allowed = {
+			{ "none", "Disables all optional 3rd party libraries" },
+			{ "contrib", "Uses 3rd party libraries in contrib folder" },
+			{ "system", "Uses 3rd party libraries from the host system" },
+		}
+	}
+
+	if _OPTIONS["lib-src"] == "none" then
+		_OPTIONS["curl-src"] = "none"
+		_OPTIONS["zlib-src"] = "none"
+		-- Lua is not optional
+	elseif _OPTIONS["lib-src"] == "contrib" then
+		_OPTIONS["curl-src"] = "contrib"
+		_OPTIONS["zlib-src"] = "contrib"
+		_OPTIONS["lua-src"] = "contrib"
+	elseif _OPTIONS["lib-src"] == "system" then
+		_OPTIONS["curl-src"] = "system"
+		_OPTIONS["zlib-src"] = "system"
+		_OPTIONS["lua-src"] = "system"
+	end
 
 	newoption {
 		trigger     = "bytecode",
@@ -150,14 +199,16 @@
 		flags { "MultiProcessorCompile" }
 		warnings "Extra"
 
-		if not _OPTIONS["no-zlib"] then
+		filter { "options:not zlib-src=none" }
 			defines { "PREMAKE_COMPRESSION" }
-		end
 
 		filter { "options:not curl-src=none" }
 			defines { "PREMAKE_CURL" }
 		filter { "options:curl-src=contrib" }
 			defines { "CURL_STATICLIB" }
+
+		filter { "options:lua-src=contrib" }
+			defines { "LUA_STATICLIB" }
 
 		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
 			buildoptions { "-arch arm64" }
@@ -213,21 +264,6 @@
 		targetname  "premake5"
 		language    "C"
 		kind        "ConsoleApp"
-		includedirs { "contrib/lua/src", "contrib/luashim" }
-		links       { "lua-lib" }
-
-		-- optional 3rd party libraries
-		if not _OPTIONS["no-zlib"] then
-			includedirs { "contrib/zlib", "contrib/libzip" }
-			links { "zip-lib", "zlib-lib" }
-		end
-
-		filter { "options:curl-src=contrib" }
-			includedirs { "contrib/curl/include" }
-			links { "curl-lib" }
-		filter { "options:curl-src=system" }
-			links { "curl" }
-		filter {}
 
 		files
 		{
@@ -241,6 +277,28 @@
 			"contrib/**.*",
 			"binmodules/**.*"
 		}
+
+		filter { "options:lua-src=contrib" }
+			includedirs { "contrib/lua/src", "contrib/luashim" }
+			links       { "lua-lib" }
+
+		filter { "options:lua-src=system" }
+			links { "lua5.3" }
+
+		-- optional 3rd party libraries
+		filter { "options:zlib-src=contrib" }
+			includedirs { "contrib/zlib", "contrib/libzip" }
+			links { "zip-lib", "zlib-lib" }
+
+		filter { "options:zlib-src=system" }
+			links { "zip", "z" }
+
+		filter { "options:curl-src=contrib" }
+			includedirs { "contrib/curl/include" }
+			links { "curl-lib" }
+
+		filter { "options:curl-src=system" }
+			links { "curl" }
 
 		filter "configurations:Debug"
 			targetdir   "bin/debug"
@@ -309,12 +367,15 @@ if premake.action.supports("None") then
 
 		files ".github/**"
 end
+
 	-- optional 3rd party libraries
 	group "contrib"
-		include "contrib/lua"
-		include "contrib/luashim"
+		if _OPTIONS["lua-src"] == "contrib" then
+			include "contrib/lua"
+			include "contrib/luashim"
+		end
 
-		if not _OPTIONS["no-zlib"] then
+		if _OPTIONS["zlib-src"] == "contrib" then
 			include "contrib/zlib"
 			include "contrib/libzip"
 		end
@@ -324,7 +385,7 @@ end
 			include "contrib/curl"
 		end
 
-	if _OPTIONS["cc"] ~= "cosmocc" then
+	if _OPTIONS["lua-src"] == "contrib" and _OPTIONS["cc"] ~= "cosmocc" then
 		group "Binary Modules"
 			include "binmodules/example"
 
@@ -332,6 +393,7 @@ end
 				include "binmodules/luasocket"
 			end
 	end
+
 --
 -- A more thorough cleanup.
 --

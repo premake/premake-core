@@ -282,7 +282,7 @@
 			dotnetbase.allowUnsafeBlocks(cfg)
 		end
 
-		if cfg.flags.FatalCompileWarnings then
+		if p.hasFatalCompileWarnings(cfg.fatalwarnings) then
 			_p(2,'<TreatWarningsAsErrors>true</TreatWarningsAsErrors>')
 		end
 

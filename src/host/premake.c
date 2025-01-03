@@ -9,7 +9,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "premake.h"
+#ifdef LUA_STATICLIB
 #include "lua_shimtable.h"
+#endif
 
 #if PLATFORM_MACOSX
 #include <CoreFoundation/CFBundle.h>
@@ -76,6 +78,8 @@ static const luaL_Reg os_functions[] = {
 	{ "hostarch",               os_hostarch             },
 	{ "isfile",                 os_isfile               },
 	{ "islink",                 os_islink               },
+	{ "linkdir",                os_linkdir              },
+	{ "linkfile",               os_linkfile             },
 	{ "locate",                 os_locate               },
 	{ "matchdone",              os_matchdone            },
 	{ "matchisfile",            os_matchisfile          },
@@ -85,8 +89,8 @@ static const luaL_Reg os_functions[] = {
 	{ "mkdir",                  os_mkdir                },
 #if PLATFORM_WINDOWS
 	// utf8 functions for Windows (assuming posix already handle utf8)
-	{"remove",                  os_remove               },
-	{"rename",                  os_rename               },
+	{ "remove",                 os_remove               },
+	{ "rename",                 os_rename               },
 #endif
 	{ "pathsearch",             os_pathsearch           },
 	{ "realpath",               os_realpath             },
@@ -95,7 +99,9 @@ static const luaL_Reg os_functions[] = {
 	{ "uuid",                   os_uuid                 },
 	{ "writefile_ifnotequal",   os_writefile_ifnotequal },
 	{ "touchfile",              os_touchfile            },
+#ifdef LUA_STATICLIB
 	{ "compile",                os_compile              },
+#endif
 	{ NULL, NULL }
 };
 
@@ -180,6 +186,21 @@ int premake_init(lua_State* L)
 {
 	const char* value;
 
+	// Replace Lua functions
+	lua_pushcfunction(L, premake_luaB_loadfile);
+	lua_setglobal(L, "loadfile");
+
+	lua_pushcfunction(L, premake_luaB_dofile);
+	lua_setglobal(L, "dofile");
+
+	lua_getglobal(L, "package"); /* Load 'package' */
+	lua_getfield(L, -1, "searchers"); /* Load 'package.searchers' */
+	lua_pushinteger(L, 2); /* Prepare 'package.searchers[2]' for replacement */
+	lua_pushvalue(L, -3);  /* set 'package' as upvalue for all searchers */
+	lua_pushcclosure(L, premake_searcher_Lua, 1);
+	lua_settable(L, -3);
+	lua_pop(L, 2);
+
 	luaL_register(L, "premake",  premake_functions);
 	luaL_register(L, "criteria", criteria_functions);
 	luaL_register(L, "debug",    debug_functions);
@@ -197,8 +218,10 @@ int premake_init(lua_State* L)
 	luaL_register(L, "zip",     zip_functions);
 #endif
 
+#ifdef LUA_STATICLIB
 	lua_pushlightuserdata(L, &s_shimTable);
 	lua_rawseti(L, LUA_REGISTRYINDEX, 0x5348494D); // equal to 'SHIM'
+#endif
 
 	/* push the application metadata */
 	lua_pushstring(L, LUA_COPYRIGHT);
@@ -633,7 +656,7 @@ static int run_premake_main(lua_State* L, const char* script)
 
 	if (z == OKAY) {
 		const char* filename = lua_tostring(L, -1);
-		z = luaL_dofile(L, filename);
+		z = premake_luaL_dofile(L, filename);
 	}
 
 	return z;

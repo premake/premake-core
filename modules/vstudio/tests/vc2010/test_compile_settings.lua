@@ -158,6 +158,20 @@
 <ClCompile>
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>TurnOffAllWarnings</WarningLevel>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+	function suite.warningLevel_onNoWarningsOverOtherWarningsAPI()
+		fatalwarnings { "All" }
+		warnings "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>TurnOffAllWarnings</WarningLevel>
+	<Optimization>Disabled</Optimization>
 		]]
 	end
 
@@ -544,8 +558,20 @@
 -- Add <TreatWarningAsError> if FatalWarnings flag is set.
 --
 
-	function suite.treatWarningsAsError_onFatalWarnings()
+	function suite.treatWarningsAsError_onFatalWarningsViaFlag()
 		flags { "FatalCompileWarnings" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<TreatWarningAsError>true</TreatWarningAsError>
+		]]
+	end
+
+
+	function suite.treatWarningsAsError_onFatalWarningsViaAPI()
+		fatalwarnings { "All" }
 		prepare()
 		test.capture [[
 <ClCompile>

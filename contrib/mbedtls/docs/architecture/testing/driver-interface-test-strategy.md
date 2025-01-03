@@ -1,14 +1,24 @@
-# Mbed Crypto driver interface test strategy
+# Mbed TLS driver interface test strategy
 
-This document describes the test strategy for the driver interfaces in Mbed Crypto. Mbed Crypto has interfaces for secure element drivers, accelerator drivers and entropy drivers. This document is about testing Mbed Crypto itself; testing drivers is out of scope.
+This document describes the test strategy for the driver interfaces in Mbed TLS. Mbed TLS has interfaces for secure element drivers, accelerator drivers and entropy drivers. This document is about testing Mbed TLS itself; testing drivers is out of scope.
 
 The driver interfaces are standardized through PSA Cryptography functional specifications.
 
-## Secure element driver interface
+## Secure element driver interface testing
 
-The secure element driver interface (SE interface for short) is defined by [`psa/crypto_se_driver.h`](../../../include/psa/crypto_se_driver.h). This is an interface between Mbed Crypto and one or more third-party drivers.
+### Secure element driver interfaces
 
-The SE interface consists of one function provided by Mbed Crypto (`psa_register_se_driver`) and many functions that drivers must implement. To make a driver usable by Mbed Crypto, the initialization code must call `psa_register_se_driver` with a structure that describes the driver. The structure mostly contains function pointers, pointing to the driver's methods. All calls to a driver function are triggered by a call to a PSA crypto API function.
+#### Opaque driver interface
+
+The [unified driver interface](../../proposed/psa-driver-interface.md) supports both transparent drivers (for accelerators) and opaque drivers (for secure elements).
+
+Drivers exposing this interface need to be registered at compile time by declaring their JSON description file.
+
+#### Dynamic secure element driver interface
+
+The dynamic secure element driver interface (SE interface for short) is defined by [`psa/crypto_se_driver.h`](../../../include/psa/crypto_se_driver.h). This is an interface between Mbed TLS and one or more third-party drivers.
+
+The SE interface consists of one function provided by Mbed TLS (`psa_register_se_driver`) and many functions that drivers must implement. To make a driver usable by Mbed TLS, the initialization code must call `psa_register_se_driver` with a structure that describes the driver. The structure mostly contains function pointers, pointing to the driver's methods. All calls to a driver function are triggered by a call to a PSA crypto API function.
 
 ### SE driver interface unit tests
 
@@ -17,6 +27,8 @@ This section describes unit tests that must be implemented to validate the secur
 Many SE driver interface unit tests could be covered by running the existing API tests with a key in a secure element.
 
 #### SE driver registration
+
+This applies to dynamic drivers only.
 
 * Test `psa_register_se_driver` with valid and with invalid arguments.
 * Make at least one failing call to `psa_register_se_driver` followed by a successful call.
@@ -45,7 +57,7 @@ For each API function that can lead to a driver call (more precisely, for each d
 
 #### SE driver outputs
 
-For each API function that leads to a driver call, call it with parameters that cause a driver to be invoked and check how Mbed Crypto handles the outputs.
+For each API function that leads to a driver call, call it with parameters that cause a driver to be invoked and check how Mbed TLS handles the outputs.
 
 * Correct outputs.
 * Incorrect outputs such as an invalid output length.
@@ -75,7 +87,7 @@ Creating or removing a key in a secure element involves multiple storage modific
 * This must be done for each possible flow, including error cases (e.g. a key creation that fails midway due to `OUT_OF_MEMORY`).
 * The recovery during `psa_crypto_init` can itself be interrupted. Test those interruptions too.
 * Two things need to be tested: the key that is being created or destroyed, and the driver's persistent storage.
-* Check both that the storage has the expected content (this can be done by e.g. using a key that is supposed to be present) and does not have any unexpected content (for keys, this can be done by checking that `psa_open_key` fails with `PSA_ERRROR_DOES_NOT_EXIST`).
+* Check both that the storage has the expected content (this can be done by e.g. using a key that is supposed to be present) and does not have any unexpected content (for keys, this can be done by checking that `psa_open_key` fails with `PSA_ERROR_DOES_NOT_EXIST`).
 
 This requires instrumenting the storage implementation, either to force it to fail at each point or to record successive storage states and replay each of them. Each `psa_its_xxx` function call is assumed to be atomic.
 
@@ -102,14 +114,20 @@ We should have at least one driver that covers the whole interface:
 
 A PKCS#11 driver would be a good candidate. It would be useful as part of our product offering.
 
-## Accelerator driver interface
+## Transparent driver interface testing
 
-The accelerator driver interface is defined by [`psa/crypto_accel_driver.h`](../../../include/psa/crypto_accel_driver.h).
+The [unified driver interface](../../proposed/psa-driver-interface.md) defines interfaces for accelerators.
 
-TODO
+### Test requirements
 
-## Entropy driver interface
+#### Requirements for transparent driver testing
 
-The entropy driver interface is defined by [`psa/crypto_entropy_driver.h`](../../../include/psa/crypto_entropy_driver.h).
+Every cryptographic mechanism for which a transparent driver interface exists (key creation, cryptographic operations, …) must be exercised in at least one build. The test must verify that the driver code is called.
+
+#### Requirements for fallback
+
+The driver interface includes a fallback mechanism so that a driver can reject a request at runtime and let another driver handle the request. For each entry point, there must be at least three test runs with two or more drivers available with driver A configured to fall back to driver B, with one run where A returns `PSA_SUCCESS`, one where A returns `PSA_ERROR_NOT_SUPPORTED` and B is invoked, and one where A returns a different error and B is not invoked.
+
+## Entropy and randomness interface testing
 
 TODO

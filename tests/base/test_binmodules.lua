@@ -7,7 +7,7 @@
 	local suite = test.declare("premake_binmodules")
 	local p = premake
 
-	if not _COSMOPOLITAN then
+	if not _COSMOPOLITAN and debug.getregistry()[0x5348494D] ~= nil then
 
 	function suite.setup()
 		require("example")

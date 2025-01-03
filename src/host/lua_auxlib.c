@@ -6,18 +6,10 @@
 
 #include "premake.h"
 #include <assert.h>
+#include <string.h>
 
 
 static int chunk_wrapper(lua_State* L);
-
-
-
-/* Pull in Lua's aux lib implementation, but rename luaL_loadfilex() so I
- * can replace it with my own implementation. */
-
-#define luaL_loadfilex  original_luaL_loadfilex
-#include "lauxlib.c"
-#undef luaL_loadfilex
 
 
 
@@ -25,7 +17,7 @@ static int chunk_wrapper(lua_State* L);
  * Extend the default implementation of luaL_loadfile() to call my chunk
  * wrapper, above, before executing any scripts loaded from a file.
  */
-LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* mode)
+int premake_luaL_loadfilex (lua_State* L, const char* filename, const char* mode)
 {
 	const char* script_dir;
 	const char* test_name;
@@ -87,7 +79,7 @@ LUALIB_API int luaL_loadfilex (lua_State* L, const char* filename, const char* m
 		test_name = lua_tostring(L, -1);
 
 		if (test_name) {
-			z = original_luaL_loadfilex(L, test_name, mode);
+			z = luaL_loadfilex(L, test_name, mode);
 		}
 
 		/* If the file exists but errors, pass that through */
@@ -209,4 +201,155 @@ static int chunk_wrapper(lua_State* L)
 	lua_setglobal(L, "_SCRIPT_DIR");
 
 	return lua_gettop(L) - args - 2;
+}
+
+
+/**
+ * Copy of load_aux from lbaselib.c in Lua source
+ */
+static int load_aux(lua_State *L, int status, int envidx) {
+	if (status == LUA_OK) {
+		if (envidx != 0) {  /* 'env' parameter? */
+			lua_pushvalue(L, envidx);  /* environment for loaded function */
+			if (!lua_setupvalue(L, -2, 1))  /* set it as 1st upvalue */
+				lua_pop(L, 1);  /* remove 'env' if not used by previous call */
+		}
+		return 1;
+	}
+	else {  /* error (message is on top of the stack) */
+		lua_pushnil(L);
+		lua_insert(L, -2);  /* put before error message */
+		return 2;  /* return nil plus error message */
+	}
+}
+
+
+/**
+ * Extend the default implementation of luaB_loadfile() to call our
+ * luaL_loadfilex implementation.
+ */
+int premake_luaB_loadfile(lua_State *L)
+{
+	const char *fname = luaL_optstring(L, 1, NULL);
+	const char *mode = luaL_optstring(L, 2, NULL);
+	int env = (!lua_isnone(L, 3) ? 3 : 0);  /* 'env' index or 0 if no 'env' */
+	int status = premake_luaL_loadfilex(L, fname, mode);
+	return load_aux(L, status, env);
+}
+
+
+/**
+ * Copy of dofilecont from lbaselib.c in Lua source
+ */
+static int dofilecont(lua_State *L, int d1, lua_KContext d2) {
+	(void)d1;  (void)d2;  /* only to match 'lua_Kfunction' prototype */
+	return lua_gettop(L) - 1;
+}
+
+
+/**
+ * Extend the default implementation of luaB_dofile() to call our
+ * luaL_loadfilex implementation.
+ */
+int premake_luaB_dofile(lua_State *L)
+{
+	const char *fname = luaL_optstring(L, 1, NULL);
+	lua_settop(L, 1);
+	if (premake_luaL_loadfile(L, fname) != LUA_OK)
+		return lua_error(L);
+	lua_callk(L, 0, LUA_MULTRET, 0, dofilecont);
+	return dofilecont(L, 0, 0);
+}
+
+
+ /**
+  * Copy of readable from loadlib.c in Lua source
+  */
+static int readable(const char *filename) {
+	FILE *f = fopen(filename, "r");  /* try to open file */
+	if (f == NULL) return 0;  /* open failed */
+	fclose(f);
+	return 1;
+}
+
+
+/**
+ * Copy of pushnexttemplate from loadlib.c in Lua source
+ */
+static const char *pushnexttemplate(lua_State *L, const char *path) {
+	const char *l;
+	while (*path == *LUA_PATH_SEP) path++;  /* skip separators */
+	if (*path == '\0') return NULL;  /* no more templates */
+	l = strchr(path, *LUA_PATH_SEP);  /* find next separator */
+	if (l == NULL) l = path + strlen(path);
+	lua_pushlstring(L, path, l - path);  /* template */
+	return l;
+}
+
+
+/**
+ * Copy of searchpath from loadlib.c in Lua source
+ */
+static const char *searchpath(lua_State *L, const char *name,
+	const char *path,
+	const char *sep,
+	const char *dirsep) {
+	luaL_Buffer msg;  /* to build error message */
+	luaL_buffinit(L, &msg);
+	if (*sep != '\0')  /* non-empty separator? */
+		name = luaL_gsub(L, name, sep, dirsep);  /* replace it by 'dirsep' */
+	while ((path = pushnexttemplate(L, path)) != NULL) {
+		const char *filename = luaL_gsub(L, lua_tostring(L, -1),
+			LUA_PATH_MARK, name);
+		lua_remove(L, -2);  /* remove path template */
+		if (readable(filename))  /* does file exist and is readable? */
+			return filename;  /* return that file name */
+		lua_pushfstring(L, "\n\tno file '%s'", filename);
+		lua_remove(L, -2);  /* remove file name */
+		luaL_addvalue(&msg);  /* concatenate error msg. entry */
+	}
+	luaL_pushresult(&msg);  /* create error message */
+	return NULL;  /* not found */
+}
+
+
+/**
+ * Copy of findfile from loadlib.c in Lua source
+ */
+static const char *findfile(lua_State *L, const char *name,
+	const char *pname,
+	const char *dirsep) {
+	const char *path;
+	lua_getfield(L, lua_upvalueindex(1), pname);
+	path = lua_tostring(L, -1);
+	if (path == NULL)
+		luaL_error(L, "'package.%s' must be a string", pname);
+	return searchpath(L, name, path, ".", dirsep);
+}
+
+
+/**
+ * Copy of checkload from loadlib.c in Lua source
+ */
+static int checkload(lua_State *L, int stat, const char *filename) {
+	if (stat) {  /* module loaded successfully? */
+		lua_pushstring(L, filename);  /* will be 2nd argument to module */
+		return 2;  /* return open function and file name */
+	}
+	else
+		return luaL_error(L, "error loading module '%s' from file '%s':\n\t%s",
+			lua_tostring(L, 1), filename, lua_tostring(L, -1));
+}
+
+
+/**
+ * Extend the default implementation of requires 'searcher_Lua' function
+ * to use our luaL_loadfilex implementation.
+ */
+int premake_searcher_Lua(lua_State *L) {
+	const char *filename;
+	const char *name = luaL_checkstring(L, 1);
+	filename = findfile(L, name, "path", LUA_DIRSEP);
+	if (filename == NULL) return 1;  /* module not found in this path */
+	return checkload(L, (premake_luaL_loadfile(L, filename) == LUA_OK), filename);
 }

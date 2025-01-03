@@ -44,6 +44,9 @@
 
 	clang.shared = {
 		architecture = gcc.shared.architecture,
+		fatalwarnings = {
+			All = "-Werror"
+		},
 		flags = gcc.shared.flags,
 		floatingpoint = {
 			Fast = "-ffast-math",
@@ -226,6 +229,11 @@
 		architecture = {
 			x86 = "-m32",
 			x86_64 = "-m64",
+			WASM32 = "-m32",
+			WASM64 = "-m64",
+		},
+		linkerfatalwarnings = {
+			All = "-Wl,--fatal-warnings",
 		},
 		linktimeoptimization = clang.shared.linktimeoptimization,
 		kind = {

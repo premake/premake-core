@@ -242,8 +242,14 @@
 		test.contains("/Wall", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_OnFatalWarnings()
+	function suite.cflags_OnFatalWarningsViaFlag()
 		flags "FatalWarnings"
+		prepare()
+		test.contains("/WX", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_OnFatalWarningsViaAPI()
+		fatalwarnings { "All" }
 		prepare()
 		test.contains("/WX", msc.getcflags(cfg))
 	end
@@ -256,12 +262,11 @@
 		test.contains({ '/w1"enable"', '/wd"disable"', '/we"fatal"' }, msc.getcflags(cfg))
 	end
 
-	function suite.ldflags_OnFatalWarnings()
-		flags "FatalWarnings"
+	function suite.ldflags_OnFatalWarningsViaAPI()
+		linkerfatalwarnings { "All" }
 		prepare()
 		test.contains("/WX", msc.getldflags(cfg))
 	end
-
 
 --
 -- Check handling externalwarnings.

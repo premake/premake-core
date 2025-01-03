@@ -80,6 +80,23 @@
 						p.touch(prj, ".vcxitems")
 					end
 				end
+
+			elseif prj.kind == p.PACKAGING then
+
+				if prj.system ~= p.ANDROID then
+					p.error("System must be set to Android for a project of type Packaging")
+				end
+
+				if project.iscpp(prj) then
+					p.generate(prj, ".androidproj", vstudio.androidproj.generate)
+				
+					-- Skip generation of empty user files
+					local user = p.capture(function() vstudio.vc2010.generateUser(prj) end)
+					if #user > 0 then
+						p.generate(prj, ".androidproj.user", function() p.outln(user) end)
+					end
+				end
+
 			else
 				local projFileModified = p.generate(prj, ".vcxproj", vstudio.vc2010.generate)
 
