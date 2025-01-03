@@ -633,7 +633,7 @@
 				end
 
 				return nil
-			end,
+			end
 		}
 	}
 

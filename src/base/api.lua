@@ -265,11 +265,11 @@
 
 		if type(field.allowed) == "table" then
 			for i, item in ipairs(field.allowed) do
-				if(type(item) == "function") then
-					field.allowed["dynamicvalidator"] = item
-				else
-					field.allowed[item:lower()] = item
-				end
+				if type(item) == "string" then
+            		field.allowed[item:lower()] = item
+				elseif type(item) == "function" then
+					field.allowed["_function_" .. i .."_"] = item
+        		end
 			end
 		end
 
