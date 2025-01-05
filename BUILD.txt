@@ -18,7 +18,7 @@ BUILDING FROM A SOURCE PACKAGE
  officially supported toolsets in the build/ folder. Build the release
  configuration and you will be ready to go. For makefiles:
 
-    $ cd build/gmake2.unix
+    $ cd build/gmake.unix
     $ make config=release
 
  The binaries will be placed in the ./bin/release directory.
@@ -64,7 +64,7 @@ Alternatively, you may call the Makefile directly:
  files for your toolset by running a command like the following in the
  top-level Premake directory:
 
-    $ premake5 gmake2  # for makefiles
+    $ premake5 gmake  # for makefiles
     $ premake5 vs2012 # for a Visual Studio 2012 solution
     $ premake --help  # to see a list of supported toolsets
 
@@ -114,7 +114,7 @@ BUILDING deb BINARY PACKAGE
 
  0. sudo apt install devscripts
  1. bootstrap the premake
- 2. ./bin/release/premake5 gmake2
+ 2. ./bin/release/premake5 gmake
  3. cp ./packages/debian ./debian
  4. debuild --no-lintian --no-sign
  5. the built package should appear in the parent dir.

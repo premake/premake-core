@@ -1,12 +1,12 @@
-local suite = test.declare("gmake2_wks")
+local suite = test.declare("gmake_wks")
 
 local p = premake
-local gmake2 = premake.modules.gmake2
+local gmake = premake.modules.gmake
 
 local wks, prj, cfg
 
 function suite.setup()
-	p.escaper(gmake2.esc)
+	p.escaper(gmake.esc)
 	wks = workspace("MyWorkspace")
 	configurations { "Debug", "Release" }
 end
@@ -16,7 +16,7 @@ local function prepare()
 	wks = test.getWorkspace(wks)
 	prj = test.getproject(wks, 1)
 
-	gmake2.projectrules(wks)
+	gmake.projectrules(wks)
 end
 
 

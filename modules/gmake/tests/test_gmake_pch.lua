@@ -1,14 +1,14 @@
 --
--- test_gmake2_pch.lua
+-- test_gmake_pch.lua
 -- Validate the setup for precompiled headers in makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
-	local suite = test.declare("gmake2_pch")
+	local suite = test.declare("gmake_pch")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 	local project = p.project
 
@@ -20,25 +20,25 @@
 
 	local wks, prj
 	function suite.setup()
-		gmake2.cpp.initialize()
+		gmake.cpp.initialize()
 		wks, prj = test.createWorkspace()
 	end
 
 	local function prepareVars()
 		local cfg = test.getconfig(prj, "Debug")
-		gmake2.cpp.pch(cfg)
+		gmake.cpp.pch(cfg)
 	end
 
 	local function prepareRules()
 		local cfg = test.getconfig(prj, "Debug")
-		gmake2.cpp.pchRules(cfg.project)
+		gmake.cpp.pchRules(cfg.project)
 	end
 
 	local function prepareFlags()
 		local project = test.getproject(wks, 1)
-		gmake2.cpp.createRuleTable(project)
-		gmake2.cpp.createFileTable(project)
-		gmake2.cpp.outputFileRuleSection(project)
+		gmake.cpp.createRuleTable(project)
+		gmake.cpp.createFileTable(project)
+		gmake.cpp.outputFileRuleSection(project)
 	end
 
 --

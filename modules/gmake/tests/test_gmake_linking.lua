@@ -1,14 +1,14 @@
 --
--- test_gmake2_linking.lua
+-- test_gmake_linking.lua
 -- Validate the link step generation for makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_linking")
+	local suite = test.declare("gmake_linking")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
-	local cpp = gmake2.cpp
+	local gmake = p.modules.gmake
+	local cpp = gmake.cpp
 
 	local project = p.project
 

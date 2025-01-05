@@ -30,7 +30,7 @@ Please provide a [minimal, reproducible example](https://stackoverflow.com/help/
 - [ ] Visual Studio 2008 (vs2008)
 - [ ] Visual Studio 2005 (vs2005)
 - [ ] GNU Makefile (gmake)
-- [ ] GNU Makefile 2 (gmake2)
+- [ ] GNU Makefile Legacy (gmakelegacy)
 - [ ] XCode (xcode)
 - [ ] Codelite
 - [ ] Other (Please list below)

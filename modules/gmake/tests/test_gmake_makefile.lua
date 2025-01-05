@@ -1,14 +1,14 @@
 --
--- test_gmake2_makefile.lua
+-- test_gmake_makefile.lua
 -- Validate the makefile projects.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
   local p = premake
-  local suite = test.declare("gmake2_makefile")
+  local suite = test.declare("gmake_makefile")
 
   local p = premake
-  local gmake2 = p.modules.gmake2
+  local gmake = p.modules.gmake
 
   local project = p.project
 
@@ -26,7 +26,7 @@
 
   local function prepare()
     prj = test.getproject(wks, 1)
-    gmake2.makefile.configs(prj)
+    gmake.makefile.configs(prj)
   end
 
 

@@ -1,13 +1,13 @@
 --
--- test_gmake2_objects.lua
+-- test_gmake_objects.lua
 -- Validate the list of objects for a makefile.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_objects")
+	local suite = test.declare("gmake_objects")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 
 --
@@ -17,15 +17,15 @@
 	local wks, prj
 
 	function suite.setup()
-		gmake2.cpp.initialize()
+		gmake.cpp.initialize()
 		wks = test.createWorkspace()
 	end
 
 	local function prepare()
 		prj = test.getproject(wks, 1)
-		gmake2.cpp.createRuleTable(prj)
-		gmake2.cpp.createFileTable(prj)
-		gmake2.cpp.outputFilesSection(prj)
+		gmake.cpp.createRuleTable(prj)
+		gmake.cpp.createFileTable(prj)
+		gmake.cpp.outputFilesSection(prj)
 	end
 
 

@@ -1,13 +1,13 @@
 --
--- test_gmake2_file_rules.lua
+-- test_gmake_file_rules.lua
 -- Validate the makefile source building rules.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_file_rules")
+	local suite = test.declare("gmake_file_rules")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 --
 -- Setup
@@ -16,8 +16,8 @@
 	local wks, prj
 
 	function suite.setup()
-		p.escaper(gmake2.esc)
-		gmake2.cpp.initialize()
+		p.escaper(gmake.esc)
+		gmake.cpp.initialize()
 
 		rule "TestRule"
 		display "Test Rule"
@@ -75,9 +75,9 @@
 		prj = p.workspace.getproject(wks, 1)
 		p.oven.bake()
 
-		gmake2.cpp.createRuleTable(prj)
-		gmake2.cpp.createFileTable(prj)
-		gmake2.cpp.outputFileRuleSection(prj)
+		gmake.cpp.createRuleTable(prj)
+		gmake.cpp.createFileTable(prj)
+		gmake.cpp.outputFileRuleSection(prj)
 	end
 
 

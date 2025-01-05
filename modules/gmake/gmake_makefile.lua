@@ -1,14 +1,14 @@
 --
--- gmake2_makefile.lua
+-- gmake_makefile.lua
 -- Generate a C/C++ project makefile.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
-	gmake2.makefile  = {}
-	local makefile   = gmake2.makefile
+	gmake.makefile  = {}
+	local makefile   = gmake.makefile
 
 	local project    = p.project
 	local config     = p.config
@@ -25,8 +25,8 @@
 
 	makefile.elements.makefile = function(prj)
 		return {
-			gmake2.header,
-			gmake2.phonyRules,
+			gmake.header,
+			gmake.phonyRules,
 			makefile.configs,
 			makefile.targetRules
 		}
@@ -40,9 +40,9 @@
 
 	makefile.elements.configuration = function(cfg)
 		return {
-			gmake2.target,
-			gmake2.buildCommands,
-			gmake2.cleanCommands,
+			gmake.target,
+			gmake.buildCommands,
+			gmake.cleanCommands,
 		}
 	end
 
@@ -86,7 +86,7 @@
 	end
 
 
-	function gmake2.buildCommands(cfg)
+	function gmake.buildCommands(cfg)
 		_p('  define BUILDCMDS')
 		local steps = cfg.buildcommands
 		if #steps > 0 then
@@ -98,7 +98,7 @@
 	end
 
 
-	function gmake2.cleanCommands(cfg)
+	function gmake.cleanCommands(cfg)
 		_p('  define CLEANCMDS')
 		local steps = cfg.cleancommands
 		if #steps > 0 then

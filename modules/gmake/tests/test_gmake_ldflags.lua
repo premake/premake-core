@@ -1,13 +1,13 @@
 --
--- test_gmake2_ldflags.lua
+-- test_gmake_ldflags.lua
 -- Tests compiler and linker flags for Makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_ldflags")
+	local suite = test.declare("gmake_ldflags")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 
 --
@@ -24,7 +24,7 @@
 	local function prepare(calls)
 		local cfg = test.getconfig(prj, "Debug")
 		local toolset = p.tools.gcc
-		gmake2.cpp.ldFlags(cfg, toolset)
+		gmake.cpp.ldFlags(cfg, toolset)
 	end
 
 

@@ -1,13 +1,13 @@
 --
--- test_gmake2_includes.lua
+-- test_gmake_includes.lua
 -- Validate the link step generation for makefiles.
 -- (c) 2016-2023 Jess Perkins and the Premake project
 --
 
-local suite = test.declare("gmake2_includes")
+local suite = test.declare("gmake_includes")
 
 local p = premake
-local gmake2 = p.modules.gmake2
+local gmake = p.modules.gmake
 
 local project = p.project
 
@@ -25,7 +25,7 @@ end
 local function prepare(calls)
     local cfg = test.getconfig(prj, "Debug")
     local toolset = p.tools.gcc
-    gmake2.cpp.includes(cfg, toolset)
+    gmake.cpp.includes(cfg, toolset)
 end
 
 

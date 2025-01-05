@@ -1,14 +1,14 @@
 --
--- gmake2_cpp.lua
+-- gmake_cpp.lua
 -- Generate a C/C++ project makefile.
--- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
+-- (c) 2016-2025 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
-	gmake2.cpp       = {}
-	local cpp        = gmake2.cpp
+	gmake.cpp       = {}
+	local cpp        = gmake.cpp
 
 	local project    = p.project
 	local config     = p.config
@@ -28,9 +28,9 @@
 
 	cpp.elements.makefile = function(prj)
 		return {
-			gmake2.header,
-			gmake2.phonyRules,
-			gmake2.shellType,
+			gmake.header,
+			gmake.phonyRules,
+			gmake.shellType,
 			cpp.createRuleTable,
 			cpp.outputConfigurationSection,
 			cpp.outputPerFileConfigurationSection,
@@ -60,13 +60,13 @@
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
 			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CXX) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
 			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CC) %{premake.modules.gmake2.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
@@ -187,7 +187,7 @@
 				buildoutputs  = { output },
 				source        = node.relpath,
 				buildmessage  = '$(notdir $<)',
-				verbatimbuildcommands = gmake2.copyfile_cmds('"$<"', '"$@"'),
+				verbatimbuildcommands = gmake.copyfile_cmds('"$<"', '"$@"'),
 				buildinputs = {'$(TARGETDIR)'}
 			}
 			table.insert(cfg._gmake.fileRules, file)
@@ -306,8 +306,8 @@
 	cpp.elements.configuration = function(cfg)
 		return {
 			cpp.tools,
-			gmake2.target,
-			gmake2.objdir,
+			gmake.target,
+			gmake.objdir,
 			cpp.pch,
 			cpp.defines,
 			cpp.includes,
@@ -322,10 +322,10 @@
 			cpp.linkCmd,
 			cpp.bindirs,
 			cpp.exepaths,
-			gmake2.settings,
-			gmake2.preBuildCmds,
-			gmake2.preLinkCmds,
-			gmake2.postBuildCmds,
+			gmake.settings,
+			gmake.preBuildCmds,
+			gmake.preLinkCmds,
+			gmake.postBuildCmds,
 		}
 	end
 
@@ -334,7 +334,7 @@
 		_p('# Configurations')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, cpp.elements.configuration)
+		gmake.outputSection(prj, cpp.elements.configuration)
 	end
 
 
@@ -381,61 +381,61 @@
 
 
 	function cpp.defines(cfg, toolset)
-		p.outln('DEFINES +=' .. gmake2.list(table.join(toolset.getdefines(cfg.defines, cfg), toolset.getundefines(cfg.undefines))))
+		p.outln('DEFINES +=' .. gmake.list(table.join(toolset.getdefines(cfg.defines, cfg), toolset.getundefines(cfg.undefines))))
 	end
 
 
 	function cpp.includes(cfg, toolset)
 		local includes = toolset.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter)
-		p.outln('INCLUDES +=' .. gmake2.list(includes))
+		p.outln('INCLUDES +=' .. gmake.list(includes))
 	end
 
 
 	function cpp.forceInclude(cfg, toolset)
 		local includes = toolset.getforceincludes(cfg)
-		p.outln('FORCE_INCLUDE +=' .. gmake2.list(includes))
+		p.outln('FORCE_INCLUDE +=' .. gmake.list(includes))
 	end
 
 
 	function cpp.cppFlags(cfg, toolset)
-		local flags = gmake2.list(toolset.getcppflags(cfg))
+		local flags = gmake.list(toolset.getcppflags(cfg))
 		p.outln('ALL_CPPFLAGS += $(CPPFLAGS)' .. flags .. ' $(DEFINES) $(INCLUDES)')
 	end
 
 
 	function cpp.cFlags(cfg, toolset)
-		local flags = gmake2.list(table.join(toolset.getcflags(cfg), cfg.buildoptions))
+		local flags = gmake.list(table.join(toolset.getcflags(cfg), cfg.buildoptions))
 		p.outln('ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS)' .. flags)
 	end
 
 
 	function cpp.cxxFlags(cfg, toolset)
-		local flags = gmake2.list(table.join(toolset.getcxxflags(cfg), cfg.buildoptions))
+		local flags = gmake.list(table.join(toolset.getcxxflags(cfg), cfg.buildoptions))
 		p.outln('ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS)' .. flags)
 	end
 
 
 	function cpp.resFlags(cfg, toolset)
 		local resflags = table.join(toolset.getdefines(cfg.resdefines), toolset.getincludedirs(cfg, cfg.resincludedirs), cfg.resoptions)
-		p.outln('ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)' .. gmake2.list(resflags))
+		p.outln('ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)' .. gmake.list(resflags))
 	end
 
 
 	function cpp.libs(cfg, toolset)
 		local flags = toolset.getlinks(cfg)
-		p.outln('LIBS +=' .. gmake2.list(flags, true))
+		p.outln('LIBS +=' .. gmake.list(flags, true))
 	end
 
 
 	function cpp.ldDeps(cfg, toolset)
 		local deps = config.getlinks(cfg, "siblings", "fullpath")
-		p.outln('LDDEPS +=' .. gmake2.list(p.esc(deps)))
+		p.outln('LDDEPS +=' .. gmake.list(p.esc(deps)))
 	end
 
 
 	function cpp.ldFlags(cfg, toolset)
 		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), toolset.getldflags(cfg), cfg.linkoptions)
-		p.outln('ALL_LDFLAGS += $(LDFLAGS)' .. gmake2.list(flags))
+		p.outln('ALL_LDFLAGS += $(LDFLAGS)' .. gmake.list(flags))
 	end
 
 
@@ -517,24 +517,24 @@
 	end
 
 	function cpp.perFileFlags(cfg, fcfg)
-		local toolset = gmake2.getToolSet(cfg)
+		local toolset = gmake.getToolSet(cfg)
 
 		local isCFile = path.iscfile(fcfg.name)
 
 		local getflags = iif(isCFile, toolset.getcflags, toolset.getcxxflags)
-		local value = gmake2.list(table.join(getflags(fcfg), fcfg.buildoptions))
+		local value = gmake.list(table.join(getflags(fcfg), fcfg.buildoptions))
 
 		if fcfg.defines or fcfg.undefines then
 			local defs = table.join(toolset.getdefines(fcfg.defines, cfg), toolset.getundefines(fcfg.undefines))
 			if #defs > 0 then
-				value = value .. gmake2.list(defs)
+				value = value .. gmake.list(defs)
 			end
 		end
 
 		if fcfg.includedirs or fcfg.externalincludedirs or fcfg.frameworkdirs then
 			local includes = toolset.getincludedirs(cfg, fcfg.includedirs, fcfg.externalincludedirs, fcfg.frameworkdirs)
 			if #includes > 0 then
-				value = value ..  gmake2.list(includes)
+				value = value ..  gmake.list(includes)
 			end
 		end
 
@@ -600,7 +600,7 @@
 		end
 		_x('')
 
-		gmake2.outputSection(prj, cpp.elements.filesets)
+		gmake.outputSection(prj, cpp.elements.filesets)
 	end
 
 	function cpp.outputFileset(cfg, kind, file)
@@ -616,10 +616,10 @@
 		return {
 			cpp.allRules,
 			cpp.targetRules,
-			gmake2.targetDirRules,
-			gmake2.objDirRules,
+			gmake.targetDirRules,
+			gmake.objDirRules,
 			cpp.cleanRules,
-			gmake2.preBuildRules,
+			gmake.preBuildRules,
 			cpp.customDeps,
 			cpp.pchRules,
 		}
@@ -630,7 +630,7 @@
 		_p('# Rules')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, cpp.elements.rules)
+		gmake.outputSection(prj, cpp.elements.rules)
 	end
 
 
@@ -735,7 +735,7 @@
 		_p('# File Rules')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, cpp.elements.fileRules)
+		gmake.outputSection(prj, cpp.elements.fileRules)
 	end
 
 
