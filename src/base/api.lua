@@ -267,8 +267,6 @@
 			for i, item in ipairs(field.allowed) do
 				if type(item) == "string" then
             		field.allowed[item:lower()] = item
-				elseif type(item) == "function" then
-					field.allowed["_function_" .. i .."_"] = item
         		end
 			end
 		end

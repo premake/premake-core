@@ -6,7 +6,7 @@ dotnetsdk "SDK"
 
 For more information see the MSDN documentation [here](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview)
 
-## parameters ##
+## Parameters ##
 `SDK` is one of:
 
  * [Default](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props)
@@ -23,7 +23,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 beta4 or later.
+Premake 5.0 beta5 or later.
 
 Visual studio is the only toolset currently supported.
 

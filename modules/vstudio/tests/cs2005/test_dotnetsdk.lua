@@ -1,7 +1,7 @@
 --
 -- tests/actions/vstudio/cs2005/test_dotnetsdk.lua
 -- Test DotnetSDK feature Visual Studio 2005+ C# project.
--- Copyright (c) 2012-2024 Jason Perkins and the Premake project
+-- Copyright (c) 2012-2025 Jason Perkins and the Premake project
 --
 	local p = premake
 	local suite = test.declare("vstudio_cs2005_dotnetsdk")
