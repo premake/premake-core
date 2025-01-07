@@ -623,8 +623,6 @@
 			function (value)
 				-- value is expected to be in the format <sdk>/<version>
 				local parts = value:explode("/", true, 1)
-				local sdk = parts[1] or value
-
 
 				if parts and #parts == 2 then
 					if p.api.checkValue(p.field.get("dotnetsdk"), parts[1], "string") then
