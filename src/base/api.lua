@@ -265,7 +265,9 @@
 
 		if type(field.allowed) == "table" then
 			for i, item in ipairs(field.allowed) do
-				field.allowed[item:lower()] = item
+				if type(item) == "string" then
+            		field.allowed[item:lower()] = item
+        		end
 			end
 		end
 

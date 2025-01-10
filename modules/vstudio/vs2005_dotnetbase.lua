@@ -57,11 +57,7 @@
 
 	function dotnetbase.projectElement(prj)
 		if dotnetbase.isNewFormatProject(prj) then
-			if prj.flags.WPF then
-				_p('<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">')
-			else
-				_p('<Project Sdk="Microsoft.NET.Sdk">')
-			end
+			_p('<Project Sdk="%s">', dotnetbase.netcore.getsdk(prj))
 		else
 			local ver = ''
 			local action = p.action.current()
@@ -825,6 +821,33 @@
 		if cfg.flags.WPF then
 			_p(2,'<UseWpf>true</UseWpf>')
 		end
+	end
+
+	function dotnetbase.netcore.getsdk(cfg)
+        local map = {
+			["Default"] = "Microsoft.NET.Sdk",
+            ["Web"] = "Microsoft.NET.Sdk.Web",
+            ["Razor"] = "Microsoft.NET.Sdk.Razor",
+            ["Worker"] = "Microsoft.NET.Sdk.Worker",
+            ["Blazor"] = "Microsoft.NET.Sdk.BlazorWebAssembly",
+            ["WindowsDesktop"] = "Microsoft.NET.Sdk.WindowsDesktop",
+            ["MSTest"] = "MSTest.Sdk",
+        }
+
+		local parts = nil
+
+		if cfg.dotnetsdk then
+			parts = cfg.dotnetsdk:explode("/", true, 1)
+		end
+
+		local sdk = (parts and #parts > 0 and parts[1]) or cfg.dotnetsdk
+		if not parts or #parts < 2 then
+			return map[sdk or "Default"]
+		elseif parts and #parts == 2 then
+			return string.format("%s/%s", map[parts[1]] or parts[1], parts[2])
+		end
+
+		return map["Default"]
 	end
 
 	function dotnetbase.allowUnsafeBlocks(cfg)
