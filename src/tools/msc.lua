@@ -179,7 +179,8 @@
 	msc.cflags = {
 		cdialect = {
 			["C11"] = "/std:c11",
-			["C17"] = "/std:c17"
+			["C17"] = "/std:c17",
+			["C23"] = "/std:clatest"
 		}
 	}
 

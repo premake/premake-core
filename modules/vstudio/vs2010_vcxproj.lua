@@ -2064,6 +2064,8 @@
 				m.element("LanguageStandard_C", condition, 'stdc11')
 			elseif (cfg.cdialect == "C17") then
 				m.element("LanguageStandard_C", condition, 'stdc17')
+			elseif (cfg.cdialect == "C23") then
+				m.element("LanguageStandard_C", condition, 'stdclatest')
 			end
 		end
 	end

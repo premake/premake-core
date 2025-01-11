@@ -172,11 +172,13 @@
 			["C99"] = "-std=c99",
 			["C11"] = "-std=c11",
 			["C17"] = "-std=c17",
+			["C23"] = "-std=c23",
 			["gnu89"] = "-std=gnu89",
 			["gnu90"] = "-std=gnu90",
 			["gnu99"] = "-std=gnu99",
 			["gnu11"] = "-std=gnu11",
-			["gnu17"] = "-std=gnu17"
+			["gnu17"] = "-std=gnu17",
+			["gnu23"] = "-std=gnu23",
 		}
 	}
 

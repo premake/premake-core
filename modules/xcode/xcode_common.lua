@@ -1369,10 +1369,14 @@
 		["C90"] = "c90",
 		["C99"] = "c99",
 		["C11"] = "c11",
+		["C17"] = "c17",
+		["C23"] = "c23",
 		["gnu89"] = "gnu89",
 		["gnu90"] = "gnu90",
 		["gnu99"] = "gnu99",
-		["gnu11"] = "gnu11"
+		["gnu11"] = "gnu11",
+		["gnu17"] = "gnu17",
+		["gnu23"] = "gnu23",
 	}
 
 	function xcode.XCBuildConfiguration_CLanguageStandard(settings, cfg)

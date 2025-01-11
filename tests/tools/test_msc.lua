@@ -390,6 +390,12 @@ end
 		test.contains('/std:c17', msc.getcflags(cfg))
 	end
 
+	function suite.cdialectC23()
+		cdialect "C23"
+		prepare()
+		test.contains('/std:clatest', msc.getcflags(cfg))
+	end
+
 --
 -- Check handling of cppdialect.
 --
