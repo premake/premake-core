@@ -12,10 +12,7 @@ Premake will use its [extended set of module locations](Locating-Scripts.md) whe
 
 `versions` is an optional string of a version requirements. See the examples below for more information on the format of the requirements string. If the requirements are not met, an error will be raised.
 
-`silent` will change the default error handling behavior.
-By default, `require` raises an error if the module could not be loaded
-or if the module version does not meet the `versions` criteria.
-If `silent` is set, the `require` function will return `false` and the error message instead.
+`silent` is not set or set to false, the require function will raise an error if the module fails to load or the version does not meet the criteria set by versions. If silent is set to true, then require shall return a tuple of false and the error message.
 
 
 ### Returns ###
