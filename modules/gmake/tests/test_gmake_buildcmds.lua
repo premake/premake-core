@@ -1,8 +1,8 @@
 
 
 
-local suite = test.declare("gmake2_buildcommands")
-local gmake2 = premake.modules.gmake2
+local suite = test.declare("gmake_buildcommands")
+local gmake = premake.modules.gmake
 
 local wks, prj, cfg
 
@@ -18,8 +18,8 @@ local function prepare()
 	prj = test.getproject(wks, 1)
 	cfg = test.getconfig(prj, "Debug")
 
-	local toolset = gmake2.getToolSet(cfg)
-	gmake2.postBuildCmds(cfg, toolset)
+	local toolset = gmake.getToolSet(cfg)
+	gmake.postBuildCmds(cfg, toolset)
 end
 
 

@@ -1,13 +1,13 @@
 --
--- test_gmake2_tools.lua
+-- test_gmake_tools.lua
 -- Tests for tools support in makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_tools")
+	local suite = test.declare("gmake_tools")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 	local project = premake.project
 
@@ -29,7 +29,7 @@
 --
 
 	function suite.usesCorrectTools_gcc()
-		gmake2.cpp.tools(cfg, p.tools.gcc)
+		gmake.cpp.tools(cfg, p.tools.gcc)
 		test.capture [[
 ifeq ($(origin CC), default)
   CC = gcc
@@ -45,7 +45,7 @@ RESCOMP = windres
 	end
 
 	function suite.usesCorrectTools_clang()
-		gmake2.cpp.tools(cfg, p.tools.clang)
+		gmake.cpp.tools(cfg, p.tools.clang)
 		test.capture [[
 ifeq ($(origin CC), default)
   CC = clang

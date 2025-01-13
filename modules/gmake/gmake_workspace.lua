@@ -1,11 +1,11 @@
 --
--- gmake2_workspace.lua
+-- gmake_workspace.lua
 -- Generate a workspace-level makefile.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 	local tree    = p.tree
 	local project = p.project
@@ -14,20 +14,20 @@
 -- Generate a GNU make "workspace" makefile, with support for the new platforms API.
 --
 
-	function gmake2.generate_workspace(wks)
+	function gmake.generate_workspace(wks)
 		p.eol("\n")
 
-		gmake2.header(wks)
+		gmake.header(wks)
 
-		gmake2.configmap(wks)
-		gmake2.projects(wks)
+		gmake.configmap(wks)
+		gmake.projects(wks)
 
-		gmake2.workspacePhonyRule(wks)
-		gmake2.groupRules(wks)
+		gmake.workspacePhonyRule(wks)
+		gmake.groupRules(wks)
 
-		gmake2.projectrules(wks)
-		gmake2.cleanrules(wks)
-		gmake2.helprule(wks)
+		gmake.projectrules(wks)
+		gmake.cleanrules(wks)
+		gmake.helprule(wks)
 	end
 
 
@@ -36,7 +36,7 @@
 -- level configurations to the project level equivalents.
 --
 
-	function gmake2.configmap(wks)
+	function gmake.configmap(wks)
 		local first = true
 		for cfg in p.workspace.eachconfig(wks) do
 			if first then
@@ -49,7 +49,7 @@
 			for prj in p.workspace.eachproject(wks) do
 				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
 				if prjcfg then
-					_p('  %s_config = %s', gmake2.tovar(prj.name), prjcfg.shortname)
+					_p('  %s_config = %s', gmake.tovar(prj.name), prjcfg.shortname)
 				end
 			end
 
@@ -69,10 +69,10 @@
 -- Write out the rules for the `make clean` action.
 --
 
-	function gmake2.cleanrules(wks)
+	function gmake.cleanrules(wks)
 		_p('clean:')
 		for prj in p.workspace.eachproject(wks) do
-			local prjpath = p.filename(prj, gmake2.getmakefilename(prj, true))
+			local prjpath = p.filename(prj, gmake.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(wks.location, prjpath))
 			local prjname = path.getname(prjpath)
 			_x(1,'@${MAKE} --no-print-directory -C %s -f %s clean', prjdir, prjname)
@@ -85,7 +85,7 @@
 -- Write out the make file help rule and configurations list.
 --
 
-	function gmake2.helprule(wks)
+	function gmake.helprule(wks)
 		_p('help:')
 		_p(1,'@echo "Usage: make [config=name] [target]"')
 		_p(1,'@echo ""')
@@ -114,7 +114,7 @@
 -- Write out the list of projects that comprise the workspace.
 --
 
-	function gmake2.projects(wks)
+	function gmake.projects(wks)
 		_p('PROJECTS := %s', table.concat(p.esc(table.extract(wks.projects, "name")), " "))
 		_p('')
 	end
@@ -123,7 +123,7 @@
 -- Write out the workspace PHONY rule
 --
 
-	function gmake2.workspacePhonyRule(wks)
+	function gmake.workspacePhonyRule(wks)
 		local groups = {}
 		local tr = p.workspace.grouptree(wks)
 		tree.traverse(tr, {
@@ -141,7 +141,7 @@
 --
 -- Write out the phony rules representing project groups
 --
-	function gmake2.groupRules(wks)
+	function gmake.groupRules(wks)
 		-- Transform workspace groups into target aggregate
 		local tr = p.workspace.grouptree(wks)
 		tree.traverse(tr, {
@@ -179,19 +179,19 @@
 -- Write out the rules to build each of the workspace's projects.
 --
 
-	function gmake2.projectrules(wks)
+	function gmake.projectrules(wks)
 		for prj in p.workspace.eachproject(wks) do
 			local deps = project.getdependencies(prj)
 			deps = table.extract(deps, "name")
 
-			_p('%s:%s', p.esc(prj.name), gmake2.list(p.esc(deps)))
+			_p('%s:%s', p.esc(prj.name), gmake.list(p.esc(deps)))
 
-			local cfgvar = gmake2.tovar(prj.name)
+			local cfgvar = gmake.tovar(prj.name)
 			_p('ifneq (,$(%s_config))', cfgvar)
 
 			_p(1,'@echo "==== Building %s ($(%s_config)) ===="', prj.name, cfgvar)
 
-			local prjpath = p.filename(prj, gmake2.getmakefilename(prj, true))
+			local prjpath = p.filename(prj, gmake.getmakefilename(prj, true))
 			local prjdir = path.getdirectory(path.getrelative(wks.location, prjpath))
 			local prjname = path.getname(prjpath)
 

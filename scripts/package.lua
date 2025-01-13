@@ -195,7 +195,7 @@ if kind == "source" then
 	}
 
 	local perOSActions = {
-		"gmake2",
+		"gmake",
 		"codelite"
 	}
 

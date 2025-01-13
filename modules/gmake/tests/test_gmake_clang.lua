@@ -1,13 +1,13 @@
 --
--- test_gmake2_clang.lua
+-- test_gmake_clang.lua
 -- Test Clang support in Makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_clang")
+	local suite = test.declare("gmake_clang")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 --
 -- Setup
@@ -27,7 +27,7 @@
 --
 
 	function suite.usesCorrectCompilers()
-		gmake2.cpp.outputConfigurationSection(prj)
+		gmake.cpp.outputConfigurationSection(prj)
 		test.capture [[
 # Configurations
 # #############################################

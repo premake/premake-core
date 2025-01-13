@@ -1,13 +1,13 @@
 --
--- gmake2_perfile_flags.lua
+-- gmake_perfile_flags.lua
 -- Tests compiler and linker flags for Makefiles.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
-	local suite = test.declare("gmake2_perfile_flags")
+	local suite = test.declare("gmake_perfile_flags")
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
 	local project = p.project
 
@@ -23,7 +23,7 @@
 
 	local function prepare()
 		local prj = p.workspace.getproject(wks, 1)
-		gmake2.cpp.outputPerFileConfigurationSection(prj)
+		gmake.cpp.outputPerFileConfigurationSection(prj)
 	end
 
 

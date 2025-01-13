@@ -1,14 +1,14 @@
 --
--- gmake2_utility.lua
+-- gmake_utility.lua
 -- Generate a C/C++ project makefile.
 -- (c) 2016-2017 Jess Perkins, Blizzard Entertainment and the Premake project
 --
 
 	local p = premake
-	local gmake2 = p.modules.gmake2
+	local gmake = p.modules.gmake
 
-	gmake2.utility   = {}
-	local utility    = gmake2.utility
+	gmake.utility   = {}
+	local utility    = gmake.utility
 
 	local project    = p.project
 	local config     = p.config
@@ -27,9 +27,9 @@
 
 	utility.elements.makefile = function(prj)
 		return {
-			gmake2.header,
-			gmake2.phonyRules,
-			gmake2.shellType,
+			gmake.header,
+			gmake.phonyRules,
+			gmake.shellType,
 			utility.initialize,
 			utility.createFileTable,
 			utility.outputConfigurationSection,
@@ -205,10 +205,10 @@
 		return {
 			utility.bindirs,
 			utility.exepaths,
-			gmake2.settings,
-			gmake2.preBuildCmds,
-			gmake2.preLinkCmds,
-			gmake2.postBuildCmds,
+			gmake.settings,
+			gmake.preBuildCmds,
+			gmake.preLinkCmds,
+			gmake.postBuildCmds,
 		}
 	end
 
@@ -217,7 +217,7 @@
 		_p('# Configurations')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, utility.elements.configuration)
+		gmake.outputSection(prj, utility.elements.configuration)
 	end
 
 
@@ -264,7 +264,7 @@
 		end
 		_x('')
 
-		gmake2.outputSection(prj, utility.elements.filesets)
+		gmake.outputSection(prj, utility.elements.filesets)
 	end
 
 
@@ -281,7 +281,7 @@
 		return {
 			utility.allRules,
 			utility.targetRules,
-			gmake2.targetDirRules,
+			gmake.targetDirRules,
 			utility.cleanRules,
 		}
 	end
@@ -291,7 +291,7 @@
 		_p('# Rules')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, utility.elements.rules)
+		gmake.outputSection(prj, utility.elements.rules)
 	end
 
 
@@ -347,7 +347,7 @@
 		_p('# File Rules')
 		_p('# #############################################')
 		_p('')
-		gmake2.outputSection(prj, utility.elements.fileRules)
+		gmake.outputSection(prj, utility.elements.fileRules)
 	end
 
 
