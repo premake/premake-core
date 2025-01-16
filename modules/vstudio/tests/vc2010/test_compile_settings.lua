@@ -1477,6 +1477,22 @@
 		]]
 	end
 
+	function suite.onLanguage_C23_VS2019()
+		p.action.set("vs2019")
+
+		cdialect 'C23'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard_C>stdclatest</LanguageStandard_C>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+</ClCompile>
+		]]
+	end
+
 	function suite.onLanguage_CppLatest_VS2010()
 		cppdialect 'C++latest'
 		prepare()

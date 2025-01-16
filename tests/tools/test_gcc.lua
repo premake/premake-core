@@ -947,6 +947,13 @@ end
 		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
+	function suite.cflags_onC23()
+		cdialect "C23"
+		prepare()
+		test.contains({ "-std=c23" }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
+	end
+
 	function suite.cflags_ongnu89()
 		cdialect "gnu89"
 		prepare()
@@ -979,6 +986,13 @@ end
 		cdialect "gnu17"
 		prepare()
 		test.contains({ "-std=gnu17" }, gcc.getcflags(cfg))
+		test.isequal({ }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cflags_ongnu23()
+		cdialect "gnu23"
+		prepare()
+		test.contains({ "-std=gnu23" }, gcc.getcflags(cfg))
 		test.isequal({ }, gcc.getcxxflags(cfg))
 	end
 
