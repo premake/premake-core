@@ -44,10 +44,10 @@
 		deprecatedaliases = {
 			["gmake2"] = {
 				["action"] = function()
-					p.warnOnce("gmake2 has been renamed to gmake. Use gmake to generate makefiles instead.")
+					p.warnOnce("gmake2-action-deprecate", "gmake2 has been renamed to gmake. Use gmake to generate makefiles instead.")
 				end,
 				["filter"] = function()
-					p.warnOnce("gmake2 has been renamed to gmake. Update your filters to use gmake instead.")
+					p.warnOnce("gmake2-filter-deprecate", "gmake2 has been renamed to gmake. Update your filters to use gmake instead.")
 				end
 			}
 		},
