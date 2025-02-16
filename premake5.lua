@@ -347,6 +347,21 @@
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN", "_BSD_SOURCE" }
 			links       { "network", "bsd" }
 
+		filter ""
+
+		usage "HelloUsage"
+			defines { "PREMAKE_PUBLIC" }
+			filter { "configurations:Release" }
+				defines { "PREMAKE_PUBLIC_RELEASE" }
+			filter ""
+		usage "*"
+
+		uses {
+			"Github",
+			"DoesNotExist",
+			"RandomName"
+		}
+
 if premake.action.supports("None") then
 	project "Web"
 		kind "None"
@@ -366,6 +381,15 @@ if premake.action.supports("None") then
 		kind "None"
 
 		files ".github/**"
+
+		usage "PUBLIC"
+			defines { "PUBLIC_GITHUB" }
+			filter { "configurations:Release" }
+				defines { "PUBLIC_GITHUB_RELEASE" }
+				includedirs { "/test/1/2/3" }
+
+		usage "RandomName"
+			defines { "RANDOM_DANCING" }
 end
 
 	-- optional 3rd party libraries

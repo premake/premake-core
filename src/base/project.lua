@@ -570,3 +570,16 @@
 			return values[1], values[2]
 		end
 	end
+
+
+	function project.findusage(self, name)
+		name = name:lower()
+
+		for _, usage in ipairs(self.usages) do
+			if name == usage.name:lower() then
+				return usage
+			end
+		end
+
+		return nil
+	end

@@ -81,6 +81,19 @@
 	end
 
 ---
+-- Bakes the global scope.
+---
+
+	function p.global.bake(self)
+		p.container.bakeChildren(self)
+
+
+		-- now we can post process the projects for 'uses' entries and apply the
+		-- corresponding 'usage' block to the project.
+		oven.bakeUsages()
+	end
+
+---
 -- Bakes a specific workspace object.
 ---
 
@@ -322,6 +335,82 @@
 	end
 
 
+---
+-- Bakes a specific usage object.
+--
+-- @param self
+--	  The usage object to bake.
+---
+	function p.usage.bake(self)
+		verbosef('    Baking %s:%s...', self.project.name, self.name)
+
+		local prj = self.project
+		local wks = prj.workspace
+
+		-- Add filtering terms to the context to make it as specific as I can.
+		context.copyFilters(self, prj)
+
+		self.system = self.system or os.target()
+		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
+		context.addFilter(self, "architecture", self.architecture)
+		context.addFilter(self, "tags", self.tags)
+
+		self.usage = usage
+
+		self.environ = {
+			wks = prj.workspace,
+			sln = prj.workspace,
+			prj = prj,
+			usage = self,
+		}
+
+		-- Mark the children blocks of the usage as originating from usage
+		-- so they can be distinguished from the project's own blocks.
+		self._isusage = true
+
+		for _, block in ipairs(self._cfgset.blocks) do
+			-- Mark the block as originating from usage
+			block._isusage = true
+		end
+
+		context.compile(self)
+
+		p.container.bakeChildren(self)
+
+		self.location = self.location or self.basedir
+		context.basedir(self, self.location)
+
+		local cfgs = table.fold(self.configurations or {}, self.platforms or {})
+		oven.bubbleFields(self, self, cfgs)
+		self._cfglist = oven.bakeConfigList(self, cfgs)
+
+		local usageSystem = self.system
+		self.system = nil
+
+		self.configs = {}
+
+		for _, pairing in ipairs(self._cfglist) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+			local cfg = oven.bakeConfig(wks, prj, buildcfg, platform, nil, self)
+
+			if p.action.supportsconfig(p.action.current(), cfg) then
+				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+			end
+		end
+
+		self._ = {}
+		self._.files = oven.bakeFiles(self)
+
+		if p.project.isnative(self) then
+			oven.assignObjectSequences(self)
+		end
+
+		self.system = usageSystem
+	end
+
+
 
 --
 -- Assigns a unique objects directory to every configuration of every project
@@ -526,9 +615,11 @@
 -- @param extraFilters
 --    Optional. Any extra filter terms to use when retrieving the data for
 --    this configuration
+-- @param usage
+--    Optional. The usage block to apply to the configuration.
 ---
 
-	function oven.bakeConfig(wks, prj, buildcfg, platform, extraFilters)
+	function oven.bakeConfig(wks, prj, buildcfg, platform, extraFilters, usage)
 
 		-- Set the default system and architecture values; if the platform's
 		-- name matches a known system or architecture, use that as the default.
@@ -556,8 +647,9 @@
 			prj = prj,
 		}
 
-		local ctx = context.new(prj or wks, environ)
+		local ctx = context.new(usage or prj or wks, environ)
 
+		ctx.usage = usage
 		ctx.project = prj
 		ctx.workspace = wks
 		ctx.solution = wks
@@ -782,11 +874,169 @@
 		cfg.name = cfg.longname
 
 		-- compute build and link targets
-		if cfg.project and cfg.kind then
+		-- usages do not have build or link targets
+		if cfg.project and cfg.kind and not cfg.usage then
 			cfg.buildtarget = p.config.gettargetinfo(cfg)
 			cfg.buildtarget.relpath = p.project.getrelative(cfg.project, cfg.buildtarget.abspath)
 
 			cfg.linktarget = p.config.getlinkinfo(cfg)
 			cfg.linktarget.relpath = p.project.getrelative(cfg.project, cfg.linktarget.abspath)
+		end
+	end
+
+
+--
+-- Post-process the projects for 'uses' entries and apply the corresponding
+-- 'usage' block to the project.
+--
+	function oven.bakeUsages()
+		local function fetchConfigSetBlocks(cfg)
+			return cfg._cfgset.blocks
+		end
+
+		local function buildAppliedPropertyTable(prj, cfg)
+			local blocks = fetchConfigSetBlocks(cfg)
+
+			local properties = {}
+
+			local srcprj = cfg.project
+
+			for _, blk in ipairs(blocks) do
+				if blk._isusage then
+					for key, value in pairs(blk) do
+						local field = p.field.get(key)
+						if field then
+							if field.paths then
+								-- Translate the paths to be relative to the project's location
+								-- Get the absolute path of the field values
+								local absPaths = {}
+								if type(value) == 'table' then
+									for i, v in ipairs(value) do
+										absPaths[i] = path.getabsolute(path.join(srcprj.location, v))
+									end
+								else
+									absPaths = path.getabsolute(path.join(srcprj.location, value))
+								end
+
+								-- Translate the absolute paths to be relative to the target project's location
+								local relPaths = {}
+								if type(absPaths) == 'table' then
+									for i, v in ipairs(absPaths) do
+										relPaths[i] = path.getrelative(prj.location, v)
+									end
+								else
+									relPaths = path.getrelative(prj.location, absPaths)
+								end
+
+								if type(relPaths) == 'table' then
+									verbosef('Translated paths - %s = %s', key, table.concat(relPaths, ","))
+								else
+									verbosef('Translated paths - %s = %s', key, relPaths)
+								end
+							else
+								properties[key] = p.field.store(field, properties[key], value)
+							end
+						end
+					end
+				end
+			end
+
+			for key, value in pairs(properties) do
+				if type(value) == 'table' then
+					verbosef('%s = %s', key, table.concat(value, ","))
+				else
+					verbosef('%s = %s', key, value)
+				end
+			end
+		end
+
+		local function applyUsage(prj, usage)
+			-- For each configuration in the project, apply the corresponding configuration from the usage block
+			for cfg in p.project.eachconfig(prj) do
+				-- Merge the usage block into the project configuration
+				-- If the type of a field contains files, ensure the files are applied relative to the usage block's location
+				-- instead of target configuration's location
+
+				-- Find the usage configuration that corresponds to the project configuration
+				local match = p.project.findClosestMatch(usage, cfg.buildcfg, cfg.platform)
+				if match then
+					-- Merge the usage configuration into the project configuration
+					verbosef('      Applying usage %s:%s:%s to %s:%s', usage.project.name, usage.name, cfg.shortname, prj.name, cfg.shortname)
+					buildAppliedPropertyTable(prj, match)
+				end
+			end
+		end
+
+
+		-- Build a table of all of the usage blocks in the workspace which are not a special
+		-- case (public, private, interface).
+
+		verbosef('    Baking usages...')
+		local usages = {}
+		for wks in p.global.eachWorkspace() do
+			for prj in p.workspace.eachproject(wks) do
+				for _, usage in ipairs(prj.usages or {}) do
+					verbosef('      Found usage %s:%s:%s', wks.name, prj.name, usage.name)
+
+					if not p.usage.isSpecial(usage) then
+						-- Check if the usage block already exists in the table
+						local existing = usages[usage.name]
+						if not existing then
+							usages[usage.name] = usage
+						else
+							p.warn('Usage with name %s already exists in the workspace.')
+						end
+					end
+				end
+			end
+		end
+
+		for wks in p.global.eachWorkspace() do
+			for prj in p.workspace.eachproject(wks) do
+				-- Check if the project has a PRIVATE or PUBLIC block
+				-- PUBLIC is applied to all, PRIVATE is applied to the project only
+				local publicusage = p.project.findusage(prj, p.usage.PUBLIC)
+				local interfaceusage = p.project.findusage(prj, p.usage.INTERFACE)
+
+				if publicusage then
+					applyUsage(prj, publicusage)
+				end
+
+				if interfaceusage then
+					applyUsage(prj, interfaceusage)
+				end
+
+				local uses = prj.uses or {}
+				for _, usagename in ipairs(uses) do
+					-- Search priority:
+					-- 1. Search for a project with the same name as the usage
+					-- 2. Search for a usage with the same name as the usage
+					-- 3. Present a warning if no project or usage is found
+
+					local tgt = p.workspace.findproject(wks, usagename)
+					if tgt then
+						-- In the case of a project, search for public and interface blocks
+						local publicusage = p.project.findusage(tgt, p.usage.PUBLIC) -- public block
+						local interfaceusage = p.project.findusage(tgt, p.usage.INTERFACE) -- interface block
+
+						if publicusage then
+							applyUsage(prj, publicusage)
+						end
+
+						if interfaceusage then
+							applyUsage(prj, interfaceusage)
+						end
+					else
+						local usage = usages[usagename]
+						if usage then
+							applyUsage(prj, usage)
+						else
+							-- Present a warning if no project or usage is found
+							p.warn('Project %s uses %s, but no project or usage with that name was found', prj.name, usagename)
+						end
+					end
+				end
+			end
+
 		end
 	end
