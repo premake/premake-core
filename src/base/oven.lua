@@ -356,7 +356,7 @@
 		context.addFilter(self, "architecture", self.architecture)
 		context.addFilter(self, "tags", self.tags)
 
-		self.usage = usage
+		self.usage = self
 
 		self.environ = {
 			wks = prj.workspace,
@@ -394,6 +394,8 @@
 			local buildcfg = pairing[1]
 			local platform = pairing[2]
 			local cfg = oven.bakeConfig(wks, prj, buildcfg, platform, nil, self)
+			cfg.usage = self
+			cfg._isusage = true
 
 			if p.action.supportsconfig(p.action.current(), cfg) then
 				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
@@ -950,93 +952,101 @@
 			end
 		end
 
-		local function applyUsage(prj, usage)
-			-- For each configuration in the project, apply the corresponding configuration from the usage block
-			for cfg in p.project.eachconfig(prj) do
-				-- Merge the usage block into the project configuration
-				-- If the type of a field contains files, ensure the files are applied relative to the usage block's location
-				-- instead of target configuration's location
+		local function fetchPropertiesToApply(src, tgt)
+			local properties = {}
+			local srcprj = src.project
 
-				-- Find the usage configuration that corresponds to the project configuration
-				local match = p.project.findClosestMatch(usage, cfg.buildcfg, cfg.platform)
-				if match then
-					-- Merge the usage configuration into the project configuration
-					verbosef('      Applying usage %s:%s:%s to %s:%s', usage.project.name, usage.name, cfg.shortname, prj.name, cfg.shortname)
-					buildAppliedPropertyTable(prj, match)
-				end
+			verbosef('Applying properties from %s:%s to %s:%s', srcprj.name, src.name, tgt.project.name, tgt.shortname)
+
+			for k, v in pairs(src) do
+				verbosef('key = %s, value = %s', k, v)
 			end
+
+			return properties
 		end
 
+		local function collectUsages(cfg)
+			local uses = {}
 
-		-- Build a table of all of the usage blocks in the workspace which are not a special
-		-- case (public, private, interface).
+			for _, use in ipairs(cfg.uses or {}) do
+				-- Find a usage block that matches the usage name
+				local namematch = p.usage.findglobal(use)
+				for i = 1, #namematch do
+					local usagecfg = p.project.findClosestMatch(namematch[i], cfg.buildcfg, cfg.platform)
+					
+					if usagecfg then
+						-- Apply the usage block to the project configuration
+						local children = collectUsages(usagecfg)
+						uses = table.join(uses, children)
+					else
+						p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
+					end
+				end
+
+				if #namematch > 0 then
+					table.insert(uses, use) -- Add use to the end, to preserve walking order
+				else					
+					p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
+				end
+			end
+
+			return uses
+		end
+
+		local function collectSpecialUsages(usage, cfg)
+			local usagecfg = p.project.findClosestMatch(usage, cfg.buildcfg, cfg.platform)
+			if usagecfg then
+				local result = {}
+				local children = collectUsages(usagecfg)
+				
+				local uses = table.translate(children, function(use)
+					return p.usage.findglobal(use)
+				end)
+				
+				result = table.join(result, uses)
+				result = table.insert(result, usage)
+
+				return result
+			end
+
+			return {}
+		end
 
 		verbosef('    Baking usages...')
-		local usages = {}
+
 		for wks in p.global.eachWorkspace() do
 			for prj in p.workspace.eachproject(wks) do
-				for _, usage in ipairs(prj.usages or {}) do
-					verbosef('      Found usage %s:%s:%s', wks.name, prj.name, usage.name)
+				for cfg in p.project.eachconfig(prj) do
+					local usenames = collectUsages(cfg)
+					local uses = table.translate(usenames, function(use)
+						return p.usage.findglobal(use)
+					end)
 
-					if not p.usage.isSpecial(usage) then
-						-- Check if the usage block already exists in the table
-						local existing = usages[usage.name]
-						if not existing then
-							usages[usage.name] = usage
-						else
-							p.warn('Usage with name %s already exists in the workspace.')
+					-- Find a public usage block for the current project
+					local publicusage = p.project.findusage(prj, p.usage.PUBLIC)
+					if publicusage then
+						local children = collectSpecialUsages(publicusage, cfg)
+						uses = table.join(uses, children)
+					end
+
+					-- Find a private usage block for the current project
+					local privateusage = p.project.findusage(prj, p.usage.PRIVATE)
+					if privateusage then
+						local children = collectSpecialUsages(privateusage, cfg)
+						uses = table.join(uses, children)
+					end
+
+					local allprops = {}
+
+					for _, usage in ipairs(uses) do
+						local props = fetchPropertiesToApply(usage[1], cfg)
+						
+						-- Handle duplicate properties
+						for key, value in pairs(props) do
+							allprops[key] = p.field.store(p.fields[key], allprops[key], value)
 						end
 					end
 				end
 			end
-		end
-
-		for wks in p.global.eachWorkspace() do
-			for prj in p.workspace.eachproject(wks) do
-				-- Check if the project has a PRIVATE or PUBLIC block
-				-- PUBLIC is applied to all, PRIVATE is applied to the project only
-				local publicusage = p.project.findusage(prj, p.usage.PUBLIC)
-				local interfaceusage = p.project.findusage(prj, p.usage.INTERFACE)
-
-				if publicusage then
-					applyUsage(prj, publicusage)
-				end
-
-				if interfaceusage then
-					applyUsage(prj, interfaceusage)
-				end
-
-				local uses = prj.uses or {}
-				for _, usagename in ipairs(uses) do
-					-- Search priority:
-					-- 1. Search for a project with the same name as the usage
-					-- 2. Search for a usage with the same name as the usage
-					-- 3. Present a warning if no project or usage is found
-
-					local tgt = p.workspace.findproject(wks, usagename)
-					if tgt then
-						-- In the case of a project, search for public and interface blocks
-						local publicusage = p.project.findusage(tgt, p.usage.PUBLIC) -- public block
-						local interfaceusage = p.project.findusage(tgt, p.usage.INTERFACE) -- interface block
-
-						if publicusage then
-							applyUsage(prj, publicusage)
-						end
-
-						if interfaceusage then
-							applyUsage(prj, interfaceusage)
-						end
-					else
-						local usage = usages[usagename]
-						if usage then
-							applyUsage(prj, usage)
-						else
-							-- Present a warning if no project or usage is found
-							p.warn('Project %s uses %s, but no project or usage with that name was found', prj.name, usagename)
-						end
-					end
-				end
-			end
-
 		end
 	end

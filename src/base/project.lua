@@ -575,7 +575,7 @@
 	function project.findusage(self, name)
 		name = name:lower()
 
-		for _, usage in ipairs(self.usages) do
+		for _, usage in ipairs(self.usages or self.project.usages) do
 			if name == usage.name:lower() then
 				return usage
 			end

@@ -382,11 +382,21 @@ if premake.action.supports("None") then
 
 		files ".github/**"
 
+		usage "SomeOtherUsage"
+			defines { "SOME_OTHER" }
+
+		usage "DebugOnlyUsage"
+			defines { "DEBUG_ONLY" }
+
 		usage "PUBLIC"
 			defines { "PUBLIC_GITHUB" }
+			uses { "SomeOtherUsage" }
 			filter { "configurations:Release" }
 				defines { "PUBLIC_GITHUB_RELEASE" }
 				includedirs { "/test/1/2/3" }
+			filter { "configurations:Debug" }
+				uses { "DebugOnlyUsage" }
+			filter {}
 
 		usage "RandomName"
 			defines { "RANDOM_DANCING" }

@@ -42,3 +42,39 @@
     function usage.isSpecial(self)
         return self.name == usage.PUBLIC or self.name == usage.PRIVATE or self.name == usage.INTERFACE
     end
+
+
+    function usage.findglobal(name)
+        -- First, try to find a project with the provided name in the global scope
+        for wks in p.global.eachWorkspace() do
+            -- For each workspace, check if a project with the provided name exists
+            local prj = p.workspace.findproject(wks, name)
+            if prj then
+                -- Check if the project has a public or interface usage
+                local publicUsage = p.project.findusage(prj, usage.PUBLIC)
+                local interfaceUsage = p.project.findusage(prj, usage.INTERFACE)
+
+                local result = {}
+                if publicUsage then
+                    table.insert(result, publicUsage)
+                end
+
+                if interfaceUsage then
+                    table.insert(result, interfaceUsage)
+                end
+
+                return result
+            end
+
+            -- If no project with a matching name was found, check each project to see if it has a usage
+            -- with the provided name
+            for prj in p.workspace.eachproject(wks) do
+                local usage = p.project.findusage(prj, name)
+                if usage then
+                    return { usage }
+                end
+            end
+        end
+
+        return {}
+    end

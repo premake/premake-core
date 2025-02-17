@@ -1185,7 +1185,7 @@
 	api.register {
 		name = "uses",
 		scope = "config",
-		kind = "table"
+		kind = "list:string",
 	}
 
 
