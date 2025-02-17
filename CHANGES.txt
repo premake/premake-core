@@ -1,9 +1,22 @@
 --------------------
-  5.0-beta4
+  5.0-beta5
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-beta4:
+* PR #2401  [gmake] Add missing dependencies between prelink and generated files (@Jarod42)
+* PR #2403  fix typo in xcode projects generator (@artamonovoleg)
+* PR #2404  Rename gmake to gmakelegacy (@nickclark2016)
+* PR #2406  Add OmniOS CI job (@LORgames)
+* PR #2408  Rename gmake2 to gmake (@nickclark2016)
+* PR #2412  Remove deprecated buildrule (@Jarod42)
+* PR #2413  Improve some doc (@Jarod42)
+* PR #2414  C23 dialect support (@nickclark2016)
+* PR #2417  fix warnings function for the xcode4 generator (@artamonovoleg)
+* PR #2419  Remove the 'Android' architecture from pre-vs2015 support (@redorav)
+* PR #2422  Fix code using gmake2 to properly display warning (@nickclark2016)
 
 Since 5.0-beta3:
 

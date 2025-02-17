@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define PREMAKE_VERSION        "5.0.0-dev"
+#define PREMAKE_VERSION        "5.0.0-beta5"
 #define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2024 Jess Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
