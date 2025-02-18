@@ -1042,15 +1042,9 @@
 						toconsume = table.join(toconsume, children)
 					end
 
-					local allprops = {}
-
 					for _, usage in ipairs(toconsume) do
 						local props = fetchPropertiesToApply(usage, cfg)
-						
-						-- Handle duplicate properties
-						for key, value in pairs(props) do
-							allprops[key] = p.field.store(p.fields[key], allprops[key], value)
-						end
+						table.insert(cfg._cfgset.blocks, props)
 					end
 				end
 			end
