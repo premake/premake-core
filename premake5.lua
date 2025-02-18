@@ -393,7 +393,7 @@ if premake.action.supports("None") then
 			uses { "SomeOtherUsage" }
 			filter { "configurations:Release" }
 				defines { "PUBLIC_GITHUB_RELEASE" }
-				includedirs { "/test/1/2/3" }
+				includedirs { "/test/1/2/3", "../rel/path" }
 			filter { "configurations:Debug" }
 				uses { "DebugOnlyUsage" }
 			filter {}

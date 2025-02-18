@@ -357,6 +357,8 @@
 		context.addFilter(self, "tags", self.tags)
 
 		self.usage = self
+		self.configurations = prj.configurations
+		self.platforms = prj.platforms
 
 		self.environ = {
 			wks = prj.workspace,
@@ -647,6 +649,7 @@
 			wks = wks,
 			sln = wks,
 			prj = prj,
+      usage = usage,
 		}
 
 		local ctx = context.new(usage or prj or wks, environ)
@@ -956,10 +959,21 @@
 			local properties = {}
 			local srcprj = src.project
 
-			verbosef('Applying properties from %s:%s to %s:%s', srcprj.name, src.name, tgt.project.name, tgt.shortname)
+			verbosef('Applying properties from %s:%s:%s to %s:%s', srcprj.name, src.usage.name, src.name, tgt.project.name, tgt.shortname)
 
-			for k, v in pairs(src) do
-				verbosef('key = %s, value = %s', k, v)
+			local blocks = fetchConfigSetBlocks(src)
+			local n = #blocks
+			local srccfgpath = src.basedir
+			local tgtcfgpath = tgt.basedir
+
+			for i = 1, n do
+				local block = blocks[i]
+				for k, v in pairs(block) do
+					local f = p.field.get(k)
+					if f then
+						properties[k] = p.field.store(f, properties[k], v)
+					end
+				end
 			end
 
 			return properties
@@ -978,14 +992,13 @@
 						-- Apply the usage block to the project configuration
 						local children = collectUsages(usagecfg)
 						uses = table.join(uses, children)
+						table.insert(uses, usagecfg)
 					else
 						p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
 					end
 				end
 
-				if #namematch > 0 then
-					table.insert(uses, use) -- Add use to the end, to preserve walking order
-				else					
+				if #namematch == 0 then				
 					p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
 				end
 			end
@@ -997,14 +1010,10 @@
 			local usagecfg = p.project.findClosestMatch(usage, cfg.buildcfg, cfg.platform)
 			if usagecfg then
 				local result = {}
-				local children = collectUsages(usagecfg)
-				
-				local uses = table.translate(children, function(use)
-					return p.usage.findglobal(use)
-				end)
+				local uses = collectUsages(usagecfg)
 				
 				result = table.join(result, uses)
-				result = table.insert(result, usage)
+				result = table.insert(result, usagecfg)
 
 				return result
 			end
@@ -1017,29 +1026,26 @@
 		for wks in p.global.eachWorkspace() do
 			for prj in p.workspace.eachproject(wks) do
 				for cfg in p.project.eachconfig(prj) do
-					local usenames = collectUsages(cfg)
-					local uses = table.translate(usenames, function(use)
-						return p.usage.findglobal(use)
-					end)
+					local toconsume = collectUsages(cfg)
 
 					-- Find a public usage block for the current project
 					local publicusage = p.project.findusage(prj, p.usage.PUBLIC)
 					if publicusage then
 						local children = collectSpecialUsages(publicusage, cfg)
-						uses = table.join(uses, children)
+						toconsume = table.join(toconsume, children)
 					end
 
 					-- Find a private usage block for the current project
 					local privateusage = p.project.findusage(prj, p.usage.PRIVATE)
 					if privateusage then
 						local children = collectSpecialUsages(privateusage, cfg)
-						uses = table.join(uses, children)
+						toconsume = table.join(toconsume, children)
 					end
 
 					local allprops = {}
 
-					for _, usage in ipairs(uses) do
-						local props = fetchPropertiesToApply(usage[1], cfg)
+					for _, usage in ipairs(toconsume) do
+						local props = fetchPropertiesToApply(usage, cfg)
 						
 						-- Handle duplicate properties
 						for key, value in pairs(props) do
