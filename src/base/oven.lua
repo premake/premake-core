@@ -959,8 +959,6 @@
 			local properties = {}
 			local srcprj = src.project
 
-			verbosef('Applying properties from %s:%s:%s to %s:%s', srcprj.name, src.usage.name, src.name, tgt.project.name, tgt.shortname)
-
 			local blocks = fetchConfigSetBlocks(src)
 			local n = #blocks
 			local srccfgpath = src.basedir
@@ -1013,7 +1011,7 @@
 				local uses = collectUsages(usagecfg)
 				
 				result = table.join(result, uses)
-				result = table.insert(result, usagecfg)
+				table.insert(result, usagecfg)
 
 				return result
 			end
@@ -1042,10 +1040,21 @@
 						toconsume = table.join(toconsume, children)
 					end
 
+					toconsume = table.unique(toconsume)
+
+					local allprops = {}
+
 					for _, usage in ipairs(toconsume) do
 						local props = fetchPropertiesToApply(usage, cfg)
-						table.insert(cfg._cfgset.blocks, props)
+						for k, v in pairs(props) do
+							local field = p.field.get(k)
+							if field then
+								allprops[k] = p.field.store(field, allprops[k], v)
+							end
+						end
 					end
+
+					table.insert(cfg._cfgset.blocks, allprops)
 				end
 			end
 		end
