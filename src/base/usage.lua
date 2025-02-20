@@ -34,6 +34,20 @@
 
 
 ---
+-- Checks if a usage name is a magic name (PUBLIC, PRIVATE, INTERFACE)
+--
+-- @param name
+--   The name of the usage.
+-- @return
+--   True if the usage is a special usage.
+---
+
+	function usage.isSpecialName(name)
+		return name == usage.PUBLIC or name == usage.PRIVATE or name == usage.INTERFACE
+	end
+
+
+---
 -- Check if the usage has a magic name (PUBLIC, PRIVATE, INTERFACE)
 --
 -- @param self
@@ -41,7 +55,7 @@
 -- @return
 --	  True if the usage is a special usage.
 	function usage.isSpecial(self)
-		return self.name == usage.PUBLIC or self.name == usage.PRIVATE or self.name == usage.INTERFACE
+		return usage.isSpecialName(self.name)
 	end
 
 

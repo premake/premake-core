@@ -90,7 +90,7 @@
 
 		-- now we can post process the projects for 'uses' entries and apply the
 		-- corresponding 'usage' block to the project.
-		oven.bakeUsages()
+		oven.applyUsages()
 	end
 
 ---
@@ -894,7 +894,7 @@
 -- Post-process the projects for 'uses' entries and apply the corresponding
 -- 'usage' block to the project.
 --
-	function oven.bakeUsages()
+	function oven.applyUsages()
 		local function fetchConfigSetBlocks(cfg)
 			return cfg._cfgset.blocks
 		end
@@ -981,6 +981,11 @@
 			local uses = {}
 
 			for _, use in ipairs(cfg.uses or {}) do
+				if p.usage.isSpecialName(use) then
+					-- Explicitly providing special names is not allowed
+					p.error("Special names are not allowed in 'uses' list. Found '%s' requested in project '%s'", use, cfg.project.name)
+				end
+
 				-- Find a usage block that matches the usage name
 				local namematch = p.usage.findglobal(use)
 				for i = 1, #namematch do
