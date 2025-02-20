@@ -649,7 +649,7 @@
 			wks = wks,
 			sln = wks,
 			prj = prj,
-      usage = usage,
+			usage = usage,
 		}
 
 		local ctx = context.new(usage or prj or wks, environ)

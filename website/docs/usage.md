@@ -9,7 +9,7 @@ The `usage` API is used to define configuration to be consumed by the `uses` API
 
 ### Magic Usage Blocks ###
 
-1. `PRIVATE` - Private specifies a configuration to be automatically applied to the project defining the `usage` block. This block is inaccessible to be consumed by `uses`.
+1. `PRIVATE` - Private specifies a configuration to be automatically applied to the project defining the `usage` block. This block is inaccessible to be consumed by `uses`. This is the equivalent of defining configuration inside the project directly.
 2. `INTERFACE` - Interface has the opposite meaning as private usages. An interface usage is applied only to those projects consuming it via `uses`. Interface usage blocks are consumed by specfiying the containing project's name in the `uses` list.
 3. `PUBLIC` - Public specifies a configuration to be automatically applied to the project defining the `usage` block and any project consuming it via `uses`. Like `INTERFACE`, it is consumed by specifying the name of the project it is defined in.
 
