@@ -84,7 +84,7 @@
 
         -- Order is important here, as the test treats different order as a failure
         -- However, the order of the defines is not important in the actual implementation
-        test.isequal({ "PROJECT_3", "PROJECT_1_PUBLIC", "PROJECT_1_INTERFACE", "PROJECT_2_PUBLIC", "PROJECT_2_INTERFACE" }, cfg.defines) -- Interface defines should not be included
+        test.isequal({ "PROJECT_3", "PROJECT_1_PUBLIC", "PROJECT_1_INTERFACE", "PROJECT_2_PUBLIC", "PROJECT_2_INTERFACE" }, cfg.defines)
     end
 
 ---
@@ -102,7 +102,7 @@
 
         -- Order is important here, as the test treats different order as a failure
         -- However, the order of the defines is not important in the actual implementation
-        test.isequal({ "MY_CUSTOM_USAGE" }, cfg.defines) -- Interface defines should not be included
+        test.isequal({ "MY_CUSTOM_USAGE" }, cfg.defines)
     end
 
 

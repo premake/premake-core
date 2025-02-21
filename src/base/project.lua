@@ -573,10 +573,8 @@
 
 
 	function project.findusage(self, name)
-		name = name:lower()
-
 		for _, usage in ipairs(self.usages or self.project.usages) do
-			if name == usage.name:lower() then
+			if name == usage.name then
 				return usage
 			end
 		end

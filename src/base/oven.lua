@@ -899,62 +899,6 @@
 			return cfg._cfgset.blocks
 		end
 
-		local function buildAppliedPropertyTable(prj, cfg)
-			local blocks = fetchConfigSetBlocks(cfg)
-
-			local properties = {}
-
-			local srcprj = cfg.project
-
-			for _, blk in ipairs(blocks) do
-				if blk._isusage then
-					for key, value in pairs(blk) do
-						local field = p.field.get(key)
-						if field then
-							if field.paths then
-								-- Translate the paths to be relative to the project's location
-								-- Get the absolute path of the field values
-								local absPaths = {}
-								if type(value) == 'table' then
-									for i, v in ipairs(value) do
-										absPaths[i] = path.getabsolute(path.join(srcprj.location, v))
-									end
-								else
-									absPaths = path.getabsolute(path.join(srcprj.location, value))
-								end
-
-								-- Translate the absolute paths to be relative to the target project's location
-								local relPaths = {}
-								if type(absPaths) == 'table' then
-									for i, v in ipairs(absPaths) do
-										relPaths[i] = path.getrelative(prj.location, v)
-									end
-								else
-									relPaths = path.getrelative(prj.location, absPaths)
-								end
-
-								if type(relPaths) == 'table' then
-									verbosef('Translated paths - %s = %s', key, table.concat(relPaths, ","))
-								else
-									verbosef('Translated paths - %s = %s', key, relPaths)
-								end
-							else
-								properties[key] = p.field.store(field, properties[key], value)
-							end
-						end
-					end
-				end
-			end
-
-			for key, value in pairs(properties) do
-				if type(value) == 'table' then
-					verbosef('%s = %s', key, table.concat(value, ","))
-				else
-					verbosef('%s = %s', key, value)
-				end
-			end
-		end
-
 		local function fetchPropertiesToApply(src, tgt)
 			local properties = {}
 			local srcprj = src.project
