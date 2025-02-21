@@ -570,3 +570,14 @@
 			return values[1], values[2]
 		end
 	end
+
+
+	function project.findusage(self, name)
+		for _, usage in ipairs(self.usages or self.project.usages) do
+			if name == usage.name then
+				return usage
+			end
+		end
+
+		return nil
+	end
