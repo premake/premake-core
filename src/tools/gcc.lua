@@ -427,8 +427,10 @@
 		for _, fullpath in ipairs(dirs) do
 			local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
 			if table.contains(os.getSystemTags(cfg.system), "darwin") then
+				rpath = p.quoted(rpath) -- quote in case of spaces in path
 				rpath = "@loader_path/" .. rpath
 			elseif (cfg.system == p.LINUX) then
+				rpath = p.quoted(rpath) -- quote in case of spaces in path
 				rpath = iif(rpath == ".", "", "/" .. rpath)
 				rpath = "$$ORIGIN" .. rpath
 			end
