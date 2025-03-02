@@ -92,3 +92,30 @@
 		test.issame(wks, api.scope.workspace)
 		test.isnil(api.scope.project)
 	end
+
+--
+-- The "usage" statement should create a new usage container.
+--
+
+	function suite.usage_onUsage()
+		project("MyProject")
+		usage "MyUsage"
+		test.isnotnil(api.scope.usage)
+		test.issame(api.scope.usage.name, "MyUsage")
+	end
+
+	function suite.usage_onStar()
+		local prj = project("MyProject")
+		usage "MyUsage"
+		usage "*"
+		test.isnil(api.scope.usage)
+		test.issame(api.scope.project, prj)
+	end
+
+	function suite.usage_findusage()
+		project("MyProject")
+		usage "MyUsage"
+		test.isnotnil(p.project.findusage(api.scope.project, "MyUsage"))
+		test.issame(p.project.findusage(api.scope.project, "MyUsage").project, api.scope.project)
+		test.issame(p.project.findusage(api.scope.project, "MyUsage"), api.scope.usage)
+	end

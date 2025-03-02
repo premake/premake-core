@@ -462,7 +462,7 @@
 	function configset.compile(cset, filter)
 		-- always start with the parent
 		local result
-		if cset.parent then
+		if cset.parent and not cset.noinherit then
 			result = configset.compile(cset.parent, filter)
 		else
 			result = configset.new()
