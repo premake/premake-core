@@ -18,14 +18,6 @@
 	end
 
 ---
--- Bakes the global scope.
----
-	function global.bake(self)
-		p.container.bakeChildren(self)
-	end
-
-
----
 -- Iterate over the collection of rules in a session.
 --
 -- @returns

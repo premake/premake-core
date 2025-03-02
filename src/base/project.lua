@@ -570,3 +570,22 @@
 			return values[1], values[2]
 		end
 	end
+
+
+---
+-- Retrieve the project's usage information for a particular usage.
+-- @param name
+--    The name of the usage to retrieve.
+-- @return
+--    The usage object with the specified name or nil if not found.
+---
+
+	function project.findusage(self, name)
+		for _, usage in ipairs(self.usages or self.project.usages) do
+			if name == usage.name then
+				return usage
+			end
+		end
+
+		return nil
+	end

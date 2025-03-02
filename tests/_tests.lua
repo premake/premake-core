@@ -44,6 +44,7 @@ return {
 	-- Baking tests
 	"oven/test_filtering.lua",
 	"oven/test_objdirs.lua",
+	"oven/test_usages.lua",
 
 	-- API tests
 	"api/test_boolean_kind.lua",

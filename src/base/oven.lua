@@ -81,6 +81,18 @@
 	end
 
 ---
+-- Bakes the global scope.
+---
+
+	function p.global.bake(self)
+		p.container.bakeChildren(self)
+
+		-- now we can post process the projects for 'uses' entries and apply the
+		-- corresponding 'usage' block to the project.
+		oven.applyUsages()
+	end
+
+---
 -- Bakes a specific workspace object.
 ---
 
@@ -322,6 +334,86 @@
 	end
 
 
+---
+-- Bakes a specific usage object.
+--
+-- @param self
+--	  The usage object to bake.
+---
+	function p.usage.bake(self)
+		verbosef('    Baking %s:%s...', self.project.name, self.name)
+
+		local prj = self.project
+		local wks = prj.workspace
+
+		-- Add filtering terms to the context to make it as specific as I can.
+		context.copyFilters(self, prj)
+
+		self.system = self.system or os.target()
+		context.addFilter(self, "system", os.getSystemTags(self.system))
+		context.addFilter(self, "host", os.getSystemTags(os.host()))
+		context.addFilter(self, "architecture", self.architecture)
+		context.addFilter(self, "tags", self.tags)
+
+		self.usage = self
+		self.configurations = prj.configurations
+		self.platforms = prj.platforms
+
+		self.environ = {
+			wks = prj.workspace,
+			sln = prj.workspace,
+			prj = prj,
+			usage = self,
+		}
+
+		-- Mark the children blocks of the usage as originating from usage
+		-- so they can be distinguished from the project's own blocks.
+		self._isusage = true
+
+		for _, block in ipairs(self._cfgset.blocks) do
+			-- Mark the block as originating from usage
+			block._isusage = true
+		end
+
+		context.compile(self)
+
+		p.container.bakeChildren(self)
+
+		self.location = self.location or self.basedir
+		context.basedir(self, self.location)
+
+		local cfgs = table.fold(self.configurations or {}, self.platforms or {})
+		oven.bubbleFields(self, self, cfgs)
+		self._cfglist = oven.bakeConfigList(self, cfgs)
+
+		local usageSystem = self.system
+		self.system = nil
+
+		self.configs = {}
+
+		for _, pairing in ipairs(self._cfglist) do
+			local buildcfg = pairing[1]
+			local platform = pairing[2]
+			local cfg = oven.bakeConfig(wks, prj, buildcfg, platform, nil, self)
+			cfg.usage = self
+			cfg._isusage = true
+
+			if p.action.supportsconfig(p.action.current(), cfg) then
+				self.configs[(buildcfg or "*") .. (platform or "")] = cfg
+			end
+		end
+
+		self._ = {}
+		self._.files = oven.bakeFiles(self)
+
+		if p.project.isnative(self) then
+			oven.assignObjectSequences(self)
+		end
+
+		self.system = usageSystem
+	end
+
+
 
 --
 -- Assigns a unique objects directory to every configuration of every project
@@ -526,9 +618,11 @@
 -- @param extraFilters
 --    Optional. Any extra filter terms to use when retrieving the data for
 --    this configuration
+-- @param usage
+--    Optional. The usage block to apply to the configuration.
 ---
 
-	function oven.bakeConfig(wks, prj, buildcfg, platform, extraFilters)
+	function oven.bakeConfig(wks, prj, buildcfg, platform, extraFilters, usage)
 
 		-- Set the default system and architecture values; if the platform's
 		-- name matches a known system or architecture, use that as the default.
@@ -554,10 +648,12 @@
 			wks = wks,
 			sln = wks,
 			prj = prj,
+			usage = usage,
 		}
 
-		local ctx = context.new(prj or wks, environ)
+		local ctx = context.new(usage or prj or wks, environ)
 
+		ctx.usage = usage
 		ctx.project = prj
 		ctx.workspace = wks
 		ctx.solution = wks
@@ -782,11 +878,132 @@
 		cfg.name = cfg.longname
 
 		-- compute build and link targets
-		if cfg.project and cfg.kind then
+		-- usages do not have build or link targets
+		if cfg.project and cfg.kind and not cfg.usage then
 			cfg.buildtarget = p.config.gettargetinfo(cfg)
 			cfg.buildtarget.relpath = p.project.getrelative(cfg.project, cfg.buildtarget.abspath)
 
 			cfg.linktarget = p.config.getlinkinfo(cfg)
 			cfg.linktarget.relpath = p.project.getrelative(cfg.project, cfg.linktarget.abspath)
+		end
+	end
+
+
+--
+-- Post-process the projects for 'uses' entries and apply the corresponding
+-- 'usage' block to the project.
+--
+	function oven.applyUsages()
+		local function fetchConfigSetBlocks(cfg)
+			return cfg._cfgset.blocks
+		end
+
+		local function fetchPropertiesToApply(src, tgt)
+			local properties = {}
+			local srcprj = src.project
+
+			local blocks = fetchConfigSetBlocks(src)
+			local n = #blocks
+			local srccfgpath = src.basedir
+			local tgtcfgpath = tgt.basedir
+
+			for i = 1, n do
+				local block = blocks[i]
+				for k, v in pairs(block) do
+					local f = p.field.get(k)
+					if f then
+						properties[k] = p.field.store(f, properties[k], v)
+					end
+				end
+			end
+
+			return properties
+		end
+
+		local function collectUsages(cfg)
+			local uses = {}
+
+			for _, use in ipairs(cfg.uses or {}) do
+				if p.usage.isSpecialName(use) then
+					-- Explicitly providing special names is not allowed
+					p.error("Special names are not allowed in 'uses' list. Found '%s' requested in project '%s'", use, cfg.project.name)
+				end
+
+				-- Find a usage block that matches the usage name
+				local namematch = p.usage.findglobal(use)
+				for i = 1, #namematch do
+					local usagecfg = p.project.findClosestMatch(namematch[i], cfg.buildcfg, cfg.platform)
+					
+					if usagecfg then
+						-- Apply the usage block to the project configuration
+						local children = collectUsages(usagecfg)
+						uses = table.join(uses, children)
+						table.insert(uses, usagecfg)
+					else
+						p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
+					end
+				end
+
+				if #namematch == 0 then				
+					p.warnOnce('no-such-usage:' .. use, "Usage '%s' not found in project '%s'", use, cfg.project.name)
+				end
+			end
+
+			return uses
+		end
+
+		local function collectSpecialUsages(usage, cfg)
+			local usagecfg = p.project.findClosestMatch(usage, cfg.buildcfg, cfg.platform)
+			if usagecfg then
+				local result = {}
+				local uses = collectUsages(usagecfg)
+				
+				result = table.join(result, uses)
+				table.insert(result, usagecfg)
+
+				return result
+			end
+
+			return {}
+		end
+
+		verbosef('    Baking usages...')
+
+		for wks in p.global.eachWorkspace() do
+			for prj in p.workspace.eachproject(wks) do
+				for cfg in p.project.eachconfig(prj) do
+					local toconsume = collectUsages(cfg)
+
+					-- Find a public usage block for the current project
+					local publicusage = p.project.findusage(prj, p.usage.PUBLIC)
+					if publicusage then
+						local children = collectSpecialUsages(publicusage, cfg)
+						toconsume = table.join(toconsume, children)
+					end
+
+					-- Find a private usage block for the current project
+					local privateusage = p.project.findusage(prj, p.usage.PRIVATE)
+					if privateusage then
+						local children = collectSpecialUsages(privateusage, cfg)
+						toconsume = table.join(toconsume, children)
+					end
+
+					toconsume = table.unique(toconsume)
+
+					local allprops = {}
+
+					for _, usage in ipairs(toconsume) do
+						local props = fetchPropertiesToApply(usage, cfg)
+						for k, v in pairs(props) do
+							local field = p.field.get(k)
+							if field then
+								allprops[k] = p.field.store(field, allprops[k], v)
+							end
+						end
+					end
+
+					table.insert(cfg._cfgset.blocks, allprops)
+				end
+			end
 		end
 	end
