@@ -24,6 +24,7 @@ module.exports = {
 				'Configurations-and-Platforms',
 				'Filters',
 				'Build-Settings',
+				'Usages-and-Uses',
 				'Command-Line-Arguments',
 				'Using-Modules',
 				'Topics'

@@ -22,6 +22,7 @@ Welcome to the **Premake 5  User Guide**!
 * [Configurations and Platforms](Configurations-and-Platforms.md)
 * [Filters](Filters.md)
 * [Build Settings](Build-Settings.md)
+* [Usages and Uses](Usages-and-Uses.md)
 * [Command Line Arguments](Command-Line-Arguments.md)
 * [Using Modules](Using-Modules.md)
 * [More Topics…](Topics.md)
