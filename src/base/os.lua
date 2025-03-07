@@ -63,44 +63,31 @@
 	end
 
 	local function get_library_search_path()
-		local path
 		if os.istarget("windows") then
-			path = os.getenv("PATH") or ""
+			return (os.getenv("PATH") or ""):explode(";")
 		elseif os.istarget("haiku") then
-			path = os.getenv("LIBRARY_PATH") or ""
+			return (os.getenv("LIBRARY_PATH") or ""):explode(":")
 		else
+			local paths
 			if os.istarget("darwin") then
-				path = os.getenv("DYLD_LIBRARY_PATH") or ""
+				paths = (os.getenv("DYLD_LIBRARY_PATH") or ""):explode(":")
 			else
-				path = os.getenv("LD_LIBRARY_PATH") or ""
+				paths = (os.getenv("LD_LIBRARY_PATH") or ""):explode(":")
 
 				for _, prefix in ipairs({"", "/opt"}) do
 					local conf_file = prefix .. "/etc/ld.so.conf"
 					if os.isfile(conf_file) then
-						for _, v in ipairs(parse_ld_so_conf(conf_file)) do
-							if (#path > 0) then
-								path = path .. ":" .. v
-							else
-								path = v
-							end
-						end
+						paths = table.join(paths, parse_ld_so_conf(conf_file))
 					end
 				end
 			end
 
-			path = path or ""
-			local archpath = "/lib:/usr/lib:/usr/local/lib"
+			local archpaths = {"/lib", "/usr/lib", "/usr/local/lib"}
 			if os.is64bit() and not (os.istarget("darwin")) then
-				archpath = "/lib64:/usr/lib64/:usr/local/lib64" .. ":" .. archpath
+				archpaths = table.join({"/lib64", "/usr/lib64/", "usr/local/lib64"}, archpaths)
 			end
-			if (#path > 0) then
-				path = path .. ":" .. archpath
-			else
-				path = archpath
-			end
+			return table.join(paths, archpaths)
 		end
-
-		return path
 	end
 
 
@@ -123,7 +110,7 @@
 --    The full path to the library if found; `nil` otherwise.
 ---
 	function os.findlib(libname, libdirs)
-		local path = get_library_search_path()
+		local paths = get_library_search_path()
 		local formats
 
 		-- assemble a search path, depending on the platform
@@ -141,25 +128,17 @@
 			table.insert(formats, "%s")
 		end
 
-		local userpath = ""
+		local userpaths = {}
 
 		if type(libdirs) == "string" then
-			userpath = libdirs
+			userpaths = {libdirs}
 		elseif type(libdirs) == "table" then
-			userpath = table.implode(libdirs, "", "", ":")
+			userpaths = libdirs
 		end
-
-		if (#userpath > 0) then
-			if (#path > 0) then
-				path = userpath .. ":" .. path
-			else
-				path = userpath
-			end
-		end
-
+		paths = table.join(userpaths, paths)
 		for _, fmt in ipairs(formats) do
 			local name = string.format(fmt, libname)
-			local result = os.pathsearch(name, path)
+			local result = os.pathsearch(name, table.unpack(paths))
 			if result then return result end
 		end
 	end
@@ -168,30 +147,21 @@
 		-- headerpath: a partial header file path
 		-- headerdirs: additional header search paths
 
-		local path = get_library_search_path()
+		local paths = get_library_search_path()
 
-		-- replace all /lib by /include
-		path = path .. ':'
-		path = path:gsub ('/lib[0-9]*([:/])', '/include%1')
-		path = path:sub (1, #path - 1)
+		-- replace all /lib and /bin by /include
+		paths = table.translate(paths, function (path) return path:gsub('[/\\]lib[0-9]*', '/include'):gsub('[/\\]bin', '/include') end)
 
-		local userpath = ""
+		local userpaths = {}
 
 		if type(headerdirs) == "string" then
-			userpath = headerdirs
+			userpaths = { headerdirs }
 		elseif type(headerdirs) == "table" then
-			userpath = table.implode(headerdirs, "", "", ":")
+			userpaths = headerdirs
 		end
+		paths = table.join(userpaths, paths)
 
-		if (#userpath > 0) then
-			if (#path > 0) then
-				path = userpath .. ":" .. path
-			else
-				path = userpath
-			end
-		end
-
-		local result = os.pathsearch (headerpath, path)
+		local result = os.pathsearch (headerpath, table.unpack(paths))
 		return result
 	end
 
