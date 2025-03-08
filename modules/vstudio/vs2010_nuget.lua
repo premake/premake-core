@@ -224,11 +224,30 @@
 
 			for _, page in ipairs(response.items) do
 				if not page.items or #page.items == 0 then
-					p.error("Failed to understand NuGet API response (got a page with no items for package '%s')", id)
-				end
+					local itemResponse, err, code = http.get(page["@id"])
+					if err ~= "OK" then
+						if code == 404 then
+							p.error("NuGet package '%s' for project '%s' couldn't be found in the repository", id, prj.name)
+						else
+							p.error("NuGet API error (%d)\n%s", code, err)
+						end
+					end
 
-				for _, item in ipairs(page.items) do
-					table.insert(items, item)
+					itemResponse, err = json.decode(itemResponse)
+					if not itemResponse then
+						p.error("Failed to decode NuGet API response (%s)", err)
+					end
+					if not itemResponse.items or #itemResponse.items == 0 then
+						p.error("Failed to understand NuGet API response (got a page with no items for package '%s')", id)
+					end
+
+					for _, item in ipairs(itemResponse.items) do
+						table.insert(items, item)
+					end
+				else
+					for _, item in ipairs(page.items) do
+						table.insert(items, item)
+					end
 				end
 			end
 

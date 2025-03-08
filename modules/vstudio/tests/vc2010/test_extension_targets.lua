@@ -65,7 +65,7 @@
 
 if http ~= nil and _OPTIONS["test-all"] then
 	function suite.addsImport_onEachNuGetPackage()
-		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3", "WinPixEventRuntime:1.0.220810001", "Microsoft.Direct3D.D3D12:1.608.2" }
+		nuget { "boost:1.59.0-b1", "sdl2.v140:2.0.3", "sdl2.v140.redist:2.0.3", "WinPixEventRuntime:1.0.220810001", "Microsoft.Direct3D.D3D12:1.608.2", "python:3.13.2" }
 		prepare()
 		test.capture [[
 <ImportGroup Label="ExtensionTargets">
