@@ -143,6 +143,8 @@ filter {}
 
 * Filters can be viewed as a scoping concept.  A currently set filter goes 'out of scope' when either a filter reset operation is invoked or a project definition is started.
 
+* Filters are whitespace sensitive. For example, a filter of `system:not windows` is fundamentally different from `system: not windows`.
+
 ### See Also ###
 
 * [Filters](Filters.md)
