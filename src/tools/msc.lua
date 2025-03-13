@@ -386,6 +386,12 @@
 			table.insert(flags, '/NODEFAULTLIB:' .. ignore)
 		end
 
+		if cfg.kind == "ConsoleApp" or cfg.kind == "WindowedApp" or cfg.kind == "SharedLib" then
+			if cfg.profile then
+				table.insert(flags, "/PROFILE")
+			end
+		end
+
 		return flags
 	end
 
