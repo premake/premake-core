@@ -197,3 +197,25 @@
 		test.contains("-O3", clang.getcflags(cfg))
 		test.contains("-O3", clang.getcxxflags(cfg))
 	end
+
+--
+-- Test profiling flag
+--
+
+	function suite.flags_onProfileOff()
+		profile "Off"
+
+		prepare()
+		test.excludes({ "-pg" }, clang.getcflags(cfg))
+		test.excludes({ "-pg" }, clang.getcxxflags(cfg))
+		test.excludes({ "-pg" }, clang.getldflags(cfg))
+	end
+
+	function suite.flags_onProfileOn()
+		profile "On"
+
+		prepare()
+		test.contains({ "-pg" }, clang.getcflags(cfg))
+		test.contains({ "-pg" }, clang.getcxxflags(cfg))
+		test.contains({ "-pg" }, clang.getldflags(cfg))
+	end

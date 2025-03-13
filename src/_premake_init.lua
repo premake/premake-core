@@ -1188,6 +1188,12 @@
 		kind = "list:string",
 	}
 
+	p.api.register {
+		name = "profile",
+		scope = "config",
+		kind = "boolean"
+	}
+
 
 -----------------------------------------------------------------------------
 --
