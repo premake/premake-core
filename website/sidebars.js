@@ -215,6 +215,7 @@ module.exports = {
 						'preferredtoolarchitecture',
 						'prelinkcommands',
 						'prelinkmessage',
+						'profile',
 						'project',
 						'propertydefinition',
 						'rebuildcommands',

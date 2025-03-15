@@ -1252,3 +1252,25 @@ end
 		test.contains({ "-x objective-c++" }, gcc.getcflags(cfg))
 		test.contains({ "-x objective-c++" }, gcc.getcxxflags(cfg))
 	end
+
+--
+-- Test profiling flag
+--
+
+	function suite.flags_onProfileOff()
+		profile "Off"
+
+		prepare()
+		test.excludes({ "-pg" }, gcc.getcflags(cfg))
+		test.excludes({ "-pg" }, gcc.getcxxflags(cfg))
+		test.excludes({ "-pg" }, gcc.getldflags(cfg))
+	end
+
+	function suite.flags_onProfileOn()
+		profile "On"
+
+		prepare()
+		test.contains({ "-pg" }, gcc.getcflags(cfg))
+		test.contains({ "-pg" }, gcc.getcxxflags(cfg))
+		test.contains({ "-pg" }, gcc.getldflags(cfg))
+	end

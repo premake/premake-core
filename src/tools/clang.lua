@@ -67,7 +67,8 @@
 		}),
 		visibility = gcc.shared.visibility,
 		inlinesvisibility = gcc.shared.inlinesvisibility,
-		linktimeoptimization = gcc.shared.linktimeoptimization
+		linktimeoptimization = gcc.shared.linktimeoptimization,
+		profile = gcc.shared.profile,
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {
@@ -253,6 +254,7 @@
 			end,
 		},
 		linker = gcc.ldflags.linker,
+		profile = gcc.ldflags.profile,
 		sanitize = table.merge(gcc.ldflags.sanitize, {
 			Fuzzer = "-fsanitize=fuzzer",
 		}),

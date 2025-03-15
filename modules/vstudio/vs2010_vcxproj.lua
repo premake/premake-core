@@ -825,6 +825,7 @@
 				m.additionalLinkOptions,
 				m.programDatabaseFile,
 				m.assemblyDebug,
+				m.profile,
 			}
 		end
 	end
@@ -2550,7 +2551,14 @@
 
 	function m.assemblyDebug(cfg)
 		if cfg.assemblydebug then
-      		m.element("AssemblyDebug", nil, "true")
+			m.element("AssemblyDebug", nil, "true")
+		end
+	end
+
+
+	function m.profile(cfg)
+		if cfg.profile ~= nil then
+			m.element("Profile", nil, iif(cfg.profile, "true", "false"))
 		end
 	end
 

@@ -767,3 +767,33 @@
 </Link>
 		]]
 	end
+
+
+--
+-- Test for the Profile flag.
+--
+
+	function suite.profileOn()
+		profile "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<Profile>true</Profile>
+</Link>
+	]]
+	end
+
+
+	function suite.profileOff()
+		profile "Off"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<Profile>false</Profile>
+</Link>
+	]]
+	end
