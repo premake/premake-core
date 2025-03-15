@@ -17,6 +17,29 @@
 		os.chdir(cwd)
 	end
 
+	local function create_mock_os_getenv(map)
+		return function (key) return map[key] end
+	end
+
+	local function get_LD_PATH_variable_name()
+		if os.istarget("windows") then
+			return 'PATH'
+		elseif os.istarget("haiku") then
+			return 'LIBRARY_PATH'
+		elseif os.istarget("darwin") then
+			return 'DYLD_LIBRARY_PATH'
+		else
+			return 'LD_LIBRARY_PATH'
+		end
+	end
+
+	local function get_surrounded_env_path(dir)
+		if os.istarget("windows") then
+			return "c:\\anyPath;" .. path.getabsolute(dir) .. ";c:\\otherpath"
+		else
+			return "/any_path:" .. path.getabsolute(dir) .. ":/other_path"
+		end
+	end
 
 --
 -- os.findlib() tests
@@ -50,6 +73,20 @@
 		test.isfalse(os.findlib("NoSuchLibraryAsThisOneHere"))
 	end
 
+	function suite.findlib_provided()
+		test.isequal(path.getabsolute("folder/subfolder/lib"),
+					 os.findlib("test", path.getabsolute("folder/subfolder/lib")))
+	end
+
+	function suite.findlib_frompath()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		test.isequal(path.getabsolute("folder/subfolder/lib"), os.findlib("test"))
+
+		os.getenv = os_getenv
+	end
+
 	function suite.findheader_stdheaders()
 		if not os.istarget("windows") and not os.istarget("macosx") then
 			test.istrue(os.findheader("stdlib.h"))
@@ -60,6 +97,28 @@
 		test.isfalse(os.findheader("Knights/who/say/Ni.hpp"))
 	end
 
+	function suite.findheader_provided()
+		test.isequal(path.getabsolute("folder/subfolder/include"),
+					 os.findheader("test.h", path.getabsolute("folder/subfolder/include")))
+	end
+
+	function suite.findheader_frompath_lib()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		test.isequal(path.getabsolute("folder/subfolder/include"), os.findheader("test.h"))
+
+		os.getenv = os_getenv
+	end
+
+	function suite.findheader_frompath_bin()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/bin") })
+
+		test.isequal(path.getabsolute("folder/subfolder/include"), os.findheader("test.h"))
+
+		os.getenv = os_getenv
+	end
 
 --
 -- os.isfile() tests
