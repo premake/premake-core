@@ -36,6 +36,10 @@ int os_locate(lua_State* L)
 	for (i = 1; i <= nArgs; ++i) {
 		const char* name = lua_tostring(L, i);
 
+		if (name == NULL) {
+			continue;
+		}
+
 		/* Direct path to an embedded file? */
 		if (name[0] == '$' && name[1] == '/' && premake_find_embedded_script(name + 2)) {
 			lua_pushvalue(L, i);

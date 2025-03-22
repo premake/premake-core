@@ -1,7 +1,7 @@
-Searches the [Premake path](Locating-Scripts.md) for a file.
+Searches the [Premake path](Locating-Scripts.md) for files.
 
 ```lua
-os.locate("file_name")
+os.locate("file_name1", ...)
 ```
 
 ### Parameters ###
@@ -11,7 +11,7 @@ os.locate("file_name")
 
 ### Return Value ###
 
-The full path to the file if found, or nil if the file could not be located.
+The full path to the first file found, or nil if the files could not be located.
 
 
 ### Availability ###
