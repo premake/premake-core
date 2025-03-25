@@ -162,6 +162,9 @@
 		},
 		inlinesvisibility = {
 			Hidden = "-fvisibility-inlines-hidden"
+		},
+		profile = {
+			On = "-pg",
 		}
 	}
 
@@ -500,6 +503,9 @@
 		linker = {
 			Default = "",
 			LLD = "-fuse-ld=lld"
+		},
+		profile = {
+			On = "-pg",
 		},
 		sanitize = {
 			Address = "-fsanitize=address",

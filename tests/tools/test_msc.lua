@@ -628,7 +628,26 @@ end
 		test.contains("/DLL", msc.getldflags(cfg))
 	end
 
+	function suite.ldflags_onProfile()
+		kind "ConsoleApp"
+		profile "On"
+		prepare()
+		test.contains("/PROFILE", msc.getldflags(cfg))
+	end
 
+	function suite.ldflags_onNoProfile()
+		kind "ConsoleApp"
+		profile "Off"
+		prepare()
+		test.missing("/PROFILE", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onProfileInvalidKind()
+		kind "StaticLib"
+		profile "On"
+		prepare()
+		test.missing("/PROFILE", msc.getldflags(cfg))
+	end
 
 --
 -- Check handling of CLR settings.
