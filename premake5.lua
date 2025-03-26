@@ -253,8 +253,8 @@
 			flags       { "NoIncrementalLink" }
 
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
-		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
-			flags		{ "LinkTimeOptimization" }
+		filter { "system:windows", "configurations:Release", "toolset:msc" }
+			flags { "LinkTimeOptimization" }
 
 		filter { "system:uwp" }
 			systemversion "latest:latest"
@@ -312,8 +312,8 @@
 			links       { "ole32", "ws2_32", "advapi32", "version" }
 			files { "src/**.rc" }
 
-		filter "toolset:mingw"
-			links		{ "crypt32", "bcrypt" }
+		filter { "system:windows", "toolset:not msc" }
+			links { "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
