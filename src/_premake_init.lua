@@ -45,7 +45,8 @@
 	api.register {
 		name = "basedir",
 		scope = "project",
-		kind = "path"
+		kind = "path",
+		cwdAsBase = true
 	}
 
 	api.register {
