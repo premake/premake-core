@@ -1,9 +1,21 @@
 --------------------
-  5.0-beta5
+  5.0-beta6
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-beta5:
+* PR #2405  Use git to retrieve version instead of manually change `PREMAKE_VERSION`. (@Jarod42)
+* PR #2432  Usages and Uses API (@nickclark2016)
+* PR #2438  Added more documentation for usages and uses (@nickclark2016)
+* PR #2440  Add documentation specifying that filters are space sensitive (@nickclark2016)
+* PR #2442  Fix findlib and findheader on windows (@Jarod42)
+* PR #2443  nuget python package error fix (@hanagasira)
+* PR #2446  Added Instrumented Profiling Support (@nickclark2016)
+* PR #2449  [bugfix] Fix crash with invalid argument type passed to `os.locate` (@Jarod42)
+* PR #2450  [contrib][premake] Add missing `"library/*.h"` in `files` in contrib/mbedtls/premake5.lua (@Jarod42)
+* PR #2452  Update python version for requirements, upgrade jinja (@nickclark2016)
 
 Since 5.0-beta4:
 * PR #2401  [gmake] Add missing dependencies between prelink and generated files (@Jarod42)
