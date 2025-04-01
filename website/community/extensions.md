@@ -6,7 +6,7 @@ These IDE extensions are available from other developers; follow the links for m
 
 ## Visual Studio Code
 
-- [Premake Mananager](https://marketplace.visualstudio.com/items?itemName=lolrobbe2.premake-manager) : Manage premake projects and use the integrated premake terminal.
+- [Premake Manager](https://marketplace.visualstudio.com/items?itemName=lolrobbe2.premake-manager) : Manage premake projects and use the integrated premake terminal.
 
 ## Visual Studio
 
