@@ -211,10 +211,10 @@
 
 	function premake.findProjectScript(fname)
 		local filenames = {
-			fname,
-			fname .. ".lua",
 			path.join(fname, "premake5.lua"),
 			path.join(fname, "premake4.lua"),
+			fname .. ".lua",
+			fname,
 		}
 
 		-- If the currently running script was embedded, try to find this file as if it were embedded too.
