@@ -838,6 +838,13 @@
 		test.contains("-F/Library/Frameworks", gcc.getincludedirs(cfg, {}, {}, cfg.frameworkdirs))
 	end
 
+	function suite.includeDirs_tvos_onFrameworkDirs()
+		system "tvOS"
+		frameworkdirs { "/Library/Frameworks" }
+		prepare()
+		test.contains("-F/Library/Frameworks", gcc.getincludedirs(cfg, {}, {}, cfg.frameworkdirs))
+	end
+
 
 --
 -- Check handling of linker flag.

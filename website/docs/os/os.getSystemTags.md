@@ -15,6 +15,7 @@ and meta tags like `posix`, `darwin`, `desktop` and `mobile` tags.
 | linux    | linux, posix, desktop                   |
 | macosx   | macosx, darwin, posix, desktop          |
 | solaris  | solaris, posix, desktop                 |
+| tvos     | tvos, darwin, posix, mobile             |
 | uwp      | uwp, windows, desktop                   |
 | windows  | windows, win32, desktop                 |
 

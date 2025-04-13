@@ -220,7 +220,7 @@
 
 
 --
--- Bundle path should be set for macOS/iOS cocoa bundle.
+-- Bundle path should be set for macOS/iOS/tvOS cocoa bundle.
 --
 
 	function suite.bundlepathSet_onMacSharedLibOSXBundle()
@@ -232,7 +232,7 @@
 	end
 
 --
--- Bundle path should be set for macOS/iOS cocoa unit test bundle.
+-- Bundle path should be set for macOS/iOS/tvOS cocoa unit test bundle.
 --
 
 	function suite.bundlepathSet_onMacSharedLibXCTest()
@@ -245,7 +245,7 @@
 
 
 --
--- Bundle path should be set for macOS/iOS framework.
+-- Bundle path should be set for macOS/iOS/tvOS framework.
 --
 
 	function suite.bundlepathSet_onMacSharedLibOSXFramework()

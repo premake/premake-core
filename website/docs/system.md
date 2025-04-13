@@ -19,6 +19,7 @@ If no system is specified, Premake will identify and target the current operatin
 * linux
 * macosx
 * solaris
+* tvos
 * uwp
 * wii
 * windows
