@@ -45,6 +45,16 @@
 		test.isnil(snc.gettoolname(cfg, "ar"))
 	end
 
+--
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "snc"
+	toolsetpath("snc", "cc", "/path/to/my/custom/snc_cc")
+	prepare()
+	test.isequal("/path/to/my/custom/snc_cc", snc.gettoolname(cfg, "cc"))
+end
+
 
 --
 -- By default, the -MMD -MP are used to generate dependencies.

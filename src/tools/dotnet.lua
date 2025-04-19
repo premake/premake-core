@@ -255,6 +255,11 @@
 --
 
 	function dotnet.gettoolname(cfg, tool)
+		-- Check toolsetpaths first
+		if cfg.toolsetpaths and cfg.toolsetpaths[cfg.toolset] and cfg.toolsetpaths[cfg.toolset][tool] then
+			return cfg.toolsetpaths[cfg.toolset][tool]
+		end
+
 		local compilers = {
 			msnet = "csc",
 			mono = "mcs",

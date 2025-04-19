@@ -924,6 +924,14 @@
 	}
 
 	api.register {
+		name = "toolsetpaths",
+		scope = "config",
+		kind = "keyed:keyed:path", -- { toolset_name = { tool_name = path } }
+		tokens = true,
+		pathVars = true,
+	}
+
+	api.register {
 		name = "undefines",
 		scope = "config",
 		kind = "list:string",

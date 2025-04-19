@@ -49,6 +49,16 @@
 	end
 
 --
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "clang"
+	toolsetpath("clang", "cc", "/path/to/my/custom/clang")
+	prepare()
+	test.isequal("/path/to/my/custom/clang", clang.gettoolname(cfg, "cc"))
+end
+
+--
 -- Check Mac OS X deployment target flags
 --
 

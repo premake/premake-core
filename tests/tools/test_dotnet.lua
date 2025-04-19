@@ -45,6 +45,16 @@
 		test.isequal("csc", dotnet.gettoolname(cfg, "csc"))
 	end
 
+--
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "dotnet"
+	toolsetpath("dotnet", "csc", "/path/to/my/custom/csc")
+	prepare()
+	test.isequal("/path/to/my/custom/csc", dotnet.gettoolname(cfg, "csc"))
+end
+
 
 --
 -- Check support for the `csversion` API
