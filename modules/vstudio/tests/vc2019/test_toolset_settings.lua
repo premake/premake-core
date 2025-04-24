@@ -109,8 +109,8 @@ function suite.onAllModulesPublicOn()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<AllProjectBMIsArePublic>true</AllProjectBMIsArePublic>
@@ -125,8 +125,8 @@ function suite.onAllModulesPublicOff()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<AllProjectBMIsArePublic>false</AllProjectBMIsArePublic>

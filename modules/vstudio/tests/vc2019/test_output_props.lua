@@ -35,8 +35,8 @@ function suite.onClangTidy_Enabled()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
@@ -54,8 +54,8 @@ function suite.onClangTidy_Disabled()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
@@ -73,8 +73,8 @@ function suite.onRunCodeAnalysis_Enabled()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<RunCodeAnalysis>true</RunCodeAnalysis>
@@ -92,8 +92,8 @@ function suite.RunCodeAnalysis_Disabled()
 	test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LinkIncremental>true</LinkIncremental>
-	<OutDir>bin\Debug\</OutDir>
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>.exe</TargetExt>
 	<RunCodeAnalysis>false</RunCodeAnalysis>
