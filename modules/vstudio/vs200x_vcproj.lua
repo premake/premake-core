@@ -1149,7 +1149,7 @@
 
 
 	function m.generateManifest(cfg, toolset)
-		if cfg.flags.NoManifest or toolset then
+		if cfg.flags.NoManifest then
 			p.w('GenerateManifest="false"')
 		end
 	end
