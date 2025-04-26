@@ -51,7 +51,8 @@ local vc2010 = p.vstudio.vc2010
 		prepareOutputProperties()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-	<IntDir>obj\Debug\</IntDir>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>
 	</TargetExt>

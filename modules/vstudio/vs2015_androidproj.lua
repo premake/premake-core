@@ -116,7 +116,7 @@
 
 	m.elements.outputProperties = function(cfg)
 		return {
-			m.androidOutDir,
+			vc2010.outDir,
 			vc2010.intDir,
 			vc2010.targetName,
 		}
@@ -134,10 +134,6 @@
 		for cfg in project.eachconfig(prj) do
 			m.outputProperties(cfg)
 		end
-	end
-
-	function m.androidOutDir(cfg)
-		vc2010.element("OutDir", nil, "%s\\", cfg.buildtarget.directory)
 	end
 
 --

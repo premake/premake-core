@@ -393,6 +393,7 @@
 			}
 		else
 			return {
+				m.outDir,
 				m.intDir,
 				m.targetName,
 				m.targetExt,
@@ -418,6 +419,7 @@
 			}
 		else
 			return {
+				m.outDir,
 				m.intDir,
 				m.targetName,
 				m.targetExt,
@@ -2833,6 +2835,11 @@
 
 	function m.intDir(cfg)
 		local objdir = vstudio.path(cfg, cfg.objdir)
+
+		if not path.isabsolute(objdir) then
+			objdir = "$(ProjectDir)" .. objdir
+		end
+
 		m.element("IntDir", nil, "%s\\", objdir)
 	end
 
@@ -3079,7 +3086,13 @@
 
 	function m.outDir(cfg)
 		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+
+		if not path.isabsolute(outdir) then
+			outdir = "$(ProjectDir)" .. outdir
+		end
+
 		m.element("OutDir", nil, "%s\\", outdir)
+
 	end
 
 
