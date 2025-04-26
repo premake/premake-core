@@ -146,6 +146,16 @@ end
 		]]
 	end
 
+	function suite.outDir_onTargetDirAbsolute()
+		targetdir "C:/bin"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>C:\bin\</OutDir>
+		]]
+	end
+
 --
 -- The objects directory is applied, if specified.
 --
@@ -158,6 +168,17 @@ end
 	<LinkIncremental>true</LinkIncremental>
 	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
 	<IntDir>$(ProjectDir)..\tmp\Debug\</IntDir>
+		]]
+	end
+
+	function suite.intDir_onTargetDirAbsolute()
+		objdir "C:/tmp"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
+	<IntDir>C:\tmp\Debug\</IntDir>
 		]]
 	end
 
