@@ -91,6 +91,24 @@
 	end
 
 --
+-- Check tvOS deployment target flags
+--
+
+function suite.cflags_tvos_systemversion()
+	system "tvOS"
+	systemversion "12.1"
+	prepare()
+	test.contains({ "-mappletvos-version-min=12.1" }, clang.getcflags(cfg))
+end
+
+function suite.cxxflags_tvos_systemversion()
+	system "tvOS"
+	systemversion "5.0"
+	prepare()
+	test.contains({ "-mappletvos-version-min=5.0" }, clang.getcxxflags(cfg))
+end
+
+--
 -- Check handling of openmp.
 --
 

@@ -1341,6 +1341,15 @@
 			if family then
 				settings['TARGETED_DEVICE_FAMILY'] = family
 			end
+		elseif os.istarget(p.TVOS) then
+			settings['SDKROOT'] = 'appletvos'
+
+			settings['CODE_SIGN_IDENTITY[sdk=appletvos*]'] = cfg.xcodecodesigningidentity or 'Apple Developer'
+
+			local minOSVersion = project.systemversion(cfg)
+			if minOSVersion ~= nil then
+				settings['TVOS_DEPLOYMENT_TARGET'] = minOSVersion
+			end
 		else
 			local minOSVersion = project.systemversion(cfg)
 			if minOSVersion ~= nil then

@@ -36,6 +36,7 @@
 	premake.ANDROID     = "android"
 	premake.EMSCRIPTEN  = "emscripten"
 	premake.IOS         = "ios"
+	premake.TVOS        = "tvos"
 	premake.LINUX       = "linux"
 	premake.MACOSX      = "macosx"
 	premake.MAKEFILE    = "Makefile"

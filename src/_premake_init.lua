@@ -855,6 +855,7 @@
 			"linux",
 			"macosx",
 			"solaris",
+			"tvos",
 			"uwp",
 			"wii",
 			"windows",
@@ -1306,6 +1307,7 @@
 			{ "linux",      "Linux" },
 			{ "macosx",     "Apple Mac OS X" },
 			{ "solaris",    "Solaris" },
+			{ "tvos",       "tvOS" },
 			{ "uwp",        "Microsoft Universal Windows Platform"},
 			{ "windows",    "Microsoft Windows" },
 		}

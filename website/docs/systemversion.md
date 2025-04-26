@@ -10,7 +10,7 @@ systemversion ("value")
 
 Ranges are currently only supported by the Windows targets with the Visual Studio actions.
 
-Otherwise, only a minimum version can be set for macOS/iOS targets with `xcode` and `gmake`-based actions.
+Otherwise, only a minimum version can be set for macOS/iOS/tvOS targets with `xcode` and `gmake`-based actions.
 
 ### Applies To ###
 
@@ -44,15 +44,21 @@ filter "system:macosx"
 
 ### Apple Targets ###
 
-Under macOS this sets the minimum version of the operating system required for the app to run and  is equivalent to setting the `-macosx-version-min` (or newer `-macos-version-min`) compiler flag.
+Under macOS this sets the minimum version of the operating system required for the app to run and is equivalent to setting the `-mmacosx-version-min` (or newer `-mmacos-version-min`) compiler flag.
 
-The same is true for iOS, iPadOS, tvOS, and watchOS system targets except it is equivalent to setting the `-miphoneos-version-min` (or newer `ios-version-min`) compiler flag.
+The same is true for iOS, iPadOS, and watchOS system targets except it is equivalent to setting the `-miphoneos-version-min` (or newer `-mios-version-min`) compiler flag.
 
 :::warning
-There is also a `-miphonesimulator-version` or `mios-simulator-version-min` compiler flag, but iOS simulator targets are not yet supported by Premake.
+There is also a `-miphonesimulator-version-min` or `-mios-simulator-version-min` compiler flag, but iOS simulator targets are not yet supported by Premake.
 :::
 
-For the `xcode` action this is equivalent to the `MACOSX_DEPLOYMENT_TARGET` Xcode setting.
+The same is also true for tvOS system targets except it is equivalent to setting the `-mappletvos-version-min` (or newer `-mtvos-version-min`) compiler flag.
+
+:::warning
+There is also a `-mappletvsimulator-version-min` or `-mtvos-simulator-version-min` compiler flag, but tvOS simulator targets are not yet supported by Premake.
+:::
+
+For the `xcode` action this is equivalent to the `MACOSX_DEPLOYMENT_TARGET`, `IPHONEOS_DEPLOYMENT_TARGET`, or `TVOS_DEPLOYMENT_TARGET` Xcode setting (depending on the target OS).
 
 ### Windows Targets ###
 
