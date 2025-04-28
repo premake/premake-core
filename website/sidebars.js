@@ -271,6 +271,7 @@ module.exports = {
 						'thumbmode',
 						'toolchainversion',
 						'toolset',
+						'toolsetpath',
 						'toolsversion',
 						'undefines',
 						'usage',

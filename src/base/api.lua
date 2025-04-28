@@ -1205,3 +1205,40 @@
 	function newoption(opt)
 		p.option.add(opt)
 	end
+
+
+---
+-- Set the path for a specific tool within a toolset.
+--
+-- @param toolsetName
+--    The name of the toolset (e.g., "gcc", "clang").
+-- @param toolName
+--    The name of the tool (e.g., "cc", "cxx", "ld").
+-- @param toolPath
+--    The path to the tool executable.
+---
+function toolsetpath(toolsetName, toolName, toolPath)
+	local cfg = api.scope.current
+	if not cfg then
+		error("toolsetpath must be called within a configuration block", 2)
+	end
+
+	-- Get the toolsetpaths field definition
+	local field = p.field.get("toolsetpaths")
+	if not field then
+		error("toolsetpaths field not registered", 2)
+	end
+
+	-- Construct the data table
+	local data = {
+		[toolsetName] = {
+			[toolName] = toolPath
+		}
+	}
+
+	-- Store the data using configset.store
+	local status, err = configset.store(cfg, field, data)
+	if err then
+		error(err, 2)
+	end
+end

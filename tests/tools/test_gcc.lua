@@ -67,6 +67,16 @@
 	end
 
 --
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "gcc"
+	toolsetpath("gcc", "cc", "/path/to/my/custom/gcc")
+	prepare()
+	test.isequal("/path/to/my/custom/gcc", gcc.gettoolname(cfg, "cc"))
+end
+
+--
 -- By default, the -MMD -MP are used to generate dependencies.
 --
 
