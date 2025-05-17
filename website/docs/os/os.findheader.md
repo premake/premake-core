@@ -8,7 +8,7 @@ p = os.findheader("headerfile" [, additionalpaths])
 
 `headerfile` is a file name of a file path to locate.
 
-`additionalpaths` is a string or a table of one or more additional search path. Can be absolute or relative paths. If relative, they are relative to all the default search paths.
+`additionalpaths` is a string or a table of one or more additional search path. The paths may be absolute or relative. If the path is a relative path, it is relative to each of the default search paths.
 
 ### Return Value ###
 
