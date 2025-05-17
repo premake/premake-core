@@ -15,6 +15,8 @@ architecture ("value")
 * `ARM64`
 * `RISCV64`
 * `loongarch64`
+* `ppc`
+* `ppc64`
 * `wasm32`,
 * `wasm64`,
 * `e2k`,

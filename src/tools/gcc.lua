@@ -100,6 +100,7 @@
 			SSSE3 = "-mssse3",
 			["SSE4.1"] = "-msse4.1",
 			["SSE4.2"] = "-msse4.2",
+			ALTIVEC = "-maltivec",
 		},
 		isaextensions = {
 			MOVBE = "-mmovbe",

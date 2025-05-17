@@ -65,6 +65,8 @@
 	premake.ARM64       = "ARM64"
 	premake.RISCV64     = "RISCV64"
 	premake.LOONGARCH64 = "loongarch64"
+	premake.PPC         = "ppc"
+	premake.PPC64       = "ppc64"
 	premake.WASM32 = "wasm32"
 	premake.WASM64 = "wasm64"
 	premake.E2K = "e2k"
