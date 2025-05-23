@@ -263,6 +263,7 @@ module.exports = {
 						'systemversion',
 						'tags',
 						'tailcalls',
+						'targetbundleextension',
 						'targetdir',
 						'targetextension',
 						'targetname',

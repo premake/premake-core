@@ -1195,6 +1195,12 @@
 		kind = "boolean"
 	}
 
+	p.api.register {
+		name = "targetbundleextension",
+		scope = "config",
+		kind = "string"
+	}
+
 
 -----------------------------------------------------------------------------
 --
@@ -1402,22 +1408,22 @@
 	-- Add variations for other Posix-like systems.
 
 	filter { "system:darwin", "kind:WindowedApp" }
-		targetextension ".app"
+		targetbundleextension ".app"
 
 	filter { "system:darwin", "kind:SharedLib" }
 		targetextension ".dylib"
 
 	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:OSXBundle" }
 		targetprefix ""
-		targetextension ".bundle"
+		targetbundleextension ".bundle"
 
 	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:OSXFramework" }
 		targetprefix ""
-		targetextension ".framework"
+		targetbundleextension ".framework"
 
 	filter { "system:darwin", "kind:SharedLib", "sharedlibtype:XCTest" }
 		targetprefix ""
-		targetextension ".xctest"
+		targetbundleextension ".xctest"
 
 	-- Windows and friends.
 

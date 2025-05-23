@@ -44,26 +44,28 @@
 		local prefix = cfg[field.."prefix"] or cfg.targetprefix or ""
 		local suffix = cfg[field.."suffix"] or cfg.targetsuffix or ""
 		local extension = cfg[field.."extension"] or cfg.targetextension or ""
+		local bundleextension = cfg[field.."bundleextension"] or cfg.targetbundleextension or ""
 
 		local bundlename = ""
 		local bundlepath = ""
 
 		if table.contains(os.getSystemTags(cfg.system), "darwin") and (kind == p.WINDOWEDAPP or (kind == p.SHAREDLIB and cfg.sharedlibtype)) then
-			bundlename = basename .. extension
+			bundlename = basename .. bundleextension
 			bundlepath = path.join(bundlename, iif(kind == p.SHAREDLIB and cfg.sharedlibtype == "OSXFramework", "Versions/A", "Contents/MacOS"))
 		end
 
 		local info = {}
-		info.directory  = directory
-		info.basename   = basename .. suffix
-		info.name       = prefix .. info.basename .. extension
-		info.extension  = extension
-		info.abspath    = path.join(directory, info.name)
-		info.fullpath   = info.abspath
-		info.bundlename = bundlename
-		info.bundlepath = path.join(directory, bundlepath)
-		info.prefix     = prefix
-		info.suffix     = suffix
+		info.directory       = directory
+		info.basename        = basename .. suffix
+		info.name            = prefix .. info.basename .. extension
+		info.extension       = extension
+		info.bundleextension = bundleextension
+		info.abspath         = path.join(directory, info.name)
+		info.fullpath        = info.abspath
+		info.bundlename      = bundlename
+		info.bundlepath      = path.join(directory, bundlepath)
+		info.prefix          = prefix
+		info.suffix          = suffix
 		return info
 	end
 

@@ -216,6 +216,7 @@
 		system "MacOSX"
 		i = prepare()
 		test.isequal("bin/Debug/MyProject.app/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal("", i.extension)
 	end
 
 
@@ -229,6 +230,7 @@
 		system "macosx"
 		i = prepare()
 		test.isequal("bin/Debug/MyProject.bundle/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal(".dylib", i.extension)
 	end
 
 --
@@ -241,6 +243,7 @@
 		system "macosx"
 		i = prepare()
 		test.isequal("bin/Debug/MyProject.xctest/Contents/MacOS", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal(".dylib", i.extension)
 	end
 
 
@@ -254,6 +257,7 @@
 		system "macosx"
 		i = prepare()
 		test.isequal("bin/Debug/MyProject.framework/Versions/A", path.getrelative(os.getcwd(), i.bundlepath))
+		test.isequal(".dylib", i.extension)
 	end
 
 
