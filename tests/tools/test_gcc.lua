@@ -183,6 +183,32 @@
 		test.contains({ "-ffloat-store" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onStructmemberalign1()
+		structmemberalign(1)
+		prepare()
+		test.contains({ "-fpack-struct=1" }, gcc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign2()
+		structmemberalign(2)
+		prepare()
+		test.contains({ "-fpack-struct=2" }, gcc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign4()
+		structmemberalign(4)
+		prepare()
+		test.contains({ "-fpack-struct=4" }, gcc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign8()
+		structmemberalign(8)
+		prepare()
+		test.contains({ "-fpack-struct=8" }, gcc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign16()
+		structmemberalign(16)
+		prepare()
+		test.contains({ "-fpack-struct=16" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onSSE()
 		vectorextensions "SSE"
 		prepare()

@@ -65,6 +65,7 @@
 		sanitize = table.merge(gcc.shared.sanitize, {
 			Fuzzer = "-fsanitize=fuzzer",
 		}),
+		structmemberalign = gcc.shared.structmemberalign,
 		visibility = gcc.shared.visibility,
 		inlinesvisibility = gcc.shared.inlinesvisibility,
 		linktimeoptimization = gcc.shared.linktimeoptimization,

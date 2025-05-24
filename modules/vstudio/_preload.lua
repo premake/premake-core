@@ -423,19 +423,6 @@
 	}
 
 	p.api.register {
-		name = "structmemberalign",
-		scope = "config",
-		kind = "integer",
-		allowed = {
-			"1",
-			"2",
-			"4",
-			"8",
-			"16",
-		}
-	}
-
-	p.api.register {
 		name = "symbolspath",
 		scope = "config",
 		kind = "path",

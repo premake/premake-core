@@ -575,7 +575,7 @@
 				-- result if the corresponding value is not present
 
 				for key, replacement in pairs(map) do
-					if #key > 1 and key:startswith("_") then
+					if type(key) == "string" and #key > 1 and key:startswith("_") then
 						key = key:sub(2)
 						if values[key] == nil then
 							add(replacement)

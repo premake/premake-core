@@ -823,6 +823,19 @@
 	}
 
 	api.register {
+		name = "structmemberalign",
+		scope = "config",
+		kind = "integer",
+		allowed = {
+			"1",
+			"2",
+			"4",
+			"8",
+			"16",
+		}
+	}
+
+	api.register {
 		name = "symbols",
 		scope = "config",
 		kind = "string",
