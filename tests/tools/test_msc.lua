@@ -120,6 +120,37 @@
 		test.excludes("/GF-", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onStructmemberalign1()
+		structmemberalign(1)
+		prepare()
+		test.contains("/Zp1", msc.getcflags(cfg))
+		test.contains("/Zp1", msc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign2()
+		structmemberalign(2)
+		prepare()
+		test.contains("/Zp2", msc.getcflags(cfg))
+		test.contains("/Zp2", msc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign4()
+		structmemberalign(4)
+		prepare()
+		test.contains("/Zp4", msc.getcflags(cfg))
+		test.contains("/Zp4", msc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign8()
+		structmemberalign(8)
+		prepare()
+		test.contains("/Zp8", msc.getcflags(cfg))
+		test.contains("/Zp8", msc.getcflags(cfg))
+	end
+	function suite.cflags_onStructmemberalign16()
+		structmemberalign(16)
+		prepare()
+		test.contains("/Zp16", msc.getcflags(cfg))
+		test.contains("/Zp16", msc.getcflags(cfg))
+	end
+
 	function suite.cflags_onFloatingPointExceptionsOn()
 		floatingpointexceptions "On"
 		prepare()

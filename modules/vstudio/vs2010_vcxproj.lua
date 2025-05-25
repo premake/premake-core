@@ -2157,6 +2157,10 @@
 			if cfg.openmp == "On" then
 				table.insert(opts, 1, '/openmp')
 			end
+			-- <StructMemberAlignment>N</StructMemberAlignment> is unfortunately partially ignored with clang toolset
+			if cfg.structmemberalign then
+				table.insert(opts, 1, '/Zp' .. tostring(cfg.structmemberalign))
+			end
 		end
 
 		if #opts > 0 then

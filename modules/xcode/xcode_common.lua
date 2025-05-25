@@ -1588,6 +1588,10 @@
 
 		settings['OTHER_CFLAGS'] = table.join(flags, cfg.buildoptions)
 
+		if cfg.structmemberalign then
+			table.insert(settings['OTHER_CFLAGS'], "-fpack-struct=" .. tostring(cfg.structmemberalign))
+		end
+
 		-- build list of "other" linked flags.
 		flags = { }
 		for _, lib in ipairs(config.getlinks(cfg, "system")) do

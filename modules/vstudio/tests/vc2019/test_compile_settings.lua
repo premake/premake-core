@@ -94,6 +94,24 @@
 	end
 
 --
+-- Check StructMemberAlignment
+--
+
+	function suite.structMemberAlignmentWithClang()
+		toolset "clang"
+		structmemberalign(2)
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/Zp2 %(AdditionalOptions)</AdditionalOptions>
+	<StructMemberAlignment>2Bytes</StructMemberAlignment>
+]]
+	end
+
+--
 -- Check ClCompile for ScanForModuleDependencies
 --
 

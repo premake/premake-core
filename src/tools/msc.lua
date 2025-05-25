@@ -139,6 +139,13 @@
 			On = "/GF",
 			Off = "/GF-",
 		},
+		structmemberalign = {
+			[1] = "/Zp1",
+			[2] = "/Zp2",
+			[4] = "/Zp4",
+			[8] = "/Zp8",
+			[16] = "/Zp16",
+		},
 		symbols = {
 			On = "/Z7"
 		},
