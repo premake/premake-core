@@ -12,7 +12,9 @@ None.
 
 An architecture identifier; see [architecture()](architecture.md) for a complete list of identifiers.
 
-Note that this function returns the architecture for the OS that Premake is currently running on, which is not necessarily the same as the architecture that Premake is generating files for.
+:::warning
+Currently, this function actually returns the architecture of the system that Premake was compiled for. This means that if you run the Win32 version of Premake on a 64-bit Windows system, this function will return 'x86' instead of 'x86_64'.
+:::
 
 ### Availability ###
 
