@@ -1255,7 +1255,7 @@
 			settings['EXECUTABLE_PREFIX'] = cfg.buildtarget.prefix
 		end
 
-		if cfg.buildtarget.extension then
+		if cfg.buildtarget.bundleextension then
 			local exts = {
 				WindowedApp  = "app",
 				SharedLib    = "dylib",
@@ -1264,7 +1264,7 @@
 				OSXFramework = "framework",
 				XCTest       = "xctest",
 			}
-			local ext = cfg.buildtarget.extension:sub(2)
+			local ext = iif(cfg.kind == "WindowedApp" or (cfg.kind == "SharedLib" and cfg.sharedlibtype), cfg.buildtarget.bundleextension:sub(2), cfg.buildtarget.extension:sub(2))
 			if ext ~= exts[iif(cfg.kind == "SharedLib" and cfg.sharedlibtype, cfg.sharedlibtype, cfg.kind)] then
 				if cfg.kind == "WindowedApp" or (cfg.kind == "SharedLib" and cfg.sharedlibtype) then
 					settings['WRAPPER_EXTENSION'] = ext

@@ -1908,9 +1908,9 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnWindowedAppTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnWindowedAppTargetBundleExtension()
 		kind "WindowedApp"
-		targetextension ".xyz"
+		targetbundleextension ".xyz"
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -1931,9 +1931,9 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnWindowedAppNoTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnWindowedAppNoTargetBundleExtension()
 		kind "WindowedApp"
-		targetextension ""
+		targetbundleextension ""
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -1954,10 +1954,10 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnOSXBundleTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnOSXBundleTargetBundleExtension()
 		kind "SharedLib"
 		sharedlibtype "OSXBundle"
-		targetextension ".xyz"
+		targetbundleextension ".xyz"
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -1978,10 +1978,10 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnOSXBundleNoTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnOSXBundleNoTargetBundleExtension()
 		kind "SharedLib"
 		sharedlibtype "OSXBundle"
-		targetextension ""
+		targetbundleextension ""
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -2002,10 +2002,10 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnOSXFrameworkTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnOSXFrameworkTargetBundleExtension()
 		kind "SharedLib"
 		sharedlibtype "OSXFramework"
-		targetextension ".xyz"
+		targetbundleextension ".xyz"
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
@@ -2026,10 +2026,10 @@
 	end
 
 
-	function suite.XCBuildConfigurationTarget_OnOSXFrameworkNoTargetExtension()
+	function suite.XCBuildConfigurationTarget_OnOSXFrameworkNoTargetBundleExtension()
 		kind "SharedLib"
 		sharedlibtype "OSXFramework"
-		targetextension ""
+		targetbundleextension ""
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
