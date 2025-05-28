@@ -172,6 +172,8 @@
 			{ "ARM64", "ARM64" },
 			{ "x86", "x86 (On macOS, same as x86_64.)" },
 			{ "x86_64", "x86_64" },
+			{ "ppc", "PowerPC 32-bit" },
+			{ "ppc64", "PowerPC 64-bit" },
 			{ "Universal", "Universal Binary (macOS only)" },
 			--
 			{ "Win32", "Same as x86" },
@@ -242,6 +244,14 @@
 		filter { "system:macosx", "options:arch=Universal" }
 			buildoptions { "-arch arm64", "-arch x86_64" }
 			linkoptions { "-arch arm64", "-arch x86_64" }
+
+		filter { "system:macosx", "options:arch=ppc" }
+			buildoptions { "-arch ppc" }
+			linkoptions { "-arch ppc" }
+
+		filter { "system:macosx", "options:arch=ppc64" }
+			buildoptions { "-arch ppc64" }
+			linkoptions { "-arch ppc64" }
 
 		filter { "system:windows", "options:arch=ARM" }
 			platforms { "ARM" }

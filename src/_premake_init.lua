@@ -30,6 +30,8 @@
 			p.ARM64,
 			p.RISCV64,
 			p.LOONGARCH64,
+			p.PPC,
+			p.PPC64,
 			p.WASM32,
 			p.WASM64,
 			p.E2K
@@ -981,6 +983,7 @@
 			"SSSE3",
 			"SSE4.1",
 			"SSE4.2",
+			"ALTIVEC",
 		}
 	}
 
