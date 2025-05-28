@@ -11,7 +11,7 @@ jobs:
         platform: [x64]
         depsrc: [none, contrib, system]
         cc: [gcc, clang]
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -41,8 +41,8 @@ jobs:
     strategy:
       matrix:
         config: [debug, release]
-        platform: [x64]
-    timeout-minutes: 30
+        platform: [x64, ARM64]
+    timeout-minutes: 15
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
         config: [debug, release]
         platform: [Win32, x64]
         msdev: [vs2022]
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -100,7 +100,7 @@ jobs:
             msystem: mingw32
           - platform: x64
             msystem: mingw64
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: msys2 {0}
@@ -142,7 +142,8 @@ jobs:
     strategy:
       matrix:
         config: [debug, release]
-    timeout-minutes: 30
+        platform: [x64]
+    timeout-minutes: 15
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -168,7 +169,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc, clang]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: freebsd {0}
@@ -176,7 +177,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Start FreeBSD VM
-      uses: vmactions/freebsd-vm@v1
+      uses: vmactions/freebsd-vm@v1.2.0
       with:
         usesh: true
         sync: sshfs
@@ -207,7 +208,7 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [clang]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: openbsd {0}
@@ -215,7 +216,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Start OpenBSD VM
-      uses: vmactions/openbsd-vm@v1
+      uses: vmactions/openbsd-vm@v1.1.8
       with:
         usesh: true
         sync: sshfs
@@ -246,30 +247,32 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: netbsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Start NetBSD VM
-      uses: vmactions/netbsd-vm@v1
+    - name: Build on NetBSD VM
+      uses: vmactions/netbsd-vm@v1.1.8
       with:
+        usesh: true
         prepare: |
-          pkg_add gmake
-    - name: Build
-      run: |
-        cd $GITHUB_WORKSPACE
-        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
-    - name: Test
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 docs-check
+          set -e
+          /usr/sbin/pkg_add pkgin
+          pkgin -y install gmake
+        run: |
+          cd $GITHUB_WORKSPACE
+          PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+          bin/${{ matrix.config }}/premake5 test --test-all
+          bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-netbsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
   dragonflybsd:
     runs-on: ubuntu-latest
     strategy:
@@ -277,30 +280,30 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: dragonflybsd {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Start DragonflyBSD VM
-      uses: vmactions/dragonflybsd-vm@v1
+    - name: Build on DragonflyBSD VM
+      uses: vmactions/dragonflybsd-vm@v1.1.0
       with:
+        usesh: true
         prepare: |
           pkg install -y gmake
-    - name: Build
-      run: |
-        cd $GITHUB_WORKSPACE
-        PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
-    - name: Test
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 docs-check
+        run: |
+          cd $GITHUB_WORKSPACE
+          PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+          bin/${{ matrix.config }}/premake5 test --test-all
+          bin/${{ matrix.config }}/premake5 docs-check
+    - name: Upload Artifacts
+      if: matrix.config == 'release' && matrix.cc == 'gcc'
+      uses: actions/upload-artifact@v4
+      with:
+        name: premake-dragonflybsd-${{ matrix.platform }}
+        path: bin/${{ matrix.config }}/
   solaris:
     runs-on: ubuntu-latest
     strategy:
@@ -308,32 +311,25 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: solaris {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Start Solaris VM
-      uses: vmactions/solaris-vm@v1
+    - name: Build on Solaris VM
+      uses: vmactions/solaris-vm@v1.1.3
       with:
         usesh: true
         cpu: 4
         mem: 8192
         release: 11.4-gcc
-    - name: Build
-      run: |
-        cd $GITHUB_WORKSPACE
-        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
-    - name: Test
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 docs-check
+        run: |
+          cd $GITHUB_WORKSPACE
+          CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+          bin/${{ matrix.config }}/premake5 test --test-all
+          bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v4
@@ -347,31 +343,24 @@ jobs:
         config: [debug, release]
         platform: [x64]
         cc: [gcc]
-    timeout-minutes: 30
+    timeout-minutes: 15
     defaults:
       run:
         shell: omnios {0}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Start OmniOS VM
-      uses: vmactions/omnios-vm@v1
+    - name: Build on OmniOS VM
+      uses: vmactions/omnios-vm@v1.1.0
       with:
         usesh: true
         prepare: |
           pkg install build-essential web/ca-bundle
-    - name: Build
-      run: |
-        cd $GITHUB_WORKSPACE
-        CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
-    - name: Test
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 test --test-all
-    - name: Docs check
-      run: |
-        cd $GITHUB_WORKSPACE
-        bin/${{ matrix.config }}/premake5 docs-check
+        run: |
+          cd $GITHUB_WORKSPACE
+          CC=${{ matrix.cc }} PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} PREMAKE_OPTS="--cc=${{ matrix.cc }}" ./Bootstrap.sh
+          bin/${{ matrix.config }}/premake5 test --test-all
+          bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v4
