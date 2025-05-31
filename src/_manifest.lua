@@ -64,7 +64,6 @@
 		"tools/msc.lua",
 		"tools/snc.lua",
 		"tools/clang.lua",
-		"tools/mingw.lua",
 		"tools/cosmocc.lua",
 		"tools/emcc.lua",
 
