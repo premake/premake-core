@@ -319,7 +319,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build on Solaris VM
-      uses: vmactions/solaris-vm@v1.1.3
+      uses: vmactions/solaris-vm@v1.1.4
       with:
         usesh: true
         cpu: 4
