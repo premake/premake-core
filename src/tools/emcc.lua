@@ -22,7 +22,13 @@ emcc.tools = {
 -- flags correctly to emcc builds.
 emcc.shared.profile = nil
 emcc.ldflags.profile = nil
+emcc.getsharedlibarg = function(cfg) return "" end
 
 function emcc.gettoolname(cfg, tool)
+	-- Check toolsetpaths first
+	if cfg.toolsetpaths and cfg.toolsetpaths[cfg.toolset] and cfg.toolsetpaths[cfg.toolset][tool] then
+		return cfg.toolsetpaths[cfg.toolset][tool]
+	end
+
 	return emcc.tools[tool]
 end
