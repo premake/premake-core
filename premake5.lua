@@ -203,8 +203,10 @@
 		end
 	end
 
+	local git_tag = nil
+
 	if premake.action.isConfigurable() then
-		local git_tag = retrieve_git_tag() or io.readfile("git-tags.txt")
+		git_tag = retrieve_git_tag() or io.readfile("git-tags.txt")
 
 		if git_tag == "$Format:%(describe:tags=true)$" then
 			git_tag = nil
