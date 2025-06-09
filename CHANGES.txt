@@ -1,9 +1,24 @@
 --------------------
-  5.0-beta6
+  5.0-beta7
 --------------------
 
 See https://github.com/premake/premake-core/wiki/What's-New-in-5.0
 for the complete list of changes from the Premake 4.x series.
+
+Since 5.0-beta6:
+* PR #2455  Added premake manager extension to extensions.md (@lolrobbe2)
+* PR #2458  Fix optimize('Debug') for xcode project generator (@artamonovoleg)
+* PR #2459  Remove legacy page for third party usages implementation (@nickclark2016)
+* PR #2460  Add basic support for tvOS (@sbeca)
+* PR #2461  Fix vs200x_vcproj to properly handle NoManifest (@NishiOwO)
+* PR #2464  Fix targetdir and objdir for Linux and Android (@redorav)
+* PR #2471  Support powerpc (@barracuda156)
+* PR #2474  Update zlib dependency to 1.3.1 (@nickclark2016)
+* PR #2475  Separates the functionality for bundle and binary extensions (@nickclark2016)
+* PR #2476  Handle `structmemberalign` for non-visual studio actions (@Jarod42)
+* PR #2480  Added ARM build for MacOSX, added more artifacts (@nickclark2016)
+* PR #2482  Bump vmactions/solaris-vm from 1.1.3 to 1.1.4 in the github-actions group (@dependabot)
+* PR #2483  Fix git tagged builds (@nickclark2016)
 
 Since 5.0-beta5:
 * PR #2405  Use git to retrieve version instead of manually change `PREMAKE_VERSION`. (@Jarod42)
