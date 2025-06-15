@@ -146,10 +146,10 @@
 --    An array of symbols with the appropriate flag decorations.
 --
 
-	function clang.getdefines(defines)
+	function clang.getdefines(defines, cfg)
 
 		-- Just pass through to GCC for now
-		local flags = gcc.getdefines(defines)
+		local flags = gcc.getdefines(defines, cfg)
 		return flags
 
 	end
