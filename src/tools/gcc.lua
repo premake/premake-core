@@ -287,7 +287,7 @@
 -- Decorate defines for the GCC command line.
 --
 
-	function gcc.getdefines(defines)
+	function gcc.getdefines(defines, cfg)
 		local result = {}
 		for _, define in ipairs(defines) do
 			table.insert(result, '-D' .. p.esc(define))

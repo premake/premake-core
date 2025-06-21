@@ -239,9 +239,9 @@
 
 	msc.defines = {
 		characterset = {
-			Default = { '/D"_UNICODE"', '/D"UNICODE"' },
-			MBCS = '/D"_MBCS"',
-			Unicode = { '/D"_UNICODE"', '/D"UNICODE"' },
+			Default = { '/D_UNICODE', '/DUNICODE' },
+			MBCS = '/D_MBCS',
+			Unicode = { '/D_UNICODE', '/DUNICODE' },
 			ASCII = { },
 		}
 	}
@@ -260,7 +260,7 @@
 		end
 
 		for _, define in ipairs(defines) do
-			table.insert(result, '/D"' .. define .. '"')
+			table.insert(result, '/D' .. p.esc(define))
 		end
 
 		if cfg and cfg.exceptionhandling == p.OFF then
@@ -271,11 +271,7 @@
 	end
 
 	function msc.getundefines(undefines)
-		local result = {}
-		for _, undefine in ipairs(undefines) do
-			table.insert(result, '/U"' .. undefine .. '"')
-		end
-		return result
+		return table.translate(undefines, function (undefine) return '/U' .. p.esc(undefine) end)
 	end
 
 
