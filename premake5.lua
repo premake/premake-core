@@ -267,7 +267,7 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:not arch" }
+		filter { "system:windows", "options:arch=" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"
@@ -288,6 +288,9 @@
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
 		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
 			flags		{ "LinkTimeOptimization" }
+		
+		filter { "system:windows", "configurations:Release", "toolset:clang", "action:not vs*" }
+			linkoptions { "-fuse-ld=lld" }
 
 		filter { "system:uwp" }
 			systemversion "latest:latest"
@@ -350,6 +353,9 @@
 			files { "src/**.rc" }
 
 		filter "toolset:mingw"
+			links		{ "crypt32", "bcrypt" }
+
+		filter { "system:windows", "toolset:clang", "action:not vs*" }
 			links		{ "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"
