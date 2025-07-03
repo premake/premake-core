@@ -11,7 +11,7 @@ project "zip-lib"
 		"**.c"
 	}
 
-	filter "toolset:gcc or clang or cosmocc"
+	filter { "toolset:gcc or clang or cosmocc", "system:not windows" }
 		defines { "HAVE_SSIZE_T_LIBZIP", "HAVE_CONFIG_H" }
 		forceincludes { "unistd.h" }
 
