@@ -328,13 +328,37 @@
 	function suite.defines()
 		defines "DEF"
 		prepare()
-		test.contains({ "-DDEF" }, gcc.getdefines(cfg.defines))
+		p.escaper(p.quote)
+		test.contains({ '-D"DEF"' }, gcc.getdefines(cfg.defines, cfg))
+		p.escaper()
+		test.contains({ '-DDEF' }, gcc.getdefines(cfg.defines, cfg))
+	end
+
+	function suite.definesVar()
+		defines "DEF=42"
+		prepare()
+		p.escaper(p.quote)
+		test.contains({ '-D"DEF=42"' }, gcc.getdefines(cfg.defines, cfg))
+		p.escaper()
+		test.contains({ '-DDEF=42' }, gcc.getdefines(cfg.defines, cfg))
+	end
+
+	function suite.definesStringVar()
+		defines 'DEF="Hello world"'
+		prepare()
+		p.escaper(p.quote)
+		test.contains({ '-D"DEF=\\"Hello world\\""' }, gcc.getdefines(cfg.defines, cfg))
+		p.escaper()
+		test.contains({ '-DDEF="Hello world"' }, gcc.getdefines(cfg.defines, cfg))
 	end
 
 	function suite.undefines()
 		undefines "UNDEF"
 		prepare()
-		test.contains({ "-UUNDEF" }, gcc.getundefines(cfg.undefines))
+		p.escaper(p.quote)
+		test.contains({ '-U"UNDEF"' }, gcc.getundefines(cfg.undefines))
+		p.escaper()
+		test.contains({ '-UUNDEF' }, gcc.getundefines(cfg.undefines))
 	end
 
 
