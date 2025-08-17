@@ -23,5 +23,10 @@ cosmocc.tools = {
 }
 
 function cosmocc.gettoolname(cfg, tool)
+	-- Check toolsetpaths first
+	if cfg.toolsetpaths and cfg.toolsetpaths[cfg.toolset] and cfg.toolsetpaths[cfg.toolset][tool] then
+		return cfg.toolsetpaths[cfg.toolset][tool]
+	end
+
     return cosmocc.tools[tool]
 end

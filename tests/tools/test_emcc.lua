@@ -46,3 +46,13 @@ function suite.tools_onWASM64()
 	test.isequal("wasm64", cfg.architecture)
 end
 
+--
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "emcc"
+	toolsetpath("emcc", "cc", "/path/to/my/custom/emcc")
+	prepare()
+	test.isequal("/path/to/my/custom/emcc", emcc.gettoolname(cfg, "cc"))
+end
+
