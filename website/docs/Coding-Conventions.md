@@ -29,7 +29,7 @@ local project = p.project
 local m = p.vstudio.vc2010
 ```
 
-The alias `p` is used conventionally  as a shortcut for the `premake` namespace. The alias `m` is conventially used to represent the module being implemented.
+The alias `p` is used conventionally  as a shortcut for the `premake` namespace. The alias `m` is conventionally used to represent the module being implemented.
 
 Using aliases saves some keystrokes when coding. And since Premake embeds all of its scripts into the release executables, it saves on the final download size as well.
 
