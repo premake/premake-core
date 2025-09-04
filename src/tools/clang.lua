@@ -233,12 +233,10 @@
 --
 
 	clang.ldflags = {
-		architecture = {
-			x86 = "-m32",
-			x86_64 = "-m64",
+		architecture = table.merge(gcc.ldflags.architecture, {
 			WASM32 = "-m32",
 			WASM64 = "-m64",
-		},
+		}),
 		linkerfatalwarnings = {
 			All = "-Wl,--fatal-warnings",
 		},

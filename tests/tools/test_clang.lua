@@ -237,3 +237,77 @@ end
 		test.contains({ "-pg" }, clang.getcxxflags(cfg))
 		test.contains({ "-pg" }, clang.getldflags(cfg))
 	end
+
+--
+-- Make sure system or architecture flags are added properly.
+--
+
+	function suite.cflags_onX86()
+		architecture "x86"
+		prepare()
+		test.contains({ "-m32" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_onX86()
+		architecture "x86"
+		prepare()
+		test.contains({ "-m32" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_onX86_64()
+		architecture "x86_64"
+		prepare()
+		test.contains({ "-m64" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_onX86_64()
+		architecture "x86_64"
+		prepare()
+		test.contains({ "-m64" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_macosx_onX86()
+		system "macosx"
+		architecture "x86"
+		prepare()
+		test.excludes({ "-m32" }, clang.getcflags(cfg))
+		test.contains({ "-arch i386" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onX86()
+		system "macosx"
+		architecture "x86"
+		prepare()
+		test.excludes({ "-m32" }, clang.getldflags(cfg))
+		test.contains({ "-arch i386" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_macosx_onX86_64()
+		system "macosx"
+		architecture "x86_64"
+		prepare()
+		test.excludes({ "-m64" }, clang.getcflags(cfg))
+		test.contains({ "-arch x86_64" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onX86_64()
+		system "macosx"
+		architecture "x86_64"
+		prepare()
+		test.excludes({ "-m64" }, clang.getldflags(cfg))
+		test.contains({ "-arch x86_64" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_macosx_onarm64()
+		system "macosx"
+		architecture "arm64"
+		prepare()
+		test.contains({ "-arch arm64" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onarm64()
+		system "macosx"
+		architecture "arm64"
+		prepare()
+		test.contains({ "-arch arm64" }, clang.getldflags(cfg))
+	end
