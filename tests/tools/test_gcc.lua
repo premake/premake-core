@@ -606,6 +606,52 @@
 		test.contains({ "-m64" }, gcc.getldflags(cfg))
 	end
 
+	function suite.cflags_macosx_onX86()
+		system "macosx"
+		architecture "x86"
+		prepare()
+		test.excludes({ "-m32" }, gcc.getcflags(cfg))
+		test.contains({ "-arch i386" }, gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onX86()
+		system "macosx"
+		architecture "x86"
+		prepare()
+		test.excludes({ "-m32" }, gcc.getldflags(cfg))
+		test.contains({ "-arch i386" }, gcc.getldflags(cfg))
+	end
+
+	function suite.cflags_macosx_onX86_64()
+		system "macosx"
+		architecture "x86_64"
+		prepare()
+		test.excludes({ "-m64" }, gcc.getcflags(cfg))
+		test.contains({ "-arch x86_64" }, gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onX86_64()
+		system "macosx"
+		architecture "x86_64"
+		prepare()
+		test.excludes({ "-m64" }, gcc.getldflags(cfg))
+		test.contains({ "-arch x86_64" }, gcc.getldflags(cfg))
+	end
+
+	function suite.cflags_macosx_onarm64()
+		system "macosx"
+		architecture "arm64"
+		prepare()
+		test.contains({ "-arch arm64" }, gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onarm64()
+		system "macosx"
+		architecture "arm64"
+		prepare()
+		test.contains({ "-arch arm64" }, gcc.getldflags(cfg))
+	end
+
 
 --
 -- Non-Windows shared libraries should marked as position independent.

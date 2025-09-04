@@ -73,6 +73,6 @@
 		system (p.MACOSX)
 		prepare()
 		test.capture [[
-  ALL_LDFLAGS += $(LDFLAGS) -m64
+  ALL_LDFLAGS += $(LDFLAGS) -arch x86_64
 		]]
 	end

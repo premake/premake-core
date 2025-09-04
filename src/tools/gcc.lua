@@ -54,8 +54,9 @@
 --
 	gcc.shared = {
 		architecture = {
-			x86 = "-m32",
-			x86_64 = "-m64",
+			x86 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch i386", "-m32") end,
+			x86_64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch x86_64", "-m64") end,
+			ARM64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch arm64", nil) end,
 		},
 		fatalwarnings = {
 			All = "-Werror",
@@ -485,8 +486,9 @@
 
 	gcc.ldflags = {
 		architecture = {
-			x86 = "-m32",
-			x86_64 = "-m64",
+			x86 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch i386", "-m32") end,
+			x86_64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch x86_64", "-m64") end,
+			ARM64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch arm64", nil) end,
 		},
 		linkerfatalwarnings = {
 			All = "-Wl,--fatal-warnings",
