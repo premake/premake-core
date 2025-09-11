@@ -716,6 +716,11 @@
 	}
 
 	function gcc.gettoolname(cfg, tool)
+		-- Check toolsetpaths first
+		if cfg.toolsetpaths and cfg.toolsetpaths[cfg.toolset] and cfg.toolsetpaths[cfg.toolset][tool] then
+			return cfg.toolsetpaths[cfg.toolset][tool]
+		end
+
 		local toolset, version = p.tools.canonical(cfg.toolset or p.GCC)
 		if toolset == p.tools.gcc and version ~= nil then
 			version = "-" .. version

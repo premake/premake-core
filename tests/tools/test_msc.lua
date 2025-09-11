@@ -27,6 +27,16 @@
 
 
 --
+-- Verify that toolsetpath overrides the default tool name.
+--
+function suite.toolsetpathOverridesDefault()
+	toolset "msc"
+	toolsetpath("msc", "cc", "C:/path/to/my/custom/cl.exe")
+	prepare()
+	test.isequal("C:/path/to/my/custom/cl.exe", msc.gettoolname(cfg, "cc"))
+end
+
+--
 -- Check the optimization flags.
 --
 

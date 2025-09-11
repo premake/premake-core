@@ -354,6 +354,11 @@
 	}
 
 	function clang.gettoolname(cfg, tool)
+		-- Check toolsetpaths first
+		if cfg.toolsetpaths and cfg.toolsetpaths[cfg.toolset] and cfg.toolsetpaths[cfg.toolset][tool] then
+			return cfg.toolsetpaths[cfg.toolset][tool]
+		end
+
 		local toolset, version = p.tools.canonical(cfg.toolset or p.CLANG)
 		local value = clang.tools[tool]
 		if type(value) == "function" then
