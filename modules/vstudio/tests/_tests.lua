@@ -119,4 +119,8 @@ return {
 
 	-- Linux projects
 	"linux/test_linux_files.lua",
+
+	-- Visual Studio 2026+ Solutions
+	"sln2026/test_configurations.lua",
+	"sln2026/test_projects.lua",
 }

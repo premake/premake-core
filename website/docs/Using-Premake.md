@@ -18,6 +18,7 @@ Premake defines the following list of actions out of the box; projects may also 
 
 | Action      | Description                                       |
 |-------------|---------------------------------------------------|
+| vs2026      | Generate Visual Studio 2026 project files         |
 | vs2022      | Generate Visual Studio 2022 project files         |
 | vs2019      | Generate Visual Studio 2019 project files         |
 | vs2017      | Generate Visual Studio 2017 project files         |
