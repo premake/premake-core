@@ -659,5 +659,6 @@
 	include("vs2010_rules_xml.lua")
 	include("vs2013_vcxitems.lua")
 	include("vs2015_androidproj.lua")
+	include("vs2026_solution.lua")
 
 	return p.modules.vstudio

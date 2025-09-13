@@ -38,7 +38,8 @@ toolset "v100"    -- for those more familiar with Visual Studio's way
 
 Use [Clang/C2](http://llvm.org/builds/) with Visual Studio
 ```lua
-toolset "msc-llvm-vs2014"
+toolset "msc-llvm-vs2014" -- pre VS 2019
+toolset "clang" -- VS 2019 and newer
 ```
 
 Use the toolset for Windows XP
