@@ -2053,7 +2053,7 @@
 			elseif (cfg.cppdialect == "C++20") then
 				m.element("LanguageStandard", condition, iif(_ACTION <= "vs2017", 'stdcpplatest', 'stdcpp20'))
 			elseif (cfg.cppdialect == "C++23") then
-				m.element("LanguageStandard", condition, 'stdcpplatest')
+				m.element("LanguageStandard", condition, iif(_ACTION <= "vs2019", 'stdcpplatest', 'stdcpp23'))
 			elseif (cfg.cppdialect == "C++latest") then
 				m.element("LanguageStandard", condition, 'stdcpplatest')
 			end
@@ -2141,8 +2141,8 @@
 			elseif (cfg.cppdialect == "C++17") then
 				table.insert(opts, "/std:c++17")
 			elseif (cfg.cppdialect == "C++20") then
-				table.insert(opts, "/std:c++latest")
-			elseif (cfg.cppdialect == "C++latest") then
+				table.insert(opts, iif(_ACTION <= "vs2017", "/std:c++latest", "/std:c++20"))
+			elseif (cfg.cppdialect == "C++latest" or cfg.cppdialect == "C++23") then
 				table.insert(opts, "/std:c++latest")
 			end
 		end
