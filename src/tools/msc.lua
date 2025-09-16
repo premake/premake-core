@@ -308,7 +308,7 @@
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = p.tools.getrelative(cfg.project, dir)
-			table.insert(result, '-I' ..  p.quoted(dir))
+			table.insert(result, '/I' ..  p.quoted(dir))
 		end
 
 		for _, dir in ipairs(extdirs or {}) do
@@ -316,7 +316,7 @@
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
 				table.insert(result, '/external:I' ..  p.quoted(dir))
 			else
-				table.insert(result, '-I' ..  p.quoted(dir))
+				table.insert(result, '/I' ..  p.quoted(dir))
 			end
 		end
 
@@ -325,7 +325,7 @@
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
 				table.insert(result, '/external:I' ..  p.quoted(dir))
 			else
-				table.insert(result, '-I' ..  p.quoted(dir))
+				table.insert(result, '/I' ..  p.quoted(dir))
 			end
 		end
 

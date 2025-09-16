@@ -340,14 +340,14 @@
 	function suite.cflags_onExternalIncludeDirs()
 		externalincludedirs { "/usr/local/include" }
 		prepare()
-		test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 	function suite.cflags_onVs2008ExternalIncludeDirs()
 		p.action.set("vs2008")
 		externalincludedirs { "/usr/local/include" }
 		prepare()
-		test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 	function suite.cflags_onVs2022ExternalIncludeDirs()
@@ -365,14 +365,14 @@
 function suite.cflags_onIncludeDirsAfter()
 	includedirsafter { "/usr/local/include" }
 	prepare()
-	test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
 function suite.cflags_onVs2008IncludeDirsAfter()
 	p.action.set("vs2008")
 	includedirsafter { "/usr/local/include" }
 	prepare()
-	test.contains("-I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
 function suite.cflags_onVs2022IncludeDirsAfter()
