@@ -27,6 +27,29 @@
 
 
 --
+-- Check the selection of tools.
+--
+
+	function suite.tools_onDefaults()
+		prepare()
+		test.isequal("cl", msc.gettoolname(cfg, "cc"))
+		test.isequal("cl", msc.gettoolname(cfg, "cxx"))
+		test.isequal("lib", msc.gettoolname(cfg, "ar"))
+		test.isequal("rc", msc.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_withMsc()
+		toolset "msc"
+		prepare()
+		test.isequal("cl", msc.gettoolname(cfg, "cc"))
+		test.isequal("cl", msc.gettoolname(cfg, "cxx"))
+		test.isequal("lib", msc.gettoolname(cfg, "ar"))
+		test.isequal("rc", msc.gettoolname(cfg, "rc"))
+	end
+
+
+
+--
 -- Check the optimization flags.
 --
 
