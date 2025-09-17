@@ -724,3 +724,7 @@
 		end
 		return (cfg.gccprefix or "") .. gcc.tools[tool] .. version
 	end
+
+	function gcc.gettooloutputext(tool)
+		return iif(tool == "rc", ".res", ".o")
+	end
