@@ -184,7 +184,7 @@
 			local iscfile = node and path.iscfile(node.abspath) or false
 			flags = iif(prj.language == "C" or iscfile, '$(CC) $(ALL_CFLAGS)', '$(CXX) $(ALL_CXXFLAGS)')
 		end
-		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -MF "$(@:%%.%s=%%.d)" -c "$<"', flags, objext)
+		_p('\t$(SILENT) %s $(FORCE_INCLUDE) -o "$@" -c "$<"', flags, objext)
 	end
 
 
@@ -584,7 +584,7 @@ end
 		_p('\t@echo $(notdir $<)')
 
 		local cmd = iif(prj.language == "C", "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
-		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		_p('\t$(SILENT) %s -o "$@" -c "$<"', cmd)
 
 		_p('else')
 		_p('$(OBJECTS): | $(OBJDIR)')

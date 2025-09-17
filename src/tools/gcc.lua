@@ -33,6 +33,10 @@
 
 	function gcc.getcppflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.cppflags)
+
+		-- Request that dependencies be written out
+		table.insert(flags, '-MF "$(@:%.o=%.d)"')
+
 		return flags
 	end
 

@@ -43,6 +43,26 @@ INCLUDES += -Isrc/include -I../include
 	end
 
 --
+-- Dependency flags in ALL_CPPFLAGS shouldn't appear for MSC
+--
+
+	function suite.dependencyFlags_onDefault()
+		local cfg = test.getconfig(prj, "Debug")
+		local res = cpp.cppFlags(cfg, p.tools.gcc)
+		test.capture [[
+ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP -MF "$(@:%.o=%.d)" $(DEFINES) $(INCLUDES)
+]]
+	end
+
+	function suite.dependencyFlags_onMSC()
+		local cfg = test.getconfig(prj, "Debug")
+		cpp.cppFlags(cfg, p.tools.msc)
+		test.capture [[
+ALL_CPPFLAGS += $(CPPFLAGS) $(DEFINES) $(INCLUDES)
+]]
+	end
+
+--
 -- symbols "on" should produce -g
 --
 	function suite.symbols_on()

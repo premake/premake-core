@@ -60,13 +60,13 @@
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
 			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
 			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
@@ -703,7 +703,7 @@
 		_p('$(GCH): $(PCH) | prebuild')
 		_p('\t@echo $(notdir $<)')
 		local cmd = iif(p.languages.isc(cfg.language), "$(CC) -x c-header $(ALL_CFLAGS)", "$(CXX) -x c++-header $(ALL_CXXFLAGS)")
-		_p('\t$(SILENT) %s -o "$@" -MF "$(@:%%.gch=%%.d)" -c "$<"', cmd)
+		_p('\t$(SILENT) %s -o "$@" -c "$<"', cmd)
 		_p('$(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)')
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) touch "$@"')
