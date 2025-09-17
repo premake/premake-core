@@ -82,6 +82,46 @@
 
 
 --
+-- Object filenames use correct extension based on toolset
+--
+
+	function suite.objectNameExtensions_onDefault()
+		files { "src/hello.cpp", "src/test.c" }
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/hello.o: src/hello.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/test.o: src/test.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+]]
+	end
+
+	function suite.objectNameExtensions_onMSC()
+		toolset "msc"
+		files { "src/hello.cpp", "src/test.c" }
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/hello.obj: src/hello.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/test.obj: src/test.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+]]
+	end
+
+
+--
 -- Two files with the same base name should have different object files.
 --
 

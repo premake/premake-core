@@ -432,6 +432,14 @@
 	end
 
 --
+-- Return tool output extension
+--
+
+	function msc.gettooloutputext(tool)
+		return iif(tool == "rc", "res", "obj")
+	end
+
+--
 -- Return the list of libraries to link, decorated with flags as needed.
 --
 
