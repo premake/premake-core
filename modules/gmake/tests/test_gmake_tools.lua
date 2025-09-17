@@ -59,3 +59,19 @@ endif
 RESCOMP = windres
 		]]
 	end
+
+	function suite.usesCorrectTools_msc()
+		gmake.cpp.tools(cfg, p.tools.msc)
+		test.capture [[
+ifeq ($(origin CC), default)
+  CC = cl
+endif
+ifeq ($(origin CXX), default)
+  CXX = cl
+endif
+ifeq ($(origin AR), default)
+  AR = lib
+endif
+RESCOMP = rc
+		]]
+	end

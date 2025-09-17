@@ -481,8 +481,17 @@
 --    default value should be used.
 --
 
+	msc.tools = {
+		cc = "cl",
+		cxx = "cl",
+		ar = "lib",
+		rc = "rc"
+	}
+
 	function msc.gettoolname(cfg, tool)
-		return nil
+		local toolset, version = p.tools.canonical(cfg.toolset or p.MSC)
+		-- TODO: Support versioning?
+		return msc.tools[tool]
 	end
 
 
