@@ -1,33 +1,41 @@
-omitframepointer - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Controls whether the frame pointer is omitted during compilation.
 
 ```lua
 omitframepointer (value)
 ```
 
-### Parameters
-
+## Parameters
 `value` is one of:
-
-* `Default`: Use the compiler’s default behavior. The compiler decides whether to omit the frame pointer based on optimization settings and target architecture.
-* `On`: Omit the frame pointer. This frees up a register for optimization, resulting in smaller and faster code, but makes debugging and stack traces less reliable.
-* `Off`: Keep the frame pointer. This provides more accurate stack traces and easier debugging at the cost of some optimization opportunities.
+* `Default`: Use the compiler's default behavior.
+* `On`: Omit the frame pointer.
+* `Off`: Keep the frame pointer.
 
 ## Applies To
-
 The `config` scope.
 
-### Availability
-
+## Availability
 Premake 5.0.0 alpha 14 or later.
 
-### Examples
-
+## Examples
+Keep frame pointer in debug builds for better stack traces:
 ```lua
--- Keep frame pointer in debug builds for better stack traces
 filter "configurations:Debug"
     omitframepointer "Off"
+```
 
--- Omit frame pointer in release builds for performance
+Omit frame pointer in release builds:
+```lua
 filter "configurations:Release"
     omitframepointer "On"
 ```
+
+Use compiler defaults across all configurations:
+```lua
+omitframepointer "Default"
+```
+
+## See Also
+* [GCC Optimize Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-fomit-frame-pointer) - Documentation on `-fomit-frame-pointer`
+* [LLVM Function Attributes](https://llvm.org/docs/LangRef.html#function-attributes) - LLVM documentation on frame pointer handling
+* [MSVC Optimization Options](https://docs.microsoft.com/en-us/cpp/build/reference/oy-frame-pointer-omission) - Microsoft Visual C++ frame pointer omission documentation
+* [Clang Optimization Options](https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fomit-frame-pointer) - Clang compiler documentation
