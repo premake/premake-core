@@ -690,7 +690,7 @@
 		_p('\t$(SILENT) rm -rf $(OBJDIR)')
 		_p('else')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(GENERATED)) del /s /q $(subst /,\\\\,$(GENERATED))')
+		_p('\t$(SILENT) $(foreach f,$(subst /,\\\\,$(GENERATED)),if exist $(f) del /s /q $(f) >nul &)')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
 		_p('')
