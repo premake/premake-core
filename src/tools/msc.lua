@@ -494,6 +494,9 @@
 		return msc.tools[tool]
 	end
 
+	function msc.gettooloutputext(tool)
+		return iif(tool == "rc", ".res", ".obj")
+	end
 
 
 	function msc.getwarnings(cfg)
