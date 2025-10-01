@@ -2,7 +2,7 @@
 id: _OS
 ---
 
-:::caution_
+:::caution
 **This has been deprecated in Premake 5.0 alpha 12.** Use the new [_TARGET_OS](premake_TARGET_OS.md) instead.
 :::
 
