@@ -14,6 +14,12 @@ done
 PLATFORM_ARG=""
 CONFIG_ARG=""
 PREMAKE_OPTS_ARG=""
+SYSTEM=$(uname -s)
+
+# If the user has not explicitly selected an architecture, select one automatically
+if [ -z "$PLATFORM" ] && [ "$SYSTEM" = "Darwin" ] && [ "$(uname -m)" = "arm64" ]; then
+  PLATFORM="ARM64"
+fi
 
 if [ -n "$PLATFORM" ]; then
   PLATFORM_ARG="PLATFORM=$PLATFORM"
@@ -29,7 +35,6 @@ else
   PREMAKE_OPTS_ARG="PREMAKE_OPTS="
 fi
 
-SYSTEM=$(uname -s)
 case "${SYSTEM}" in
    Linux)
      NPROC=$(nproc --all)
