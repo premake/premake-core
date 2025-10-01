@@ -39,9 +39,15 @@ BUILDING FROM THE REPOSITORY
 
 Alternatively, you may call the Makefile directly:
 
-    $ make -f Bootstrap.mak PLATFORM
+    $ make -f Bootstrap.mak HOST_PLATFORM
 
- Where PLATFORM can be osx or linux.
+ Where HOST_PLATFORM can be osx or linux.
+
+ The target architecture for the Makefile defaults to x86. If you are building
+ for something else you can set PLATFORM explicitly e.g. for Apple Silicon:
+
+    $ make -f Bootstrap.mak osx PLATFORM=ARM64
+
  On Windows with Visual Studio use nmake:
 
     $ nmake -f Bootstrap.mak windows

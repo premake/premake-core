@@ -24,14 +24,20 @@ make -f Bootstrap.mak osx        # for Mac OS X
 make -f Bootstrap.mak linux      # Linux and similar Posix systems
 ```
 
-If your system or toolset is not fully supported by the bootstrap Makefile, you will need to create new project files using an existing version of Premake, however on Windows you can optionally specify the version of Visual Studio to use for the bootstrap using the MSDEV macro. To successfully compile on Windows with Visual C++ you must run `vcvars32.bat` first. If you don't have Visual C++ as part of your environment variables then you need to use the full path `C:\Program Files (x86)\Microsoft Visual Studio <version>\VC\bin\vcvars32.bat`. It might be easier to create a batch file with the following contents or copy the contents in appveyor.yml.
+If you get an error related to building for an unsupported architecture, you may need to select the architecture manually. E.g. to build for Apple Silicon set `PLATFROM` to `ARM64`.
+
+```bash
+make -f Bootstrap.mak osx PLATFORM=ARM64
+```
+
+On Windows you can optionally specify the version of Visual Studio to use for the bootstrap by setting `MSDEV`. To successfully compile on Windows with Visual C++ you must run `vcvars32.bat` first. If you don't have Visual C++ as part of your environment variables then you need to use the full path `C:\Program Files (x86)\Microsoft Visual Studio <version>\VC\bin\vcvars32.bat`. It might be easier to create a batch file with the following contents or copy the contents in appveyor.yml.
 
 ```bash
 call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" # Sets up the necessary environment variables for nmake to run
 nmake -f Bootstrap.mak MSDEV=vs2015 windows    # For Windows with Visual Studio 2015.
 ```
 
-On other platforms, if the bootstrap fails to build, you will need to have a working Premake executable on your system. The easiest way to get one is by [downloading prebuilt binary package](/download). If a binary is not available for your system, or if you would prefer to build one yourself, grab the latest source code package from that same site and follow the steps in **Using a Source Code Package**, above.
+If your system or toolset is not fully supported by the bootstrap Makefile, you will need to create new project files using an existing version of Premake. The easiest way to get one is by [downloading prebuilt binary package](/download). If a binary is not available for your system, or if you would prefer to build one yourself, grab the latest source code package from that same site and follow the steps in **Using a Source Code Package**, above.
 
 Once you have a working Premake available, you can generate the project files for your toolset by running a command like the following in the top-level Premake directory:
 
