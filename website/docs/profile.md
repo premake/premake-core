@@ -5,10 +5,11 @@ profile "value"
 ```
 
 ### Parameters ###
-| Value   | Description                                                             |
--------------------------------------------------------------------------------------
-| On      | Turn on instrumented performance profiling.                             |
-| Off     | Turn off instrumented performance profiling.                            |
+
+| Value   | Description                                  |
+|---------|----------------------------------------------|
+| On      | Turn on instrumented performance profiling.  |
+| Off     | Turn off instrumented performance profiling. |
 
 ### Applies To ###
 

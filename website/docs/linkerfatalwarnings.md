@@ -10,11 +10,11 @@ linkerfatalwarnings { "warnings" }
 
 For Visual Studio, the MSC warning number should be used to specify the warning. On other compilers, the warning should be identified by name.
 
-In addition, Premake provides a special value to turn on all linker warnings.
+In addition, Premake provides the special value `All` to turn on all linker warnings.
 
-| Value   | Description                   |
--------------------------------------------
-| All | Treat all linker warnings as errors   |
+| Value | Description                         |
+|-------|-------------------------------------|
+| All   | Treat all linker warnings as errors |
 
 ### Applies To ###
 
