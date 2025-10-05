@@ -79,6 +79,10 @@
 #define PLATFORM_ARCHITECTURE "ppc64"
 #elif defined(__ppc__) || defined(__powerpc__)
 #define PLATFORM_ARCHITECTURE "ppc"
+#elif (defined(__mips) && defined (_ABI64) && \
+       defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && \
+       (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#define PLATFORM_ARCHITECTURE "mips64el"
 #elif !defined(RC_INVOKED)
 #error Unknown architecture detected
 #endif
