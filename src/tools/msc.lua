@@ -481,8 +481,15 @@
 --    default value should be used.
 --
 
+	msc.tools = {
+		cc = "cl",
+		cxx = "cl",
+		ar = "lib",
+		rc = "rc",
+	}
+
 	function msc.gettoolname(cfg, tool)
-		return nil
+		return msc.tools[tool]
 	end
 
 
