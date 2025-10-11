@@ -351,7 +351,9 @@
 
 		filter "system:windows"
 			links       { "ole32", "ws2_32", "advapi32", "version" }
-			files { "src/**.rc" }
+
+		filter { "system:windows", "toolset:msc*" }
+			files       { "src/**.rc" }
 
 		filter "toolset:mingw"
 			links		{ "crypt32", "bcrypt" }
