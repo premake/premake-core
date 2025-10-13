@@ -364,3 +364,7 @@
 		end
 		return value
 	end
+
+	function clang.gettooloutputext(tool)
+		return gcc.gettooloutputext(tool)
+	end

@@ -1,5 +1,5 @@
 :::caution
-**This function has been deprecated.** Use [os.istarget()](os.istarget.md), os.target()](os.target.md), or [os.host()](os.host.md) instead.
+**This function has been deprecated.** Use [os.istarget()](os.istarget.md), [os.target()](os.target.md), or [os.host()](os.host.md) instead.
 :::
 
 Checks the current operating system identifier against a particular value.

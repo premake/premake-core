@@ -58,25 +58,33 @@
 	function cpp.initialize()
 		rule 'cpp'
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
-			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
+			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('cxx', cfg)}" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
-			buildoutputs  { "$(OBJDIR)/%{file.objname}.o" }
+			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('cc', cfg)}" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
 
 		rule 'resource'
 			fileExtension ".rc"
-			buildoutputs  { "$(OBJDIR)/%{file.objname}.res" }
+			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('rc', cfg)}" }
 			buildmessage  '$(notdir $<)'
 			buildcommands {'$(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)'}
 
 		global(nil)
 	end
 
+	function cpp.gettooloutputext(tool, cfg)
+		local toolset = gmake.getToolSet(cfg)
+		if toolset.gettooloutputext ~= nil then
+			return toolset.gettooloutputext(tool)
+		end
+
+		return iif(tool == "rc", ".res", ".o")
+	end
 
 	function cpp.createRuleTable(prj)
 		local rules = {}
@@ -690,7 +698,7 @@
 		_p('\t$(SILENT) rm -rf $(OBJDIR)')
 		_p('else')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(TARGET)) del $(subst /,\\\\,$(TARGET))')
-		_p('\t$(SILENT) if exist $(subst /,\\\\,$(GENERATED)) del /s /q $(subst /,\\\\,$(GENERATED))')
+		_p('\t$(SILENT) $(foreach f,$(subst /,\\\\,$(GENERATED)),if exist $(f) del /s /q $(f) >nul &)')
 		_p('\t$(SILENT) if exist $(subst /,\\\\,$(OBJDIR)) rmdir /s /q $(subst /,\\\\,$(OBJDIR))')
 		_p('endif')
 		_p('')
