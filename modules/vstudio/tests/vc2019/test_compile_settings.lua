@@ -192,3 +192,20 @@
 	<EnableModules>true</EnableModules>
 		]]
 	end
+
+--
+-- Disable specific warnings.
+--
+
+	function suite.disableSpecificWarningsWithClang()
+		disablewarnings { "disable" }
+		toolset "clang"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>-Wno-disable %(AdditionalOptions)</AdditionalOptions>
+		]]
+	end
