@@ -2161,6 +2161,7 @@
 			if cfg.structmemberalign then
 				table.insert(opts, 1, '/Zp' .. tostring(cfg.structmemberalign))
 			end
+			opts = table.join(opts, table.translate(cfg.disablewarnings, function(disable) return '-Wno-' .. disable end))
 		end
 
 		if #opts > 0 then
@@ -3556,7 +3557,7 @@
 
 
 	function m.disableSpecificWarnings(cfg, condition)
-		if #cfg.disablewarnings > 0 then
+		if #cfg.disablewarnings > 0 and cfg.toolset ~= "clang" then
 			local warnings = table.concat(cfg.disablewarnings, ";")
 			warnings = warnings .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
