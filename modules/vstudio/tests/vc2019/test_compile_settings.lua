@@ -209,3 +209,20 @@
 	<AdditionalOptions>-Wno-disable %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
+
+--
+-- Fatal specific warnings.
+--
+
+	function suite.fatalSpecificWarningsWithClang()
+		fatalwarnings { "disable" }
+		toolset "clang"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>-Werror=disable %(AdditionalOptions)</AdditionalOptions>
+		]]
+	end

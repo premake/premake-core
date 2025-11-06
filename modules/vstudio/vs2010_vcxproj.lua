@@ -2162,6 +2162,7 @@
 				table.insert(opts, 1, '/Zp' .. tostring(cfg.structmemberalign))
 			end
 			opts = table.join(opts, table.translate(cfg.disablewarnings, function(disable) return '-Wno-' .. disable end))
+			opts = table.join(opts, table.translate(p.filterFatalWarnings(cfg.fatalwarnings), function(disable) return '-Werror=' .. disable end))
 		end
 
 		if #opts > 0 then
@@ -3568,7 +3569,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		local filteredWarnings = p.filterFatalWarnings(cfg.fatalwarnings)
 
-		if #filteredWarnings > 0 then
+		if #filteredWarnings > 0 and cfg.toolset ~= "clang" then
 			local fatal = table.concat(filteredWarnings, ";")
 			fatal = fatal .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
