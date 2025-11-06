@@ -198,7 +198,7 @@
 --
 
 	function suite.disableSpecificWarningsWithClang()
-		disablewarnings { "disable" }
+		disablewarnings { "warningID" }
 		toolset "clang"
 		prepare()
 		test.capture [[
@@ -206,7 +206,7 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<AdditionalOptions>-Wno-disable %(AdditionalOptions)</AdditionalOptions>
+	<AdditionalOptions>-Wno-warningID %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
 
@@ -215,7 +215,7 @@
 --
 
 	function suite.fatalSpecificWarningsWithClang()
-		fatalwarnings { "disable" }
+		fatalwarnings { "warningID" }
 		toolset "clang"
 		prepare()
 		test.capture [[
@@ -223,6 +223,35 @@
 	<PrecompiledHeader>NotUsing</PrecompiledHeader>
 	<WarningLevel>Level3</WarningLevel>
 	<Optimization>Disabled</Optimization>
-	<AdditionalOptions>-Werror=disable %(AdditionalOptions)</AdditionalOptions>
+	<AdditionalOptions>-Werror=warningID %(AdditionalOptions)</AdditionalOptions>
+		]]
+	end
+
+--
+-- Enable specific warnings.
+--
+
+	function suite.enableSpecificWarnings()
+		enablewarnings { "warningID" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>/w1warningID %(AdditionalOptions)</AdditionalOptions>
+		]]
+	end
+
+	function suite.enableSpecificWarningsWithClang()
+		enablewarnings { "warningID" }
+		toolset "clang"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<AdditionalOptions>-WwarningID %(AdditionalOptions)</AdditionalOptions>
 		]]
 	end
