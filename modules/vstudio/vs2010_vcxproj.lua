@@ -2150,6 +2150,7 @@
 		if cfg.toolset and cfg.toolset:startswith("msc") then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+			opts = table.join(opts, table.translate(cfg.enablewarnings, function(enable) return '/w1' .. enable end))
 		elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
@@ -2163,6 +2164,7 @@
 			end
 			opts = table.join(opts, table.translate(cfg.disablewarnings, function(disable) return '-Wno-' .. disable end))
 			opts = table.join(opts, table.translate(p.filterFatalWarnings(cfg.fatalwarnings), function(disable) return '-Werror=' .. disable end))
+			opts = table.join(opts, table.translate(cfg.enablewarnings, function(enable) return '-W' .. enable end))
 		end
 
 		if #opts > 0 then
