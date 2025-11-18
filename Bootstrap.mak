@@ -40,6 +40,25 @@ SRC		= src/host/*.c			\
 		$(LUA_DIR)/lvm.c		\
 		$(LUA_DIR)/lzio.c		\
 
+ifdef MAKEDIR:
+!ifdef MAKEDIR
+
+# NMAKE
+
+!if "$(MSDEV)" == "vs2010" || "$(MSDEV)" == "vs2012" || "$(MSDEV)" == "vs2013" || "$(MSDEV)" == "vs2015" || "$(MSDEV)" == "vs2017" || "$(MSDEV)" == "vs2019" || "$(MSDEV)" == "vs2022"
+SLN_EXT = sln
+!else
+SLN_EXT = slnx
+!endif
+
+!else
+else
+
+# make
+
+endif
+!endif : # !endif has to be last to work in make
+
 HOST_PLATFORM= none
 
 .PHONY: default none clean nix-clean windows-clean \
@@ -148,11 +167,11 @@ windows-base: windows-clean
 	.\build\bootstrap\premake_bootstrap --arch=$(PLATFORM) --to=build/bootstrap $(PREMAKE_OPTS) $(MSDEV)
 
 windows: windows-base
-	devenv .\build\bootstrap\Premake5.sln /Upgrade
-	devenv .\build\bootstrap\Premake5.sln /Build "$(CONFIG)|$(PLATFORM:x86=win32)"
+	devenv .\build\bootstrap\Premake5.$(SLN_EXT) /Upgrade
+	devenv .\build\bootstrap\Premake5.$(SLN_EXT) /Build "$(CONFIG)|$(PLATFORM:x86=win32)"
 
 windows-msbuild: windows-base
-	msbuild /p:Configuration=$(CONFIG) /p:Platform=$(PLATFORM:x86=win32) .\build\bootstrap\Premake5.sln
+	msbuild /p:Configuration=$(CONFIG) /p:Platform=$(PLATFORM:x86=win32) .\build\bootstrap\Premake5.$(SLN_EXT)
 
 cosmo-clean: nix-clean
 
