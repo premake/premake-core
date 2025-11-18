@@ -23,7 +23,7 @@ int http_post(lua_State* L)
 		size_t dataSize;
 		const char* data = luaL_checklstring(L, 2, &dataSize);
 
-		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		curl_easy_setopt(curl, CURLOPT_POST, 1L);
 		if (data && dataSize > 0)
 		{
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)dataSize);
