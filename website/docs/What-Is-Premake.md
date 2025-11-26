@@ -60,6 +60,7 @@ The current development version of Premake 5.0 can generate C, C++, or C# projec
 * GNU Make, including Cygwin and MinGW
 * Xcode
 * Codelite
+* Ninja
 
 Previous version of Premake also supported exporting for MonoDevelop and Code::Blocks. We are in the process of bringing these exporters back online for the final release.
 

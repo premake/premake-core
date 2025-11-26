@@ -2,7 +2,7 @@
 -- ninja.lua
 -- Utilities for generating Ninja build files
 -- Author: Nick Clark
--- Copyright (c) Jess Perkins and the Premake project
+-- Copyright (c) 2025 Jess Perkins and the Premake project
 --
 
 local p = premake
@@ -14,12 +14,18 @@ local ninja = p.modules.ninja
 
 --
 -- Escape a string so it can be written to a Ninja build file.
+-- Ninja variables are expanded into shell commands, so we need to escape
+-- shell special characters as well as Ninja special characters.
 --
 function ninja.esc(value)
     value = value:gsub("%$", "$$")
     value = value:gsub(":", "$:")
     value = value:gsub("\n", "$\n")
     value = value:gsub(" ", "$ ")
+    value = value:gsub('%(', '\\(')
+    value = value:gsub('%)', '\\)')
+    value = value:gsub('"', '\\"')
+    
     return value
 end
 
@@ -32,15 +38,16 @@ end
 
 function ninja.key(cfg)
     local name = cfg.project.name
+    local buildcfg = cfg.buildcfg
     if cfg.platform then
-        return name .. "_" .. cfg.buildcfg .. "_" .. cfg.platform
+        return name .. "_" .. (buildcfg or "") .. "_" .. cfg.platform
     else
-        return name .. "_" .. cfg.buildcfg
+        return name .. (buildcfg and ("_" .. buildcfg) or "")
     end
 end
 
-function ninja.getprjconfigfilename(cfg)
-    return ninja.key(cfg) .. ".ninja"
+function ninja.getprjconfigfilename(prj)
+    return prj.name .. ".ninja"
 end
 
 function ninja.getninjafilename(target, searchprjs)
@@ -62,7 +69,7 @@ function ninja.getninjafilename(target, searchprjs)
     if count == 1 then
         return "build.ninja"
     else
-        return ".ninja"
+        return target.name .. ".ninja"
     end
 end
 
@@ -73,6 +80,36 @@ function ninja.gettoolset(cfg)
         error("No toolset found for '" .. tostring(cfg.toolset) .. "'")
     end
     return toolset
+end
+
+function ninja.list(value)
+    if #value > 0 then
+        return " " .. table.concat(value, " ")
+    else
+        return ""
+    end
+end
+
+-- Override tools.getrelative to use workspace-relative paths for Ninja
+-- Ninja builds are always executed from the workspace root, so all paths
+-- must be relative to the workspace, not the project
+function ninja.getrelative(prj, value)
+    if type(value) == "table" then
+        local result = {}
+        for i, name in ipairs(value) do
+            result[i] = ninja.getrelative(prj, name)
+        end
+        return result
+    else
+        if value then
+            local result = value
+            if path.hasdeferredjoin(result) then
+                result = path.resolvedeferredjoin(result)
+            end
+            -- Use workspace location instead of project location for Ninja
+            return path.getrelative(prj.workspace.location, result)
+        end
+    end
 end
 
 include("ninja_cpp.lua")

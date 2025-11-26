@@ -32,6 +32,7 @@ Premake defines the following list of actions out of the box; projects may also 
 | gmakelegacy | Generate GNU Makefiles (deprecated exporter) |
 | xcode4      | XCode projects |
 | codelite    | CodeLite projects |
+| ninja       | Ninja projects |
 
 (Premake4 supported some additional actions that haven't yet been ported to this new version; see the [Available Feature Matrix](Feature-Matrix.md) for the whole list.)
 
