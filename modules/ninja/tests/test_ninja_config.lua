@@ -105,13 +105,15 @@ target_MyProject_Debug = MyProject
 		kind "ConsoleApp"
 		files { "main.cpp" }
 		defines { "DEBUG", "PLATFORM_LINUX" }
+		defines { 'HELLO="HELLO WORLD"' }
+		defines { "VALUE=with_paren()"}
 		
 		local cfg = prepare()
 		cpp.configurationVariables(cfg)
 		
 		test.capture [[
-cflags_MyProject_Debug = -DDEBUG -DPLATFORM_LINUX
-cxxflags_MyProject_Debug = -DDEBUG -DPLATFORM_LINUX
+cflags_MyProject_Debug = -DDEBUG -DPLATFORM_LINUX -DHELLO="HELLO WORLD" -DVALUE=with_paren()
+cxxflags_MyProject_Debug = -DDEBUG -DPLATFORM_LINUX -DHELLO="HELLO WORLD" -DVALUE=with_paren()
 ldflags_MyProject_Debug = -s
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -370,6 +372,146 @@ target_MyProject_Debug = MyProject
 	end
 
 
+--
+-- Check that buildoptions are included in flags.
+--
+
+	function suite.configVars_withBuildOptions_Linux()
+		toolset "gcc"
+		_OS = "Linux"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		buildoptions { "-Wall", "-Wextra" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = -Wall -Wextra
+cxxflags_MyProject_Debug = -Wall -Wextra
+ldflags_MyProject_Debug = -s
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject
+
+		]]
+	end
+
+
+	function suite.configVars_withBuildOptions_Windows()
+		toolset "msc"
+		_OS = "Windows"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		buildoptions { "/W4", "/WX" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = /MD /W4 /WX
+cxxflags_MyProject_Debug = /MD /EHsc /W4 /WX
+ldflags_MyProject_Debug = /NOLOGO
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject.exe
+
+		]]
+	end
+
+
+	function suite.configVars_withBuildOptions_Macosx()
+		toolset "gcc"
+		_OS = "macosx"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		buildoptions { "-Wall", "-Wextra" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = -Wall -Wextra
+cxxflags_MyProject_Debug = -Wall -Wextra
+ldflags_MyProject_Debug = -Wl,-x
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject
+
+		]]
+	end
+
+
+--
+-- Check that undefines are included in flags.
+--
+
+	function suite.configVars_withUndefines_Linux()
+		toolset "gcc"
+		_OS = "Linux"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		undefines { "NDEBUG", "OLD_PLATFORM" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = -UNDEBUG -UOLD_PLATFORM
+cxxflags_MyProject_Debug = -UNDEBUG -UOLD_PLATFORM
+ldflags_MyProject_Debug = -s
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject
+
+		]]
+	end
+
+
+	function suite.configVars_withUndefines_Windows()
+		toolset "msc"
+		_OS = "Windows"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		undefines { "NDEBUG", "OLD_PLATFORM" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = /MD /UNDEBUG /UOLD_PLATFORM
+cxxflags_MyProject_Debug = /MD /EHsc /UNDEBUG /UOLD_PLATFORM
+ldflags_MyProject_Debug = /NOLOGO
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject.exe
+
+		]]
+	end
+
+
+	function suite.configVars_withUndefines_Macosx()
+		toolset "gcc"
+		_OS = "macosx"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		undefines { "NDEBUG", "OLD_PLATFORM" }
+		
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+		
+		test.capture [[
+cflags_MyProject_Debug = -UNDEBUG -UOLD_PLATFORM
+cxxflags_MyProject_Debug = -UNDEBUG -UOLD_PLATFORM
+ldflags_MyProject_Debug = -Wl,-x
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject
+
+		]]
+	end
+
+
 ---
 -- C/C++ flags function tests
 ---
@@ -485,7 +627,7 @@ build bin/Debug/MyProject.prebuild: prebuild
 		test.isnotnil(result)
 		test.capture [[
 build bin/Debug/MyProject.prebuild: prebuildmessage
-  prebuildmessage = Building project
+  prebuildmessage = "Building project"
 		]]
 	end
 
@@ -506,7 +648,7 @@ build bin/Debug/MyProject.prebuild: prebuildmessage
 		test.isnotnil(result)
 		test.capture [[
 build bin/Debug/MyProject.prebuild: prebuild
-  prebuildcommands = echo Building$ project && mkdir -p build && cp file.txt build/
+  prebuildcommands = echo "Building project" && mkdir -p build && cp file.txt build/
 		]]
 	end
 
@@ -541,11 +683,12 @@ build bin/Debug/MyProject.prebuild: prebuild
 		prelinkcommands { "echo Linking" }
 		
 		local cfg = prepare()
-		local result = cpp.buildPreLinkEvents(cfg)
+		cfg._objectFiles = { "obj/Debug/main.o" }
+		local result = cpp.buildPreLinkEvents(cfg, cfg._objectFiles)
 		
 		test.isnotnil(result)
 		test.capture [[
-build bin/Debug/MyProject.prelinkevents: prelink
+build bin/Debug/MyProject.prelinkevents: prelink obj/Debug/main.o
   prelinkcommands = echo Linking
 		]]
 	end
@@ -561,12 +704,13 @@ build bin/Debug/MyProject.prelinkevents: prelink
 		prelinkmessage "Linking project"
 		
 		local cfg = prepare()
-		local result = cpp.buildPreLinkEvents(cfg)
+		cfg._objectFiles = { "obj/Debug/main.o" }
+		local result = cpp.buildPreLinkEvents(cfg, cfg._objectFiles)
 		
 		test.isnotnil(result)
 		test.capture [[
-build bin/Debug/MyProject.prelinkevents: prelinkmessage
-  prelinkmessage = Linking project
+build bin/Debug/MyProject.prelinkevents: prelinkmessage obj/Debug/main.o
+  prelinkmessage = "Linking project"
 		]]
 	end
 
@@ -582,12 +726,13 @@ build bin/Debug/MyProject.prelinkevents: prelinkmessage
 		prelinkcommands { "echo prelinking", "ls -la" }
 		
 		local cfg = prepare()
-		local result = cpp.buildPreLinkEvents(cfg)
+		cfg._objectFiles = { "obj/Debug/main.o" }
+		local result = cpp.buildPreLinkEvents(cfg, cfg._objectFiles)
 		
 		test.isnotnil(result)
 		test.capture [[
-build bin/Debug/MyProject.prelinkevents: prelink
-  prelinkcommands = echo Preparing$ link && echo prelinking && ls -la
+build bin/Debug/MyProject.prelinkevents: prelink obj/Debug/main.o
+  prelinkcommands = echo "Preparing link" && echo prelinking && ls -la
 		]]
 	end
 
@@ -601,9 +746,30 @@ build bin/Debug/MyProject.prelinkevents: prelink
 		files { "main.cpp" }
 		
 		local cfg = prepare()
-		local result = cpp.buildPreLinkEvents(cfg)
+		local result = cpp.buildPreLinkEvents(cfg, {})
 		
 		test.isnil(result)
+	end
+
+--
+-- Check that prelink commands depend on multiple object files.
+--
+
+	function suite.prelinkEvents_withMultipleObjectFiles()
+		toolset "gcc"
+		kind "ConsoleApp"
+		files { "main.cpp", "foo.cpp", "bar.cpp" }
+		prelinkcommands { "echo Linking" }
+		
+		local cfg = prepare()
+		cfg._objectFiles = { "obj/Debug/main.o", "obj/Debug/foo.o", "obj/Debug/bar.o" }
+		local result = cpp.buildPreLinkEvents(cfg, cfg._objectFiles)
+		
+		test.isnotnil(result)
+		test.capture [[
+build bin/Debug/MyProject.prelinkevents: prelink obj/Debug/main.o obj/Debug/foo.o obj/Debug/bar.o
+  prelinkcommands = echo Linking
+		]]
 	end
 
 
@@ -622,10 +788,10 @@ build bin/Debug/MyProject.prelinkevents: prelink
 		postbuildcommands { "echo Done" }
 		
 		local cfg = prepare()
-		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject.link", "bin/Debug/MyProject")
+		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject")
 		
 		test.capture [[
-build bin/Debug/MyProject: postbuild bin/Debug/MyProject.link
+build bin/Debug/MyProject.postbuild: postbuild | bin/Debug/MyProject
   postbuildcommands = echo Done
 		]]
 	end
@@ -641,11 +807,11 @@ build bin/Debug/MyProject: postbuild bin/Debug/MyProject.link
 		postbuildmessage "Build complete"
 		
 		local cfg = prepare()
-		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject.link", "bin/Debug/MyProject")
+		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject")
 		
 		test.capture [[
-build bin/Debug/MyProject: postbuildmessage bin/Debug/MyProject.link
-  postbuildmessage = Build complete
+build bin/Debug/MyProject.postbuild: postbuildmessage | bin/Debug/MyProject
+  postbuildmessage = "Build complete"
 		]]
 	end
 
@@ -661,10 +827,10 @@ build bin/Debug/MyProject: postbuildmessage bin/Debug/MyProject.link
 		postbuildcommands { "cp bin/Debug/MyProject /usr/local/bin/", "chmod +x /usr/local/bin/MyProject" }
 		
 		local cfg = prepare()
-		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject.link", "bin/Debug/MyProject")
+		cpp.buildPostBuildEvents(cfg, "bin/Debug/MyProject")
 		
 		test.capture [[
-build bin/Debug/MyProject: postbuild bin/Debug/MyProject.link
-  postbuildcommands = echo Finishing$ build && cp bin/Debug/MyProject /usr/local/bin/ && chmod +x /usr/local/bin/MyProject
+build bin/Debug/MyProject.postbuild: postbuild | bin/Debug/MyProject
+  postbuildcommands = echo "Finishing build" && cp bin/Debug/MyProject /usr/local/bin/ && chmod +x /usr/local/bin/MyProject
 		]]
 	end

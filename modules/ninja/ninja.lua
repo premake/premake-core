@@ -12,19 +12,14 @@ p.modules.ninja._VERSION = p._VERSION
 
 local ninja = p.modules.ninja
 
---
--- Escape a string so it can be written to a Ninja build file.
--- Ninja variables are expanded into shell commands, so we need to escape
--- shell special characters as well as Ninja special characters.
---
 function ninja.esc(value)
     value = value:gsub("%$", "$$")
     value = value:gsub(":", "$:")
     value = value:gsub("\n", "$\n")
-    value = value:gsub(" ", "$ ")
     value = value:gsub('%(', '\\(')
     value = value:gsub('%)', '\\)')
     value = value:gsub('"', '\\"')
+    value = value:gsub(" ", "\\ ")
     
     return value
 end

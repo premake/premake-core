@@ -226,3 +226,128 @@ build obj/Debug/script.c: custom script.lua
 		
 		test.isnil(outputs)
 	end
+
+--
+-- Check that custom build commands creating the same output across multiple
+-- configurations only generate the build rule once (for the first config).
+-- The actual output path must match buildoutputs exactly.
+--
+
+	function suite.customBuild_sameOutputFirstConfig()
+		toolset "gcc"
+		kind "ConsoleApp"
+		files { "main.cpp", "src/main.cpp.in" }
+		
+		filter "files:**.in"
+			buildmessage "copy %{file.relpath}"
+			buildoutputs { "main.cpp" }
+			buildcommands { "cp %{file.relpath} main.cpp" }
+		filter {}
+		
+		local cfg = prepare()
+		
+		-- Simulate first configuration - should generate build rule
+		local outputTracking = {}
+		local filecfg = {
+			buildcommands = { "cp src/main.cpp.in main.cpp" },
+			buildoutputs = { "main.cpp" },
+			buildmessage = "copy src/main.cpp.in"
+		}
+		
+		local node = {
+			abspath = path.join(cfg.project.basedir, "src/main.cpp.in")
+		}
+		
+		local outputs = cpp.buildCustomFile(cfg, node, filecfg, outputTracking)
+		
+		test.isnotnil(outputs)
+		test.isequal(1, #outputs)
+		test.isequal("main.cpp", outputs[1])
+		test.capture [[
+build main.cpp: custom src/main.cpp.in
+  customcommand = cp src/main.cpp.in main.cpp
+  description = copy src/main.cpp.in
+		]]
+	end
+
+--
+-- Check that when the same output is generated in a second configuration,
+-- the build rule is skipped but the output path is still returned.
+--
+
+	function suite.customBuild_sameOutputSecondConfig()
+		toolset "gcc"
+		kind "ConsoleApp"
+		files { "main.cpp", "src/main.cpp.in" }
+		
+		filter "files:**.in"
+			buildmessage "copy %{file.relpath}"
+			buildoutputs { "main.cpp" }
+			buildcommands { "cp %{file.relpath} main.cpp" }
+		filter {}
+		
+		local cfg = prepare()
+		
+		-- Simulate second configuration with same output
+		-- outputTracking already has main.cpp from first config
+		local outputTracking = {
+			["main.cpp"] = { "MyProject_Debug" }
+		}
+		
+		local filecfg = {
+			buildcommands = { "cp src/main.cpp.in main.cpp" },
+			buildoutputs = { "main.cpp" },
+			buildmessage = "copy src/main.cpp.in"
+		}
+		
+		local node = {
+			abspath = path.join(cfg.project.basedir, "src/main.cpp.in")
+		}
+		
+		local outputs = cpp.buildCustomFile(cfg, node, filecfg, outputTracking)
+		
+		-- Should return outputs but not generate build rule
+		test.isnotnil(outputs)
+		test.isequal(1, #outputs)
+		test.isequal("main.cpp", outputs[1])
+		test.capture [[
+		]]
+	end
+
+--
+-- Check that custom build with multiple outputs where one is duplicate
+-- skips the entire build rule.
+--
+
+	function suite.customBuild_multipleOutputsWithDuplicate()
+		toolset "gcc"
+		kind "ConsoleApp"
+		files { "resource.rc" }
+		
+		local cfg = prepare()
+		
+		-- Simulate second configuration where one output is duplicate
+		local outputTracking = {
+			["obj/Debug/resource.h"] = { "MyProject_Debug" }
+		}
+		
+		local filecfg = {
+			buildcommands = { "rcc resource.rc -o obj/Debug/resource.h obj/Debug/resource.cpp" },
+			buildoutputs = { "obj/Debug/resource.h", "obj/Debug/resource.cpp" }
+		}
+		
+		local node = {
+			abspath = path.join(cfg.project.basedir, "resource.rc")
+		}
+		
+		local outputs = cpp.buildCustomFile(cfg, node, filecfg, outputTracking)
+		
+		test.isnotnil(outputs)
+		test.isequal(2, #outputs)
+		-- Should return actual output paths
+		test.isequal("obj/Debug/resource.h", outputs[1])
+		test.isequal("obj/Debug/resource.cpp", outputs[2])
+		-- But no build rule should be generated
+		test.capture [[
+		]]
+	end

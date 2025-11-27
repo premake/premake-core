@@ -16,23 +16,23 @@ premake5 [action]
 
 Premake defines the following list of actions out of the box; projects may also add their own custom actions.
 
-| Action      | Description                                       |
-|-------------|---------------------------------------------------|
-| vs2026      | Generate Visual Studio 2026 project files         |
-| vs2022      | Generate Visual Studio 2022 project files         |
-| vs2019      | Generate Visual Studio 2019 project files         |
-| vs2017      | Generate Visual Studio 2017 project files         |
-| vs2015      | Generate Visual Studio 2015 project files         |
-| vs2013      | Generate Visual Studio 2013 project files         |
-| vs2012      | Generate Visual Studio 2012 project files         |
-| vs2010      | Generate Visual Studio 2010 project files         |
-| vs2008      | Generate Visual Studio 2008 project files         |
-| vs2005      | Generate Visual Studio 2005 project files         |
+| Action      | Description                                                   |
+|-------------|---------------------------------------------------------------|
+| codelite    | CodeLite projects                                             |
 | gmake       | Generate GNU Makefiles (including [Cygwin][1] and [MinGW][2]) |
-| gmakelegacy | Generate GNU Makefiles (deprecated exporter) |
-| xcode4      | XCode projects |
-| codelite    | CodeLite projects |
-| ninja       | Ninja projects |
+| gmakelegacy | Generate GNU Makefiles (deprecated exporter)                  |
+| ninja       | Ninja projects                                                |
+| vs2026      | Generate Visual Studio 2026 project files                     |
+| vs2022      | Generate Visual Studio 2022 project files                     |
+| vs2019      | Generate Visual Studio 2019 project files                     |
+| vs2017      | Generate Visual Studio 2017 project files                     |
+| vs2015      | Generate Visual Studio 2015 project files                     |
+| vs2013      | Generate Visual Studio 2013 project files                     |
+| vs2012      | Generate Visual Studio 2012 project files                     |
+| vs2010      | Generate Visual Studio 2010 project files                     |
+| vs2008      | Generate Visual Studio 2008 project files                     |
+| vs2005      | Generate Visual Studio 2005 project files                     |
+| xcode4      | XCode projects                                                |
 
 (Premake4 supported some additional actions that haven't yet been ported to this new version; see the [Available Feature Matrix](Feature-Matrix.md) for the whole list.)
 

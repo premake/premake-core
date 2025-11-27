@@ -269,7 +269,7 @@ rule link
 		cpp.linkrules(cfg)
 		test.capture [[
 rule link
-  command = g++ -o $out -Wl,--start-group $in $links $ldflags -Wl,--end-group
+  command = g++ -o $out $in $links $ldflags
   description = Linking target $out
 
 		]]
@@ -327,8 +327,9 @@ rule ar
 		cpp.pchrules(cfg)
 		test.capture [[
 rule pch
-  command = g++ -x c++-header $cflags $in -o $out
+  command = g++ -x c++-header $cflags -o $out -MD -c $in
   description = Generating precompiled header $in
+  depfile = $out.d
 
 		]]
 	end
@@ -345,8 +346,9 @@ rule pch
 		cpp.pchrules(cfg)
 		test.capture [[
 rule pch
-  command = clang++ -x c++-header $cflags $in -o $out
+  command = clang++ -x c++-header $cflags -o $out -MD -c $in
   description = Generating precompiled header $in
+  depfile = $out.d
 
 		]]
 	end
@@ -363,7 +365,7 @@ rule pch
 		cpp.pchrules(cfg)
 		test.capture [[
 rule pch
-  command = cl /Yc$pchheader /Fp$out /Fo$objdir/ $cflags $in
+  command = cl /nologo /Yc$pchheader /Fp$out /Fo$objdir/ $cflags /c $in
   description = Generating precompiled header $pchheader
 
 		]]
@@ -506,24 +508,9 @@ rule custom
 -- Check the phony rule.
 --
 
-	function suite.phonyRule()
-		local cfg = prepare()
-		cpp.phonies(cfg)
-		test.capture [[
-rule phony
-  command = :
-  description = Phony target
-
-		]]
-	end
-
-function suite.phonies()
-	ninja.cpp.phonies()
-
-	test.capture [[
-rule phony
-  command = :
-  description = Phony target
-	]]
-end
+--
+-- Phony tests removed - Ninja has built-in phony support and doesn't need
+-- a phony rule definition. Phony targets work natively with the syntax:
+--   build target: phony dependencies
+--
 

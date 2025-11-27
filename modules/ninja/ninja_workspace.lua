@@ -20,7 +20,6 @@ m.elements = function(wks)
 		m.projects,
 		m.defaultTarget,
 		m.phonyConfigPlatformPairs,
-		m.phonyClean,
 	}
 end
 
@@ -92,21 +91,5 @@ function m.phonyConfigPlatformPairs(wks)
 		else
 			_p("build %s: phony", configKey)
 		end
-	end
-end
-
-function m.phonyClean(wks)
-	_p("")
-	_p("# Workspace clean target")
-	
-	local cleanTargets = {}
-	for prj in p.workspace.eachproject(wks) do
-		table.insert(cleanTargets, "clean_" .. prj.name)
-	end
-	
-	if #cleanTargets > 0 then
-		_p("build clean: phony %s", table.concat(cleanTargets, " "))
-	else
-		_p("build clean: phony")
 	end
 end

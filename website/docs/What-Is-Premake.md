@@ -56,11 +56,11 @@ Done.
 
 The current development version of Premake 5.0 can generate C, C++, or C# projects targeting:
 
-* Microsoft Visual Studio 2005-2022
-* GNU Make, including Cygwin and MinGW
-* Xcode
 * Codelite
+* GNU Make, including Cygwin and MinGW
+* Microsoft Visual Studio 2005-2022
 * Ninja
+* Xcode
 
 Previous version of Premake also supported exporting for MonoDevelop and Code::Blocks. We are in the process of bringing these exporters back online for the final release.
 

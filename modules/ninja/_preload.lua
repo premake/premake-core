@@ -33,7 +33,7 @@ newaction {
 		elseif target == p.EMSCRIPTEN then
 			return "emcc"
 		elseif target == p.WINDOWS then
-			return "v143"
+			return "msc"
 		else
 			return "gcc"
 		end
