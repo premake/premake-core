@@ -397,11 +397,12 @@ rule copy
 --
 
 	function suite.prebuildCommandsRule()
+		system "Windows"
 		local cfg = prepare()
 		cpp.prebuildcommandsrule(cfg)
 		test.capture [[
 rule prebuild
-  command = $prebuildcommands
+  command = cmd /c $prebuildcommands
   description = Running pre-build commands
 
 		]]
@@ -429,11 +430,12 @@ rule prebuildmessage
 --
 
 	function suite.prelinkCommandsRule()
+		system "Windows"
 		local cfg = prepare()
 		cpp.prelinkcommandsrule(cfg)
 		test.capture [[
 rule prelink
-  command = $prelinkcommands
+  command = cmd /c $prelinkcommands
   description = Running pre-link commands
 
 		]]
@@ -461,11 +463,12 @@ rule prelinkmessage
 --
 
 	function suite.postbuildCommandsRule()
+		system "Windows"
 		local cfg = prepare()
 		cpp.postbuildcommandsrule(cfg)
 		test.capture [[
 rule postbuild
-  command = $postbuildcommands
+  command = cmd /c $postbuildcommands
   description = Running post-build commands
 
 		]]
@@ -483,6 +486,57 @@ rule postbuild
 rule postbuildmessage
   command = echo $postbuildmessage
   description = Post-build message: $postbuildmessage
+
+		]]
+	end
+
+
+--
+-- Check the pre-build commands rule on Linux doesn't use cmd /c.
+--
+
+	function suite.prebuildCommandsRule_onLinux()
+		system "Linux"
+		local cfg = prepare()
+		cpp.prebuildcommandsrule(cfg)
+		test.capture [[
+rule prebuild
+  command = $prebuildcommands
+  description = Running pre-build commands
+
+		]]
+	end
+
+
+--
+-- Check the pre-link commands rule on Linux doesn't use cmd /c.
+--
+
+	function suite.prelinkCommandsRule_onLinux()
+		system "Linux"
+		local cfg = prepare()
+		cpp.prelinkcommandsrule(cfg)
+		test.capture [[
+rule prelink
+  command = $prelinkcommands
+  description = Running pre-link commands
+
+		]]
+	end
+
+
+--
+-- Check the post-build commands rule on Linux doesn't use cmd /c.
+--
+
+	function suite.postbuildCommandsRule_onLinux()
+		system "Linux"
+		local cfg = prepare()
+		cpp.postbuildcommandsrule(cfg)
+		test.capture [[
+rule postbuild
+  command = $postbuildcommands
+  description = Running post-build commands
 
 		]]
 	end

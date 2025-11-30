@@ -15,6 +15,7 @@ return {
     "test_ninja_custom_build.lua",
     "test_ninja_custom_rules.lua",
     "test_ninja_dependson.lua",
+    "test_ninja_implib.lua",
     "test_ninja_pch.lua",
     "test_ninja_perfile_config.lua",
     "test_ninja_project.lua",

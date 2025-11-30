@@ -182,7 +182,13 @@ end
 
 function m.prebuildcommandsrule(cfg, toolset)
 	_p("rule prebuild")
-	_p("  command = $prebuildcommands")
+	-- Use cmd /c on Windows to ensure proper command execution with complex commands
+	-- This matches the behavior of the gmake generator which detects shell type
+	if cfg.system == p.WINDOWS then
+		_p("  command = cmd /c $prebuildcommands")
+	else
+		_p("  command = $prebuildcommands")
+	end
 	_p("  description = Running pre-build commands")
 	_p("")
 end
@@ -196,7 +202,12 @@ end
 
 function m.prelinkcommandsrule(cfg, toolset)
 	_p("rule prelink")
-	_p("  command = $prelinkcommands")
+	-- Use cmd /c on Windows to ensure proper command execution
+	if cfg.system == p.WINDOWS then
+		_p("  command = cmd /c $prelinkcommands")
+	else
+		_p("  command = $prelinkcommands")
+	end
 	_p("  description = Running pre-link commands")
 	_p("")
 end
@@ -210,7 +221,12 @@ end
 
 function m.postbuildcommandsrule(cfg, toolset)
 	_p("rule postbuild")
-	_p("  command = $postbuildcommands")
+	-- Use cmd /c on Windows to ensure proper command execution
+	if cfg.system == p.WINDOWS then
+		_p("  command = cmd /c $postbuildcommands")
+	else
+		_p("  command = $postbuildcommands")
+	end
 	_p("  description = Running post-build commands")
 	_p("")
 end
@@ -436,7 +452,7 @@ function m.getFileCxxFlags(cfg, filecfg, toolset)
 	local allExternalIncludedirs = table.join(cfg.externalincludedirs or {}, filecfg.externalincludedirs or {})
 	local allFrameworkdirs = table.join(cfg.frameworkdirs or {}, filecfg.frameworkdirs or {})
 	local allIncludedirsafter = table.join(cfg.includedirsafter or {}, filecfg.includedirsafter or {})
-	local includedirs = toolset.getincludedirs(cfg, allIncludedirs, allExternalIncludedirs, allFrameworkdirs, allIncludedirsafter)
+	local includedirs = toolset.getincludedirs(cfg, allIncludedirs, allExternalIncludedDirs, allFrameworkdirs, allIncludedirsafter)
 	flags = table.join(flags, includedirs)
 	
 	local forceincludes = toolset.getforceincludes(filecfg)
@@ -537,6 +553,13 @@ function m.getLdFlags(cfg, toolset)
 		local runpathdirs = table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))
 		local rpaths = toolset.getrunpathdirs(cfg, runpathdirs)
 		flags = table.join(flags, rpaths)
+	end
+	
+	-- For MSVC shared libraries, add /IMPLIB: to specify the import library location
+	-- MSVC is Windows-only, so no need to check cfg.system
+	if cfg.kind == p.SHAREDLIB and toolset == p.tools.msc and not cfg.flags.NoImportLib then
+		local impLibPath = path.getrelative(cfg.workspace.location, cfg.linktarget.directory) .. "/" .. cfg.linktarget.name
+		table.insert(flags, "/IMPLIB:" .. impLibPath)
 	end
 	
 	return flags
@@ -1112,7 +1135,16 @@ function m.linkTarget(cfg)
 	
 	local hasPostBuild = #cfg.postbuildcommands > 0 or cfg.postbuildmessage
 	
-	_p("build %s: %s %s%s", targetPath, rule, table.concat(cfg._objectFiles, " "), implicitDeps)
+	-- For MSVC shared libraries with import libraries, list the import library as an implicit output
+	-- Dependencies will reference the .lib file (linktarget), which Ninja will know how to build.
+	-- MSVC is Windows-only, so no need to check cfg.system
+	local implicitOutputs = ""
+	if cfg.kind == p.SHAREDLIB and toolset == p.tools.msc and not cfg.flags.NoImportLib then
+		local impLibPath = path.getrelative(cfg.workspace.location, cfg.linktarget.directory) .. "/" .. cfg.linktarget.name
+		implicitOutputs = " | " .. impLibPath
+	end
+	
+	_p("build %s%s: %s %s%s", targetPath, implicitOutputs, rule, table.concat(cfg._objectFiles, " "), implicitDeps)
 	
 	if cfg.kind ~= p.STATICLIB then
 		_p("  ldflags = $ldflags_%s", ninja.key(cfg))
