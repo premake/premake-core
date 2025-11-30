@@ -34,7 +34,8 @@
 			p.PPC64,
 			p.WASM32,
 			p.WASM64,
-			p.E2K
+			p.E2K,
+			p.MIPS64EL
 		},
 		aliases = {
 			i386  = p.X86,

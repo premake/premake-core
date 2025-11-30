@@ -2150,6 +2150,7 @@
 		if cfg.toolset and cfg.toolset:startswith("msc") then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
+			opts = table.join(opts, table.translate(cfg.enablewarnings, function(enable) return '/w1' .. enable end))
 		elseif _ACTION >= "vs2019" and cfg.toolset and cfg.toolset == "clang" then
 			local value = iif(cfg.unsignedchar, "On", "Off")
 			table.insert(opts, p.tools.msc.shared.unsignedchar[value])
@@ -2161,6 +2162,9 @@
 			if cfg.structmemberalign then
 				table.insert(opts, 1, '/Zp' .. tostring(cfg.structmemberalign))
 			end
+			opts = table.join(opts, table.translate(cfg.disablewarnings, function(disable) return '-Wno-' .. disable end))
+			opts = table.join(opts, table.translate(p.filterFatalWarnings(cfg.fatalwarnings), function(disable) return '-Werror=' .. disable end))
+			opts = table.join(opts, table.translate(cfg.enablewarnings, function(enable) return '-W' .. enable end))
 		end
 
 		if #opts > 0 then
@@ -3556,7 +3560,7 @@
 
 
 	function m.disableSpecificWarnings(cfg, condition)
-		if #cfg.disablewarnings > 0 then
+		if #cfg.disablewarnings > 0 and cfg.toolset ~= "clang" then
 			local warnings = table.concat(cfg.disablewarnings, ";")
 			warnings = warnings .. ";%%(DisableSpecificWarnings)"
 			m.element('DisableSpecificWarnings', condition, warnings)
@@ -3567,7 +3571,7 @@
 	function m.treatSpecificWarningsAsErrors(cfg, condition)
 		local filteredWarnings = p.filterFatalWarnings(cfg.fatalwarnings)
 
-		if #filteredWarnings > 0 then
+		if #filteredWarnings > 0 and cfg.toolset ~= "clang" then
 			local fatal = table.concat(filteredWarnings, ";")
 			fatal = fatal .. ";%%(TreatSpecificWarningsAsErrors)"
 			m.element('TreatSpecificWarningsAsErrors', condition, fatal)
@@ -4470,7 +4474,7 @@
 
 		-- -fvisibility=<>
 		if cfg.visibility ~= nil then
-			table.insert(opts, p.tools.gcc.cxxflags.visibility[cfg.visibility])
+			table.insert(opts, p.tools.gcc.shared.visibility[cfg.visibility])
 		end
 
 		if #opts > 0 then

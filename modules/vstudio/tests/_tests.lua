@@ -114,6 +114,7 @@ return {
 	"vc2022/test_toolset_settings.lua",
 	
 	-- Android projects
+	"android/test_android_build_settings.lua",
 	"android/test_android_files.lua",
 	"android/test_android_project.lua",
 

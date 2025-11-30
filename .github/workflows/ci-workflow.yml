@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Install booststrap's dependencies
       run: |
         sudo apt-get update 
@@ -32,7 +32,7 @@ jobs:
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-linux-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -45,7 +45,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build
       run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
@@ -54,7 +54,7 @@ jobs:
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-macosx-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -68,7 +68,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build
       shell: cmd
       env:
@@ -83,7 +83,7 @@ jobs:
       shell: cmd
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-windows-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
@@ -106,7 +106,7 @@ jobs:
         shell: msys2 {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: 'Setup MSYS2'
       uses: msys2/setup-msys2@v2
       with:
@@ -133,7 +133,7 @@ jobs:
       run: bin/${{ matrix.config }}/premake5.exe docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.depsrc == 'contrib' && matrix.cc == 'mingw'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-${{ matrix.msystem }}-${{ matrix.platform }}
         path: bin\${{ matrix.config }}\
@@ -146,7 +146,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - uses: tritao/setup-cosmopolitan@v1.3
       with:
         version: '3.9.2'
@@ -158,7 +158,7 @@ jobs:
       run: bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-cosmopolitan-universal
         path: bin/${{ matrix.config }}/premake5
@@ -175,9 +175,9 @@ jobs:
         shell: freebsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Start FreeBSD VM
-      uses: vmactions/freebsd-vm@v1.2.4
+      uses: vmactions/freebsd-vm@v1.2.7
       with:
         usesh: true
         sync: sshfs
@@ -197,7 +197,7 @@ jobs:
         bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'clang'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-freebsd-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -214,9 +214,9 @@ jobs:
         shell: openbsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Start OpenBSD VM
-      uses: vmactions/openbsd-vm@v1.2.0
+      uses: vmactions/openbsd-vm@v1.2.3
       with:
         usesh: true
         sync: sshfs
@@ -236,7 +236,7 @@ jobs:
         bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'clang'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-openbsd-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -253,9 +253,9 @@ jobs:
         shell: netbsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build on NetBSD VM
-      uses: vmactions/netbsd-vm@v1.2.0
+      uses: vmactions/netbsd-vm@v1.2.1
       with:
         usesh: true
         prepare: |
@@ -269,7 +269,7 @@ jobs:
           bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-netbsd-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -286,9 +286,9 @@ jobs:
         shell: dragonflybsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build on DragonflyBSD VM
-      uses: vmactions/dragonflybsd-vm@v1.1.1
+      uses: vmactions/dragonflybsd-vm@v1.1.2
       with:
         usesh: true
         prepare: |
@@ -300,7 +300,7 @@ jobs:
           bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-dragonflybsd-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -317,9 +317,9 @@ jobs:
         shell: solaris {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build on Solaris VM
-      uses: vmactions/solaris-vm@v1.1.5
+      uses: vmactions/solaris-vm@v1.1.6
       with:
         usesh: true
         cpu: 4
@@ -332,7 +332,7 @@ jobs:
           bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-solaris-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
@@ -349,9 +349,9 @@ jobs:
         shell: omnios {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Build on OmniOS VM
-      uses: vmactions/omnios-vm@v1.1.1
+      uses: vmactions/omnios-vm@v1.1.2
       with:
         usesh: true
         prepare: |
@@ -363,7 +363,7 @@ jobs:
           bin/${{ matrix.config }}/premake5 docs-check
     - name: Upload Artifacts
       if: matrix.config == 'release' && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: premake-omnios-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
