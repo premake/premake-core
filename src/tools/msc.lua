@@ -467,6 +467,13 @@
 	end
 
 
+	msc.tools = {
+		cc = "cl",
+		cxx = "cl",
+		ar = "lib",
+		rc = "rc"
+	}
+
 --
 -- Retrieves the executable command name for a tool, based on the
 -- provided configuration and the operating environment.
@@ -481,18 +488,12 @@
 --    default value should be used.
 --
 
-	msc.tools = {
-		cc = "cl",
-		cxx = "cl",
-		ar = "lib",
-		rc = "rc"
-	}
-
 	function msc.gettoolname(cfg, tool)
 		local toolset, version = p.tools.canonical(cfg.toolset or p.MSC)
 		-- TODO: Support versioning?
 		return msc.tools[tool]
 	end
+
 
 	function msc.gettooloutputext(tool)
 		return iif(tool == "rc", ".res", ".obj")

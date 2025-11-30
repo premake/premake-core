@@ -184,6 +184,24 @@
 
 
 --
+-- Returns the proper precompiled header file for the given configuration.
+-- For GCC-like toolsets, this is the header file path with .gch appended.
+--
+-- @param cfg
+--    The project configuration.
+-- @return
+--    The path to the precompiled header file, relative to the project.
+--
+
+	function clang.getpch(cfg)
+
+		-- Clang uses the same PCH handling as GCC
+		return gcc.getpch(cfg)
+
+	end
+
+
+--
 -- Returns a list of include file search directories, decorated for
 -- the compiler command line.
 --

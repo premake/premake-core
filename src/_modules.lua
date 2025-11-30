@@ -1,13 +1,14 @@
 --
 -- _modules.lua
 -- The list of core modules to preload on startup
--- Copyright (c) 2015 Jess Perkins and the Premake project
+-- Copyright (c) 2015-2025 Jess Perkins and the Premake project
 --
 
 	return {
-		"gmakelegacy",
-		"vstudio",
-		"xcode",
 		"codelite",
 		"gmake",
+		"gmakelegacy",
+		"ninja",
+		"vstudio",
+		"xcode",
 	}
