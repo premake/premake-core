@@ -2298,7 +2298,7 @@
 
 
 	function m.wholeProgramOptimization(cfg)
-		if cfg.linktimeoptimization == "On" then
+		if cfg.linktimeoptimization == "Default" or cfg.linktimeoptimization == "On" then
 			m.element("WholeProgramOptimization", nil, "true")
 		elseif cfg.linktimeoptimization == "Off" then
 			m.element("WholeProgramOptimization", nil, "false")
