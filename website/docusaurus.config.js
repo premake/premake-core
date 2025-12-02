@@ -140,7 +140,6 @@ export default {
 						keywords: ['note', 'tip', 'info', 'warning', 'danger'],
 						extendDefaults: true,
 					},
-					remarkPlugins: [require('remark-admonitions')],
 				},
 				blog: {
 					blogSidebarTitle: 'Posts',
