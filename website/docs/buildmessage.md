@@ -1,3 +1,9 @@
+---
+title: buildmessage
+description: Specifies the text to output to the when a custom build command or rule is executed.
+keywords: [premake, buildmessage, custom build, message, output, project config, rules]
+---
+
 Specifies the text to output to the when a custom build command or rule is executed.
 
 ```lua
@@ -6,7 +12,7 @@ buildmessage ("message")
 
 ### Parameters ###
 
-`message` is the text to write to standard output.
+`message` **string** - is the text to write to standard output.
 
 
 ### Applies To ###

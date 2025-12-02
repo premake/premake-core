@@ -1,14 +1,22 @@
+---
+title: compilebuildoutputs
+description: Specify if generated file from buildcommands should be compiled or not.
+keywords: [premake, compilebuildoutputs, buildcommands, buildoutputs, custom build, generated files, project config]
+---
+
 Specify if generated file from [`buildcommands`](buildcommands.md) should be compiled or not.
 
 ```lua
-compilebuildoutputs "value"
+compilebuildoutputs "enabled"
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - generated file should be compiled.
-* `off` - generated file should not be compiled.
+| Enabled | Description                            |
+| ------- | -------------------------------------- |
+| on      | Generated file should be compiled.     |
+| off     | Generated file should not be compiled. |
+
 
 ### Applies To ###
 

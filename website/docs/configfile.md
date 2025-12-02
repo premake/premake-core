@@ -1,3 +1,9 @@
+---
+title: configfile
+description: Specifies an Xbox 360 configuration file.
+keywords: [premake, configfile, xbox 360, configuration file, project config]
+---
+
 Specifies an Xbox 360 configuration file.
 
 ```lua
@@ -6,7 +12,7 @@ configfile "file"
 
 ### Parameters ###
 
-`file` is the script-relative path to the configuration file.
+`file` **string** - is the script-relative path to the configuration file.
 
 
 ### Applies To ###

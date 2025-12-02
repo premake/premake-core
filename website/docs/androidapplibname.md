@@ -1,14 +1,20 @@
+---
+title: androidapplibname
+description: Specfies the file name for the output APK.
+keywords: [premake, android, apk, filename, config]
+---
+
 Specfies the file name for the output APK.
 
 ```lua
-androidapplibname ("value")
+androidapplibname ("filename")
 ```
 
 By default, the project name will be used as the file name for the APK.
 
 ### Parameters ###
 
-`value` is the new file name.
+`filename` **string** - is the new file name.
 
 ## Applies To ###
 

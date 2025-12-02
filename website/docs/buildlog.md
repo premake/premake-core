@@ -1,14 +1,20 @@
+---
+title: buildlog
+description: Specifies the output location of a toolset's build logs.
+keywords: [premake, buildlog, build logs, visual studio, project config, path]
+---
+
 Specifies the output location of a toolset's build logs.
 
 ```lua
-buildlog ("path")
+buildlog("path")
 ```
 
 If a build log path has not been specified, the toolset's default path will be used.
 
 ### Parameters ###
 
-`path` is the output file system location for the build log file.
+`path` **string** - is the output file system location for the build log file.
 
 ### Applies To ###
 

@@ -1,17 +1,24 @@
+---
+title: clangtidy
+description: Enables clang-tidy code analysis for Visual Studio.
+keywords: [premake, clangtidy, clang tidy, code analysis, static analysis, visual studio]
+---
+
 Enables clang-tidy code analysis for Visual Studio.
 
 The `clangtidy` option enables running clang-tidy code analysis in Visual Studio projects.
 
 ```lua
-clangtidy("value")
+clangtidy("enabled")
 ```
 
 ### Parameters ###
 
-`value` is one of:
+| Enabled | Description        |
+| ------- | ------------------ |
+| On      | Enable clang tidy  |
+| Off     | Disable clang tidy |
 
-- `On`
-- `Off`
 
 ### Applies To ###
 

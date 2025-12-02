@@ -1,17 +1,25 @@
+---
+title: callingconvention
+description: Sets whether or not the compiler should build STL modules.
+keywords: [premake, callingconvention, cdecl, fastcall, stdcall, vectorcall, function calling convention, compiler, project config]
+---
+
+
 Sets the [function calling convention](https://en.wikipedia.org/wiki/X86_calling_conventions).
 
 ```lua
-callingconvention ("value")
+callingconvention ("convention")
 ```
 
 ### Parameters ###
 
-`value` is one of:
+| Convention  | Description                                                                 |
+|-------------|-----------------------------------------------------------------------------|
+| Cdecl       | Standard C calling convention; caller cleans the stack after the function.  |
+| FastCall    | Passes some arguments via registers for faster function calls.              |
+| StdCall     | Standard calling convention for WinAPI; callee cleans the stack.            |
+| VectorCall  | Optimized for vector types; passes arguments in registers for performance.  |
 
-* `Cdecl`
-* `FastCall`
-* `StdCall`
-* `VectorCall`
 
 ### Applies To ###
 

@@ -1,12 +1,18 @@
+---
+title: androidapilevel
+keywords: [premake, android, api, level, config]
+description: Specifies the target Android API level.
+---
+
 Specifies the target Android API level.
 
 ```lua
-androidapilevel (value)
+androidapilevel(level)
 ```
 
 ### Parameters ###
 
-`value` is a number specifying the target Android API level.
+`level` **number** - is a number specifying the target Android API level.
 
 ## Applies To ###
 

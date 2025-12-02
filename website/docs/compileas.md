@@ -1,20 +1,28 @@
-compileas
+---
+title: compileas
+description: Specify how a source file should be compiled, regardless of its extension.
+keywords: [premake, compileas, compile type]
+---
+
+Specify how a source file should be compiled, regardless of its extension.
 
 ```lua
-compileas "value"
+compileas "type"
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `Default` - Compile based on file extensions that have been built into premake.
-* `C` - Compile as a C source file.
-* `C++` - Compile as a C++ source file.
-* `Objective-C` - Compile as an Objective-C source file.
-* `Objective-C++` - Compile as an Objective-C++ source file.
-* `Module` - Compile as a C++20 module interface unit.
-* `ModulePartition` - Compile as a C++20 module interface partition.
-* `HeaderUnit` - Compile as a C++20 header unit.
+| Type            | Description                                                         |
+| --------------- | ------------------------------------------------------------------- |
+| Default         | Compile based on file extensions that have been built into Premake. |
+| C               | Compile as a C source file.                                         |
+| C++             | Compile as a C++ source file.                                       |
+| Objective-C     | Compile as an Objective-C source file.                              |
+| Objective-C++   | Compile as an Objective-C++ source file.                            |
+| Module          | Compile as a C++20 module interface unit.                           |
+| ModulePartition | Compile as a C++20 module interface partition.                      |
+| HeaderUnit      | Compile as a C++20 header unit.                                     |
+
 
 ### Applies To ###
 

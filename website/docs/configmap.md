@@ -1,3 +1,9 @@
+---
+title: configmap
+description: Map workspace level configuration and platforms to a different project configuration or platform.
+keywords: [premake, configmap, configuration mapping, platforms]
+---
+
 Map workspace level configuration and platforms to a different project configuration or platform.
 
 ```lua
@@ -9,9 +15,9 @@ You may map multiple configurations in a single configuration map.
 
 ### Parameters ###
 
-`wks_cfg` is the workspace configuration being mapped. It can be a string representing a build configuration or a platform, or a table holding a build configuration/platform pair.
+`wks_cfg` **string | table** - is the workspace configuration being mapped. It can be a string representing a build configuration or a platform, or a table holding a build configuration/platform pair.
 
-`prj_cfg` is the project configuration to which the workspace configuration should be mapped. It may also be a string or a build configuration/platform pair.
+`prj_cfg` **string | table** - is the project configuration to which the workspace configuration should be mapped. It may also be a string or a build configuration/platform pair.
 
 ### Applies To ###
 

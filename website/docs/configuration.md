@@ -1,3 +1,9 @@
+---
+title: configuration
+description: Limits the subsequent build settings to a particular environment.
+keywords: [premake, configuration, deprecated]
+---
+
 :::caution
 **This function has been deprecated in Premake 5.0 beta1.** Use the new [filter()](filter.md) function instead; you will get more granular matching and much better performance. `configuration()` will be not supported in Premake 6.
 :::
@@ -10,7 +16,7 @@ configuration { "keywords" }
 
 ### Parameters ###
 
-`keywords` is a list of identifiers (see below). When all of the keywords in this list match Premake's current context, the settings that follow the `configuration` statement will be applied. If any of the identifiers are not in the current context the settings will be ignored.
+`keywords` **string[]** - is a list of identifiers (see below). When all of the keywords in this list match Premake's current context, the settings that follow the `configuration` statement will be applied. If any of the identifiers are not in the current context the settings will be ignored.
 
 The available sources for keywords. Keywords are not case-sensitive.
 

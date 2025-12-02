@@ -1,12 +1,18 @@
-assemblydebug - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+---
+title: assemblydebug
+description: Generates assembly-level debug information in Visual Studio projects
+keywords: [premake, assemblydebug, visual studio, debug, config]
+---
+
+Generates assembly-level debug information in Visual Studio projects
 
 ```lua
-assemblydebug (value)
+assemblydebug(enable)
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`enable` **boolean** - enable/disable assemblydebug.
 
 ## Applies To ###
 
@@ -19,6 +25,6 @@ Premake 5.0.0 alpha 16 or later.
 ### Examples ###
 
 ```lua
-assemblydebug (value)
+assemblydebug(true)
 ```
 

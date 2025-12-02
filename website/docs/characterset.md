@@ -1,17 +1,23 @@
+---
+title: characterset
+description: Set the character encoding.
+keywords: [premake, characterset, character encoding, unicode, mbcs, ascii, compiler, project config]
+---
+
 Set the character encoding.
 
 ```lua
-characterset ("value")
+characterset("set")
 ```
 
 ### Parameters ###
 
-`value` is one of:
-
-* `Default`: the default encoding for the toolset; usually `Unicode`
-* `MBCS`: Multi-byte Character Set; currently Visual Studio only
-* `Unicode`: Unicode character encoding
-* `ASCII`: No actual character set
+| Set     | Description                                                         |
+| ------- | ------------------------------------------------------------------- |
+| Default | The default encoding for the toolset; usually Unicode               |
+| MBCS    | Multi-byte Character Set; currently supported only in Visual Studio |
+| Unicode | Unicode character encoding                                          |
+| ASCII   | No actual character set; plain 7-bit ASCII encoding                 |
 
 ### Applies To ###
 

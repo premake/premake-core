@@ -1,3 +1,9 @@
+---
+title: bindirs
+description: Specifies extra paths to use when executing build commands
+keywords: [premake, bindirs, build commands, executable paths, config]
+---
+
 Specifies extra paths to use when executing build commands
 
 ```lua
@@ -6,7 +12,7 @@ bindirs { "directories" }
 
 ### Parameters ###
 
-`directories` - paths containing executable to run when building command.
+`directories` **string[]** - paths containing executable to run when building command.
 
 ### Applies To ###
 

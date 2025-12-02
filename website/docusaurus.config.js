@@ -136,6 +136,11 @@ export default {
 					editUrl: 'https://github.com/premake/premake-core/edit/master/website/',
 					showLastUpdateAuthor: true,
 					showLastUpdateTime: true,
+					admonitions: {
+						keywords: ['note', 'tip', 'info', 'warning', 'danger'],
+						extendDefaults: true,
+					},
+					remarkPlugins: [require('remark-admonitions')],
 				},
 				blog: {
 					blogSidebarTitle: 'Posts',

@@ -1,3 +1,9 @@
+---
+title: builddependencies
+description: Specifies any additional dependencies for the target of a custom build rule.
+keywords: [premake, builddependencies, dependencies]
+---
+
 Specifies any additional dependencies for the target of a custom build rule.
 
 ```lua
@@ -6,7 +12,7 @@ builddependencies { "files" }
 
 ### Parameters ###
 
-`files` specifies a list of file path for additional dependencies.
+`files` **string[]** - specifies a list of file paths for additional dependencies.
 
 
 ### Applies To ###

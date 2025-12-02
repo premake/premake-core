@@ -1,3 +1,9 @@
+---
+title: configurations
+description: Specifies the set of build configurations.
+keywords: [premake, configurations, debug, release]
+---
+
 Specifies the set of build configurations, such as "Debug" and "Release", for a workspace or project.
 
 ```lua
@@ -10,7 +16,7 @@ For more information, see [Configurations and Platforms](Configurations-and-Plat
 
 ### Parameters ###
 
-`names` is a list of configuration names. Spaces are allowed, but may make using certain Premake features, such as a command-line configuration selection, more difficult.
+`names` **string[]** - is a list of configuration names. Spaces are allowed, but may make using certain Premake features, such as a command-line configuration selection, more difficult.
 
 ### Applies To ###
 

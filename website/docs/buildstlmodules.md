@@ -1,15 +1,22 @@
+---
+title: buildstlmodules
+description: Sets whether or not the compiler should build STL modules.
+keywords: [premake, buildstlmodules, stl modules, visual studio, compiler, config]
+---
+
 Sets whether or not the compiler should build STL modules.
 
 ```lua
-buildstlmodules("value")
+buildstlmodules("enabled")
 ```
 
 ### Parameters ###
 
-`value` is one of:
+| Enabled | Description         |
+| ------- | ------------------- |
+| On      | Enable stl modules  |
+| Off     | Disable stl modules |
 
-- `On`
-- `Off`
 
 ### Applies To ###
 

@@ -1,12 +1,23 @@
-conformancemode - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+---
+title: conformancemode
+description: Enables or disables the compiler’s standards conformance mode.
+keywords: [premake, conformancemode, standards conformance, permissive-, c++, visual studio, compiler options]
+---
+
+Controls whether the compiler enforces strict language standards conformance.
+In Visual Studio, this corresponds to the `/permissive-` option, which turns on standard‑compliant C++ behavior and disables certain non‑standard Microsoft extensions.
 
 ```lua
-conformancemode (value)
+conformancemode(enabled)
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+| enabled | Description                                                                                  |
+| ------- | -------------------------------------------------------------------------------------------- |
+| On      | Enable standards‑conformance mode (`/permissive-`), enforcing strict C++ compliance.         |
+| Off     | Disable standards‑conformance mode, allowing Microsoft extensions and non‑standard behavior. |
+
 
 ## Applies To ###
 

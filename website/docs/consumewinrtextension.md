@@ -1,3 +1,9 @@
+---
+title: consumewinrtextension
+description: Enables the WinRT extension.
+keywords: [premake, consumewinrtextension, winrt, c++/cx, visual studio, compiler options]
+---
+
 Enables the WinRT extension, C++/CX, for the specified projects/files.
 
 ```lua
@@ -6,10 +12,11 @@ consumewinrtextension "value"
 
 ### Parameters ###
 
-`value` is one of:
-* `Default` - Compiles the file using the default for the toolset. (Default is `Off`)
-* `On` - Compiles the file with the WinRT extension enabled.
-* `Off` - Compiles the file without the WinRT extension enabled.
+| Value   | Description                                                                 |
+|---------|-----------------------------------------------------------------------------|
+| Default | Compiles the file using the default for the toolset. (Default is `Off`)     |
+| On      | Compiles the file with the WinRT extension enabled.                         |
+| Off     | Compiles the file without the WinRT extension enabled.                      |
 
 ### Applies To ###
 

@@ -1,5 +1,10 @@
-customtoolnamespace
+---
+title: customtoolnamespace
+description: Sets the namespace used by custom build tools in Visual Studio .NET projects.
+keywords: [premake, customtoolnamespace, visual studio, .net, msbuild, custom tool, namespace]
+---
 
+Sets the namespace used by custom build tools in Visual Studio .NET projects.
 ```lua
 customtoolnamespace "value"
 ```

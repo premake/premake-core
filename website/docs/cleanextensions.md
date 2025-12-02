@@ -1,3 +1,10 @@
+---
+title: cleanextensions
+description: Specifies one or more file extensions to find and remove when cleaning the project.
+keywords: [premake, cleancommands, makefile, shell, project cleanup]
+---
+
+
 Specifies one or more file extensions to find and remove when cleaning the project.
 
 ```lua
@@ -6,7 +13,7 @@ cleanextensions { ".ext1", ".ext2" }
 
 ### Parameters ###
 
-A list of dot-prefixed file extensions to be cleaned.
+`extension` **string[]** - A list of dot-prefixed file extensions to be cleaned.
 
 ### Applies To ###
 

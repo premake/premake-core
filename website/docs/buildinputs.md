@@ -1,3 +1,9 @@
+---
+title: buildinputs
+description: Specifies the source file file inputs of a custom build command or rule.
+keywords: [premake, buildinputs, custom build, inputs, source files, project config]
+---
+
 Specifies the source file file inputs of a custom build command or rule.
 
 ```lua
@@ -6,7 +12,7 @@ buildinputs { "inputs" }
 
 ### Parameters ###
 
-`inputs` is the list of input source files.
+`inputs` **string** - is the list of input source files.
 
 
 ### Applies To ###

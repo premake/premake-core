@@ -1,12 +1,18 @@
+---
+title: csversion
+description: Specifies the C# language level.
+keywords: [premake, csversion, compiler options]
+---
+
 Specifies the C# language level.
 
 ```lua
-csversion ("value")
+csversion ("version")
 ```
 
 ### Parameters ###
 
-`value` is a string specifying the C# language level.
+`version` **string** - is a string specifying the C# language level.
 
 ### Applies To ###
 

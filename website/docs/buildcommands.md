@@ -1,3 +1,9 @@
+---
+title: buildcommands
+description: Specifies one or more shell commands to be executed to build a project or file
+keywords: [premake, buildcommands, shell, makefile, custom, config]
+---
+
 Specifies one or more shell commands to be executed to build a project or file.
 
 ```lua
@@ -6,7 +12,7 @@ buildcommands { "commands" }
 
 ### Parameters ###
 
-`commands` specifies a list of one or more shell commands to be executed. The commands may use [tokens](Tokens.md).
+`commands` **string[]** - specifies a list of one or more shell commands to be executed. The commands may use [tokens](Tokens.md).
 
 ### Applies To ###
 

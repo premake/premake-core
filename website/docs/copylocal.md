@@ -1,3 +1,9 @@
+---
+title: copylocal
+description: Specifies a list of libraries or assembly references which should be copied to the target directory as part of the build.
+keywords: [premake, copylocal, assemblies, libraries, c#, visual studio]
+---
+
 Specifies a list of libraries or assembly references which should be copied to the target directory as part of the build. Refer to the Visual Studio C# project feature of the same name.
 
 ```lua
@@ -10,7 +16,7 @@ Note that, by default, all referenced non-system assemblies in a C# project are 
 
 ### Parameters ###
 
-`libraries` is a list of the libraries or assemblies to be copied as part of the build. The names specified here should match the names used in the call to `links()`.
+`libraries` **string[]** - is a list of the libraries or assemblies to be copied as part of the build. The names specified here should match the names used in the call to `links()`.
 
 ### Applies To ###
 

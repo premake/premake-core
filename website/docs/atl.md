@@ -1,3 +1,9 @@
+---
+title: atl
+description: Enables Microsoft's Active Template Library in a project.
+keywords: [premake, atl, active template library, visual studio, project, config]
+---
+
 Enables Microsoft's Active Template Library in a project.
 
 ```lua

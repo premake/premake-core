@@ -1,3 +1,9 @@
+---
+title: buildaction
+description: Specifies how a file or set of files should be treated during the compilation process
+keywords: [premake, buildaction, msbuild, visual studio, compile, embed, copy, resource, config]
+---
+
 Specifies how a file or set of files should be treated during the compilation process. It is usually paired with a filter to select a file set. If no build action is specified for a file a default action will be used, based on the file's extension.
 
 ```lua
@@ -23,8 +29,10 @@ For C/C++, `action` is the name of the MSBuild action as defined by the vcxproj 
 | AppxManifest    | Treat the file as AppX Manifest; required for UWP applications.                  |
 | Copy            | Copy the file to the target directory.                                           |
 
+:::warning
 For C# projects, `buildaction` behaviour is special to support legacy implementation.
 In C#, `action` is one of
+:::
 
 | Action      | Description                                                           |
 |-------------|-----------------------------------------------------------------------|
@@ -38,8 +46,9 @@ In C#, `action` is one of
 | Resource    | Copy/embed the file with the project resources.                       |
 | UserControl | Treat the source file as [visual user control][2].                    |
 
+:::warning
 The descriptive actions such as **Component**, **Form*, and **UserControl** are only recognized by Visual Studio, and may be considered optional as Visual Studio will automatically deduce the types when it first examines the project. You only need to specify these actions to avoid unnecessary modifications to the project files on save.
-
+:::
 ### Applies To ###
 
 File configurations.

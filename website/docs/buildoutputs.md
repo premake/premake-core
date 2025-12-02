@@ -1,3 +1,9 @@
+---
+title: buildoutputs
+description: Specifies the file outputs of a custom build command or rule.
+keywords: [premake, buildoutputs, custom build, outputs, files, project config, rules]
+---
+
 Specifies the file outputs of a custom build command or rule.
 
 ```lua
@@ -6,7 +12,7 @@ buildoutputs { "output" }
 
 ### Parameters ###
 
-`output` is the file that is created or updated by the custom build command or rule.
+`output` **string[]** - is the file that is created or updated by the custom build command or rule.
 
 
 ### Applies To ###

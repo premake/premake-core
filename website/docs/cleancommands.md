@@ -1,3 +1,9 @@
+---
+title: cleancommands
+description: Specifies one or more shell commands to be executed to clean a Makefile project
+keywords: [premake, cleancommands, makefile, shell, project cleanup]
+---
+
 Specifies one or more shell commands to be executed to clean a [Makefile project](Makefile-Projects.md).
 
 ```lua
@@ -6,7 +12,7 @@ cleancommands { "commands" }
 
 ### Parameters ###
 
-`commands` specifies a list of one or more shell commands to be executed. The commands may use tokens.
+`commands` **string[]** - specifies a list of one or more shell commands to be executed. The commands may use tokens.
 
 ### Applies To ###
 

@@ -1,12 +1,18 @@
+---
+title: buildcustomizations
+description: Imports custom .props files for Visual Studio.
+keywords: [premake, buildcustomizations, visual studio, props, project]
+---
+
 Imports custom .props files for Visual Studio.
 
 ```lua
-buildcustomizations { "string" }
+buildcustomizations { "name" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`name` **string** — The name of the Visual Studio build customization to import (corresponding to a `.props` file, without extension)..
 
 ### Applies To ###
 
