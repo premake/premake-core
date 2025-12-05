@@ -12,12 +12,12 @@ allmodulespublic "value"
 
 ### Parameters ###
 
-| value | Description                                                   |
+| Value | Description                                                   |
 | ----- | ------------------------------------------------------------- |
 | On    | All C++ modules in the given project(s) will be public.       |
 | Off   | Not all C++ modules in the given project(s) will be public.[] |
 
-## Applies To ###
+### Applies To ###
 
 The `config` scope.
 

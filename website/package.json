@@ -9,7 +9,9 @@
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "serve": "docusaurus serve",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+	"check": "node docscheck.js",
+	"new" :"node docgenerate.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "3.5.2",

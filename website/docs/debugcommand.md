@@ -1,14 +1,25 @@
+---
+title: debugcommand
+description: Specifies the command to launch a project's target when debugging.
+keywords: [premake, debugargs, debugger, arguments, visual studio, project config]
+---
+
 Specifies the command to launch a project's target when debugging.
 
 ```lua
 debugcommand ("command")
 ```
+:::note
+In Visual Studio, this file can be overridden by a per-user configuration file (such as `ProjectName.vcproj.MYDOMAIN-MYUSERNAME.user`).
+:::
 
-In Visual Studio, this file can be overridden by a per-user configuration file (such as `ProjectName.vcproj.MYDOMAIN-MYUSERNAME.user`). Removing this file (which is done by Premake's clean action) will restore the default settings.
+:::warning
+Removing `ProjectName.vcproj.MYDOMAIN-MYUSERNAME.user` (which is done by Premake's clean action) will restore the default settings.
+:::
 
 ### Parameters ###
 
-`command` is the command to run to start the target.
+`command` **string** - is the command to run to start the target.
 
 ### Applies To ###
 

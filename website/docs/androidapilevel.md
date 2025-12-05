@@ -14,7 +14,7 @@ androidapilevel(level)
 
 `level` **number** - is a number specifying the target Android API level.
 
-## Applies To ###
+### Applies To ###
 
 The `config` scope.
 

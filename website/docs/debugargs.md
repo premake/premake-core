@@ -1,3 +1,9 @@
+---
+title: debugargs
+description: Specifies a list of arguments to pass to the application when run under the debugger.
+keywords: [premake, debugargs, debugger, arguments, visual studio, project config]
+---
+
 Specifies a list of arguments to pass to the application when run under the debugger.
 
 ```lua
@@ -10,7 +16,7 @@ In Visual Studio, this file can be overridden by a per-user configuration file (
 
 ### Parameters ###
 
-`args` is a Lua list of arguments to provide to the executable while debugging.
+`args` **string** - is a list of arguments to provide to the executable while debugging.
 
 ### Applies To ###
 

@@ -1,7 +1,7 @@
 ---
 title: basedir
 description: Sets the base directory for a configuration
-keywords: [premake, basedir, base directory, path, configuration]
+keywords: [premake, basedir, base directory, path, config]
 ---
 
 Sets the base directory for a configuration, from with other paths contained by the configuration will be made relative at export time.

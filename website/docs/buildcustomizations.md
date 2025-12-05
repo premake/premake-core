@@ -1,7 +1,7 @@
 ---
 title: buildcustomizations
 description: Imports custom .props files for Visual Studio.
-keywords: [premake, buildcustomizations, visual studio, props, project]
+keywords: [premake, buildcustomizations, visual studio, props, project configuration]
 ---
 
 Imports custom .props files for Visual Studio.

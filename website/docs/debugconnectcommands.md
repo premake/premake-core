@@ -1,3 +1,9 @@
+---
+title: debugconnectcommands
+description: Specifies commands to be executed upon connection of the debugger to a remote process.
+keywords: [premake, debugconnectcommands, debugger, commands, visual studio, project config]
+---
+
 Specifies commands to be executed upon connection of the debugger to a remote process.
 
 ```lua
@@ -6,7 +12,7 @@ debugconnectcommands { "commands" }
 
 ### Parameters ###
 
-`commands` is a list of commands to execute.
+`commands` **string[]** - is a list of commands to execute.
 
 ### Applies To ###
 

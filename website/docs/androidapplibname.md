@@ -16,7 +16,7 @@ By default, the project name will be used as the file name for the APK.
 
 `filename` **string** - is the new file name.
 
-## Applies To ###
+### Applies To ###
 
 The `config` scope.
 

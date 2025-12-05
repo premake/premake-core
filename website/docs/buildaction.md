@@ -12,7 +12,9 @@ buildaction ("action")
 
 ### Parameters ###
 
+:::note
 For C/C++, `action` is the name of the MSBuild action as defined by the vcxproj format; eg: `ClCompile`, `FxCompile`, `None`, etc, and may refer to any such action available to MSBuild.
+:::
 
 | Action          | Description                                                                      |
 |-----------------|----------------------------------------------------------------------------------|
@@ -47,7 +49,7 @@ In C#, `action` is one of
 | UserControl | Treat the source file as [visual user control][2].                    |
 
 :::warning
-The descriptive actions such as **Component**, **Form*, and **UserControl** are only recognized by Visual Studio, and may be considered optional as Visual Studio will automatically deduce the types when it first examines the project. You only need to specify these actions to avoid unnecessary modifications to the project files on save.
+The descriptive actions such as **Component**, **Form**, and **UserControl** are only recognized by Visual Studio, and may be considered optional as Visual Studio will automatically deduce the types when it first examines the project. You only need to specify these actions to avoid unnecessary modifications to the project files on save.
 :::
 ### Applies To ###
 
