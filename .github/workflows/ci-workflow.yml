@@ -177,7 +177,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Start FreeBSD VM
-      uses: vmactions/freebsd-vm@v1.2.8
+      uses: vmactions/freebsd-vm@v1.3.0
       with:
         usesh: true
         sync: sshfs
