@@ -216,6 +216,6 @@ target_App_Debug = App
 		-- The custom build should have the Generator as an implicit dependency
 		test.capture [[
 build obj/Debug/App/data.cpp: custom data.in | bin/Debug/Generator
-  customcommand = bin/Debug/Generator data.in
+  customcommand = sh -c 'bin/Debug/Generator data.in'
 		]]
 	end

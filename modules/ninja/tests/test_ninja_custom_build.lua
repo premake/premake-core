@@ -41,6 +41,7 @@
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "shader.glsl" }
+		_OS = "linux"
 		
 		filter "files:**.glsl"
 			buildcommands { "glslc %{file.relpath} -o %{cfg.objdir}/%{file.basename}.spv" }
@@ -64,7 +65,7 @@
 		test.isequal(1, #outputs)
 		test.capture [[
 build obj/Debug/shader.spv: custom shader.glsl
-  customcommand = glslc shader.glsl -o obj/Debug/shader.spv
+  customcommand = sh -c 'glslc shader.glsl -o obj/Debug/shader.spv'
 		]]
 	end
 
@@ -76,6 +77,7 @@ build obj/Debug/shader.spv: custom shader.glsl
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "data.txt" }
+		_OS = "linux"
 		
 		filter "files:**.txt"
 			buildmessage "Processing %{file.name}"
@@ -99,7 +101,7 @@ build obj/Debug/shader.spv: custom shader.glsl
 		test.isnotnil(outputs)
 		test.capture [[
 build obj/Debug/data.count: custom data.txt
-  customcommand = cat data.txt | wc -l > obj/Debug/data.count
+  customcommand = sh -c 'cat data.txt | wc -l > obj/Debug/data.count'
   description = Processing data.txt
 		]]
 	end
@@ -112,6 +114,7 @@ build obj/Debug/data.count: custom data.txt
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "resource.rc" }
+		_OS = "linux"
 		
 		filter "files:**.rc"
 			buildcommands { "rcc %{file.relpath} -o %{cfg.objdir}/%{file.basename}.h %{cfg.objdir}/%{file.basename}.cpp" }
@@ -134,7 +137,7 @@ build obj/Debug/data.count: custom data.txt
 		test.isequal(2, #outputs)
 		test.capture [[
 build obj/Debug/resource.h obj/Debug/resource.cpp: custom resource.rc
-  customcommand = rcc resource.rc -o obj/Debug/resource.h obj/Debug/resource.cpp
+  customcommand = sh -c 'rcc resource.rc -o obj/Debug/resource.h obj/Debug/resource.cpp'
 		]]
 	end
 
@@ -146,6 +149,7 @@ build obj/Debug/resource.h obj/Debug/resource.cpp: custom resource.rc
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "template.txt" }
+		_OS = "linux"
 		
 		local cfg = prepare()
 		local filecfg = {
@@ -163,7 +167,7 @@ build obj/Debug/resource.h obj/Debug/resource.cpp: custom resource.rc
 		test.isnotnil(outputs)
 		test.capture [[
 build obj/Debug/template.out: custom template.txt | config.ini
-  customcommand = generate template.txt config.ini -o obj/Debug/template.out
+  customcommand = sh -c 'generate template.txt config.ini -o obj/Debug/template.out'
 		]]
 	end
 
@@ -175,6 +179,7 @@ build obj/Debug/template.out: custom template.txt | config.ini
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "script.lua" }
+		_OS = "linux"
 		
 		filter "files:**.lua"
 			buildcommands { 
@@ -202,7 +207,7 @@ build obj/Debug/template.out: custom template.txt | config.ini
 		test.isnotnil(outputs)
 		test.capture [[
 build obj/Debug/script.c: custom script.lua
-  customcommand = luac -o obj/Debug/script.luac script.lua && bin2c obj/Debug/script.luac > obj/Debug/script.c
+  customcommand = sh -c 'luac -o obj/Debug/script.luac script.lua && bin2c obj/Debug/script.luac > obj/Debug/script.c'
 		]]
 	end
 
@@ -237,6 +242,7 @@ build obj/Debug/script.c: custom script.lua
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "src/main.cpp.in" }
+		_OS = "linux"
 		
 		filter "files:**.in"
 			buildmessage "copy %{file.relpath}"
@@ -265,7 +271,7 @@ build obj/Debug/script.c: custom script.lua
 		test.isequal("main.cpp", outputs[1])
 		test.capture [[
 build main.cpp: custom src/main.cpp.in
-  customcommand = cp src/main.cpp.in main.cpp
+  customcommand = sh -c 'cp src/main.cpp.in main.cpp'
   description = copy src/main.cpp.in
 		]]
 	end

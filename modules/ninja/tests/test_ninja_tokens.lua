@@ -43,6 +43,7 @@
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "shader.glsl" }
+		_OS = "linux"
 		
 		filter "files:**.glsl"
 			buildcommands { "glslc %{file.relpath} -o %{cfg.objdir}/%{file.basename}.spv" }
@@ -63,7 +64,7 @@
 		
 		test.capture [[
 build obj/Debug/shader.spv: custom shader.glsl
-  customcommand = glslc shader.glsl -o obj/Debug/shader.spv
+  customcommand = sh -c 'glslc shader.glsl -o obj/Debug/shader.spv'
 		]]
 	end
 
@@ -75,6 +76,7 @@ build obj/Debug/shader.spv: custom shader.glsl
 		toolset "gcc"
 		kind "ConsoleApp"
 		files { "main.cpp", "data.txt" }
+		_OS = "linux"
 		
 		filter "files:**.txt"
 			buildmessage "Processing %{file.name}"
@@ -97,7 +99,7 @@ build obj/Debug/shader.spv: custom shader.glsl
 		
 		test.capture [[
 build obj/Debug/data.count: custom data.txt
-  customcommand = cat data.txt
+  customcommand = sh -c 'cat data.txt'
   description = Processing data.txt
 		]]
 	end
@@ -111,6 +113,7 @@ build obj/Debug/data.count: custom data.txt
 		kind "ConsoleApp"
 		objdir "intermediate/Debug"
 		files { "main.cpp", "resource.rc" }
+		_OS = "linux"
 		
 		filter "files:**.rc"
 			buildcommands { "rc -o intermediate/Debug/resource.res resource.rc" }
@@ -131,6 +134,6 @@ build obj/Debug/data.count: custom data.txt
 		
 		test.capture [[
 build intermediate/Debug/resource.res: custom resource.rc
-  customcommand = rc -o intermediate/Debug/resource.res resource.rc
+  customcommand = sh -c 'rc -o intermediate/Debug/resource.res resource.rc'
 		]]
 	end
