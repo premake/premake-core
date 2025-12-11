@@ -128,10 +128,12 @@
 ---
 
 	function premake.escaper(func)
+		local existing = _esc
 		_esc = func
 		if not _esc then
 			_esc = function (value) return value end
 		end
+		return existing
 	end
 
 
