@@ -161,6 +161,7 @@
 | [vectorextensions](vectorextensions.md)                   | Enable hardware vector extensions |
 | [vpaths](vpaths.md)                                       |  |
 | [warnings](warnings.md)                                   |  |
+| [wholearchive](wholearchive.md)                           |  |
 | [workspace](workspace.md)                                 |  |
 
 ### Builtin Extension APIs ###

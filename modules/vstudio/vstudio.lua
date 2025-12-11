@@ -367,7 +367,7 @@
 
 	function vstudio.needsExplicitLink(cfg)
 		if not cfg._needsExplicitLink then
-			local ex = cfg.implicitlink == p.OFF
+			local ex = cfg.implicitlink == p.OFF or cfg.wholearchive == p.ON
 			if not ex then
 				local prjdeps = project.getdependencies(cfg.project, "linkOnly")
 				local cfgdeps = config.getlinks(cfg, "dependencies", "object")

@@ -466,6 +466,11 @@
 			table.insert(links, link)
 		end
 
+		if cfg.wholearchive == p.ON then
+			-- Don't use "/WHOLEARCHIVE" as path.translate might be applied to result
+			links = table.translate(links, function (s) return "-WHOLEARCHIVE:" .. s end)
+		end
+
 		return links
 	end
 

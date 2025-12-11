@@ -300,6 +300,7 @@ module.exports = {
 						'vpaths',
 						'vsprops',
 						'warnings',
+						'wholearchive',
 						'workspace',
 						'wpf',
 						'xcodebuildresources',

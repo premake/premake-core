@@ -400,6 +400,22 @@ function suite.cflags_onVs2022IncludeDirsAfter()
 	test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
+--
+-- Check handling of library.
+--
+
+	function suite.links()
+		links { "mylibrary" }
+		prepare()
+		test.contains("mylibrary.lib", msc.getlinks(cfg))
+	end
+
+	function suite.links_wholearchive()
+		links { "mylibrary" }
+		wholearchive "On"
+		prepare()
+		test.contains("-WHOLEARCHIVE:mylibrary.lib", msc.getlinks(cfg))
+	end
 
 --
 -- Check handling of library search paths.
