@@ -1961,6 +1961,10 @@
 	function m.additionalDependencies(cfg, explicit)
 		local links
 
+		local toolgetrelative = p.tools.getrelative
+		p.tools.getrelative = function(...)
+			return path.translate(toolgetrelative(...))
+		end
 		-- check to see if this project uses an external toolset. If so, let the
 		-- toolset define the format of the links
 		local toolset = config.toolset(cfg)
@@ -1969,8 +1973,10 @@
 		else
 			links = vstudio.getLinks(cfg, explicit)
 		end
+		links = table.join(links, p.tools.msc.wholearchive(cfg))
+		p.tools.getrelative = toolgetrelative
 
-		links = path.translate(table.concat(links, ";"))
+		links = table.concat(links, ";")
 
 		local additional = ";%(AdditionalDependencies)"
 		if cfg.inheritdependencies ~= nil then

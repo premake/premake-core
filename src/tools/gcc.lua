@@ -609,8 +609,22 @@
 		}
 	}
 
+	function gcc.wholearchive(cfg)
+		if cfg.system == p.MACOSX then
+			return table.translate(config.getwholearchive(cfg), function(libraryname) return "-force_load " .. libraryname end)
+		else
+			if #cfg.wholearchive == 0 then
+				return {}
+			end
+			return table.join({ "-Wl,--whole-archive" }, config.getwholearchive(cfg), { "-Wl,--no-whole-archive" })
+		end
+	end
+
 	function gcc.getldflags(cfg)
 		local flags = config.mapFlags(cfg, gcc.ldflags)
+
+		flags = table.join(flags, gcc.wholearchive(cfg))
+
 		return flags
 	end
 

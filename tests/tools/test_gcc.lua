@@ -8,7 +8,6 @@
 	local suite = test.declare("tools_gcc")
 
 	local gcc = p.tools.gcc
-	local project = p.project
 
 
 --
@@ -498,6 +497,27 @@
 		test.contains({ "-shared" }, gcc.getldflags(cfg))
 	end
 
+	function suite.ldflags_onWindows_onWholeArchive()
+		system "windows"
+		links { "MyProject2" }
+		wholearchive { "ole32", "MyProject2" }
+		project "MyProject2"
+		kind "StaticLib"
+		system "windows"
+		prepare()
+		test.isequal({ "-s", "-Wl,--whole-archive", "ole32", "bin/Debug/MyProject2.lib", "-Wl,--no-whole-archive" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onLinux_onWholeArchive()
+		system "linux"
+		links { "MyProject2" }
+		wholearchive { "ole32", "MyProject2" }
+		project "MyProject2"
+		kind "StaticLib"
+		system "linux"
+		prepare()
+		test.isequal({ "-s", "-Wl,--whole-archive", "ole32", "bin/Debug/libMyProject2.a", "-Wl,--no-whole-archive" }, gcc.getldflags(cfg))
+	end
 --
 -- Check Mac OS X variants on LDFLAGS.
 --
@@ -537,6 +557,17 @@
 		kind "SharedLib"
 		prepare()
 		test.contains({ "-dynamiclib" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMacOSX_onWholeArchive()
+		system "MacOSX"
+		links { "MyProject2" }
+		wholearchive { "ole32", "MyProject2" }
+		project "MyProject2"
+		kind "StaticLib"
+		system "MacOSX"
+		prepare()
+		test.isequal({"-Wl,-x", "-force_load ole32", "-force_load bin/Debug/libMyProject2.a" }, gcc.getldflags(cfg))
 	end
 
 --

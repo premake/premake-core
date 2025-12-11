@@ -1609,7 +1609,7 @@
 			end
 		end
 
-		settings['OTHER_LDFLAGS'] = table.join(flags, cfg.linkoptions)
+		settings['OTHER_LDFLAGS'] = table.join(flags, cfg.linkoptions, toolset.wholearchive(cfg))
 
 		if cfg.staticruntime == "On" then
 			settings['STANDARD_C_PLUS_PLUS_LIBRARY_TYPE'] = 'static'
