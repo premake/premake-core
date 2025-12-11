@@ -727,6 +727,12 @@ end
 		test.missing("/PROFILE", msc.getldflags(cfg))
 	end
 
+	function suite.ldflags_wholearchive()
+		wholearchive { "mylibrary" }
+		prepare()
+		test.contains("-WHOLEARCHIVE:mylibrary.lib", msc.getldflags(cfg))
+	end
+
 --
 -- Check handling of CLR settings.
 --
