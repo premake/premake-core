@@ -290,7 +290,7 @@ function m.configurationVariables(cfg)
 	if #links > 0 then
 		local wksLinks = {}
 		for _, link in ipairs(links) do
-			if not path.isabsolute(link) then
+			if not path.isabsolute(link) and link:match('[/\\]') then
 				local absPath = path.join(cfg.project.location, link)
 				link = path.getrelative(cfg.workspace.location, absPath)
 			end
@@ -1002,6 +1002,34 @@ function m.checkCustomRuleFile(cfg, node, filecfg, outputTracking)
 	return { outputs = outputs }
 end
 
+local function touchCommand(file)
+	return os.translateCommands("{TOUCH} \"" .. file .. "\"")
+end
+
+local function buildCommandString(cmds, message, touchFile)
+	local shell = os.shell()
+
+	local allcmds = table.deepcopy(cmds)
+	if message then
+		table.insert(allcmds, 1, os.translateCommands('{ECHO} "' .. message .. '"'))
+	end
+
+	if touchFile then
+		table.insert(allcmds, touchCommand(touchFile))
+	end
+
+	if shell == "posix" then
+		return "sh -c '" .. table.concat(allcmds, " && ") .. "'"
+	elseif shell == "cmd" then
+		local joined = table.concat(allcmds, " && ")
+		-- Escape double quotes
+		joined = joined:gsub('"', '\\"')
+		return "cmd /C \"" .. joined .. "\""
+	else
+		return table.concat(allcmds, " && ")
+	end
+end
+
 function m.buildCustomFile(cfg, node, filecfg, outputTracking)
 	if not filecfg.buildcommands or #filecfg.buildcommands == 0 then
 		return nil
@@ -1062,7 +1090,7 @@ function m.buildCustomFile(cfg, node, filecfg, outputTracking)
 	end
 	
 	local commands = os.translateCommandsAndPaths(filecfg.buildcommands, cfg.project.basedir, cfg.project.location)
-	local cmdStr = table.concat(commands, " && ")
+	local cmdStr = buildCommandString(commands, nil, nil)
 	
 	_p("build %s: custom %s%s", table.concat(outputs, " "), relPath, deps)
 	_p("  customcommand = %s", cmdStr)
@@ -1181,34 +1209,6 @@ function m.linkTarget(cfg)
 	
 	if hasPostBuild then
 		m.buildPostBuildEvents(cfg, targetPath)
-	end
-end
-
-local function touchCommand(file)
-	return os.translateCommands("{TOUCH} \"" .. file .. "\"")
-end
-
-local function buildCommandString(cmds, message, touchFile)
-	local shell = os.shell()
-
-	local allcmds = table.deepcopy(cmds)
-	if message then
-		table.insert(allcmds, 1, os.translateCommands('{ECHO} "' .. message .. '"'))
-	end
-
-	if touchFile then
-		table.insert(allcmds, touchCommand(touchFile))
-	end
-
-	if shell == "posix" then
-		return "sh -c '" .. table.concat(allcmds, " && ") .. "'"
-	elseif shell == "cmd" then
-		local joined = table.concat(allcmds, " && ")
-		-- Escape double quotes
-		joined = joined:gsub('"', '\\"')
-		return "cmd /C \"" .. joined .. "\""
-	else
-		return table.concat(allcmds, " && ")
 	end
 end
 
