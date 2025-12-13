@@ -267,11 +267,8 @@
 
 			-- Strip linking decorators from link, to determine if the link
 			-- is a "sibling" project.
-			local endswith = function(s, ptrn)
-				return ptrn == string.sub(s, -string.len(ptrn))
-			end
 			local name = link
-			if endswith(name, ":static") or endswith(name, ":shared") then
+			if name:endswith(":static") or name:endswith(":shared") then
 				name = string.sub(name, 0, -8)
 			end
 
