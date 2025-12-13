@@ -12,6 +12,7 @@ linktimeoptimization "value"
 |---------|--------------------------------------------------------|
 | Off     | No LTO to be performed.                                |
 | On      | LTO optimization enabled.                              |
+| Fast    | Incremental/Fast LTO optimization enabled.             |
 | Default | Default LTO optimizations for the toolset or exporter. |
 
 ### Applies To ###
@@ -21,3 +22,5 @@ Project configurations
 ### Availability ###
 
 Premake 5.0-beta4 and later
+
+Fast only applies to Visual Studio 2010, will behave as On for other toolsets and is available from Premake 5.0-beta8 or later.

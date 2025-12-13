@@ -969,6 +969,12 @@ end
 		test.contains("-flto", gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.contains("-flto", gcc.getcflags(cfg))
+	end
+
 	function suite.ldflags_onLinkTimeOptimizationViaFlag()
 		flags "LinkTimeOptimization"
 		prepare()
@@ -977,6 +983,12 @@ end
 
 	function suite.ldflags_onLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
+		prepare()
+		test.contains("-flto", gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
 		prepare()
 		test.contains("-flto", gcc.getldflags(cfg))
 	end

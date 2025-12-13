@@ -367,7 +367,7 @@
 	clang.tools = {
 		cc = "clang",
 		cxx = "clang++",
-		ar = function(cfg) return iif(cfg.linktimeoptimization == "On", "llvm-ar", "ar") end,
+		ar = function(cfg) return iif(cfg.linktimeoptimization == "On" or cfg.linktimeoptimization == "Fast", "llvm-ar", "ar") end,
 		rc = "windres"
 	}
 

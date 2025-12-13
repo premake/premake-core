@@ -113,6 +113,12 @@
 		test.contains("/GL", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onFastLinkTimeOptimizationsViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.contains("/GL", msc.getcflags(cfg))
+	end
+
 	function suite.ldflags_onLinkTimeOptimizationsViaFlag()
 		flags "LinkTimeOptimization"
 		prepare()
@@ -123,6 +129,12 @@
 		linktimeoptimization "On"
 		prepare()
 		test.contains("/LTCG", msc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onFastLinkTimeOptimizationsViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.contains("/LTCG:incremental", msc.getldflags(cfg))
 	end
 
 	function suite.cflags_onStringPoolingOn()
