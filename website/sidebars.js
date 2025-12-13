@@ -193,6 +193,8 @@ module.exports = {
 						'llvmdir',
 						'llvmversion',
 						'makesettings',
+						'mapfile',
+						'mapfilepath',
 						'mfc',
 						'namespace',
 						'nativewchar',

@@ -276,6 +276,7 @@
 			end,
 		},
 		linker = gcc.ldflags.linker,
+		mapfile = gcc.ldflags.mapfile,
 		profile = gcc.ldflags.profile,
 		sanitize = table.merge(gcc.ldflags.sanitize, {
 			Fuzzer = "-fsanitize=fuzzer",
