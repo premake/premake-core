@@ -71,20 +71,8 @@
 --
 
 
-	function suite.treatWarningsAsErrors_onFatalWarningsFlag()
-		flags { "FatalWarnings" }
-		prepare()
-		test.capture [[
-		<DefineConstants></DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		]]
-	end
-
-
 	function suite.treatWarningsAsErrors_onFatalWarningsAPI()
-		fatalwarnings { "All" }
+		fatalwarnings "All"
 		prepare()
 		test.capture [[
 		<DefineConstants></DefineConstants>

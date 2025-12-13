@@ -287,7 +287,7 @@
 
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
 		filter { "system:windows", "configurations:Release", "toolset:not mingw" }
-			flags		{ "LinkTimeOptimization" }
+			linktimeoptimization "On"
 		
 		filter { "system:windows", "configurations:Release", "toolset:clang", "action:not vs*" }
 			linkoptions { "-fuse-ld=lld" }
