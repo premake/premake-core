@@ -328,6 +328,19 @@
 		]]
 	end
 
+	function suite.useOfLinkTimeOptimizationViaAPI_Fast()
+		linktimeoptimization "Fast"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<PlatformToolset>v100</PlatformToolset>
+	<WholeProgramOptimization>true</WholeProgramOptimization>
+		]]
+	end
+
 
 --
 -- Check the WindowsSDKDesktopARMSupport element

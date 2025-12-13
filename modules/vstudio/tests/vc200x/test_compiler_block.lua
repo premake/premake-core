@@ -594,6 +594,18 @@
 
 	end
 
+	function suite.flags_onLinkTimeOptimizationFast()
+		linktimeoptimization "Fast"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	WholeProgramOptimization="true"
+		]]
+
+	end
+
 
 --
 -- Check the optimization flags.

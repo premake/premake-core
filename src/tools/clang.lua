@@ -68,7 +68,10 @@
 		structmemberalign = gcc.shared.structmemberalign,
 		visibility = gcc.shared.visibility,
 		inlinesvisibility = gcc.shared.inlinesvisibility,
-		linktimeoptimization = gcc.shared.linktimeoptimization,
+		linktimeoptimization = {
+			On = "-flto",
+			Fast = "-flto=thin",
+		},
 		profile = gcc.shared.profile,
 	}
 
@@ -368,7 +371,7 @@
 	clang.tools = {
 		cc = "clang",
 		cxx = "clang++",
-		ar = function(cfg) return iif(cfg.linktimeoptimization == "On", "llvm-ar", "ar") end,
+		ar = function(cfg) return iif(cfg.linktimeoptimization == "On" or cfg.linktimeoptimization == "Fast", "llvm-ar", "ar") end,
 		rc = "windres"
 	}
 
