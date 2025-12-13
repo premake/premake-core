@@ -43,6 +43,22 @@ local vc2010 = p.vstudio.vc2010
 	end
 
 --
+-- Test fast link time optimization being equivalent to on. 
+--
+
+	function suite.linkTimeOptimization_Fast()
+		linktimeoptimization('fast')
+		prepareConfigProperties()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+	<ConfigurationType>Application</ConfigurationType>
+	<PlatformToolset>v142</PlatformToolset>
+	<LinkTimeOptimization>true</LinkTimeOptimization>
+</PropertyGroup>
+		]]
+	end
+
+--
 -- Test multiprocessor compilation.
 --
 

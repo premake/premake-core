@@ -1129,6 +1129,7 @@
 		allowed = {
 			"Default",
 			"On",
+			"Fast",
 			"Off"
 		}
 	}

@@ -92,6 +92,7 @@
 		},
 		linktimeoptimization = {
 			On = "/GL",
+			Fast = "/GL",
 		},
 		optimize = {
 			Off = "/Od",
@@ -351,7 +352,8 @@
 			WindowedApp = "/SUBSYSTEM:WINDOWS"
 		},
 		linktimeoptimization = {
-			On = "/LTCG"
+			On = "/LTCG",
+			Fast = "/LTCG:incremental",
 		},
 		symbols = {
 			On = "/DEBUG"

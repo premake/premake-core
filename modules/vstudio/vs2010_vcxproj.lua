@@ -2298,7 +2298,7 @@
 
 
 	function m.wholeProgramOptimization(cfg)
-		if cfg.linktimeoptimization == "On" then
+		if cfg.linktimeoptimization == "On" or cfg.linktimeoptimization == "Fast" then
 			m.element("WholeProgramOptimization", nil, "true")
 		elseif cfg.linktimeoptimization == "Off" then
 			m.element("WholeProgramOptimization", nil, "false")
@@ -3080,6 +3080,8 @@
 	function m.linkTimeCodeGeneration(cfg)
 		if cfg.linktimeoptimization == "On" then
 			m.element("LinkTimeCodeGeneration", nil, "UseLinkTimeCodeGeneration")
+		elseif cfg.linktimeoptimization == "Fast" then
+			m.element("LinkTimeCodeGeneration", nil, "UseFastLinkTimeCodeGeneration")
 		end
 	end
 
@@ -4016,7 +4018,7 @@
 	end
 
 	function m.linuxWholeProgramOptimization(cfg)
-		if cfg.linktimeoptimization == "On" then
+		if cfg.linktimeoptimization == "On" or cfg.linktimeoptimization == "Fast" then
 			m.element("LinkTimeOptimization", nil, "true")
 		elseif cfg.linktimeoptimization == "Off" then
 			m.element("LinkTimeOptimization", nil, "false")
@@ -4032,7 +4034,7 @@
 	end
 
 	function m.linuxLinkTimeCodeGeneration(cfg)
-		if cfg.linktimeoptimization == "On" then
+		if cfg.linktimeoptimization == "On" or cfg.linktimeoptimization == "Fast" then
 			m.element("LinkTimeOptimization", nil, "true")
 		end
 	end
