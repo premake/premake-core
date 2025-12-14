@@ -1181,6 +1181,31 @@
 		kind = "string"
 	}
 
+	api.register {
+		name = "mapfile",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
+		name = "mapfilepath",
+		scope = "config",
+		kind = "string",
+	}
+
+	api.deprecateValue("flags", "Maps", "Use `mapfile` instead.",
+	function(value)
+		mapfile("On")
+	end,
+	function(value)
+		mapfile("Default")
+	end)
+
 
 -----------------------------------------------------------------------------
 --

@@ -965,6 +965,23 @@ end
 
 
 --
+-- Check the handling of map file generation.
+--
+
+	function suite.ldflags_onMapFileViaAPI()
+		mapfile "On"
+		prepare()
+		test.contains({ "-Wl,-Map=bin/Debug/MyProject.map" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMapFileViaAPI_WithPath()
+		mapfile "On"
+		mapfilepath "maps/MyProject.map"
+		prepare()
+		test.contains({ '-Wl,-Map=maps/MyProject.map' }, gcc.getldflags(cfg))
+	end
+
+--
 -- Check link mode preference for system libraries.
 --
 	function suite.linksModePreference_onAllStatic()

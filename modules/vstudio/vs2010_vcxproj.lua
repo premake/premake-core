@@ -2620,8 +2620,13 @@
 
 
 	function m.generateMapFile(cfg)
-		if cfg.flags.Maps then
+		if cfg.mapfile == p.ON then
 			m.element("GenerateMapFile", nil, "true")
+			if cfg.mapfilepath then
+				m.element("MapFileName", nil, vstudio.path(cfg, cfg.mapfilepath))
+			end
+		elseif cfg.mapfile == p.OFF then
+			m.element("GenerateMapFile", nil, "false")
 		end
 	end
 

@@ -691,6 +691,32 @@
 		]]
 	end
 
+	function suite.generateMapFile_onMapFileAPI()
+		mapfile "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<GenerateMapFile>true</GenerateMapFile>
+</Link>
+		]]
+	end
+
+		function suite.generateMapFile_onMapFileWithPathAPI()
+		mapfile "On"
+		mapfilepath "bin/Debug/MyProject.map"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<GenerateMapFile>true</GenerateMapFile>
+	<MapFileName>bin\Debug\MyProject.map</MapFileName>
+</Link>
+		]]
+	end
+
 --
 -- Test ignoring default libraries with extensions specified.
 --

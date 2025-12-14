@@ -514,6 +514,14 @@
 			Default = "",
 			LLD = "-fuse-ld=lld"
 		},
+		mapfile = {
+			On = function(cfg)
+				-- If a map file path has been explicitly provided, use that
+				-- otherwise, just use the default link target path with a .map extension (no lib, exe, etc)
+				local path = cfg.mapfilepath or path.replaceextension(cfg.linktarget.relpath, ".map")
+				return "-Wl,-Map=" .. p.quoted(p.tools.getrelative(cfg.project, path))
+			end,
+		},
 		profile = {
 			On = "-pg",
 		},

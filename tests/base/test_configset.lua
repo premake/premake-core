@@ -190,10 +190,10 @@
 	function suite.remove_onMultipleValues()
 		local f = field.get("flags")
 
-		local r, err = configset.store(cset, f, { "Maps", "WPF", "MultiProcessorCompile", "NoPCH" })
+		local r, err = configset.store(cset, f, { "WPF", "MultiProcessorCompile", "NoPCH" })
 		test.isnil(err)
 
-		configset.remove(cset, f, { "Maps", "WPF" })
+		configset.remove(cset, f, { "WPF" })
 
 		local result = configset.fetch(cset, f)
 		test.isequal({ "MultiProcessorCompile", "NoPCH" }, result)
