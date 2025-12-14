@@ -21,7 +21,6 @@ flags { "flag_list" }
 | No64BitChecks         | Disable 64-bit portability warnings.                                |
 | NoBufferSecurityCheck | Turn off stack protection checks.                                   |
 | NoCopyLocal           | Prevent referenced assemblies from being copied to the target directory (C#) |
-| NoFramePointer        | Disable the generation of stack frame pointers.                     |
 | NoImplicitLink        | Disable Visual Studio's default behavior of automatically linking dependent projects. |
 | NoImportLib           | Prevent the generation of an import library for a Windows DLL.      |
 | NoIncrementalLink     | Disable support for Visual Studio's incremental linking feature.    |
