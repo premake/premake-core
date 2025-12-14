@@ -65,7 +65,6 @@
 			All = "/WX"
 		},
 		flags = {
-			MultiProcessorCompile = "/MP",
 			NoMinimalRebuild = "/Gm-",
 			OmitDefaultLibrary = "/Zl"
 		},
@@ -92,6 +91,9 @@
 		},
 		linktimeoptimization = {
 			On = "/GL",
+		},
+		multiprocessorcompile = {
+			On = "/MP",
 		},
 		optimize = {
 			Off = "/Od",

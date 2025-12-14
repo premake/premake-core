@@ -1206,6 +1206,25 @@
 		mapfile("Default")
 	end)
 
+	api.register {
+		name = "multiprocessorcompile",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.deprecateValue("flags", "MultiProcessorCompile", "Use `multiprocessorcompile` instead.",
+	function(value)
+		multiprocessorcompile("On")
+	end,
+	function(value)
+		multiprocessorcompile("Default")
+	end)
+
 
 -----------------------------------------------------------------------------
 --

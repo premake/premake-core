@@ -581,8 +581,14 @@ end
 		test.contains("/Gm-", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_onMultiProcessorCompile()
+	function suite.cflags_onMultiProcessorCompile_Flag()
 		flags "MultiProcessorCompile"
+		prepare()
+		test.contains("/MP", msc.getcflags(cfg))
+	end
+
+	function suite.cflags_onMultiProcessorCompile_API()
+		multiprocessorcompile "On"
 		prepare()
 		test.contains("/MP", msc.getcflags(cfg))
 	end
