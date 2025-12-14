@@ -196,6 +196,7 @@ module.exports = {
 						'mapfile',
 						'mapfilepath',
 						'mfc',
+						'multiprocessorcompile',
 						'namespace',
 						'nativewchar',
 						'newaction',

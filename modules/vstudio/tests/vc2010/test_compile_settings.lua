@@ -875,8 +875,21 @@
 -- Check handling of the EnableMultiProcessorCompile flag.
 --
 
-	function suite.onMultiProcessorCompile()
+	function suite.onMultiProcessorCompile_Flag()
 		flags { "MultiProcessorCompile" }
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<MinimalRebuild>false</MinimalRebuild>
+	<MultiProcessorCompilation>true</MultiProcessorCompilation>
+		]]
+	end
+
+	function suite.onMultiProcessorCompile_API()
+		multiprocessorcompile "On"
 		prepare()
 		test.capture [[
 <ClCompile>

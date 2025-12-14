@@ -728,7 +728,7 @@
 
 	function m.additionalCompilerOptions(cfg)
 		local opts = cfg.buildoptions
-		if cfg.flags.MultiProcessorCompile then
+		if cfg.multiprocessorcompile == p.ON then
 			table.insert(opts, "/MP")
 		end
 		if #opts > 0 then
@@ -1231,7 +1231,7 @@
 		   cfg.debugformat ~= "c7" and
 		   not cfg.flags.NoMinimalRebuild and
 		   cfg.clr == p.OFF and
-		   not cfg.flags.MultiProcessorCompile
+		   cfg.multiprocessorcompile ~= p.ON
 		then
 			p.w('MinimalRebuild="true"')
 		end

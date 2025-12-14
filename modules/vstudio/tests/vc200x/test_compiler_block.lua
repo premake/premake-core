@@ -518,8 +518,20 @@
 -- Check handling of the EnableMultiProcessorCompile flag.
 --
 
-	function suite.onMultiProcessorCompile()
+	function suite.onMultiProcessorCompile_Flag()
 		flags { "MultiProcessorCompile" }
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	AdditionalOptions="/MP"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+		]]
+	end
+
+	function suite.onMultiProcessorCompile_API()
+		multiprocessorcompile "On"
 		prepare()
 		test.capture [[
 <Tool
