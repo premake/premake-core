@@ -1206,6 +1206,25 @@
 		mapfile("Default")
 	end)
 
+	api.register {
+		name = "enable64bitchecks",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.deprecateValue("flags", "No64BitChecks", "Use `enable64bitchecks` instead.",
+	function(value)
+		enable64bitchecks("Off")
+	end,
+	function(value)
+		enable64bitchecks("Default")
+	end)
+
 
 -----------------------------------------------------------------------------
 --

@@ -18,7 +18,7 @@ flags { "flag_list" }
 | Maps                  | Enable Generate Map File for Visual Studio. Deprecated in Premake 5.0.0-beta8. Use `mapfile` API instead. |                          |
 | MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. | Removed in Premake 5.0.0-beta8 |
 | MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. |
-| No64BitChecks         | Disable 64-bit portability warnings.                                |
+| No64BitChecks         | Disable 64-bit portability warnings. Deprecated in Premake 5.0.0-beta8. Use `enable64bitchecks` API instead. |
 | NoBufferSecurityCheck | Turn off stack protection checks.                                   |
 | NoCopyLocal           | Prevent referenced assemblies from being copied to the target directory (C#) |
 | NoImplicitLink        | Disable Visual Studio's default behavior of automatically linking dependent projects. |
