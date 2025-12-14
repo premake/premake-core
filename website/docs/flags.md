@@ -11,12 +11,12 @@ flags { "flag_list" }
 | Flag                  | Description                                                         | Notes |
 |-----------------------|---------------------------------------------------------------------|----------------|
 | ExcludeFromBuild      | Exclude a source code file from the build, for the current configuration. |
-| FatalCompileWarnings  | Treat compiler warnings as errors. Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
-| FatalLinkWarnings     | Treat linker warnings as errors.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
-| FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. |
-| LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations. Deprecated in Premake 5.0.0-beta4. Use `linktimeoptimization` API instead. |
+| FatalCompileWarnings  | Treat compiler warnings as errors. Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
+| FatalLinkWarnings     | Treat linker warnings as errors.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
+| FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
+| LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations. Deprecated in Premake 5.0.0-beta4. Use `linktimeoptimization` API instead. | Removed in Premake 5.0.0-beta8 |
 | Maps                  | Enable Generate Map File for Visual Studio                          |
-| MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. |
+| MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. | Removed in Premake 5.0.0-beta8 |
 | MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. |
 | No64BitChecks         | Disable 64-bit portability warnings.                                |
 | NoBufferSecurityCheck | Turn off stack protection checks.                                   |

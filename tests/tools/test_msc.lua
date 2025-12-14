@@ -101,22 +101,10 @@
 		test.excludes("/Oy", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_onLinkTimeOptimizationsViaFlag()
-		flags "LinkTimeOptimization"
-		prepare()
-		test.contains("/GL", msc.getcflags(cfg))
-	end
-
 	function suite.cflags_onLinkTimeOptimizationsViaAPI()
 		linktimeoptimization "On"
 		prepare()
 		test.contains("/GL", msc.getcflags(cfg))
-	end
-
-	function suite.ldflags_onLinkTimeOptimizationsViaFlag()
-		flags "LinkTimeOptimization"
-		prepare()
-		test.contains("/LTCG", msc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onLinkTimeOptimizationsViaAPI()
@@ -294,12 +282,6 @@
 		warnings "Everything"
 		prepare()
 		test.contains("/Wall", msc.getcflags(cfg))
-	end
-
-	function suite.cflags_OnFatalWarningsViaFlag()
-		flags "FatalWarnings"
-		prepare()
-		test.contains("/WX", msc.getcflags(cfg))
 	end
 
 	function suite.cflags_OnFatalWarningsViaAPI()
@@ -816,13 +798,13 @@ end
 --
 
 	function suite.mixedToolFlags_onCFlags()
-		flags { "FatalCompileWarnings" }
+		fatalwarnings "All"
 		prepare()
 		test.isequal({ "/WX", "/MD" }, msc.getcflags(cfg))
 	end
 
 	function suite.mixedToolFlags_onCxxFlags()
-		flags { "FatalCompileWarnings" }
+		fatalwarnings "All"
 		prepare()
 		test.isequal({ "/WX", "/MD", "/EHsc" }, msc.getcxxflags(cfg))
 	end

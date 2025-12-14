@@ -121,12 +121,6 @@
 		test.contains({ "-Weverything" }, gcc.getcflags(cfg))
 	end
 
-	function suite.cflags_onFatalWarningsViaFlag()
-		flags { "FatalWarnings" }
-		prepare()
-		test.contains({ "-Werror" }, gcc.getcflags(cfg))
-	end
-
 	function suite.cflags_onFatalWarningsViaAPI()
 		fatalwarnings { "All" }
 		prepare()
@@ -957,22 +951,10 @@ end
 -- Check handling of link time optimization flag.
 --
 
-	function suite.cflags_onLinkTimeOptimizationViaFlag()
-		flags "LinkTimeOptimization"
-		prepare()
-		test.contains("-flto", gcc.getcflags(cfg))
-	end
-
 	function suite.cflags_onLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
 		prepare()
 		test.contains("-flto", gcc.getcflags(cfg))
-	end
-
-	function suite.ldflags_onLinkTimeOptimizationViaFlag()
-		flags "LinkTimeOptimization"
-		prepare()
-		test.contains("-flto", gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onLinkTimeOptimizationViaAPI()

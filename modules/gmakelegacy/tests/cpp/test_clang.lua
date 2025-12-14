@@ -44,23 +44,6 @@ ifeq ($(config),debug)
 		]]
 	end
 
-	function suite.usesCorrectCompilersAndLinkTimeOptimizationViaFlag()
-		flags { "LinkTimeOptimization" }
-		make.cppConfigs(prj)
-		test.capture [[
-ifeq ($(config),debug)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = llvm-ar
-  endif
-		]]
-	end
-
 	function suite.usesCorrectCompilersAndLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
 		make.cppConfigs(prj)
