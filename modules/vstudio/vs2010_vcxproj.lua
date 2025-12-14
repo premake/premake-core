@@ -2960,7 +2960,7 @@
 	function m.minimalRebuild(cfg)
 		if config.isOptimizedBuild(cfg) or
 		   cfg.flags.NoMinimalRebuild or
-		   cfg.flags.MultiProcessorCompile or
+		   cfg.multiprocessorcompile == p.ON or
 		   cfg.debugformat == "c7"
 		then
 			m.element("MinimalRebuild", nil, "false")
@@ -2977,7 +2977,7 @@
 
 
 	function m.multiProcessorCompilation(cfg)
-		if cfg.flags.MultiProcessorCompile then
+		if cfg.multiprocessorcompile == p.ON then
 			m.element("MultiProcessorCompilation", nil, "true")
 		end
 	end
@@ -4031,7 +4031,7 @@
 	function m.linuxMultiProcNumber(cfg)
 		-- Linux equivalent of 'MultiProcessorCompilation'
 		-- Default to 8 parallel jobs
-		if cfg.flags.MultiProcessorCompile then
+		if cfg.multiprocessorcompile == p.ON then
 			m.element("MultiProcNumber", nil, "8")
 		end
 	end
@@ -4423,7 +4423,7 @@
 
 	function m.androidUseMultiToolTask(cfg)
 		-- Android equivalent of 'MultiProcessorCompilation'
-		if cfg.flags.MultiProcessorCompile then
+		if cfg.multiprocessorcompile == p.ON then
 			m.element("UseMultiToolTask", nil, "true")
 		end
 	end

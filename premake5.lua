@@ -221,7 +221,7 @@
 		configurations { "Release", "Debug" }
 		location ( _OPTIONS["to"] )
 
-		flags { "MultiProcessorCompile" }
+		multiprocessorcompile "On"
 		warnings "Extra"
 
 		filter { "options:not zlib-src=none" }

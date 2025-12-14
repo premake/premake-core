@@ -17,7 +17,7 @@ flags { "flag_list" }
 | LinkTimeOptimization  | Enable link-time (i.e. whole program) optimizations. Deprecated in Premake 5.0.0-beta4. Use `linktimeoptimization` API instead. | Removed in Premake 5.0.0-beta8 |
 | Maps                  | Enable Generate Map File for Visual Studio. Deprecated in Premake 5.0.0-beta8. Use `mapfile` API instead. |                          |
 | MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. | Removed in Premake 5.0.0-beta8 |
-| MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. |
+| MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. Deprecated in Premake 5.0.0-beta8. Use `multiprocessorcompile` API instead. |
 | No64BitChecks         | Disable 64-bit portability warnings. Deprecated in Premake 5.0.0-beta8. Use `enable64bitchecks` API instead. |
 | NoBufferSecurityCheck | Turn off stack protection checks.                                   |
 | NoCopyLocal           | Prevent referenced assemblies from being copied to the target directory (C#) |
@@ -61,3 +61,4 @@ flags { "LinkTimeOptimization" }
 * [linktimeoptimization](linktimeoptimization.md)
 * [mfc](mfc.md)
 * [mapfile](mapfile.md)
+* [multiprocessorcompile](multiprocessorcompile.md)
