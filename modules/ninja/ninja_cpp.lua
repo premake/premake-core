@@ -69,10 +69,10 @@ function m.ccrule(cfg, toolset)
 	else
 		_p("  command = %s $cflags -c $in -o $out", ccname)
 		_p("  deps = gcc")
+		_p("  depfile = $out.d")
 	end
 	
 	_p("  description = Compiling C source $in")
-	_p("  depfile = $out.d")
 
 	_p("")
 end
@@ -88,10 +88,10 @@ function m.cxxrule(cfg, toolset)
 	else
 		_p("  command = %s $cxxflags -c $in -o $out", cxxname)
 		_p("  deps = gcc")
+		_p("  depfile = $out.d")
 	end
 
 	_p("  description = Compiling C++ source $in")
-	_p("  depfile = $out.d")
 
 	_p("")
 end
@@ -163,7 +163,7 @@ function m.pchrule(cfg, toolset)
 	else
 		-- GCC/Clang: compile header as C or C++ header
 		local headerType = iif(cfg.language == "C", "c-header", "c++-header")
-		_p("  command = %s -x %s $cflags -o $out -MD -c $in", pchname, headerType)
+		_p("  command = %s -x %s $cflags -o $out -MD -MF $out.d -c $in", pchname, headerType)
 		_p("  description = Generating precompiled header $in")
 		_p("  depfile = $out.d")
 	end
@@ -377,7 +377,7 @@ function m.getCxxFlags(cfg, toolset)
 	
 	local toolFlags = toolset.getcxxflags(cfg)
 	flags = table.join(flags, toolFlags)
-	
+
 	local escaper = p.escaper(p.quote)
 	local defines = toolset.getdefines(cfg.defines)
 	flags = table.join(flags, defines)
@@ -558,6 +558,7 @@ function m.buildPch(cfg)
 	
 	local toolset = ninja.gettoolset(cfg)
 	local pchPath = m.getPchPath(cfg)
+	local depfile = pchPath .. ".d"
 	
 	if not pchPath then
 		return nil
@@ -602,13 +603,16 @@ function m.buildPch(cfg)
 		end
 		
 		local wksRelPchPath = path.getrelative(cfg.workspace.location, path.join(cfg.project.location, pchPath))
+		local wksRelPchDepPath = path.getrelative(cfg.workspace.location, path.join(cfg.project.location, depfile))
 		
-		_p("build %s: pch_%s %s%s", wksRelPchPath, cfg.toolset, relPath, implicitDeps)
+		_p("build %s | %s: pch_%s %s%s", wksRelPchPath, wksRelPchDepPath, cfg.toolset, relPath, implicitDeps)
 		
 		if cfg.language == "C" then
 			_p("  cflags = $cflags_%s", ninja.key(cfg))
+			_p("  depfile = %s", wksRelPchDepPath)
 		else
 			_p("  cflags = $cxxflags_%s", ninja.key(cfg))
+			_p("  depfile = %s", wksRelPchDepPath)
 		end
 		
 		return wksRelPchPath
