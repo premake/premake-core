@@ -115,7 +115,7 @@
 		
 		test.isequal("obj/Debug/pch.h.gch", pchFile)
 		test.capture [[
-build obj/Debug/pch.h.gch: pch_gcc pch.h
+build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
   cflags = $cxxflags_MyProject_Debug
 		]]
 	end
@@ -136,7 +136,7 @@ build obj/Debug/pch.h.gch: pch_gcc pch.h
 		
 		test.isequal("obj/Debug/precompile.h.gch", pchFile)
 		test.capture [[
-build obj/Debug/precompile.h.gch: pch_clang precompile.h
+build obj/Debug/precompile.h.gch | obj/Debug/precompile.h.gch.d: pch_clang precompile.h
   cflags = $cxxflags_MyProject_Debug
 		]]
 	end
@@ -157,7 +157,7 @@ build obj/Debug/precompile.h.gch: pch_clang precompile.h
 		
 		test.isequal("obj/Debug/pch.h.gch", pchFile)
 		test.capture [[
-build obj/Debug/pch.h.gch: pch_gcc pch.h
+build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
   cflags = $cflags_MyProject_Debug
 		]]
 	end
@@ -247,7 +247,7 @@ build obj/Debug/pch.h.gch: pch_gcc pch.h
 		cpp.buildPch(cfg)
 		
 		test.capture [[
-build obj/Debug/pch.h.gch: pch_gcc pch.h
+build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
   cflags = $cxxflags_MyProject_Debug
 		]]
 	end

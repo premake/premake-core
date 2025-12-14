@@ -651,7 +651,7 @@
 
 	function suite.fatalWarnings_onDynamicLink()
 		kind "ConsoleApp"
-		flags { "FatalLinkWarnings" }
+		linkerfatalwarnings "All"
 		prepare()
 		test.capture [[
 <Link>
@@ -662,7 +662,7 @@
 
 	function suite.fatalWarnings_onStaticLink()
 		kind "StaticLib"
-		flags { "FatalLinkWarnings" }
+		linkerfatalwarnings "All"
 		prepare()
 		test.capture [[
 <Link>

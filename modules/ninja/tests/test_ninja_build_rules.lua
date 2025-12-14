@@ -47,7 +47,6 @@ rule cc_msc
   command = cl $cflags /nologo /showIncludes -c /Tc$in /Fo$out
   deps = msvc
   description = Compiling C source $in
-  depfile = $out.d
 
 		]]
 	end
@@ -66,8 +65,8 @@ rule cc_msc
 rule cc_gcc
   command = gcc $cflags -c $in -o $out
   deps = gcc
-  description = Compiling C source $in
   depfile = $out.d
+  description = Compiling C source $in
 
 		]]
 	end
@@ -86,8 +85,8 @@ rule cc_gcc
 rule cc_clang
   command = clang $cflags -c $in -o $out
   deps = gcc
-  description = Compiling C source $in
   depfile = $out.d
+  description = Compiling C source $in
 
 		]]
 	end
@@ -111,7 +110,6 @@ rule cxx_msc
   command = cl $cxxflags /nologo /showIncludes -c /Tp$in /Fo$out
   deps = msvc
   description = Compiling C++ source $in
-  depfile = $out.d
 
 		]]
 	end
@@ -130,8 +128,8 @@ rule cxx_msc
 rule cxx_gcc
   command = g++ $cxxflags -c $in -o $out
   deps = gcc
-  description = Compiling C++ source $in
   depfile = $out.d
+  description = Compiling C++ source $in
 
 		]]
 	end
@@ -150,8 +148,8 @@ rule cxx_gcc
 rule cxx_clang
   command = clang++ $cxxflags -c $in -o $out
   deps = gcc
-  description = Compiling C++ source $in
   depfile = $out.d
+  description = Compiling C++ source $in
 
 		]]
 	end
@@ -327,7 +325,7 @@ rule ar_gcc
 		cpp.pchrule(cfg)
 		test.capture [[
 rule pch_gcc
-  command = g++ -x c++-header $cflags -o $out -MD -c $in
+  command = g++ -x c++-header $cflags -o $out -MD -MF $out.d -c $in
   description = Generating precompiled header $in
   depfile = $out.d
 
@@ -346,7 +344,7 @@ rule pch_gcc
 		cpp.pchrule(cfg)
 		test.capture [[
 rule pch_clang
-  command = clang++ -x c++-header $cflags -o $out -MD -c $in
+  command = clang++ -x c++-header $cflags -o $out -MD -MF $out.d -c $in
   description = Generating precompiled header $in
   depfile = $out.d
 

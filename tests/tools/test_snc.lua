@@ -60,13 +60,6 @@
 -- Check the translation of CFLAGS.
 --
 
-	function suite.cflags_onFatalWarningsViaFlag()
-		flags { "FatalWarnings" }
-		prepare()
-		test.isequal({ "-Xquit=2" }, snc.getcflags(cfg))
-	end
-
-
 	function suite.cflag_onFatalWarningsViaAPI()
 		fatalwarnings { "All" }
 		prepare()

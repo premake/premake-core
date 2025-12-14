@@ -338,12 +338,7 @@
 			"DebugEnvsDontMerge",
 			"DebugEnvsInherit",
 			"ExcludeFromBuild",
-			"FatalCompileWarnings",	-- DEPRECATED
-			"FatalLinkWarnings",	-- DEPRECATED
-			"FatalWarnings",		-- DEPRECATED
-			"LinkTimeOptimization", -- DEPRECATED
 			"Maps",
-			"MFC",
 			"MultiProcessorCompile",
 			"No64BitChecks",
 			"NoCopyLocal",
@@ -1133,15 +1128,6 @@
 		}
 	}
 
-	--27 November 2024
-	api.deprecateValue("flags", "LinkTimeOptimization", "Use `linktimeoptimization` instead.",
-	function(value)
-		linktimeoptimization("On")
-	end,
-	function(value)
-		linktimeoptimization("Default")
-	end)
-
 	--25 November 2024
 	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
 	function(value)
@@ -1149,29 +1135,6 @@
 	end,
 	function(value)
 		dotnetsdk "Default"
-	end)
-	api.deprecateValue("flags", "FatalWarnings", "Use `fatalwarnings { \"All\" }` instead.",
-	function(value)
-		fatalwarnings({ "All" })
-	end,
-	function(value)
-		removefatalwarnings({ "All" })
-	end)
-
-	api.deprecateValue("flags", "FatalCompileWarnings", "Use `fatalwarnings { \"All\" }` instead.",
-	function(value)
-		fatalwarnings({ "All" })
-	end,
-	function(value)
-		removefatalwarnings({ "All" })
-	end)
-
-	api.deprecateValue("flags", "FatalLinkWarnings", "Use `linkerfatalwarnings { \"All\" }` instead.",
-	function(value)
-		linkerfatalwarnings({ "All" })
-	end,
-	function(value)
-		removelinkerfatalwarnings({ "All" })
 	end)
 
 	premake.filterFatalWarnings = function(tbl)

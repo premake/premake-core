@@ -354,25 +354,6 @@
 -- Verify the correct warnings settings are used when FatalWarnings are enabled.
 --
 
-	function suite.runtimeLibraryIsDebug_onFatalWarningsViaFlag()
-		flags { "FatalWarnings" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-	RuntimeLibrary="2"
-	EnableFunctionLevelLinking="true"
-	UsePrecompiledHeader="0"
-	WarningLevel="3"
-	WarnAsError="true"
-	DebugInformationFormat="0"
-/>
-		]]
-	end
-
-
 	function suite.runtimeLibraryIsDebug_onFatalWarningsViaAPI()
 		fatalwarnings { "All" }
 		prepare()
@@ -395,25 +376,6 @@
 --
 -- Verify the correct warnings settings are used when no warnings are enabled.
 --
-
-	function suite.runtimeLibraryIsDebug_onNoWarnings_whichDisablesAllOtherWarningsFlagsViaFlag()
-		flags { "FatalWarnings" }
-		warnings "Off"
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-	RuntimeLibrary="2"
-	EnableFunctionLevelLinking="true"
-	UsePrecompiledHeader="0"
-	WarningLevel="0"
-	DebugInformationFormat="0"
-/>
-		]]
-	end
-
 
 	function suite.runtimeLibraryIsDebug_onNoWarnings_whichDisablesAllOtherWarningsFlagsViaAPI()
 		fatalwarnings { "All" }
@@ -607,18 +569,6 @@
 --
 -- Check the LinkTimeOptimization flag.
 --
-
-	function suite.flags_onLinkTimeOptimizationViaFlag()
-		flags { "LinkTimeOptimization" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	WholeProgramOptimization="true"
-		]]
-
-	end
 
 	function suite.flags_onLinkTimeOptimization()
 		linktimeoptimization "On"

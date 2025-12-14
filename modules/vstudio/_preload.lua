@@ -636,14 +636,6 @@
 		}
 	}
 
-	p.api.deprecateValue("flags", "MFC", 'Use `mfc` instead.',
-	function(value)
-		mfc("On")
-	end,
-	function(value)
-		mfc("Off")
-	end)
-
 --
 -- Register Android properties
 --

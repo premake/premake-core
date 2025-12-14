@@ -646,15 +646,12 @@
 			elseif path.isobjectfile(link) then
 				table.insert(result, link)
 			else
-				local endswith = function(s, ptrn)
-					return ptrn == string.sub(s, -string.len(ptrn))
-				end
 				local name = path.getname(link)
 				-- Check whether link mode decorator is present
-				if endswith(name, ":static") then
+				if name:endswith(":static") then
 					name = string.sub(name, 0, -8)
 					table.insert(static_syslibs, "-l" .. name)
-				elseif endswith(name, ":shared") then
+				elseif name:endswith(":shared") then
 					name = string.sub(name, 0, -8)
 					table.insert(shared_syslibs, "-l" .. name)
 				else
