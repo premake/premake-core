@@ -39,12 +39,50 @@
 		test.isequal("windres", clang.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_onLinkTimeOptimizationViaAPI()
+		linktimeoptimization "On"
+		prepare()
+		test.isequal("clang", clang.gettoolname(cfg, "cc"))
+		test.isequal("clang++", clang.gettoolname(cfg, "cxx"))
+		test.isequal("llvm-ar", clang.gettoolname(cfg, "ar"))
+		test.isequal("windres", clang.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_onFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.isequal("clang", clang.gettoolname(cfg, "cc"))
+		test.isequal("clang++", clang.gettoolname(cfg, "cxx"))
+		test.isequal("llvm-ar", clang.gettoolname(cfg, "ar"))
+		test.isequal("windres", clang.gettoolname(cfg, "rc"))
+	end
+
 	function suite.tools_forVersion()
 		toolset "clang-16"
 		prepare()
 		test.isequal("clang-16", clang.gettoolname(cfg, "cc"))
 		test.isequal("clang++-16", clang.gettoolname(cfg, "cxx"))
 		test.isequal("ar-16", clang.gettoolname(cfg, "ar"))
+		test.isequal("windres-16", clang.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_forVersion_onLinkTimeOptimizationViaAPI()
+		toolset "clang-16"
+		linktimeoptimization "On"
+		prepare()
+		test.isequal("clang-16", clang.gettoolname(cfg, "cc"))
+		test.isequal("clang++-16", clang.gettoolname(cfg, "cxx"))
+		test.isequal("llvm-ar-16", clang.gettoolname(cfg, "ar"))
+		test.isequal("windres-16", clang.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_forVersion_onFastLinkTimeOptimizationViaAPI()
+		toolset "clang-16"
+		linktimeoptimization "Fast"
+		prepare()
+		test.isequal("clang-16", clang.gettoolname(cfg, "cc"))
+		test.isequal("clang++-16", clang.gettoolname(cfg, "cxx"))
+		test.isequal("llvm-ar-16", clang.gettoolname(cfg, "ar"))
 		test.isequal("windres-16", clang.gettoolname(cfg, "rc"))
 	end
 
@@ -132,6 +170,34 @@ end
 		linker "LLD"
 		prepare()
 		test.contains("-fuse-ld=lld", clang.getldflags(cfg))
+	end
+
+--
+-- Check handling of link time optimization flag.
+--
+
+	function suite.cflags_onLinkTimeOptimizationViaAPI()
+		linktimeoptimization "On"
+		prepare()
+		test.contains("-flto", clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.contains("-flto=thin", clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_onLinkTimeOptimizationViaAPI()
+		linktimeoptimization "On"
+		prepare()
+		test.contains("-flto", clang.getldflags(cfg))
+	end
+
+	function suite.ldflags_onFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
+		prepare()
+		test.contains("-flto=thin", clang.getldflags(cfg))
 	end
 
 --

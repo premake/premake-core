@@ -615,6 +615,31 @@
 
 
 --
+-- Test if LinkTimeOptimization API correctly specifies LinkTimeCodeGeneration
+--
+
+	function suite.linkTimeOptimization_onEnableLinkTimeOptimization()
+		linktimeoptimization "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+		]]
+	end
+
+	function suite.linkTimeOptimization_onFastLinkTimeOptimization()
+		linktimeoptimization "Fast"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+		]]
+	end
+
+
+--
 -- Correctly handle module definition (.def) files.
 --
 

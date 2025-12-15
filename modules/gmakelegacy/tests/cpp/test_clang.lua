@@ -61,3 +61,20 @@ ifeq ($(config),debug)
 		]]
 	end
 
+	function suite.usesCorrectCompilersAndFastLinkTimeOptimizationViaAPI()
+		linktimeoptimization "Fast"
+		make.cppConfigs(prj)
+		test.capture [[
+ifeq ($(config),debug)
+  ifeq ($(origin CC), default)
+    CC = clang
+  endif
+  ifeq ($(origin CXX), default)
+    CXX = clang++
+  endif
+  ifeq ($(origin AR), default)
+    AR = llvm-ar
+  endif
+		]]
+	end
+

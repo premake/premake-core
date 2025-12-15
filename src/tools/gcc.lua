@@ -71,6 +71,7 @@
 		},
 		linktimeoptimization = {
 			On = "-flto",
+			Fast = "-flto",
 		},
 		strictaliasing = {
 			Off = "-fno-strict-aliasing",

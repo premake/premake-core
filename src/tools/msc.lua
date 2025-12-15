@@ -91,6 +91,7 @@
 		},
 		linktimeoptimization = {
 			On = "/GL",
+			Fast = "/GL",
 		},
 		multiprocessorcompile = {
 			On = "/MP",
@@ -353,7 +354,8 @@
 			WindowedApp = "/SUBSYSTEM:WINDOWS"
 		},
 		linktimeoptimization = {
-			On = "/LTCG"
+			On = "/LTCG",
+			Fast = "/LTCG:incremental",
 		},
 		symbols = {
 			On = "/DEBUG"
