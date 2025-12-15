@@ -1016,7 +1016,7 @@
 	function m.detect64BitPortabilityProblems(cfg)
 		local prjcfg, filecfg = config.normalize(cfg)
 		if _ACTION < "vs2008" and cfg.clr == p.OFF and cfg.warnings ~= p.OFF and not filecfg then
-			p.w('Detect64BitPortabilityProblems="%s"', tostring(not cfg.flags.No64BitChecks))
+			p.w('Detect64BitPortabilityProblems="%s"', tostring(cfg.enable64bitchecks ~= p.OFF))
 		end
 	end
 

@@ -128,6 +128,7 @@ module.exports = {
 						'editorintegration',
 						'embed',
 						'embedandsign',
+						'enable64bitchecks',
 						'enabledefaultcompileitems',
 						'enablemodules',
 						'enableunitybuild',
