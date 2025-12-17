@@ -19,7 +19,7 @@ flags { "flag_list" }
 | MFC                   | Enable support for Microsoft Foundation Classes. Deprecated in Premake 5.0.0-beta4. Use `mfc` API instead. | Removed in Premake 5.0.0-beta8 |
 | MultiProcessorCompile | Enable Visual Studio to use multiple compiler processes when building. Deprecated in Premake 5.0.0-beta8. Use `multiprocessorcompile` API instead. |
 | No64BitChecks         | Disable 64-bit portability warnings. Deprecated in Premake 5.0.0-beta8. Use `enable64bitchecks` API instead. |
-| NoBufferSecurityCheck | Turn off stack protection checks.                                   |
+| NoBufferSecurityCheck | Turn off stack protection checks. Deprecated in Premake 5.0.0-beta8. Use `buffersecuritycheck` API instead. |
 | NoCopyLocal           | Prevent referenced assemblies from being copied to the target directory (C#) |
 | NoImplicitLink        | Disable Visual Studio's default behavior of automatically linking dependent projects. |
 | NoImportLib           | Prevent the generation of an import library for a Windows DLL.      |
@@ -57,6 +57,7 @@ flags { "LinkTimeOptimization" }
 
 ### See Also ###
 
+* [buffersecuritycheck](buffersecuritycheck.md)
 * [fatalwarnings](fatalwarnings.md)
 * [linktimeoptimization](linktimeoptimization.md)
 * [mfc](mfc.md)

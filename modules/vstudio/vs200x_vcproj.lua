@@ -879,8 +879,10 @@
 
 
 	function m.bufferSecurityCheck(cfg)
-		if cfg.flags.NoBufferSecurityCheck then
+		if cfg.buffersecuritycheck == p.OFF then
 			p.w('BufferSecurityCheck="false"')
+		elseif cfg.buffersecuritycheck == p.ON then
+			p.w('BufferSecurityCheck="true"')
 		end
 	end
 

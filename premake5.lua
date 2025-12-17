@@ -277,7 +277,8 @@
 		filter "configurations:Release"
 			defines     "NDEBUG"
 			optimize    "Full"
-			flags       { "NoBufferSecurityCheck", "NoRuntimeChecks" }
+			flags       { "NoRuntimeChecks" }
+			buffersecuritycheck "Off"
 
 		filter "action:vs*"
 			defines     { "_CRT_SECURE_NO_DEPRECATE", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }

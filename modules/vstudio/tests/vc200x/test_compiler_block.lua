@@ -247,7 +247,7 @@
 -- Check that the "no buffer security check" flag is applied correctly.
 --
 
-	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck()
+	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck_ViaFlag()
 		flags { "NoBufferSecurityCheck" }
 		prepare()
 		test.capture [[
@@ -256,6 +256,42 @@
 	Optimization="0"
 	BasicRuntimeChecks="3"
 	BufferSecurityCheck="false"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
+	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "Off"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	BufferSecurityCheck="false"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
+	function suite.bufferSecurityFlagSet_onBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "On"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	BufferSecurityCheck="true"
 	RuntimeLibrary="2"
 	EnableFunctionLevelLinking="true"
 	UsePrecompiledHeader="0"
