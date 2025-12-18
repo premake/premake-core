@@ -70,6 +70,7 @@ module.exports = {
 						'atl',
 						'basedir',
 						'bindirs',
+						'buffersecuritycheck',
 						'buildaction',
 						'buildcommands',
 						'buildcustomizations',

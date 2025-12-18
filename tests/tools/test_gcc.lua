@@ -429,10 +429,22 @@
 		test.contains({ "-fno-exceptions" }, gcc.getcxxflags(cfg))
 	end
 
-	function suite.cxxflags_onNoBufferSecurityCheck()
+	function suite.cxxflags_onNoBufferSecurityCheck_ViaFlag()
 		flags { "NoBufferSecurityCheck" }
 		prepare()
 		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onNoBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "Off"
+		prepare()
+		test.contains({ "-fno-stack-protector" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "On"
+		prepare()
+		test.contains({ "-fstack-protector" }, gcc.getcxxflags(cfg))
 	end
 
 	function suite.cxxflags_onSanitizeAddress()

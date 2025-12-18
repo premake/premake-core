@@ -713,7 +713,7 @@
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onNoBufferSecurityCheck()
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck_ViaFlag()
 		flags "NoBufferSecurityCheck"
 		prepare()
 		test.capture [[
@@ -725,6 +725,29 @@
 		]]
 	end
 
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>false</BufferSecurityCheck>
+		]]
+	end
+
+	function suite.runtimeTypeInfo_onBufferSecurityCheck_ViaAPI()
+		buffersecuritycheck "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>true</BufferSecurityCheck>
+		]]
+	end
 
 --
 -- On Win32 builds, use the Edit-and-Continue debug information format.

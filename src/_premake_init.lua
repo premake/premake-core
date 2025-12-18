@@ -1245,6 +1245,24 @@
 		multiprocessorcompile("Default")
 	end)
 
+	api.register {
+		name = "buffersecuritycheck",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.deprecateValue("flags", "NoBufferSecurityCheck", "Use `buffersecuritycheck` instead.",
+	function(value)
+		buffersecuritycheck("Off")
+	end,
+	function(value)
+		buffersecuritycheck("Default")
+	end)
 
 -----------------------------------------------------------------------------
 --

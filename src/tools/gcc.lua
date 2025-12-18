@@ -243,9 +243,6 @@
 		exceptionhandling = {
 			Off = "-fno-exceptions"
 		},
-		flags = {
-			NoBufferSecurityCheck = "-fno-stack-protector",
-		},
 		cppdialect = {
 			["C++98"] = "-std=c++98",
 			["C++0x"] = "-std=c++0x",
@@ -270,6 +267,10 @@
 			["gnu++2b"] = "-std=gnu++2b",
 			["gnu++23"] = "-std=gnu++23",
 			["C++latest"] = "-std=c++23",
+		},
+		buffersecuritycheck = {
+			Off = "-fno-stack-protector",
+			On = "-fstack-protector"
 		},
 		rtti = {
 			Off = "-fno-rtti"

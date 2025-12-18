@@ -3379,8 +3379,10 @@
 
 	function m.bufferSecurityCheck(cfg)
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.flags.NoBufferSecurityCheck or (toolVersion and toolVersion:startswith("LLVM-vs")) then
+		if cfg.buffersecuritycheck == p.OFF or (toolVersion and toolVersion:startswith("LLVM-vs")) then
 			m.element("BufferSecurityCheck", nil, "false")
+		elseif cfg.buffersecuritycheck == p.ON then
+			m.element("BufferSecurityCheck", nil, "true")
 		end
 	end
 
