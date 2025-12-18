@@ -2942,11 +2942,9 @@
 		-- Left to its own devices, VS will happily link against a project dependency
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
-		if explicit then
-			p.push('<ProjectReference>')
-			m.element("LinkLibraryDependencies", nil, "false")
-			p.pop('</ProjectReference>')
-		end
+		p.push('<ProjectReference>')
+		m.element("LinkLibraryDependencies", nil, iif(explicit, "false", "true"))
+		p.pop('</ProjectReference>')
 	end
 
 

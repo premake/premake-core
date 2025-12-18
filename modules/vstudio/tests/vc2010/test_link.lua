@@ -126,7 +126,7 @@
 -- Test the handling of the NoImplicitLink flag.
 --
 
-	function suite.linkDependencies_onNoImplicitLink()
+	function suite.linkDependencies_onNoImplicitLink_ViaFlag()
 		flags "NoImplicitLink"
 		prepare()
 		test.capture [[
@@ -136,6 +136,34 @@
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
+		]]
+	end
+
+	function suite.linkDependencies_onNoImplicitLink_ViaAPI()
+		implicitlink "Off"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
+		]]
+	end
+
+	function suite.linkDependencies_onImplicitLink_ViaAPI()
+		implicitlink "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>true</LinkLibraryDependencies>
 </ProjectReference>
 		]]
 	end
@@ -513,7 +541,7 @@
 -- If the NoImplicitLink flag is set, all dependencies should be listed explicitly.
 --
 
-	function suite.includeSiblings_onNoImplicitLink()
+	function suite.includeSiblings_onNoImplicitLink_ViaFlag()
 		flags { "NoImplicitLink" }
 		links { "MyProject2" }
 		test.createproject(wks)
@@ -527,6 +555,41 @@
 </Link>
 <ProjectReference>
 	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
+		]]
+	end
+
+	function suite.includeSiblings_onNoImplicitLink_ViaAPI()
+		implicitlink "Off"
+		links { "MyProject2" }
+		test.createproject(wks)
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>false</LinkLibraryDependencies>
+</ProjectReference>
+		]]
+	end
+
+	function suite.includeSiblings_onImplicitLink_ViaAPI()
+		implicitlink "On"
+		links { "MyProject2" }
+		test.createproject(wks)
+		kind "SharedLib"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+<ProjectReference>
+	<LinkLibraryDependencies>true</LinkLibraryDependencies>
 </ProjectReference>
 		]]
 	end
