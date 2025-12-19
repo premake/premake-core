@@ -28,7 +28,13 @@
 		valid_kinds     = { "ConsoleApp", "WindowedApp", "StaticLib", "SharedLib", "Makefile", "None", "Utility", "SharedItems", p.PACKAGING },
 		valid_languages = { "C", "C++", "C#", "F#" },
 		valid_tools     = {
-			cc     = { "msc"   },
+			cc     = function(prj)
+						if prj.system == p.LINUX then
+							return { "clang", "gcc" }
+						else
+							return { "msc" }
+						end
+					end,
 			dotnet = { "msnet" },
 		},
 

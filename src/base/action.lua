@@ -316,7 +316,10 @@
 -- @returns
 --    True if the toolset is supported, false otherwise.
 ---
-	function action.supportsToolset(language, toolset)
+	function action.supportsToolset(prj)
+		local language = prj.language
+		local toolset = prj.toolset
+
 		if not language or not toolset then
 			return true
 		end
@@ -343,6 +346,12 @@
 		end
 		toolset = p.tools.normalize(toolset)
 		toolset = toolset:explode("-", true, 1)[1] -- get rid of version
+
+		-- If the valid tools is a table, check if the toolset is in the table
+		-- If the valid tools is a function, call the function with the project. It returns a table of valid toolsets
+		if type(valid_tools) == "function" then
+			valid_tools = valid_tools(prj)
+		end
 
 		return table.contains(valid_tools, toolset)
 	end

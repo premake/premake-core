@@ -176,7 +176,7 @@
 
 
 	function m.actionSupportsToolset(prj)
-		if not p.action.supportsToolset(prj.language, prj.toolset) then
+		if not p.action.supportsToolset(prj) then
 			p.warn("Unsupported toolset '%s' used for language '%s' for project '%s'", prj.toolset, prj.language, prj.name)
 		end
 	end
