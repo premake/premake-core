@@ -342,7 +342,6 @@
 			"MultiProcessorCompile",
 			"No64BitChecks",
 			"NoCopyLocal",
-			"NoImplicitLink",
 			"NoImportLib",         -- DEPRECATED
 			"NoIncrementalLink",
 			"NoManifest",

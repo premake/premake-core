@@ -744,6 +744,26 @@
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)
+	p.api.addAllowed("flags", { "NoImplicitLink" })
+
+	p.api.register {
+		name = "implicitlink",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.deprecateValue("flags", "NoImplicitLink", "Use `implicitlink` instead.",
+	function(value)
+		implicitlink("Off")
+	end,
+	function(value)
+		implicitlink("Default")
+	end)
 
 --
 -- Decide when the full module should be loaded.

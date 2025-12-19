@@ -232,8 +232,23 @@
 -- then be added to the list.
 --
 
-	function suite.includesSiblings_onNoImplicitLink()
+	function suite.includesSiblings_onNoImplicitLink_ViaFlag()
 		flags { "NoImplicitLink" }
+		links { "MyProject2" }
+		project ("MyProject2")
+		kind "StaticLib"
+		language "C++"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	LinkLibraryDependencies="false"
+	AdditionalDependencies="bin\Debug\MyProject2.lib"
+		]]
+	end
+
+	function suite.includesSiblings_onNoImplicitLink_ViaAPI()
+		implicitlink "Off"
 		links { "MyProject2" }
 		project ("MyProject2")
 		kind "StaticLib"

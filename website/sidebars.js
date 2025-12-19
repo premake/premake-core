@@ -170,6 +170,7 @@ module.exports = {
 						'implibname',
 						'implibprefix',
 						'implibsuffix',
+						'implicitlink',
 						'includedirs',
 						'includedirsafter',
 						'inheritdependencies',

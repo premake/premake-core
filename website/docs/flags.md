@@ -21,7 +21,7 @@ flags { "flag_list" }
 | No64BitChecks         | Disable 64-bit portability warnings. Deprecated in Premake 5.0.0-beta8. Use `enable64bitchecks` API instead. |
 | NoBufferSecurityCheck | Turn off stack protection checks. Deprecated in Premake 5.0.0-beta8. Use `buffersecuritycheck` API instead. |
 | NoCopyLocal           | Prevent referenced assemblies from being copied to the target directory (C#) |
-| NoImplicitLink        | Disable Visual Studio's default behavior of automatically linking dependent projects. |
+| NoImplicitLink        | Disable Visual Studio's default behavior of automatically linking dependent projects. Deprecated in Premake 5.0.0-beta8. Use `implicitlink` API instead. |
 | NoImportLib           | Prevent the generation of an import library for a Windows DLL.      |
 | NoIncrementalLink     | Disable support for Visual Studio's incremental linking feature.    |
 | NoManifest            | Prevent the generation of a manifest for Windows executables and shared libraries. |
@@ -59,6 +59,7 @@ flags { "LinkTimeOptimization" }
 
 * [buffersecuritycheck](buffersecuritycheck.md)
 * [fatalwarnings](fatalwarnings.md)
+* [implicitlink](implicitlink.md)
 * [linktimeoptimization](linktimeoptimization.md)
 * [mfc](mfc.md)
 * [mapfile](mapfile.md)
