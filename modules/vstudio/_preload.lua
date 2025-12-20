@@ -456,23 +456,6 @@
 		tokens = true,
 	}
 
-	p.api.register {   -- DEPRECATED 2019-10-21
-		name = "debuggerflavor",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Local",
-			"Remote",
-			"WebBrowser",
-			"WebService"
-		}
-	}
-
-	p.api.deprecateField("debuggerflavor", 'Use `debugger` instead.',
-	function(value)
-		debugger('VisualStudio' .. value)
-	end)
-
 	p.api.register {
 		name = "scanformoduledependencies",
 		scope = "config",

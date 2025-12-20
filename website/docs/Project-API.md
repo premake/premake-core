@@ -148,7 +148,6 @@
 | [stringpooling](stringpooling.md)                         |  |
 | [symbols](symbols.md)                                     | Turn symbol generation on/off |
 | [symbolspath](symbolspath.md)                             | Allows you to specify the target location of the symbols |
-| [sysincludedirs](sysincludedirs.md)                       |  |
 | [syslibdirs](syslibdirs.md)                               |  |
 | [system](system.md)                                       |  |
 | [tags](tags.md)                                           |  |

@@ -1104,18 +1104,6 @@
 		tokens = true
 	}
 
-	api.register {   -- DEPRECATED 2021-11-16
-		name = "sysincludedirs",
-		scope = "config",
-		kind = "list:directory",
-		tokens = true,
-	}
-
-	api.deprecateField("sysincludedirs", 'Use `externalincludedirs` instead.',
-	function(value)
-		externalincludedirs(value)
-	end)
-
 	api.register {
 		name = "linktimeoptimization",
 		scope = "config",
