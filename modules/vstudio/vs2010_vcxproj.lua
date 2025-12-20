@@ -397,12 +397,12 @@
 				m.intDir,
 				m.targetName,
 				m.targetExt,
-				m.includePath,
 				m.libraryPath,
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
 
 				-- Linux
+				m.linuxExternalIncludeDirs,
 				m.linuxMultiProcNumber
 			}
 		end
@@ -3899,6 +3899,29 @@
 
 	end
 
+	function m.linuxExternalIncludeDirs(cfg)
+
+		local externaldirs = table.join(cfg.externalincludedirs, cfg.includedirsafter)
+		local dirs = vstudio.path(cfg, externaldirs)
+		if #dirs > 0 then
+
+			-- Take note of the directories that exist locally, to be able to copy
+			local existingdirs = {}
+
+			for _, dir in ipairs(dirs or {}) do
+				local absolutedir = path.getabsolute(dir)
+
+				-- If directory exists on local machine, it's good to copy across to remote machine
+				if os.isdir(absolutedir) then
+					table.insert(existingdirs, dir)
+				end
+			end
+
+			m.element("AdditionalSourcesToCopyMapping", nil, "%s;$(AdditionalSourcesToCopyMapping)", table.concat(existingdirs, ";"))
+		end
+
+	end
+
 	function m.linuxLanguageStandardCpp(cfg)
 		local cpp_langmap = {
 			["C++98"]   = "c++98",
@@ -4482,6 +4505,19 @@
 		-- -fvisibility=<>
 		if cfg.visibility ~= nil then
 			table.insert(opts, p.tools.gcc.shared.visibility[cfg.visibility])
+		end
+
+		-- -isystem="path1"
+		-- Systems like Android put external includes in the ExternalIncludePath
+		if cfg.system == p.LINUX then
+			local externaldirs = table.join(cfg.externalincludedirs, cfg.includedirsafter)
+			local dirs = vstudio.path(cfg, externaldirs)
+			if #dirs > 0 then
+				for _, dir in ipairs(dirs or {}) do
+					relativedir = p.tools.getrelative(cfg.project, dir)
+					table.insert(opts, '-isystem ' .. p.quoted(relativedir))
+				end
+			end
 		end
 
 		if #opts > 0 then
