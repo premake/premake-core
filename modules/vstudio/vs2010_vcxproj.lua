@@ -2943,7 +2943,9 @@
 		-- that has been excluded from the build. As a workaround, disable dependency
 		-- linking and list all siblings explicitly
 		p.push('<ProjectReference>')
-		m.element("LinkLibraryDependencies", nil, iif(explicit, "false", "true"))
+		if explicit or cfg.implicitlink ~= nil then
+			m.element("LinkLibraryDependencies", nil, iif(explicit, "false", "true"))
+		end
 		p.pop('</ProjectReference>')
 	end
 
