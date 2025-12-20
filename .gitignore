@@ -22,6 +22,7 @@ Makefile
 *.swp
 *.sdf
 *.sln
+*.slnx
 *.suo
 *.ncb
 *.vcproj*

@@ -17,7 +17,7 @@ newaction { description }
 | targetos    | If the toolset targets a specific OS, the [identifier](system.md) for that OS. |
 | valid_kinds | The list of [project kinds](kind.md) supported by the action. |
 | valid_languages | The list of [languages](language.md) supported by the action. |
-| valid_tools | The list of [tools](toolset.md) supported by the action. |
+| valid_tools | The list of [tools](toolset.md) supported by the action. Alternatively, a function taking a project and returning a list of tools can be used. |
 | toolset | Default [tools](toolset.md). |
 | onStart     | A callback marking the start of action processing. |
 | onWorkspace | A callback for each workspace specified in the user script. |
@@ -85,6 +85,21 @@ newaction {
                         end
       }
    }
+}
+```
+
+Register a new action with a dynamic list of valid tools.
+
+```lua
+newaction {
+   trigger     = "myaction",
+   valid_tools = function(prj)
+      local tools = { "msc" }
+      if prj.system == p.LINUX then
+         table.insert(tools, "gcc")
+      end
+      return tools
+   end
 }
 ```
 
