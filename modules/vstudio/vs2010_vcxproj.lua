@@ -4512,11 +4512,9 @@
 		if cfg.system == p.LINUX then
 			local externaldirs = table.join(cfg.externalincludedirs, cfg.includedirsafter)
 			local dirs = vstudio.path(cfg, externaldirs)
-			if #dirs > 0 then
-				for _, dir in ipairs(dirs or {}) do
-					relativedir = p.tools.getrelative(cfg.project, dir)
-					table.insert(opts, '-isystem ' .. p.quoted(relativedir))
-				end
+			for _, dir in ipairs(dirs or {}) do
+				relativedir = p.tools.getrelative(cfg.project, dir)
+				table.insert(opts, '-isystem ' .. p.quoted(relativedir))
 			end
 		end
 
