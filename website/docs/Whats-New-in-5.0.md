@@ -115,7 +115,6 @@ title: What's New in 5.0
 * [solution](workspace.md) (name changed)
 * [startproject](startproject.md) (new)
 * [strictaliasing](strictaliasing.md) (new)
-* [sysincludedirs](sysincludedirs.md) (new)
 * [syslibdirs](syslibdirs.md) (new)
 * [system](system.md) (new)
 * [toolset](toolset.md) (new)
