@@ -30,7 +30,7 @@
 		valid_tools     = {
 			cc     = function(prj)
 						if prj.system == p.LINUX then
-							return { "clang", "gcc" }
+							return { "gcc" }
 						else
 							return { "msc" }
 						end
