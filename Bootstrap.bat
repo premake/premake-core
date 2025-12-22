@@ -26,6 +26,8 @@ IF "%vsversion%" == "" (
 	EXIT /B %ERRORLEVEL%
 )
 
+SET PREMAKE_OPTS=%2
+
 IF "%vsversion%" == "vs2010" (
 	CALL :LegacyVisualBootstrap "%vsversion%" "100"
 
@@ -39,13 +41,13 @@ IF "%vsversion%" == "vs2010" (
 	CALL :LegacyVisualBootstrap "%vsversion%" "140"
 
 ) ELSE IF "%vsversion%" == "vs2017" (
-	CALL :VsWhereVisualBootstrap "%vsversion%" "15.0" "16.0"
+	CALL :VsWhereVisualBootstrap "%vsversion%" "15.0" "16.0" %PREMAKE_OPTS%
 
 ) ELSE IF "%vsversion%" == "vs2019" (
-	CALL :VsWhereVisualBootstrap "%vsversion%" "16.0" "17.0"
+	CALL :VsWhereVisualBootstrap "%vsversion%" "16.0" "17.0" %PREMAKE_OPTS%
 
 ) ELSE IF "%vsversion%" == "vs2022" (
-	CALL :VsWhereVisualBootstrap "%vsversion%" "17.0" "18.0"
+	CALL :VsWhereVisualBootstrap "%vsversion%" "17.0" "18.0" %PREMAKE_OPTS%
 
 ) ELSE IF "%vsversion%" == "vs18" (
 	CALL :VsWhereVisualBootstrap "vs2026" "18.0" "19.0"
@@ -96,6 +98,7 @@ REM %3: VisualStudio-style VSversionMax -> ex: 16.0
 SET "PremakeVsVersion=%~1"
 SET "VsVersionMin=%~2"
 SET "VsVersionMax=%~3"
+SET PREMAKE_OPTS=%4
 
 REM ref: https://github.com/Microsoft/vswhere/wiki/Start-Developer-Command-Prompt
 
@@ -107,13 +110,12 @@ IF NOT EXIST %VsWherePath% (
 SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVersionMax%) -property installationPath"
 
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
-
 	IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
-		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
+		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg%  %PREMAKE_OPTS% -f Bootstrap.mak windows
 		EXIT /B %ERRORLEVEL%
 	) ELSE (
 		IF EXIST "%%i\VC\Auxiliary\Build\vcvars32.bat" (
-			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% -f Bootstrap.mak windows
+			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% %PREMAKE_OPTS% -f Bootstrap.mak windows
 			EXIT /B %ERRORLEVEL%
 		)
 	)
