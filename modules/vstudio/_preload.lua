@@ -727,7 +727,7 @@
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)
-	p.api.addAllowed("flags", { "NoImplicitLink" })
+	p.api.addAllowed("flags", { "NoImplicitLink", "NoCopyLocal" })
 
 	p.api.register {
 		name = "implicitlink",
@@ -746,6 +746,24 @@
 	end,
 	function(value)
 		implicitlink("Default")
+	end)
+
+	p.api.register {
+		name = "allowcopylocal",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	p.api.deprecateValue("flags", "NoCopyLocal", "Use `allowcopylocal {}` instead.", function(value)
+		allowcopylocal("Off")
+	end,
+	function(value)
+		allowcopylocal("Default")
 	end)
 
 --

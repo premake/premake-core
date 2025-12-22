@@ -6,7 +6,7 @@ copylocal { "libraries" }
 
 If a project includes multiple calls to `copylocal` the lists are concatenated, in the order in which they appear in the script.
 
-Note that, by default, all referenced non-system assemblies in a C# project are copied. This function only needs to called when a subset of the referenced assemblies should be copied. To disable copying of *all* references, use the `NoLocalCopy` build flag instead (see Examples, below).
+Note that, by default, all referenced non-system assemblies in a C# project are copied. This function only needs to called when a subset of the referenced assemblies should be copied. To disable copying of *all* references, use the `allowcopylocal` API.
 
 ### Parameters ###
 
@@ -36,8 +36,8 @@ links { "Renderer", "../ThirdParty/nunit.framework" }
 copylocal { "../ThirdParty/nunit.framework" }
 ```
 
-If you want to prevent any assemblies from being copied, use the **NoLocalCopy** flag instead.
+If you want to prevent any assemblies from being copied, use the **allowcopylocal** API instead.
 
 ```lua
-flags { "NoCopyLocal" }
+allowcopylocal "Off"
 ```

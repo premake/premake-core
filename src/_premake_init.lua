@@ -341,7 +341,6 @@
 			"Maps",
 			"MultiProcessorCompile",
 			"No64BitChecks",
-			"NoCopyLocal",
 			"NoImportLib",         -- DEPRECATED
 			"NoIncrementalLink",
 			"NoManifest",

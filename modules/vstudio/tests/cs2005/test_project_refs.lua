@@ -96,9 +96,24 @@
 -- NoCopyLocal flag has been set for the configuration.
 --
 
-	function suite.markedPrivate_onNoCopyLocal()
+	function suite.markedPrivate_onNoCopyLocal_ViaFlag()
 		links { "MyProject" }
 		flags { "NoCopyLocal" }
+		prepare()
+		test.capture [[
+	<ItemGroup>
+		<ProjectReference Include="MyProject.vcproj">
+			<Project>{00112233-4455-6677-8888-99AABBCCDDEE}</Project>
+			<Name>MyProject</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+		]]
+	end
+
+	function suite.markedPrivate_onNoLocalCopy_ViaAPI()
+		links { "MyProject" }
+		allowcopylocal "Off"
 		prepare()
 		test.capture [[
 	<ItemGroup>
