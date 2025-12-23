@@ -1279,7 +1279,7 @@
 		allowed = {
 			{ "clang", "Clang (clang)" },
 			{ "gcc", "GNU GCC (gcc/g++)" },
-			{ "mingw", "MinGW GCC (gcc/g++)" },
+			{ "mingw", "MinGW GCC (gcc/g++)" }, -- deprecated
 			{ "msc-v80", "Microsoft compiler (Visual Studio 2005)" },
 			{ "msc-v90", "Microsoft compiler (Visual Studio 2008)" },
 			{ "msc-v100", "Microsoft compiler (Visual Studio 2010)" },
@@ -1296,6 +1296,11 @@
 			end
 		}
 	}
+
+	if _OPTIONS[cc] == "mingw" then
+		p.warn("--cc=mingw is deprecated, use --cc=gcc instead")
+		_OPTIONS[cc] = "gcc"
+	end
 
 	newoption
 	{

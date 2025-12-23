@@ -108,7 +108,7 @@ mingw: mingw-clean
 	mkdir -p build/bootstrap
 	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_STATICLIB -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lole32 -lversion
 	./build/bootstrap/premake_bootstrap embed
-	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=mingw $(PREMAKE_OPTS) gmake
+	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=gcc $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)_$(PLATFORM:x86=win32)
 
 macosx: osx
