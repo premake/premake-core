@@ -446,7 +446,7 @@
 --
 
 	function config.isCopyLocal(cfg, linkname, default)
-		if cfg.flags.NoCopyLocal then
+		if cfg.allowcopylocal == p.OFF then
 			return false
 		end
 

@@ -63,6 +63,7 @@ module.exports = {
 					label: 'Project Settings',
 					items: [
 						'allmodulespublic',
+						'allowcopylocal',
 						'androidapilevel',
 						'androidapplibname',
 						'architecture',
