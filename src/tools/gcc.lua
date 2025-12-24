@@ -439,19 +439,29 @@
 		end
 
 		for _, fullpath in ipairs(dirs) do
+			-- Try to make rpath relative to target dir
 			local rpath = path.getrelative(cfg.buildtarget.directory, fullpath)
-			if table.contains(os.getSystemTags(cfg.system), "darwin") then
-				rpath = "@loader_path/" .. rpath
-			elseif (cfg.system == p.LINUX) then
-				rpath = iif(rpath == ".", "", "/" .. rpath)
-				rpath = "$$ORIGIN" .. rpath
-			end
 
-			if mode == "linker" then
-				rpath = "-Wl,-rpath,'" .. rpath .. "'"
-			end
+			if path.isabsolute(rpath) then				
+				if mode == "linker" then
+					rpath = "-Wl,-rpath,'" .. rpath .. "'"
+				end
 
-			table.insert(result, rpath)
+				table.insert(result, rpath)
+			else
+				if table.contains(os.getSystemTags(cfg.system), "darwin") then
+					rpath = "@loader_path/" .. rpath
+				elseif (cfg.system == p.LINUX) then
+					rpath = iif(rpath == ".", "", "/" .. rpath)
+					rpath = "$$ORIGIN" .. rpath
+				end
+
+				if mode == "linker" then
+					rpath = "-Wl,-rpath,'" .. rpath .. "'"
+				end
+
+				table.insert(result, rpath)
+			end
 		end
 
 		return result

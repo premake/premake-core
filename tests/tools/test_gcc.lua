@@ -1400,3 +1400,36 @@ end
 		test.contains({ "-pg" }, gcc.getcxxflags(cfg))
 		test.contains({ "-pg" }, gcc.getldflags(cfg))
 	end
+
+--
+-- Test runpath dirs
+--
+
+	function suite.runpathdirs_onRelativeDir()	
+		local paths = { "libs" }
+		
+		runpathdirs(paths)
+		prepare()
+    
+		test.contains({ "-Wl,-rpath,'$$ORIGIN/libs'" }, gcc.getrunpathdirs(cfg, paths))
+	end
+
+
+	function suite.runpathdirs_onRelativeDir_macosx()	
+		local paths = { "libs" }
+		
+		system("MacOSX")
+		runpathdirs(paths)
+		prepare()
+	
+		test.contains({ "-Wl,-rpath,'@loader_path/libs'" }, gcc.getrunpathdirs(cfg, paths))
+	end
+
+	function suite.runpathdirs_onAbsoluteDir()	
+		local paths = { "/usr/local/lib/mylibs" }
+		
+		runpathdirs(paths)
+		prepare()
+	
+		test.contains({ "-Wl,-rpath,'/usr/local/lib/mylibs'" }, gcc.getrunpathdirs(cfg, paths))
+	end
