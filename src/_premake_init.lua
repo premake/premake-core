@@ -1222,7 +1222,6 @@
 			"Off"
 		}
 	}
-	
 	api.deprecateValue("flags", "MultiProcessorCompile", "Use `multiprocessorcompile` instead.",
 	function(value)
 		multiprocessorcompile("On")
@@ -1324,7 +1323,12 @@
     newoption
 	{
 		trigger     = "debugger",
-		description = "Start MobDebug remote debugger. Works with ZeroBrane Studio"
+		description = "Start MobDebug/ludap remote debugger. Works with ZeroBrane Studio and DAP compatible editors",
+		value       = "VALUE",
+		allowed = {
+			{"MobDebug", "MobDebug"},
+			{"luadap", "luadap" }
+		}
 	}
 
 	newoption
