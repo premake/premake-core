@@ -69,6 +69,8 @@
 
 		-- Clean action
 		"actions/clean/_clean.lua",
-
+		
+		--luadap debugger
+		"luadap.lua",
 		"_premake_init.lua",
 	}

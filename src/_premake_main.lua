@@ -265,12 +265,16 @@
 
 	function m.tryHookDebugger()
 
-		if (_OPTIONS["debugger"]) then
+		if (_OPTIONS["debugger"] == "MobDebug") then
 			print("Loading luasocket...")
 			require('luasocket')
 			print("Starting debugger...")
 			local mobdebug = require('mobdebug')
 			mobdebug.start()
+		elseif(_OPTIONS["debugger"] == "luadap") then
+			print("Starting debugger...")
+			local luadap = _G.Luadap
+			luadap.start()
 
 		end
 	end
