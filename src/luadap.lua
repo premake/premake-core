@@ -17,7 +17,7 @@
 local base = _G
 local string = require("string")
 local math = require("math")
-local luasocket = require("luasocket")
+local luasocket = {}
 
 local socket
 if type(luasocket) == "table" then
@@ -69,7 +69,6 @@ function socket.bind(host, port, backlog)
     return nil, err
 end
 
-socket.try = socket.newtry()
 
 function socket.choose(table)
     return function(name, opt1, opt2)
@@ -980,6 +979,22 @@ end
 
 function LuadapServer:new(host, port)
     local self = setmetatable({}, LuadapServer)
+	local luasocket = require("luasocket")
+	local luasocket_table
+	if type(luasocket) == "table" then
+		luasocket_table = luasocket
+	else
+		luasocket_table = _G.socket  -- fallback if needed
+	end
+
+	-- Merge luasocket_table into the existing 'socket' table
+	for k, v in pairs(luasocket_table) do
+		if socket[k] == nil then
+			socket[k] = v
+		end
+	end
+	socket.try = socket.newtry()
+
     self.host = host or "localhost"
     self.port = port or 3000
     self.server = socket.bind(self.host, self.port)
@@ -1040,6 +1055,22 @@ end
 
 function LuadapClient:new()
     local self = setmetatable({}, LuadapClient)
+	local luasocket = require("luasocket")
+	local luasocket_table
+	if type(luasocket) == "table" then
+		luasocket_table = luasocket
+	else
+		luasocket_table = _G.socket  -- fallback if needed
+	end
+
+	-- Merge luasocket_table into the existing 'socket' table
+	for k, v in pairs(luasocket_table) do
+		if socket[k] == nil then
+			socket[k] = v
+		end
+	end
+	socket.try = socket.newtry()
+
     self.client = socket.tcp()
     return self
 end
