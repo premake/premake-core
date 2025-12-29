@@ -1177,7 +1177,7 @@ function m.linkTarget(cfg)
 
 	local implicitoutputs = {}
 
-	-- If this target is a shared library on Windows with NoImportLib not set, add an implicit output
+	-- If this target is a shared library on Windows with useimportlib not set to Off, add an implicit output
 	-- for the .lib file
 	-- If this is on windows and building a shared library, emit a exp file as an implicit output
 	if cfg.system == p.WINDOWS and cfg.kind == p.SHAREDLIB then
@@ -1187,7 +1187,7 @@ function m.linkTarget(cfg)
 			table.insert(implicitoutputs, expFilePath)
 		end
 
-		if not cfg.flags.NoImportLib then
+		if cfg.useimportlib ~= p.OFF then
 			local importLibName = cfg.buildtarget.name:gsub("%..-$", "") .. ".lib"
 			if importLibName then
 				local importLibPath = path.getrelative(cfg.workspace.location, cfg.buildtarget.directory) .. "/" .. importLibName

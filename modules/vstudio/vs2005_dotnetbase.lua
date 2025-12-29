@@ -724,7 +724,7 @@
 
 
 	function dotnetbase.projectTypeGuids(cfg)
-		if cfg.flags.WPF then
+		if cfg.wpf == p.ON then
 			_p(2,'<ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>')
 		end
 	end
@@ -818,7 +818,7 @@
 	end
 
 	function dotnetbase.netcore.useWpf(cfg)
-		if cfg.flags.WPF then
+		if cfg.wpf == p.ON then
 			_p(2,'<UseWpf>true</UseWpf>')
 		end
 	end
@@ -838,6 +838,11 @@
 
 		if cfg.dotnetsdk then
 			parts = cfg.dotnetsdk:explode("/", true, 1)
+		end
+
+		-- Auto-detect WindowsDesktop SDK if WPF is enabled
+		if not cfg.dotnetsdk and cfg.wpf == p.ON then
+			return map["WindowsDesktop"]
 		end
 
 		local sdk = (parts and #parts > 0 and parts[1]) or cfg.dotnetsdk

@@ -152,10 +152,15 @@
 --
 
 	function config.canLinkIncremental(cfg)
+		-- Explicit "On" overrides all other checks
+		if cfg.incrementallink == p.ON then
+			return true
+		end
+		
 		if cfg.kind == "StaticLib"
 				or config.isOptimizedBuild(cfg)
-				or cfg.flags.NoIncrementalLink
-				or cfg.linktimeoptimization == "On"
+				or cfg.incrementallink == p.OFF
+				or cfg.linktimeoptimization == p.ON
 				or cfg.linktimeoptimization == "Fast" then
 			return false
 		end
@@ -210,7 +215,7 @@
 		-- is provided, change the kind as import libraries are static.
 		local kind = cfg.kind
 		if project.isnative(cfg.project)  then
-			if cfg.system == p.WINDOWS and kind == p.SHAREDLIB and not cfg.flags.NoImportLib then
+			if cfg.system == p.WINDOWS and kind == p.SHAREDLIB and cfg.useimportlib ~= p.OFF then
 				kind = p.STATICLIB
 			end
 		end

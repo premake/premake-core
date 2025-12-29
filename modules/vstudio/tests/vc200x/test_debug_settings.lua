@@ -135,3 +135,17 @@ Environment="key=value"
 EnvironmentMerge="false"
 		]]
 	end
+
+--
+-- Make sure that debugenvsmerge API works correctly.
+--
+
+	function suite.environmentVarsSet_onDebugEnvsAndDebugEnvsMergeOff()
+		debugenvs { "key=value" }
+		debugenvsmerge "Off"
+		prepare()
+		test.capture [[
+Environment="key=value"
+EnvironmentMerge="false"
+		]]
+	end

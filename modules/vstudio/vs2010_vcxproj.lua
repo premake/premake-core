@@ -2613,7 +2613,7 @@
 
 
 	function m.generateManifest(cfg)
-		if cfg.flags.NoManifest then
+		if cfg.manifest == p.OFF then
 			m.element("GenerateManifest", nil, "false")
 		end
 	end
@@ -2660,7 +2660,7 @@
 
 	function m.ignoreImportLibrary(cfg)
 		if cfg.kind == p.SHAREDLIB then
-			if cfg.flags.NoImportLib then
+			if cfg.useimportlib == p.OFF then
 				m.element("IgnoreImportLibrary", nil, "true")
 			elseif cfg.system == p.UWP then
 				m.element("IgnoreImportLibrary", nil, "false")
@@ -2959,11 +2959,13 @@
 
 	function m.minimalRebuild(cfg)
 		if config.isOptimizedBuild(cfg) or
-		   cfg.flags.NoMinimalRebuild or
+		   cfg.minimalrebuild == "Off" or
 		   cfg.multiprocessorcompile == p.ON or
 		   cfg.debugformat == "c7"
 		then
 			m.element("MinimalRebuild", nil, "false")
+		elseif cfg.minimalrebuild == "On" then
+			m.element("MinimalRebuild", nil, "true")
 		end
 	end
 
@@ -3059,7 +3061,7 @@
 
 
 	function m.omitDefaultLib(cfg)
-		if cfg.flags.OmitDefaultLibrary then
+		if cfg.nodefaultlib == p.ON then
 			m.element("OmitDefaultLibName", nil, "true")
 		end
 	end
@@ -3195,13 +3197,13 @@
 	function m.precompiledHeader(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
 		if filecfg then
-			if prjcfg.pchsource == filecfg.abspath and not prjcfg.flags.NoPCH then
+			if prjcfg.pchsource == filecfg.abspath and prjcfg.enablepch ~= "Off" then
 				m.element('PrecompiledHeader', condition, 'Create')
-			elseif filecfg.flags.NoPCH then
+			elseif filecfg.enablepch == p.OFF then
 				m.element('PrecompiledHeader', condition, 'NotUsing')
 			end
 		else
-			if not prjcfg.flags.NoPCH and prjcfg.pchheader then
+			if prjcfg.enablepch ~= "Off" and prjcfg.pchheader then
 				m.element("PrecompiledHeader", nil, "Use")
 
 				if cfg.system == p.ANDROID then

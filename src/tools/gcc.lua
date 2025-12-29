@@ -509,7 +509,7 @@
 		kind = {
 			SharedLib = function(cfg)
 				local r = { gcc.getsharedlibarg(cfg) }
-				if cfg.system == p.WINDOWS and not cfg.flags.NoImportLib then
+				if cfg.system == p.WINDOWS and cfg.useimportlib ~= p.OFF then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				elseif cfg.system == p.LINUX then
 					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
@@ -601,7 +601,7 @@
 			end
 		end
 
-		if cfg.flags.RelativeLinks then
+		if cfg.userelativelinks == p.ON then
 			for _, dir in ipairs(config.getlinks(cfg, "siblings", "directory")) do
 				local libFlag = "-L" .. p.tools.getrelative(cfg.project, dir)
 				if not table.contains(flags, libFlag) then
@@ -630,7 +630,7 @@
 		local result = {}
 
 		if not systemonly then
-			if cfg.flags.RelativeLinks then
+			if cfg.userelativelinks == p.ON then
 				local libFiles = config.getlinks(cfg, "siblings", "basename")
 				for _, link in ipairs(libFiles) do
 					if string.startswith(link, "lib") then
