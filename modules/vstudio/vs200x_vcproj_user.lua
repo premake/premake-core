@@ -124,7 +124,7 @@
 	function m.debugEnvironment(cfg)
 		if #cfg.debugenvs > 0 then
 			p.x('Environment="%s"', table.concat(cfg.debugenvs, "\n"))
-			if cfg.flags.DebugEnvsDontMerge then
+			if cfg.debugenvsmerge == p.OFF then
 				p.x('EnvironmentMerge="false"')
 			end
 		end

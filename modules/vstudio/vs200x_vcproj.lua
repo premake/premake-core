@@ -765,7 +765,7 @@
 
 	function m.additionalExternalCompilerOptions(cfg, toolset)
 		local buildoptions = table.join(toolset.getcxxflags(cfg), cfg.buildoptions)
-		if not cfg.flags.NoPCH and cfg.pchheader then
+		if cfg.enablepch ~= p.OFF and cfg.pchheader then
 			table.insert(buildoptions, '--use_pch="$(IntDir)/$(TargetName).pch"')
 		end
 		if #buildoptions > 0 then
@@ -1151,7 +1151,7 @@
 
 
 	function m.generateManifest(cfg, toolset)
-		if cfg.flags.NoManifest then
+		if cfg.manifest == p.OFF then
 			p.w('GenerateManifest="false"')
 		end
 	end
@@ -1159,7 +1159,7 @@
 
 
 	function m.ignoreImportLibrary(cfg, toolset)
-		if cfg.flags.NoImportLib and not toolset then
+		if cfg.useimportlib == p.OFF and not toolset then
 			p.w('IgnoreImportLibrary="true"')
 		end
 	end
@@ -1171,7 +1171,7 @@
 			local implibdir = cfg.linktarget.abspath
 
 			-- I can't actually stop the import lib, but I can hide it in the objects directory
-			if cfg.flags.NoImportLib then
+			if cfg.useimportlib == p.OFF then
 				implibdir = path.join(cfg.objdir, path.getname(implibdir))
 			end
 
@@ -1231,7 +1231,7 @@
 	function m.minimalRebuild(cfg)
 		if config.isDebugBuild(cfg) and
 		   cfg.debugformat ~= "c7" and
-		   not cfg.flags.NoMinimalRebuild and
+		   cfg.minimalrebuild ~= p.OFF and
 		   cfg.clr == p.OFF and
 		   cfg.multiprocessorcompile ~= p.ON
 		then
@@ -1264,7 +1264,7 @@
 
 
 	function m.omitDefaultLib(cfg)
-		if cfg.flags.OmitDefaultLibrary then
+		if cfg.nodefaultlib == "On" then
 			p.w('OmitDefaultLibName="true"')
 		end
 	end
@@ -1555,19 +1555,19 @@
 		local prj, file = config.normalize(cfg)
 		if file then
 			if prj.pchsource == file.abspath and
-			   not prj.flags.NoPCH and
+			   prj.enablepch ~= p.OFF and
 			   prj.system == p.WINDOWS
 			then
 				p.w('UsePrecompiledHeader="1"')
-			elseif file.flags.NoPCH then
+			elseif file.enablepch == p.OFF then
 				p.w('UsePrecompiledHeader="0"')
 			end
 		else
-			if not prj.flags.NoPCH and prj.pchheader then
+			if prj.enablepch ~= "Off" and prj.pchheader then
 				p.w('UsePrecompiledHeader="%s"', iif(_ACTION < "vs2005", 3, 2))
 				p.x('PrecompiledHeaderThrough="%s"', prj.pchheader)
 			else
-				p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or prj.flags.NoPCH, 0, 2))
+				p.w('UsePrecompiledHeader="%s"', iif(_ACTION > "vs2003" or prj.enablepch == "Off", 0, 2))
 			end
 		end
 	end

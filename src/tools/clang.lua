@@ -265,7 +265,7 @@
 		kind = {
 			SharedLib = function(cfg)
 				local r = { clang.getsharedlibarg(cfg) }
-				if cfg.system == "windows" and not cfg.flags.NoImportLib then
+				if cfg.system == "windows" and cfg.useimportlib ~= p.OFF then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
 				elseif cfg.system == p.LINUX then
 					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))

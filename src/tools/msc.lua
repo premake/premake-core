@@ -64,10 +64,7 @@
 		fatalwarnings = {
 			All = "/WX"
 		},
-		flags = {
-			NoMinimalRebuild = "/Gm-",
-			OmitDefaultLibrary = "/Zl"
-		},
+
 		floatingpoint = {
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
@@ -95,6 +92,9 @@
 		},
 		multiprocessorcompile = {
 			On = "/MP",
+		},
+		minimalrebuild = {
+			Off = "/Gm-",
 		},
 		optimize = {
 			Off = "/Od",
@@ -129,6 +129,9 @@
 		},
 		externalanglebrackets = {
 			On = "/external:anglebrackets",
+		},
+		nodefaultlib = {
+			On = "/Zl",
 		},
 		staticruntime = {
 			-- this option must always be emit (does it??)
@@ -344,10 +347,11 @@
 		linkerfatalwarnings = {
 			All = "/WX",
 		},
-		flags = {
-			NoIncrementalLink = "/INCREMENTAL:NO",
-			NoManifest = "/MANIFEST:NO",
-			OmitDefaultLibrary = "/NODEFAULTLIB",
+		manifest = {
+			Off = "/MANIFEST:NO",
+		},
+		incrementallink = {
+			Off = "/INCREMENTAL:NO",
 		},
 		kind = {
 			SharedLib = "/DLL",
@@ -356,6 +360,9 @@
 		linktimeoptimization = {
 			On = "/LTCG",
 			Fast = "/LTCG:incremental",
+		},
+		nodefaultlib = {
+			On = "/NODEFAULTLIB",
 		},
 		symbols = {
 			On = "/DEBUG"

@@ -213,6 +213,17 @@ end
 		]]
 	end
 
+	function suite.ignoreImportLib_onUseImportLibOff()
+		kind "SharedLib"
+		useimportlib "Off"
+		prepare()
+		test.capture [[
+<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<LinkIncremental>true</LinkIncremental>
+	<IgnoreImportLibrary>true</IgnoreImportLibrary>
+		]]
+	end
+
 	function suite.ignoreImportLib_onUWP()
 		system "uwp"
 		kind "SharedLib"

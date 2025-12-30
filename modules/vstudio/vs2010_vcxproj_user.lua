@@ -132,13 +132,13 @@
 	function m.localDebuggerEnvironment(cfg)
 		if #cfg.debugenvs > 0 then
 			local envs = table.concat(cfg.debugenvs, "\n")
-			if cfg.flags.DebugEnvsInherit then
+			if cfg.debugenvsinherit == p.ON then
 				envs = envs .. "\n$(LocalDebuggerEnvironment)"
 			end
 			p.w('<LocalDebuggerEnvironment>%s</LocalDebuggerEnvironment>', envs)
 
-			if cfg.flags.DebugEnvsDontMerge then
-				p.w(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
+			if cfg.debugenvsmerge == p.OFF then
+				p.w('<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
 			end
 		end
 	end
@@ -146,7 +146,7 @@
 
 
 	function m.localDebuggerMergeEnvironment(cfg)
-		if #cfg.debugenvs > 0 and cfg.flags.DebugEnvsDontMerge then
-			p.w(2,'<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
+		if #cfg.debugenvs > 0 and cfg.debugenvsmerge == p.OFF then
+			p.w('<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>')
 		end
 	end

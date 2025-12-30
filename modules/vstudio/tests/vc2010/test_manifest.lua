@@ -86,3 +86,4 @@
 </Manifest>
 		]]
 	end
+

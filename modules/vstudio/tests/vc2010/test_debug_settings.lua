@@ -146,3 +146,63 @@ foo=bar</LocalDebuggerEnvironment>
 <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
 		]]
 	end
+
+--
+-- Check the handling of debugenvsinherit.
+--
+
+	function suite.localDebuggerEnv_onDebugEnvsInherit()
+		debugenvs { "key=value" }
+		debugenvsinherit "On"
+		prepare()
+		test.capture [[
+<LocalDebuggerEnvironment>key=value
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+		]]
+	end
+
+	function suite.localDebuggerEnv_onDeprecatedDebugEnvsInherit()
+		debugenvs { "key=value" }
+		flags { "DebugEnvsInherit" }
+		prepare()
+		test.capture [[
+<LocalDebuggerEnvironment>key=value
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+		]]
+	end
+
+--
+-- Check the handling of debugenvsmerge.
+--
+
+	function suite.localDebuggerEnv_onDebugEnvsMergeFalse()
+		debugenvs { "key=value" }
+		debugenvsmerge "Off"
+		prepare()
+		test.capture [[
+<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
+<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>
+		]]
+	end
+
+	function suite.localDebuggerEnv_onDeprecatedDebugEnvsDontMerge()
+		debugenvs { "key=value" }
+		flags { "DebugEnvsDontMerge" }
+		prepare()
+		test.capture [[
+<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
+<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>
+		]]
+	end
+
+	function suite.localDebuggerEnv_onDebugEnvsBothFlags()
+		debugenvs { "key=value" }
+		debugenvsinherit "On"
+		debugenvsmerge "Off"
+		prepare()
+		test.capture [[
+<LocalDebuggerEnvironment>key=value
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>
+		]]
+	end
