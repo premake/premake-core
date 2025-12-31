@@ -247,6 +247,7 @@ module.exports = {
 						'runcodeanalysis',
 						'runpathdirs',
 						'runtime',
+						'runtimechecks',
 						'sanitize',
 						'scanformoduledependencies',
 						'shaderassembler',

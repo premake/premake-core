@@ -601,10 +601,78 @@
 <Tool
 	Name="VCCLCompilerTool"
 	Optimization="0"
+	BasicRuntimeChecks="0"
 	RuntimeLibrary="2"
 		]]
 	end
 
+
+--
+-- Check handling of the runtimechecks API with "Off" value.
+--
+
+	function suite.onRuntimeChecks_Off()
+		runtimechecks "Off"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="0"
+	RuntimeLibrary="2"
+		]]
+	end
+
+
+--
+-- Check handling of the runtimechecks API with "StackFrames" value.
+--
+
+	function suite.onRuntimeChecks_StackFrames()
+		runtimechecks "StackFrames"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="1"
+	RuntimeLibrary="2"
+		]]
+	end
+
+
+--
+-- Check handling of the runtimechecks API with "UninitializedVariables" value.
+--
+
+	function suite.onRuntimeChecks_UninitializedVariables()
+		runtimechecks "UninitializedVariables"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="2"
+	RuntimeLibrary="2"
+		]]
+	end
+
+
+--
+-- Check handling of the runtimechecks API with "FastChecks" value.
+--
+
+	function suite.onRuntimeChecks_FastChecks()
+		runtimechecks "FastChecks"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	RuntimeLibrary="2"
+		]]
+	end
 
 
 --

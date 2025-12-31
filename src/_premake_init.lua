@@ -346,7 +346,6 @@
 			"NoManifest",
 			"NoMinimalRebuild",
 			"NoPCH",
-			"NoRuntimeChecks",
 			"NoBufferSecurityCheck",
 			"OmitDefaultLibrary",
 			"RelativeLinks",
