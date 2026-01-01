@@ -27,7 +27,7 @@ flags { "flag_list" }
 | NoManifest            | Prevent the generation of a manifest for Windows executables and shared libraries. Deprecated in Premake 5.0.0-beta8. Use `manifest` API instead. |
 | NoMinimalRebuild      | Disable Visual Studio's [minimal rebuild feature][1]. Deprecated in Premake 5.0.0-beta8. Use `minimalrebuild` API instead. | Visual Studio has deprecated this feature as of vs2015.|
 | NoPCH                 | Disable precompiled header support. If not specified, the toolset default behavior will be used. Deprecated in Premake 5.0.0-beta8. Use `enablepch` API instead. |
-| NoRuntimeChecks       | Disable Visual Studio's [default stack frame and uninitialized variable checks][2] on debug builds. |
+| NoRuntimeChecks       | Disable Visual Studio's [default stack frame and uninitialized variable checks][2] on debug builds. Deprecated in Premake 5.0.0-beta8. Use `runtimechecks` API instead. |
 | OmitDefaultLibrary    | Omit the specification of a runtime library in object files. Deprecated in Premake 5.0.0-beta8. Use `nodefaultlib` API instead. |
 | RelativeLinks         | Forces the linker to use relative paths to libraries instead of absolute paths. Deprecated in Premake 5.0.0-beta8. Use `userelativelinks` API instead. |
 | ShadowedVariables     | Warn when a variable, type declaration, or function is shadowed. Deprecated in Premake 5.0.0-beta8. Use `buildoptions` API instead to add compile warnings. |

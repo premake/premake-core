@@ -895,6 +895,54 @@
 
 
 --
+-- Check handling of the runtimechecks API with "Off" value.
+--
+
+	function suite.onRuntimeChecks_Off()
+		runtimechecks "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
+		]]
+	end
+
+
+--
+-- Check handling of the runtimechecks API with "FastChecks" value.
+--
+
+	function suite.onRuntimeChecks_FastChecks()
+		runtimechecks "FastChecks"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+		]]
+	end
+
+
+--
+-- Check handling of the runtimechecks API with "Default" value.
+--
+
+	function suite.onRuntimeChecks_Default()
+		runtimechecks "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+		]]
+	end
+
+
+--
 -- Check handling of the EnableMultiProcessorCompile flag.
 --
 

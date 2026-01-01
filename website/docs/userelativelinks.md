@@ -22,7 +22,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0-beta8 or later. Replaces the deprecated `RelativeLinks` flag.
+Premake 5.0.0-beta8 or later.
 
 ### Examples ###
 

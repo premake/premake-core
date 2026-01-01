@@ -2218,15 +2218,23 @@
 
 	function m.basicRuntimeChecks(cfg, condition)
 		local prjcfg, filecfg = p.config.normalize(cfg)
-		local runtime = config.getruntime(prjcfg) or iif(config.isDebugBuild(cfg), "Debug", "Release")
-		if filecfg then
-			if filecfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(filecfg) and runtime:endswith("Debug")) then
-				m.element("BasicRuntimeChecks", condition, "Default")
-			end
-		else
-			if prjcfg.flags.NoRuntimeChecks or (config.isOptimizedBuild(prjcfg) and runtime:endswith("Debug")) then
-				m.element("BasicRuntimeChecks", nil, "Default")
-			end
+
+		local function getruntimecheck(c)
+			local checks = {
+				Off = "Default", -- Per MSVC SDK docs, "Default" means no runtime checks
+				StackFrames = "StackFrameRuntimeCheck",
+				UninitializedVariables = "UninitializedLocalUsageCheck",
+				FastChecks = "EnableFastChecks",
+			}
+
+			local runtimecheck = c.runtimechecks
+			return checks[runtimecheck]
+			
+		end
+
+		local check = getruntimecheck(filecfg or prjcfg)
+		if check then
+			m.element("BasicRuntimeChecks", condition, check)
 		end
 	end
 

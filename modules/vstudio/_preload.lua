@@ -727,7 +727,7 @@
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)
-	p.api.addAllowed("flags", { "NoImplicitLink", "NoCopyLocal" })
+	p.api.addAllowed("flags", { "NoImplicitLink", "NoCopyLocal", "NoRuntimeChecks" })
 
 	p.api.register {
 		name = "implicitlink",
@@ -764,6 +764,27 @@
 	end,
 	function(value)
 		allowcopylocal("Default")
+	end)
+
+	p.api.register {
+		name = "runtimechecks",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"Off",
+			"StackFrames",
+			"UninitializedVariables",
+			"FastChecks",
+		}
+	}
+
+	p.api.deprecateValue("flags", "NoRuntimeChecks", "Use `runtimechecks` instead.",
+	function(value)
+		runtimechecks("Off")
+	end,
+	function(value)
+		runtimechecks("Default")
 	end)
 
 --

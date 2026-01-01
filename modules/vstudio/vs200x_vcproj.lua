@@ -870,9 +870,17 @@
 		if not filecfg
 			and not config.isOptimizedBuild(cfg)
 			and cfg.clr == p.OFF
-			and not cfg.flags.NoRuntimeChecks
 		then
-			p.w('BasicRuntimeChecks="3"')
+			local runtimechecks = cfg.runtimechecks or "Default"
+			local map = {
+				Off = 0,
+				StackFrames = 1,
+				UninitializedVariables = 2,
+				FastChecks = 3,
+				Default = 3
+			}
+
+			p.w('BasicRuntimeChecks="%s"', map[runtimechecks])
 		end
 	end
 
