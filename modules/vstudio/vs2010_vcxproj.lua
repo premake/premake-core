@@ -1653,6 +1653,8 @@
 			end
 
 		else
+			local allNone = nil
+			local foundAction = nil
 
 			for cfg in project.eachconfig(prj) do
 				local fcfg = fileconfig.getconfig(file, cfg)
@@ -1664,13 +1666,29 @@
 
 					-- also check for buildaction
 					if fcfg.buildaction then
-						return m.categories[fcfg.buildaction] or m.categories.None
+						if fcfg.buildaction ~= "None" then
+							allNone = false
+							foundAction = m.categories[fcfg.buildaction] or m.categories.None
+						else
+							allNone = foundAction == nil
+						end
+					else
+						-- If no buildaction is defined for this file config, it's not "None"
+						allNone = false
 					end
 
 					if fcfg.compileas ~= nil and fcfg.compileas ~= "Default" then
 						return m.categories.ClCompile
 					end
 				end
+			end
+
+			if not foundAction and allNone == true then
+				return m.categories.None
+			end
+
+			if foundAction then
+				return foundAction
 			end
 
 			-- If there is a custom rule associated with it, use that
@@ -2481,7 +2499,7 @@
 
 
 	function m.excludedFromBuild(filecfg, condition)
-		if not filecfg or filecfg.flags.ExcludeFromBuild then
+		if not filecfg or filecfg.buildaction == "None" then
 			m.element("ExcludedFromBuild", condition, "true")
 		end
 	end

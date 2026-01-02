@@ -640,7 +640,7 @@ function m.buildFiles(cfg)
 	tree.traverse(tr, {
 		onleaf = function(node, depth)
 			local filecfg = fileconfig.getconfig(node, cfg)
-			if filecfg and not filecfg.flags.ExcludeFromBuild then
+			if filecfg then
 				if filecfg.buildaction == "None" then
 					return
 				end
@@ -686,7 +686,7 @@ function m.buildFiles(cfg)
 	tree.traverse(tr, {
 		onleaf = function(node, depth)
 			local filecfg = fileconfig.getconfig(node, cfg)
-			if filecfg and not filecfg.flags.ExcludeFromBuild then
+			if filecfg then
 				if filecfg.buildaction == "None" then
 					return
 				end

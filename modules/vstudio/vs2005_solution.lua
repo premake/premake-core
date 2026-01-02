@@ -221,7 +221,7 @@
 					-- to closest available project configuration instead.
 					context.prj = prj
 					context.prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-					context.excluded = (context.prjCfg == nil or context.prjCfg.flags.ExcludeFromBuild)
+					context.excluded = (context.prjCfg == nil or context.prjCfg.excludefrombuild)
 
 					if context.prjCfg == nil then
 						context.prjCfg = project.findClosestMatch(prj, cfg.buildcfg, cfg.platform)

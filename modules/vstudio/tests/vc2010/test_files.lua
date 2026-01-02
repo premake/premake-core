@@ -256,8 +256,32 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
+	<None Include="hello.cpp" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onBuildActionNone()
+		files { "hello.cpp" }
+		filter "files:hello.cpp"
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<None Include="hello.cpp" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onBuildActionNone_Filtered()
+		files { "hello.cpp" }
+		filter { "files:hello.cpp", "configurations:Debug" }
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
 	<ClCompile Include="hello.cpp">
-		<ExcludedFromBuild>true</ExcludedFromBuild>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 	</ClCompile>
 </ItemGroup>
 		]]
@@ -284,8 +308,32 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
+	<None Include="hello.rc" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_buildActionNone()
+		files { "hello.rc" }
+		filter "files:hello.rc"
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<None Include="hello.rc" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_buildActionNone_Filtered()
+		files { "hello.rc" }
+		filter { "files:hello.rc", "configurations:Debug" }
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
 	<ResourceCompile Include="hello.rc">
-		<ExcludedFromBuild>true</ExcludedFromBuild>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
 	</ResourceCompile>
 </ItemGroup>
 		]]
@@ -299,8 +347,34 @@
 		prepare()
 		test.capture [[
 <ItemGroup>
+	<None Include="hello.rc" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_buildActionNone_nonWindows()
+		files { "hello.rc" }
+		system "Linux"
+		filter "files:hello.rc"
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<None Include="hello.rc" />
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onResourceFile_buildActionNone_nonWindows_Filtered()
+		files { "hello.rc" }
+		system "Linux"
+		filter { "files:hello.rc", "configurations:Debug" }
+		buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
 	<ResourceCompile Include="hello.rc">
-		<ExcludedFromBuild>true</ExcludedFromBuild>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">true</ExcludedFromBuild>
 	</ResourceCompile>
 </ItemGroup>
 		]]
@@ -355,13 +429,52 @@
 		]]
 	end
 
-	function suite.excludedFromBuild_onCustomBuildRule_withNoCommands()
+	function suite.excludedFromBuild_onCustomBuildRule_buildActionNone()
+		files { "hello.cg" }
+		filter "files:**.cg"
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+			buildaction "None"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<ExcludedFromBuild>true</ExcludedFromBuild>
+		<Command>cgc $(InputFile)</Command>
+		<Outputs>$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_withNoCommands_excludeViaFlag()
 		files { "hello.cg" }
 		filter { "files:**.cg", "Debug" }
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
 		filter { "files:**.cg" }
 			flags { "ExcludeFromBuild" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<CustomBuild Include="hello.cg">
+		<FileType>Document</FileType>
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+		<Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cgc $(InputFile)</Command>
+		<Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName).obj</Outputs>
+	</CustomBuild>
+</ItemGroup>
+		]]
+	end
+
+	function suite.excludedFromBuild_onCustomBuildRule_withNoCommands_buildActionNone()
+		files { "hello.cg" }
+		filter { "files:**.cg", "Debug" }
+			buildcommands { "cgc $(InputFile)" }
+			buildoutputs { "$(InputName).obj" }
+		filter { "files:**.cg" }
+			buildaction "None"
 		prepare()
 		test.capture [[
 <ItemGroup>
