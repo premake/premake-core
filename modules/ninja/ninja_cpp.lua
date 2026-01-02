@@ -532,7 +532,7 @@ function m.getLdFlags(cfg, toolset)
 end
 
 function m.getPchPath(cfg)
-	if not cfg.pchheader or cfg.flags.NoPCH then
+	if not cfg.pchheader or cfg.enablepch == p.OFF then
 		return nil
 	end
 	
@@ -552,7 +552,7 @@ function m.getPchPath(cfg)
 end
 
 function m.buildPch(cfg)
-	if not cfg.pchheader or cfg.flags.NoPCH then
+	if not cfg.pchheader or cfg.enablepch == p.OFF then
 		return nil
 	end
 	
@@ -806,7 +806,7 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 		local relPath = path.getrelative(cfg.workspace.location, node.abspath)
 		local implicitDeps = ""
 		
-		local usePch = cfg.pchheader and not cfg.flags.NoPCH and (not filecfg or not filecfg.flags.NoPCH)
+		local usePch = cfg.pchheader and cfg.enablepch ~= p.OFF and (not filecfg or filecfg.enablepch ~= p.OFF)
 		if pchFile and usePch then
 			implicitDeps = implicitDeps .. " | " .. pchFile
 		end

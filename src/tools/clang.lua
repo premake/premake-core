@@ -73,6 +73,7 @@
 			Fast = "-flto=thin",
 		},
 		profile = gcc.shared.profile,
+		useshortenums = gcc.shared.useshortenums,
 	}
 
 	clang.cflags = table.merge(gcc.cflags, {

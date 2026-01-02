@@ -175,6 +175,10 @@
 		},
 		profile = {
 			On = "-pg",
+		},
+		useshortenums = {
+			On = "-fshort-enums",
+			Off = "-fno-short-enums",
 		}
 	}
 
@@ -381,7 +385,7 @@
 	-- relative pch file path if any
 	function gcc.getpch(cfg)
 		-- If there is no header, or if PCH has been disabled, I can early out
-		if not cfg.pchheader or cfg.flags.NoPCH then
+		if not cfg.pchheader or cfg.enablepch == p.OFF then
 			return nil
 		end
 

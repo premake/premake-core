@@ -445,8 +445,8 @@
 			end
 		else
 			local field = p.fields[name]
-			field.deprecated = field.deprecated or {}
-			field.deprecated[value] = {
+			field.deprecatedvalues = field.deprecatedvalues or {}
+			field.deprecatedvalues[value] = {
 				add = addHandler,
 				remove = removeHandler,
 				message = message
@@ -548,7 +548,7 @@
 			error(err, 3)
 		end
 
-		local hasDeprecatedValues = (type(field.deprecated) == "table")
+		local hasDeprecatedValues = (type(field.deprecatedvalues) == "table")
 
 		-- Build a list of values to be removed. If this field has deprecated
 		-- values, check to see if any of those are going to be removed by this
@@ -558,8 +558,8 @@
 		local removes = {}
 
 		local function check(value)
-			if field.deprecated[value] then
-				local handler = field.deprecated[value]
+			if field.deprecatedvalues[value] then
+				local handler = field.deprecatedvalues[value]
 				if handler.remove then handler.remove(value) end
 				if handler.message and api._deprecations ~= "off" then
 					local caller = filelineinfo(8)
@@ -597,7 +597,7 @@
 					error { msg=err }
 				end
 
-				if field.deprecated then
+				if field.deprecatedvalues then
 					check(value)
 				end
 
@@ -681,8 +681,8 @@
 				return nil, "invalid value '" .. value .. "' for " .. field.name
 			end
 
-			if field.deprecated and field.deprecated[canonical] then
-				local handler = field.deprecated[canonical]
+			if field.deprecatedvalues and field.deprecatedvalues[canonical] then
+				local handler = field.deprecatedvalues[canonical]
 				handler.add(canonical)
 				if handler.message and api._deprecations ~= "off" then
 					local caller =  filelineinfo(9)

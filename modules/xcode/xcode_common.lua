@@ -1502,7 +1502,7 @@
 		local optimizeMap = { On = 3, Size = 's', Speed = 3, Full = 'fast', Debug = 'g' }
 		settings['GCC_OPTIMIZATION_LEVEL'] = optimizeMap[cfg.optimize] or 0
 
-		if cfg.pchheader and not cfg.flags.NoPCH then
+		if cfg.pchheader and cfg.enablepch ~= p.OFF then
 			settings['GCC_PRECOMPILE_PREFIX_HEADER'] = 'YES'
 			settings['GCC_PREFIX_HEADER'] = cfg.pchheader
 		end

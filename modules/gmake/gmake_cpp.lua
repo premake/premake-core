@@ -563,7 +563,7 @@
 		local fcfg = fileconfig.getconfig(file, cfg)
 		local flags = {}
 
-		if cfg.pchheader and not cfg.flags.NoPCH and (not fcfg or not fcfg.flags.NoPCH) then
+		if cfg.pchheader and cfg.enablepch ~= p.OFF and (not fcfg or fcfg.enablepch ~= p.OFF) then
 			table.insert(flags, "-include $(PCH_PLACEHOLDER)")
 		end
 

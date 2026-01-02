@@ -275,16 +275,16 @@
 			symbols	    "On"
 
 		filter "configurations:Release"
-			defines     "NDEBUG"
-			optimize    "Full"
-			flags       { "NoRuntimeChecks" }
+			defines             "NDEBUG"
+			optimize            "Full"
+			runtimechecks       "Off"
 			buffersecuritycheck "Off"
 
 		filter "action:vs*"
 			defines     { "_CRT_SECURE_NO_DEPRECATE", "_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_WARNINGS" }
 
 		filter { "system:windows", "configurations:Release" }
-			flags       { "NoIncrementalLink" }
+			incrementallink "Off"
 
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
 		filter { "system:windows", "configurations:Release", "toolset:not gcc" }

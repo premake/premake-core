@@ -149,11 +149,6 @@
 				info.SubType = fcfg.buildaction
 			end
 
-			-- This flag is deprecated, will remove eventually
-			if fcfg.flags and fcfg.flags.Component then
-				info.SubType = "Component"
-			end
-
 		end
 
 		if info.action == "Content" then
