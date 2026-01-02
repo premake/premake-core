@@ -1303,7 +1303,7 @@
 						-- ms this seems to work on visual studio !!!
 						-- why not in xcode ??
 						local filecfg = fileconfig.getconfig(node, cfg)
-						if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
+						if not filecfg or filecfg.buildaction == "None" then
 						--fileNameList = fileNameList .. " " ..filecfg.name
 							table.insert(fileNameList, xcode.escapeArg(node.name))
 						end

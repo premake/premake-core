@@ -88,7 +88,7 @@
 
 	function utility.addFile(cfg, node, prj)
 		local filecfg = fileconfig.getconfig(node, cfg)
-		if not filecfg or filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None" then
+		if not filecfg or filecfg.buildaction == "None" then
 			return
 		end
 

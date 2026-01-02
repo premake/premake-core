@@ -182,7 +182,7 @@ function suite.project_with_platform_and_config_configmap()
 end
 
 
-function suite.project_excluded_from_build()
+function suite.project_excluded_from_build_by_flag()
 	local wks = workspace "MyWorkspace"
 	configurations { "Debug", "Release" }
 
@@ -193,6 +193,25 @@ function suite.project_excluded_from_build()
 			flags { "ExcludeFromBuild" }
 
 	filter {}
+
+	sln2026.projects(wks)
+
+	test.capture [[
+<Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+	<Build Solution="Release|Win32" Project="false" />
+</Project>
+	]]
+end
+
+
+function suite.project_excluded_from_build_by_api()
+	local wks = workspace "MyWorkspace"
+	configurations { "Debug", "Release" }
+
+	local prj1 = project "MyProject1"
+		uuid "AE61726D-187C-E440-BD07-2556188A6565"
+		filter "configurations:Release"
+			excludefrombuild "On"
 
 	sln2026.projects(wks)
 

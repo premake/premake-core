@@ -36,7 +36,7 @@
 		for cfg in premake.project.eachconfig(prj) do
 			local filecfg = premake.fileconfig.getconfig(node, cfg)
 			if filecfg then
-				local newValue = not not filecfg.flags.ExcludeFromBuild or filecfg.buildaction == "None"
+				local newValue = filecfg.buildaction == "None"
 				if value == nil then
 					value = newValue
 				elseif value ~= newValue then

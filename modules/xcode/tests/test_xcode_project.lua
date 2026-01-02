@@ -201,7 +201,7 @@
 		]]
 	end
 
-	function suite.PBXBuildFile_ExcludedFromBuildByBuildactionNone()
+	function suite.PBXBuildFile_ExcludedFromBuildByBuildActionNone()
 		files { "source.cpp", "excluded.cpp" }
 		filter { "files:excluded.cpp" }
 			buildaction "None"

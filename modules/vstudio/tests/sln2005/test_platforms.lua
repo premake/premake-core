@@ -737,6 +737,31 @@ EndGlobalSection
 	end
 
 
+	function suite.onBuildCfgExcludedByAPI()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		filter "configurations:Debug"
+		excludefrombuild "On"
+		prepare()
+		test.capture [[
+GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|DLL = Debug|DLL
+	Debug|Static = Debug|Static
+	Release|DLL = Release|DLL
+	Release|Static = Release|Static
+EndGlobalSection
+GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Debug DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug Static|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release Static|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.Build.0 = Release Static|Win32
+EndGlobalSection
+		]]
+	end
+
+
 	function suite.onExcludedPlatform()
 		platforms { "DLL", "Static" }
 		project "MyProject"
@@ -766,6 +791,30 @@ EndGlobalSection
 		project "MyProject"
 		filter "platforms:Static"
 		flags "ExcludeFromBuild"
+		prepare()
+		test.capture [[
+GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|DLL = Debug|DLL
+	Debug|Static = Debug|Static
+	Release|DLL = Release|DLL
+	Release|Static = Release|Static
+EndGlobalSection
+GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.ActiveCfg = Debug DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|DLL.Build.0 = Debug DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Debug|Static.ActiveCfg = Debug Static|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.ActiveCfg = Release DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|DLL.Build.0 = Release DLL|Win32
+	{C9135098-6047-8142-B10E-D27E7F73FCB3}.Release|Static.ActiveCfg = Release Static|Win32
+EndGlobalSection
+		]]
+	end
+
+	function suite.onPlatformExcludedByAPI()
+		platforms { "DLL", "Static" }
+		project "MyProject"
+		filter "platforms:Static"
+		excludefrombuild "On"
 		prepare()
 		test.capture [[
 GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -300,7 +300,7 @@ function m.projectExclusion(prj)
 
 	for solcfg in p.workspace.eachconfig(wks) do
 		local prjcfg = project.getconfig(prj, solcfg.buildcfg, solcfg.platform)
-		if prjcfg == nil or prjcfg.flags.ExcludeFromBuild then
+		if prjcfg == nil or prjcfg.excludefrombuild then
 			local platform = vstudio.solutionPlatform(solcfg)
 			p.push('<Build Solution="%s|%s" Project="false" />', solcfg.buildcfg, platform or "*")
 			p.pop()

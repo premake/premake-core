@@ -1086,7 +1086,7 @@
 
 
 	function m.excludedFromBuild(filecfg)
-		if not filecfg or filecfg.flags.ExcludeFromBuild then
+		if not filecfg or filecfg.buildaction == "None" then
 			p.w('ExcludedFromBuild="true"')
 		end
 	end
