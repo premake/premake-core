@@ -168,7 +168,7 @@
 
 		local function addFile(cfg, node)
 			local filecfg = p.fileconfig.getconfig(node, cfg)
-			if not filecfg or filecfg.buildaction == "None" or not filecfg.compilebuildoutputs then
+			if not filecfg or filecfg.excludefrombuild or not filecfg.compilebuildoutputs then
 				return
 			end
 
@@ -850,7 +850,7 @@
 
 			for cfg in p.project.eachconfig(prj) do
 				local fcfg = p.fileconfig.getconfig(file, cfg)
-				if fcfg ~= nil and fcfg.buildaction ~= "None" then
+				if fcfg ~= nil and not fcfg.excludefrombuild then
 					oven.uniqueSequence(fcfg, cfg, sequences, bases)
 				end
 			end

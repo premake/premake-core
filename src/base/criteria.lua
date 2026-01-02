@@ -190,25 +190,3 @@
 		criteria._validPrefixes[prefix:lower()] = true
 	end
 
-	
----
--- Checks if a given criteria has a filter of the specified type.
---
--- @param crit
---    The criteria object to check.
--- @param type
---    The filter type to look for.
--- @return
---    True if the criteria has a filter of the specified type.
----
-
-	function criteria.hasFilter(crit, type)
-		for _, term in ipairs(crit.terms) do
-			if term:startswith(type .. ":") then
-				return true
-			end
-		end
-
-		return false
-	end
-

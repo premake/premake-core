@@ -133,7 +133,7 @@
 				for cfg in project.eachconfig(prj) do
 					local cfgname = codelite.cfgname(cfg)
 					local fcfg = p.fileconfig.getconfig(node, cfg)
-					if not fcfg or fcfg.buildaction == "None" then
+					if not fcfg or fcfg.excludefrombuild or fcfg.buildaction == "None" then
 						table.insert(excludesFromBuild, cfgname)
 					end
 				end

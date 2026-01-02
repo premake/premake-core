@@ -10,7 +10,7 @@ flags { "flag_list" }
 
 | Flag                  | Description                                                         | Notes |
 |-----------------------|---------------------------------------------------------------------|----------------|
-| ExcludeFromBuild      | Exclude a source code file from the build, for the current configuration. Deprecated in Premake 5.0.0-beta8. Use `excludefrombuld` API to exclude a project from the build or `buildaction "None"` to exclude a file from the build instead. |
+| ExcludeFromBuild      | Exclude a source code file from the build, for the current configuration. Deprecated in Premake 5.0.0-beta8. Use `excludefrombuild` API instead. |
 | FatalCompileWarnings  | Treat compiler warnings as errors. Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
 | FatalLinkWarnings     | Treat linker warnings as errors.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
 | FatalWarnings         | Treat all warnings as errors; equivalent to FatalCompileWarnings, FatalLinkWarnings.  Deprecated in Premake 5.0.0-beta4. Use `fatalwarnings` API instead. | Removed in Premake 5.0.0-beta8 |
@@ -59,7 +59,6 @@ flags { "LinkTimeOptimization" }
 
 * [allowcopylocal](allowcopylocal.md)
 * [buffersecuritycheck](buffersecuritycheck.md)
-* [buildaction](buildaction.md)
 * [copylocal](copylocal.md)
 * [debugenvsinherit](debugenvsinherit.md)
 * [debugenvsmerge](debugenvsmerge.md)

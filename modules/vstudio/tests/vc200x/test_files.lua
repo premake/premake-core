@@ -434,10 +434,10 @@
 		]]
 	end
 
-	function suite.excludedFromBuild_onBuildActionNone()
+	function suite.excludedFromBuild_onExcludeAPI()
 		files { "hello.cpp" }
 		filter "files:hello.cpp"
-		buildaction "None"
+		excludefrombuild "On"
 		prepare()
 		test.capture [[
 <Files>
@@ -521,12 +521,12 @@
 	end
 
 	
-	function suite.excludedFromBuild_onCustomBuildRule_buildActionNone()
+	function suite.excludedFromBuild_onCustomBuildRule_excludeAPI()
 		files { "hello.cg" }
 		filter "files:**.cg"
 			buildcommands { "cgc $(InputFile)" }
 			buildoutputs { "$(InputName).obj" }
-			buildaction "None"
+			excludefrombuild "On"
 		prepare()
 		test.capture [[
 <Files>

@@ -1,4 +1,4 @@
-Excludes a project from the build.
+Excludes a project from the build or a source file from a configuration.
 
 ```lua
 excludefrombuild "On"
@@ -6,7 +6,7 @@ excludefrombuild "On"
 
 ### Parameters ###
 
-*value* specifies whether to exclude project from build:
+*value* specifies whether to exclude project or source file from build:
 
 | Value       | Description                                  |
 |-------------|----------------------------------------------|
@@ -15,7 +15,7 @@ excludefrombuild "On"
 
 ### Applies To ###
 
-Project configurations.
+Project and file configurations.
 
 ### Availability ###
 
