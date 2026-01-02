@@ -1457,44 +1457,12 @@
 		kind = "boolean",
 	}
 
-	api.deprecateValue("flags", "ExcludeFromBuild", "Use `excludefrombuild` to exclude projects or use `buildaction 'None'` to exclude files from compilation instead.",
+	api.deprecateValue("flags", "ExcludeFromBuild", "Use `excludefrombuild` API instead.",
 	function(value)
-		local currentscope = api.scope.current
-		local csetblocks = currentscope.blocks
-
-		local isfilefiltered = false
-		for _, block in ipairs(csetblocks) do
-			local crit = block._criteria
-			if crit and criteria.hasFilter(crit, "files") then
-				isfilefiltered = true
-				break
-			end
-		end
-
-		if isfilefiltered then
-			buildaction("None")
-		else
-			excludefrombuild("On")
-		end
+		excludefrombuild("On")
 	end,
 	function(value)
-		local currentscope = api.scope.current
-		local csetblocks = currentscope.blocks
-
-		local isfilefiltered = false
-		for _, block in ipairs(csetblocks) do
-			local crit = block._criteria
-			if crit and criteria.hasFilter(crit, "files") then
-				isfilefiltered = true
-				break
-			end
-		end
-
-		if isfilefiltered then
-			removebuildaction("None")
-		else
-			excludefrombuild("Off")
-		end
+		excludefrombuild("Off")
 	end)
 
 -----------------------------------------------------------------------------

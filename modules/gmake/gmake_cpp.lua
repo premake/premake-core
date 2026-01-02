@@ -160,7 +160,7 @@
 
 	function cpp.addFile(cfg, node)
 		local filecfg = fileconfig.getconfig(node, cfg)
-		if not filecfg or filecfg.buildaction == "None" then
+		if not filecfg or filecfg.buildaction == "None" or filecfg.excludefrombuild then
 			return
 		end
 

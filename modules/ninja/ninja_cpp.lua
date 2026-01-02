@@ -641,7 +641,7 @@ function m.buildFiles(cfg)
 		onleaf = function(node, depth)
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
-				if filecfg.buildaction == "None" then
+				if filecfg.buildaction == "None" or filecfg.excludefrombuild then
 					return
 				end
 				
@@ -687,7 +687,7 @@ function m.buildFiles(cfg)
 		onleaf = function(node, depth)
 			local filecfg = fileconfig.getconfig(node, cfg)
 			if filecfg then
-				if filecfg.buildaction == "None" then
+				if filecfg.buildaction == "None" or filecfg.excludefrombuild then
 					return
 				end
 				
