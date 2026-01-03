@@ -1,7 +1,7 @@
 Controls the level of warnings that are shown by the compiler.
 
 ```lua
-warnings "value"
+warnings ("value")
 ```
 
 If no value is set for a configuration, the toolset's default warning level will be used.
@@ -24,7 +24,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

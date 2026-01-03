@@ -1,24 +1,24 @@
-shaderincludedirs - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies a list of include directories for shader compilation.
 
 ```lua
-shaderincludedirs (value)
+shaderincludedirs { "directories" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`directories` is a list of directories to search for include paths in.
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 16 or later.
+Premake 5.0.0-alpha16 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderincludedirs (value)
+shaderincludedirs { "/path/to/includes" }
 ```
 

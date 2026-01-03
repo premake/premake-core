@@ -1,23 +1,25 @@
-allmodulespublic
+Specifies if all modules in the C++ projects are public.
 
 ```lua
-allmodulespublic "value"
+allmodulespublic ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `On` - All C++ modules in the given project(s) will be public.
-* `Off` - Not all C++ modules in the given project(s) will be public.
+`value` is one of:
+ 
+| Value | Description |
+|-------|-------------|
+| On    | All C++ modules in the given project(s) will be public. |
+| Off   | Not all C++ modules in the given project(s) will be public. |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Visual Studio 2019 and later.
-Premake 5.0-beta2 or later.
+Premake 5.0.0-beta2 and later for Visual Studio 2019 and later.
 
 ### Examples ###
 

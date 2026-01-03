@@ -1,12 +1,17 @@
 Specifies to use the 'extended-remote' protocol, which instructs GDB to maintain a persistent connection to gdbserver.
 
 ```lua
-debugextendedprotocol (enabled)
+debugextendedprotocol ("value")
 ```
 
 ### Parameters ###
 
-`enabled` is a boolean value that specifies whether to use the 'extended remote' protocol.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Use `extended-remote` protocol to maintain persistent connection with gdbserver. |
+| Off   | Do not use `extended-remote` protocol |
 
 ### Applies To ###
 
@@ -14,4 +19,4 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.

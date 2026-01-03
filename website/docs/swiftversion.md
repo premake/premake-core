@@ -1,28 +1,30 @@
-swiftversion - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the version of Swift to compile with.
 
 ```lua
-swiftversion (value)
+swiftversion ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `4.0`: needs documentation
-* `4.2`: needs documentation
-* `5.0`: needs documentation
+| Value | Description |
+|-------|-------------|
+| 4.0 | Swift Language Version 4.0 |
+| 4.2 | Swift Language Version 4.2 |
+| 5.0 | Swift Language Version 5.0 |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 1 or later.
+Premake 5.0.0-beta1 or later.
 
 ### Examples ###
 
 ```lua
-swiftversion (value)
+swiftversion "4.2"
 ```
 

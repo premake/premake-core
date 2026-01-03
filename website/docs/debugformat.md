@@ -1,7 +1,7 @@
 Specifies the desired format of the debug information written to the output binaries.
 
 ```lua
-debugformat "format"
+debugformat ("format")
 ```
 
 ### Parameters ###
@@ -23,7 +23,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### See Also ###
 

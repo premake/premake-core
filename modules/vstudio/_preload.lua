@@ -201,20 +201,6 @@
 	}
 
 	p.api.register {
-		name = "imageoptions",
-		scope = "config",
-		kind = "list:string",
-		tokens = true,
-	}
-
-	p.api.register {
-		name = "imagepath",
-		scope = "config",
-		kind = "path",
-		tokens = true,
-	}
-
-	p.api.register {
 		name = "inheritdependencies",
 		scope = "config",
 		kind = "boolean",

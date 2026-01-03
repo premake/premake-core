@@ -22,7 +22,7 @@ Project configurations.
 
 ### Availability ###
 
-`C`, `C++`, and `C#` are available in Premake 4.0 or later. Others are 5.0 or later.
+`C`, `C++`, and `C#` are available in Premake 4.0 or later. Others are 5.0.0-alpha1 or later.
 
 ### Examples ###
 

@@ -1,7 +1,7 @@
 Specifies a reusable block of configuration to be consumed at a later point.
 
 ```lua
-usage 'MyUsage'
+usage ('usage')
 ```
 
 The `usage` API is used to define configuration to be consumed by the `uses` API.  Usages must have unique names, except for magic usage block names (as described below).
@@ -35,6 +35,10 @@ project 'B'
 ### Applies To ###
 
 Project configurations.
+
+### Availability ###
+
+Premake 5.0.0-beta7 or later.
 
 ### See Also ###
 

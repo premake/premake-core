@@ -1,23 +1,26 @@
 Enables the WinRT extension, C++/CX, for the specified projects/files.
 
 ```lua
-consumewinrtextension "value"
+consumewinrtextension ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
-* `Default` - Compiles the file using the default for the toolset. (Default is `Off`)
-* `On` - Compiles the file with the WinRT extension enabled.
-* `Off` - Compiles the file without the WinRT extension enabled.
+
+| Value | Description |
+|-------|-------------|
+| Default | Compiles the file with the default for the toolset. |
+| On | Compiles the file with the WinRT extension enabled. |
+| Off | Compiles the file without the WinRT extension enabled. |
 
 ### Applies To ###
 
-The `workspace`, `project` or `file` scope.
+Workspace, project, and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 Beta 2 or later and only implemented for Visual Studio 2019+.
+Premake 5.0.0-beta2 and later for Visual Studio 2019+.
 
 ### Examples ###
 

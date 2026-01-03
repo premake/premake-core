@@ -1,7 +1,7 @@
 Specifies whether or not to allow for copy local of assemblies.
 
 ```lua
-allowcopylocal "value"
+allowcopylocal ("value")
 ```
 
 ### Parameters ###
@@ -20,7 +20,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later for Visual Studio C# Projects.
+Premake 5.0.0-beta8 or later for Visual Studio C# Projects.
 
 ### See Also ###
 

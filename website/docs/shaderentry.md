@@ -1,24 +1,24 @@
-shaderentry - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies shader entrypoint.
 
 ```lua
-shaderentry (value)
+shaderentry ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is the shader entrypoint name.
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderentry (value)
+shaderentry "main"
 ```
 

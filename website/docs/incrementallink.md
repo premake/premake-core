@@ -8,7 +8,7 @@ Incremental linking can improve iteration times during development by only relin
 
 ### Parameters ###
 
-*value* specifies the incremental linking setting:
+`value` specifies the incremental linking setting:
 
 | Value   | Description                                                  |
 |---------|--------------------------------------------------------------|
@@ -22,7 +22,7 @@ The `config` scope.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later.
+Premake 5.0.0-beta8 or later.
 
 ### Examples ###
 

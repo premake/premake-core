@@ -4,14 +4,17 @@ There is a plugin that allows re-execution of the premake step from within Visua
 https://github.com/tvandijck/PremakeExtension
 
 ```lua
-editorintegration "value"
+editorintegration ("value")
 ```
-
-If no value is set for a configuration, the toolset's default setting (usually "Off") will be used.
 
 ### Parameters ###
 
-`value` is a boolean value, i.e. "On" or "Off".
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Allow editor integration functionality with Premake. |
+| Off   | Disallow editor integration functionality with Premake. |
 
 ### Applies To ###
 
@@ -19,7 +22,7 @@ Workspace configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later for Visual Studio until 2026.
 
 ### Examples ###
 

@@ -1,26 +1,29 @@
-largeaddressaware
+Specifies to the linker that the 32 bit application can handle addresses larger than 2GB.
 
 ```lua
-largeaddressaware "value"
+largeaddressaware ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - needs documentation.
-* `off` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Linker allows handling of addresses greater than 2GB |
+| Off   | Linker disallows handling of addresses greater than 2GB |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-largeaddressaware "value"
+largeaddressaware "Off"
 ```
 

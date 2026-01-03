@@ -1,7 +1,7 @@
 The **optimize** function specifies the level and type of optimization used while building the target configuration.
 
 ```lua
-optimize "value"
+optimize ("value")
 ```
 
 If no value is set for a configuration, the toolset's default optimization (usually none) will be performed.
@@ -25,7 +25,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1.
 
 ## Examples ##
 

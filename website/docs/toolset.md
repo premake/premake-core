@@ -25,7 +25,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 and later. Versions are currently only implemented for Visual Studio 2010+.
+Premake 5.0.0-alpha1 and later. Versions are currently only implemented for Visual Studio 2010+.
 
 ### Examples ###
 

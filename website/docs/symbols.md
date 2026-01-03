@@ -1,7 +1,7 @@
 Turn on/off debug symbol table generation.
 
 ```lua
-symbols "switch"
+symbols ("switch")
 ```
 
 By default, the generated project files will use the compilers default settings for debug symbol generation. This might be on, or off, or entirely dependent on the configuration.
@@ -24,7 +24,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

@@ -14,7 +14,7 @@ The `externalrule()` function behaves just like [rule()](rule.md), except that i
 
 ### Availability ###
 
-Premake 5.0 or later; currently Visual Studio only.
+Premake 5.0.0-alpha1 or later for Visual Studio.
 
 
 ## Examples ##

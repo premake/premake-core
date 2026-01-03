@@ -14,7 +14,13 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later for CodeLite.
+
+### Examples ###
+
+```lua
+debugport 1337
+```
 
 ### See Also ###
 

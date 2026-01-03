@@ -1,7 +1,7 @@
 Used to specify the NuGet package source. Only NuGet "galleries" are currently supported. Defaults to the official NuGet Gallery at nuget.org.
 
 ```lua
-nugetsource "url"
+nugetsource ("url")
 ```
 
 ### Parameters ###
@@ -10,11 +10,11 @@ nugetsource "url"
 
 ### Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

@@ -10,11 +10,11 @@ rules { "rule_names" }
 
 ### Applies To ###
 
-Workspaces, projects.
+Workspace and project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### See Also ###
 

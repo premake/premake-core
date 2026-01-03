@@ -6,7 +6,7 @@ nodefaultlib ("value")
 
 ### Parameters ###
 
-`nodefaultlib` accepts one of the following values:
+`value` is one of:
 
 | Value   | Description                                    |
 |---------|------------------------------------------------|

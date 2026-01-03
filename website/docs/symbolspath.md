@@ -2,7 +2,7 @@ Specify the target location of the debug symbols.
 For the Visual Studio action, this allows you to specify the location and name of the .pdb output.
 
 ```lua
-symbolspath "filename"
+symbolspath ("filename")
 ```
 
 Not specifying this option will result in the compilers default behavior.
@@ -17,7 +17,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

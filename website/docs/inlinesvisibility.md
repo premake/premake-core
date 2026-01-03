@@ -1,27 +1,29 @@
-inlinesvisibility - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the inline symbol visibility.
 
 ```lua
-inlinesvisibility (value)
+inlinesvisibility ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `Default`: needs documentation
-* `Hidden`: needs documentation
+| Value | Description |
+|-------|-------------|
+| Default | Uses the default visibility |
+| Hidden | Inline symbols have hidden visibility |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for GCC and Clang toolsets.
 
 ### Examples ###
 
 ```lua
-inlinesvisibility (value)
+inlinesvisibility "Hidden"
 ```
 

@@ -1,29 +1,23 @@
----
-slug: premake-tags  # docusaurus reserves /docs/tags
----
-
-tags
+Specifies generic filter tags.
 
 ```lua
-tags { "string" }
+tags { "values" }
 ```
-
-See the [pull request](https://github.com/premake/premake-core/pull/789) for more information; help authoring documentation is appreciated!
 
 ### Parameters ###
 
-`value` - needs documentation.
+`values` are a list of tags that can be used in filters.
 
 ### Applies To ###
 
-The `config` scope.
+Workspace, project, and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 
 ```lua
-tags { "string" }
+tags { "tagA" }
 ```

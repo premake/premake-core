@@ -1,12 +1,12 @@
 Sets the version of the MFC libraries to link against.
 
 ```lua
-mfc "On"
+mfc ("value")
 ```
 
 ### Parameters ###
 
-*value* specifies the desired PIC mode:
+`value` specifies the desired MFC library to link against:
 
 | Value       | Description                                                                                            |
 |-------------|--------------------------------------------------------------------------------------------------------|
@@ -22,4 +22,4 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta4 or later on Visual Studio.
+Premake 5.0.0-beta4 or later on Visual Studio.

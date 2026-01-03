@@ -3,23 +3,25 @@ Runs code analysis during the build process for Visual Studio projects.
 The `runcodeanalysis` option enforces code analysis during the build process in Visual Studio projects. This may significantly increase build time for projects.
 
 ```lua
-runcodeanalysis("value")
+runcodeanalysis ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-- `On`
-- `Off`
+| Value | Description |
+|-------|-------------|
+| On    | Run code analysis during build of projects. |
+| Off   | Do not run code analysis during build of projects. |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later for Visual Studio 2019 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2019 and later.
 
 ### Examples ###
 

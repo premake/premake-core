@@ -83,14 +83,11 @@
 | [forceincludes](forceincludes.md)                         |  |
 | [forceusings](forceusings.md)                             |  |
 | [fpu](fpu.md)                                             |  |
-| [framework](framework.md)                                 |  |
 | [functionlevellinking](functionlevellinking.md)           |  |
 | [gccprefix](gccprefix.md)                                 |  |
 | [group](group.md)                                         |  |
 | [icon](icon.md)                                           |  |
 | [ignoredefaultlibraries](ignoredefaultlibraries.md)       | Specify a list of default libraries to ignore |
-| [imageoptions](imageoptions.md)                           |  |
-| [imagepath](imagepath.md)                                 |  |
 | [implibdir](implibdir.md)                                 |  |
 | [implibextension](implibextension.md)                     |  |
 | [implibname](implibname.md)                               |  |
