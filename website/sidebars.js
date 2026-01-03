@@ -294,6 +294,7 @@ module.exports = {
 						'usefullpaths',
 						'useimportlib',
 						'uses',
+						'useshortenums',
 						'usestandardpreprocessor',
 						'usingdirs',
 						'uuid',

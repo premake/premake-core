@@ -4416,8 +4416,8 @@
 	end
 
 	function m.androidShortEnums(cfg)
-		if cfg.flags.UseShortEnums ~= nil then
-			m.element(UseShortEnums, nil, "true")
+		if cfg.useshortenums then
+			m.element("UseShortEnums", nil, iif(cfg.useshortenums == "On", "true", "false"))
 		end
 	end
 
@@ -4450,7 +4450,7 @@
 	end
 
 	function m.androidGenerateMapFile(cfg)
-		if cfg.flags.Maps then
+		if cfg.mapfile == p.ON then
 			-- Android specifies a name. Other platforms use the project name
 			-- so we do the same thing here
 			m.element("GenerateMapFile", nil, cfg.project.name..".map")

@@ -1465,6 +1465,21 @@
 		excludefrombuild("Off")
 	end)
 
+	api.register {
+		name = "useshortenums",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.deprecateField("flags", "Use dedicated APIs instead.",
+	function(value)
+	end)
+
 -----------------------------------------------------------------------------
 --
 -- Field name aliases for backward compatibility
