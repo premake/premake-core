@@ -48,7 +48,7 @@ int do_getnumcpus()
 	{
 		return 0;
 	}
-#elif PLATFORM_SOLARIS | PLATFORM_AIX | PLATFORM_MACOSX | PLATFORM_BSD
+#elif PLATFORM_SOLARIS | PLATFORM_AIX | PLATFORM_MACOSX | PLATFORM_BSD | PLATFORM_HURD
 	return sysconf(_SC_NPROCESSORS_ONLN);
 #else
 	#warning do_getnumcpus is not implemented for your platform yet
