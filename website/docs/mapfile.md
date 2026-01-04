@@ -1,12 +1,12 @@
 Specifies whether or not to generate a mapfile.
 
 ```lua
-mapfile "On"
+mapfile ("value")
 ```
 
 ### Parameters ###
 
-*value* specifies the desired MAP generation mode:
+`value` specifies the desired MAP generation mode:
 
 | Value       | Description                               |
 |-------------|-------------------------------------------|
@@ -20,7 +20,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later on Visual Studio.
+Premake 5.0.0-beta8 or later on Visual Studio.
 
 ### See Also ###
 

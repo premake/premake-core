@@ -1,24 +1,24 @@
-shaderdefines - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies defines to pass to shader compilation.
 
 ```lua
-shaderdefines (value)
+shaderdefines { "defines" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`defines` is a list of preprocessor definitions to pass to the shader compiler.
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderdefines (value)
+shaderdefines { "HELLO_WORLD" }
 ```
 

@@ -1,5 +1,5 @@
 :::caution
-**This function has been deprecated in Premake 5.0 beta1.** Use the new [filter()](filter.md) function instead; you will get more granular matching and much better performance. `configuration()` will be not supported in Premake 6.
+**This function has been deprecated in Premake 5.0.0-beta1.** Use the new [filter()](filter.md) function instead; you will get more granular matching and much better performance. `configuration()` will be not supported in Premake 6.
 :::
 
 Limits the subsequent build settings to a particular environment.

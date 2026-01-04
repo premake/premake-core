@@ -1,7 +1,7 @@
 Sets the level of allowed pointer aliasing.
 
 ```lua
-strictaliasing "value"
+strictaliasing ("value")
 ```
 
 If no value is set for a configuration, the toolset's settings will be used.
@@ -23,7 +23,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1.
 
 ### Examples ###
 

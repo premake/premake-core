@@ -8,4 +8,4 @@ This call is also tied to the `--interactive` flag: specifying this flag will op
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.

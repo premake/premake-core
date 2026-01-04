@@ -14,7 +14,7 @@ Premake automatically assigns a UUID to each project, which is used by the Visua
 
 ### Applies To ###
 
-Projects.
+Project configurations.
 
 ### Return Value ###
 

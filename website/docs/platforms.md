@@ -12,11 +12,11 @@ The platforms listed here are just names to be displayed in the IDE, with no int
 
 ### Applies To ###
 
-Workspaces and projects.
+Workspace and project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

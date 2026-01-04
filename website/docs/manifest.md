@@ -22,7 +22,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later.
+Premake 5.0.0-beta8 or later.
 
 ### Examples ###
 

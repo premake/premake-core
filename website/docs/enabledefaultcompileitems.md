@@ -1,24 +1,29 @@
-enabledefaultcompileitems - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies if implicitly included C# and language extension files should be compiled. Defaults to `Off`.
 
 ```lua
-enabledefaultcompileitems (value)
+enabledefaultcompileitems ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Enable compilation of implicitly included C# and language extension files. |
+| Off   | Disable compilation of implicitly included C# and language extension files. |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 16 or later.
+Premake 5.0.0-alpha16 or later for Visual Studio C# Projects.
 
 ### Examples ###
 
 ```lua
-enabledefaultcompileitems (value)
+enabledefaultcompileitems "Off"
 ```
 

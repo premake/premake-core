@@ -8,7 +8,12 @@ If the runtime type is not set, Premake will try to determine the configuration 
 
 ### Parameters ###
 
-`type` is a string value, one of "Debug" or "Release".
+`type` is one of:
+
+| Value | Description |
+|-------|-------------|
+| Debug | Use debug runtime libraries. |
+| Release | Use release runtime libraries. |
 
 ### Applies To ###
 
@@ -16,7 +21,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

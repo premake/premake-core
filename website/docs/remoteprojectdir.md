@@ -10,11 +10,11 @@ remoteprojectdir ("path")
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations. 
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later, only applies to Visual Studio Linux projects.
+Premake 5.0.0-beta3 or later, only applies to Visual Studio Linux projects.
 
 ### Examples ###
 

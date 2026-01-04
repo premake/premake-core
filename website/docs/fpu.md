@@ -1,7 +1,7 @@
 Specifies whether to generate code for a hardware FPU.
 
 ```lua
-fpu "value"
+fpu ("value")
 ```
 
 ### Parameters ###
@@ -19,7 +19,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### See Also ###
 

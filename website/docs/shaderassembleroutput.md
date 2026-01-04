@@ -1,24 +1,24 @@
-shaderassembleroutput - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the output file of shader assembly.
 
 ```lua
-shaderassembleroutput (value)
+shaderassembleroutput ("path")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`path` to write shader assembly to.
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderassembleroutput (value)
+shaderassembleroutput "path/to/output.fxc"
 ```
 

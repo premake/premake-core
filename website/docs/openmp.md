@@ -1,7 +1,7 @@
 Enables or disables [OpenMP](https://en.wikipedia.org/wiki/OpenMP).
 
 ```lua
-openmp "value"
+openmp ("value")
 ```
 If no value is set for a configuration, the toolset's default OpenMP option (usually "Off") will be performed.
 
@@ -20,8 +20,8 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta1 or later for Visual Studio 2010+ and the MSC toolset.
-Premake 5.0-beta2 or later for the GCC and Clang toolsets and for xcode.
+Premake 5.0.0-beta1 or later for Visual Studio 2010+ and the MSC toolset.
+Premake 5.0.0-beta2 or later for the GCC and Clang toolsets and for xcode.
 
 ## Examples ##
 

@@ -1,7 +1,3 @@
----
-title: embedAndSign
----
-
 Sets value of the *Embed* field in Xcode under *Frameworks, Libraries, and Embedded Content* to **Embed & Sign**
 
 This results in the framework being copied into the built app bundle during the *Embed Libraries* build phase and signed.
@@ -16,11 +12,11 @@ embedAndSign "SDL2.framework"
 
 ## Applies To ###
 
-The `config` scope. Only applies to Xcode projects.
+Project configurations for XCode.
 
 ### Availability ###
 
-Premake 5.0.0 beta 1 or later.
+Premake 5.0.0-beta1 or later.
 
 ### Examples ###
 

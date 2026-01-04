@@ -1,14 +1,18 @@
-Turns the edit-and-continue features of a toolset or platform on and off.
+Specifies if the binary has edit-and-continue debugging support.
 
 ```lua
-editandcontinue "value"
+editandcontinue ("value")
 ```
-
-If no value is set for a configuration, the toolset's default setting (usually "On") will be used.
 
 ### Parameters ###
 
-`value` is a boolean value, i.e. "On" or "Off". Specifying "Default" will act the same as specifying no value, the toolset's default setting will be used.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| Default | Uses the default edit-and-continue behavior. |
+| On | Allows edit-and-continue behavior of source code while debugging. |
+| Off | Disallows edit-and-continue behavior of source code while debugging. |
 
 ### Applies To ###
 
@@ -16,7 +20,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

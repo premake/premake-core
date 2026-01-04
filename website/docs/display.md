@@ -1,7 +1,7 @@
 Text to display for rule or property definition
 
 ```lua
-display "value"
+display ("value")
 ```
 
 ### Parameters ###
@@ -14,7 +14,7 @@ The `rule` scope.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

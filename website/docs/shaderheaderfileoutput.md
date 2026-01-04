@@ -1,24 +1,24 @@
-shaderheaderfileoutput - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the generated shader header output file.
 
 ```lua
-shaderheaderfileoutput (value)
+shaderheaderfileoutput ("path")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`path` to the shader header output file.
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderheaderfileoutput (value)
+shaderheaderfileoutput "output.fx.h"
 ```
 

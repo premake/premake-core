@@ -1,28 +1,30 @@
-shaderassembler - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the shader assembler output.
 
 ```lua
-shaderassembler (value)
+shaderassembler ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `NoListing`: needs documentation
-* `AssemblyCode`: needs documentation
-* `AssemblyCodeAndHex`: needs documentation
+| Value | Description |
+|-------|-------------|
+| NoListing | No generated assembly. |
+| AssemblyCode | File containing only generated assembly. |
+| AssemblyCodeAndHex | File containing assembly code and corresponding hex code. |
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderassembler (value)
+shaderassembler "AssemblyCode"
 ```
 

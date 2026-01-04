@@ -1,20 +1,22 @@
 Sets whether or not the compiler should enable C++20 modules.
 
 ```lua
-enablemodules("value")
+enablemodules ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-- `On`
-- `Off`
+| Value | Description |
+|-------|-------------|
+| On    | Enable module support |
+| Off   | Disable module support |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later for Visual Studio 2019 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2019 and later.

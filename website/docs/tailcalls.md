@@ -1,24 +1,29 @@
-tailcalls - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies if tailcalls should be enabled in Visual Studio F# projects.
 
 ```lua
-tailcalls (value)
+tailcalls ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Enable tail calls |
+| Off   | Disable tail calls |
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio F# Projects.
 
 ### Examples ###
 
 ```lua
-tailcalls (value)
+tailcalls "On"
 ```
 

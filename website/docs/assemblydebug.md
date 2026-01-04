@@ -1,24 +1,29 @@
-assemblydebug - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies if assembly debug features should be turned on.
 
 ```lua
-assemblydebug (value)
+assemblydebug ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Assembly debug features are turned on |
+| Off   | Assembly debug features are turned off |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 16 or later.
+Premake 5.0.0-alpha16 or later for Visual Studio projects.
 
 ### Examples ###
 
 ```lua
-assemblydebug (value)
+assemblydebug ("On")
 ```
 

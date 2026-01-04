@@ -4,11 +4,19 @@ Specifies which C++ Standard Library to use.
 stl ("value")
 ```
 
-The `staticruntime` API is used to determine if a static or shared version of the STL is used.
+The `stl` API is used to determine which STL is used.
 
 ### Parameters ###
 
 `value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| none  | Minimal C++ runtime library. |
+| gabi++ | Google/Android C++ runtime library |
+| stlport | STLport runtime library |
+| gnu | GNU STL library |
+| libc++ | LLVM libc++ library |
 
 * `none`: Minimal C++ runtime library.
 * `gabi++`: C++ runtime library.
@@ -22,7 +30,7 @@ The `config` scope.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio Android projects.
 
 ### Examples ###
 
@@ -30,6 +38,3 @@ Premake 5.0.0 alpha 14 or later.
 stl "libc++"
 ```
 
-### See Also ###
-
- * [staticruntime](staticruntime.md)

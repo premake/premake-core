@@ -18,11 +18,11 @@ If no value is set for a configuration, the toolset's default option will be use
 
 ### Applies To ###
 
-.NET project configurations.
+project configurations.
 
 ### Availability ###
 
-Premake 5.0.0-beta9 or later.
+Premake 5.0.0-beta8 or later for Visual Studio .NET projects.
 
 ### Examples ###
 

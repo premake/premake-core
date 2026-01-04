@@ -1,7 +1,7 @@
 Specifies the target endian for endian-agnostic architectures.
 
 ```lua
-endian "value"
+endian ("value")
 ```
 
 ### Parameters ###
@@ -20,7 +20,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### See Also ###
 

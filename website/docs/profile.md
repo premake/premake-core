@@ -1,7 +1,7 @@
 Enable or disable instrumented performance profiling support for binaries.
 
 ```lua
-profile "value"
+profile ("value")
 ```
 
 ### Parameters ###
@@ -17,7 +17,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta6 or later.
+Premake 5.0.0-beta6 or later.
 
 ### Examples ###
 

@@ -10,20 +10,21 @@ If no system is specified, Premake will identify and target the current operatin
 
 `value` is one of:
 
-* aix
-* android
-* bsd
-* [emscripten](https://emscripten.org/)
-* [haiku](http://www.haiku-os.org)
-* ios
-* linux
-* macosx
-* solaris
-* tvos
-* uwp
-* wii
-* windows
-* xbox360
+| Value | Description |
+|-------|-------------|
+| aix | IBM AIX |
+| android | Android Platform |
+| bsd | BSD Variants |
+| emscripten | Emscripten targets |
+| haiku | Haiku OS |
+| ios | Apple iOS |
+| linux | Linux Variants |
+| macosx | Apple MacOSX |
+| solaris | Oracle Solaris |
+| tvos | Apple TVos |
+| uwp | Universal Windows Platform |
+| wii | Nintendo Wii |
+| windows | Microsoft Windows |
 
 To note: `emscripten` at the moment is only supported for the `gmake` and `gmakelegacy` actions.
 
@@ -33,7 +34,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

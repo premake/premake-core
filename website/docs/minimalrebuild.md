@@ -4,7 +4,9 @@ Sets the minimal rebuild option for Visual Studio projects. This feature was dep
 minimalrebuild ("value")
 ```
 
-### Allowed values ###
+### Parameters ###
+
+`value` is one of:
 
 | Value     | Description                                                     |
 |-----------|-----------------------------------------------------------------|
@@ -14,11 +16,11 @@ minimalrebuild ("value")
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Visual Studio 2015 and earlier.
+Premake 5.0.0-beta8 or later for Visual Studio 2015 and earlier.
 
 ### Examples ###
 
