@@ -1,23 +1,26 @@
-preferredtoolarchitecture
+Specifies the preferred architecture to use for the Visual Studio toolchain.
 
 ```lua
-preferredtoolarchitecture "value"
+preferredtoolarchitecture ("value")
 ```
 
 ### Parameters ###
 
 `value` one of:
-* `Default` - needs documentation.
-* `x86` - needs documentation.
-* `x86_64` - needs documentation.
+
+| Value | Description |
+|-------|-------------|
+| Default | Use the preferred tool architecture. |
+| x86 | Use x86 tooling. |
+| x86_64 | Use x86_64 tooling. |
 
 ### Applies To ###
 
-The `workspace` scope.
+Workspace configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio.
 
 ### Examples ###
 

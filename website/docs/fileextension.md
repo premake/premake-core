@@ -1,7 +1,7 @@
 Specifies the target file extensions for a [custom build rule](Custom-Rules.md).
 
 ```lua
-fileextension "ext"
+fileextension ("ext")
 ```
 
 ### Parameters ###
@@ -16,7 +16,7 @@ Rules.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 
 ### Examples ###

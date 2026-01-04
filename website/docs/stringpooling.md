@@ -1,26 +1,29 @@
-stringpooling
+Specifies if string pooling should be used.
 
 ```lua
-stringpooling "value"
+stringpooling ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - needs documentation.
-* `off` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On | Enable string pooling. |
+| Off | Disable string pooling. |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio or `msc` toolset.
 
 ### Examples ###
 
 ```lua
-stringpooling "value"
+stringpooling "Off"
 ```
 

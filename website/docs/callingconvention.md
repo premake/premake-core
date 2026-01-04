@@ -8,10 +8,12 @@ callingconvention ("value")
 
 `value` is one of:
 
-* `Cdecl`
-* `FastCall`
-* `StdCall`
-* `VectorCall`
+| Value      | Description |
+|------------|-------------|
+| Cdecl      | `cdecl` calling convention |
+| FastCall   | `fastcall` calling convention |
+| StdCall    | `stdcall` calling convention |
+| VectorCall | `vectorcall` calling convention |
 
 ### Applies To ###
 
@@ -19,4 +21,4 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.

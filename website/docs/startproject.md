@@ -1,7 +1,7 @@
 Specify the startup project for a workspace.
 
 ```lua
-startproject "name"
+startproject ("name")
 ```
 
 Startup projects are currently only supported by Visual Studio.
@@ -12,11 +12,11 @@ Startup projects are currently only supported by Visual Studio.
 
 ### Applies To ###
 
-Workspaces.
+Workspace configurations.
 
 ### Availability ###
 
-5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

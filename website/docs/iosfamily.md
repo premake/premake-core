@@ -1,28 +1,30 @@
-iosfamily - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies the family of iOS device to be targeted.
 
 ```lua
-iosfamily (value)
+iosfamily ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-* `iPhone/iPod touch`: needs documentation
-* `iPad`: needs documentation
-* `Universal`: needs documentation
+| Value | Description |
+|-------|-------------|
+| `iPhone/iPod touch` | iPhones or iPod Touch Devices |
+| `iPad` | iPad Devices |
+| `Universal` | Universal device target |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for XCode.
 
 ### Examples ###
 
 ```lua
-iosfamily (value)
+iosfamily "iPhone/iPod touch"
 ```
 

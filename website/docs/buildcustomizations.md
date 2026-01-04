@@ -1,24 +1,24 @@
 Imports custom .props files for Visual Studio.
 
 ```lua
-buildcustomizations { "string" }
+buildcustomizations { "values" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`values` - Custom property files to use include in project.
 
 ### Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-buildcustomizations { "string" }
+buildcustomizations { "MyProps" }
 ```
 

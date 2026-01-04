@@ -18,6 +18,10 @@ newoption { description }
 | category    | Optional. Places the option under a separate header when the user passes `--help` |
 
 
+### Applies To ###
+
+Global configurations.
+
 ### Availability ###
 
 Premake 4.0 and later.

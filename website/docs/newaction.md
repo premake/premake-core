@@ -49,9 +49,13 @@ The following fields have been deprecated:
 | os          | Deprecated, use targetos instead. |
 | onSolution  | Deprecated, use onWorkspace instead. |
 
+### Applies To ###
+
+Global configurations.
+
 ### Availability ###
 
-Premake 5.0 and later.
+Premake 5.0.0-alpha1 and later.
 
 
 ### Examples ###

@@ -12,11 +12,11 @@ By default, the project name will be used as the file name for the APK.
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later.
 
 ### Examples ###
 

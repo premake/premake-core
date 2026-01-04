@@ -16,7 +16,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 and later. Versions are currently only implemented for Visual Studio 2017+.
+Premake 5.0.0-alpha1 and later. Versions are currently only implemented for Visual Studio 2017+.
 
 ### Examples ###
 

@@ -18,7 +18,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 and later. This feature is currently only supported for Visual Studio C# projects.
+Premake 5.0.0-alpha1 and later. This feature is currently only supported for Visual Studio C# projects.
 
 ### Examples ###
 

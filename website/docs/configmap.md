@@ -15,11 +15,11 @@ You may map multiple configurations in a single configuration map.
 
 ### Applies To ###
 
-Projects.
+Project configurations.
 
 ### Availability ###
 
-5.0 or later.
+5.0.0-alpha1 or later.
 
 ### Examples ###
 

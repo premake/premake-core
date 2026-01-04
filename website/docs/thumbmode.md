@@ -8,21 +8,23 @@ thumbmode ("value")
 
 `value` is one of:
 
-* `thumb`: Uses the Thumb instruction set.
-* `arm`: Uses the ARM instruction set.
-* `disabled`: Disables usage of Thumb instruction set.
+| Value | Description |
+|-------|-------------|
+| thumb | Uses Thumb instruction set. |
+| arm | Uses ARM instruction set. |
+| disabled | Disables Thumb instruction set. |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later.
 
 ### Examples ###
 
 ```lua
-thumbmode "disabled"
+thumbmode "Disabled"
 ```
 

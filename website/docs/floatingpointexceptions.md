@@ -1,26 +1,29 @@
-floatingpointexceptions
+Specifies whether or not unmasked floating point exceptions should be raised at the point they occur.
 
 ```lua
-floatingpointexceptions "value"
+floatingpointexceptions ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - needs documentation.
-* `off` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Turn on floating point exceptions |
+| Off   | Turn off floating point exceptions |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 
 ```lua
-floatingpointexceptions "value"
+floatingpointexceptions "On"
 ```
 

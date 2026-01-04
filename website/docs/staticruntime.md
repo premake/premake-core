@@ -1,7 +1,7 @@
-staticruntime
+Specifies if the static runtime should be used.
 
 ```lua
-staticruntime "value"
+staticruntime ("value")
 ```
 
 ### Parameters ###
@@ -14,11 +14,11 @@ staticruntime "value"
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

@@ -1,24 +1,29 @@
-conformancemode - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies if conformance mode should be enabled.
 
 ```lua
-conformancemode (value)
+conformancemode ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Enable standard conformance mode |
+| Off   | Disable standard conformance mode |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 1 or later.
+Premake 5.0.0-beta1 or later for Visual Studio 2017+.
 
 ### Examples ###
 
 ```lua
-conformancemode (value)
+conformancemode "Off"
 ```
 

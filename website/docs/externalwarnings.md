@@ -1,7 +1,7 @@
 Controls the level of warnings that are shown by the compiler for headers that are considered external.
 
 ```lua
-externalwarnings "value"
+externalwarnings ("value")
 ```
 
 If no value is set for a configuration, the toolset's default warning level will be used.
@@ -24,8 +24,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
-Visual Studio 2019 version or later.
+Premake 5.0.0-alpha1 or later for Visual Studio 2019+.
 
 ### Examples ###
 

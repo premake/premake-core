@@ -12,7 +12,7 @@ You do not normally need to set this value, as it is filled in automatically wit
 
 ### Applies To ###
 
-Any configuration.
+Workspace, project, and file configurations.
 
 ### Availability ###
 

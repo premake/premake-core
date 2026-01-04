@@ -1,25 +1,25 @@
 Enables clang-tidy code analysis for Visual Studio.
 
-The `clangtidy` option enables running clang-tidy code analysis in Visual Studio projects.
-
 ```lua
-clangtidy("value")
+clangtidy ("value")
 ```
 
 ### Parameters ###
 
 `value` is one of:
 
-- `On`
-- `Off`
+| Value | Description |
+|-------|-------------|
+| On    | Turn clang-tidy code analysis on |
+| Off   | Turn clang-tidy code analysis off |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later for Visual Studio 2019 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2019 and later.
 
 ### See Also ###
 

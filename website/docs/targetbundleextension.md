@@ -16,7 +16,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 beta 7 or later.
+Premake 5.0.0-beta7 or later.
 
 ### Examples ###
 

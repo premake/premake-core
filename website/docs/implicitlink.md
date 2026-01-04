@@ -20,4 +20,4 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later on Visual Studio.
+Premake 5.0.0-beta8 or later on Visual Studio.

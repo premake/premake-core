@@ -14,11 +14,11 @@ Otherwise, only a minimum version can be set for macOS/iOS/tvOS targets with `xc
 
 ### Applies To ###
 
-Project.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

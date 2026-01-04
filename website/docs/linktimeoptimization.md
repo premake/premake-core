@@ -1,7 +1,7 @@
-The **linktimeoptimization** function specifies whether or not the toolset should perform link time optimization.
+Specifies whether or not the toolset should perform link time optimization.
 
 ```lua
-linktimeoptimization "value"
+linktimeoptimization ("value")
 ```
 
 ### Parameters ###
@@ -21,4 +21,4 @@ Project configurations
 
 ### Availability ###
 
-Premake 5.0-beta4 and later
+Premake 5.0.0-beta4 and later

@@ -1,12 +1,17 @@
 Turns on/off the automatic linking of `.obj` files that are output by custom build commands. The default behaviour is to link `.obj` files when they are output by custom build commands.
 
 ```lua
-linkbuildoutputs "value"
+linkbuildoutputs ("value")
 ```
 
 ### Parameters ###
 
-`value` is a boolean value, i.e. "On" or "Off".
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Automatically link object outputs from custom build commands. |
+| Off   | Do not automatically link object outputs from custom build commands. |
 
 
 ### Applies To ###
@@ -16,7 +21,7 @@ Project configurations and rules.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 
 ### Examples ###

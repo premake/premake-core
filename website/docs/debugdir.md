@@ -1,7 +1,7 @@
 Sets the working directory for the integrated debugger.
 
 ```lua
-debugdir "path"
+debugdir ("path")
 ```
 
 Note that this settings is not implemented for Xcode, which requires a per-user configuration file in order to make it work.

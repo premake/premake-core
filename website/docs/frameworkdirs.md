@@ -1,24 +1,24 @@
-frameworkdirs - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies directories to search for frameworks in.
 
 ```lua
-frameworkdirs (value)
+frameworkdirs { "directories" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`directories` specifies the set of paths to search for frameworks in.
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 11 or later.
+Premake 5.0.0-alpha11 or later.
 
 ### Examples ###
 
 ```lua
-frameworkdirs (value)
+frameworkdirs { "/Libs/Frameworks" }
 ```
 

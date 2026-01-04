@@ -1,28 +1,24 @@
-customtoolnamespace
+Specifies the custom tool namespace property of a project.
 
 ```lua
-customtoolnamespace "value"
+customtoolnamespace ("value")
 ```
-
-Only used by Visual Studio .NET targets.
-
-Maps to `<CustomToolNamespace>` MSBuild element.
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is the custom tool namespace.
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio C# projects.
 
 ### Examples ###
 
 ```lua
-customtoolnamespace "value"
+customtoolnamespace "CustomNamespace"
 ```
 

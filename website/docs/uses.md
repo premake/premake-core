@@ -17,6 +17,10 @@ Note: If there are duplicate usage blocks with the same resolved name, the selec
 
 Projects and usage configurations.
 
+### Availability ###
+
+Premake 5.0.0-beta7 or later.
+
 ### Examples ###
 
 Demonstration of using `uses`. When specifying a `uses` matching a project name containing a `PUBLIC` or `INTERFACE` usage block, the `uses` statement will match against that. If a `project` with a `PUBLIC` or `INTERFACE` usage block

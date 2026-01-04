@@ -1,36 +1,41 @@
-isaextensions - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies a list of supported instruction set architecture extensions.
 
 ```lua
-isaextensions (value)
+isaextensions { "values" }
 ```
 
 ### Parameters ###
 
-`value` is one of:
+`values` is one of:
 
-* `MOVBE`: needs documentation
-* `POPCNT`: needs documentation
-* `PCLMUL`: needs documentation
-* `LZCNT`: needs documentation
-* `BMI`: needs documentation
-* `BMI2`: needs documentation
-* `F16C`: needs documentation
-* `AES`: needs documentation
-* `FMA`: needs documentation
-* `FMA4`: needs documentation
-* `RDRND`: needs documentation
+| Value | Description |
+|-------|-------------|
+| `MOVBE` | Move after byte-swap instruction (transfers data with endianness conversion) |
+| `POPCNT` | Population count instruction (counts set bits in a register) |
+| `PCLMUL` | Carry-less multiply instruction (PCLMULQDQ) for polynomial multiplication |
+| `LZCNT` | Count leading zeros instruction (returns number of leading zero bits) |
+| `BMI` | Bit Manipulation Instruction set 1 (bit-field and bit-test helpers like ANDN, BLSI) |
+| `BMI2` | Bit Manipulation Instruction set 2 (advanced bit ops like MULX, PDEP, PEXT) |
+| `F16C` | Half-precision floating-point conversion instructions (float16 <-> float32) |
+| `AES` | AES-NI instructions for hardware-accelerated AES encryption/decryption |
+| `FMA` | Fused multiply-add instructions (FMA3: 3-operand fused multiply-add) |
+| `FMA4` | AMD 4-operand fused multiply-add instruction set (FMA4) |
+| `RDRND` | Hardware random number generator instruction (RDRAND) |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later.
 
 ### Examples ###
 
 ```lua
-isaextensions (value)
+isaextensions {
+    "POPCNT",
+    "BMI2"
+}
 ```
 

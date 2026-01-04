@@ -14,7 +14,7 @@ By default, generated workspace, project, and rule files use their name as the n
 
 ### Applies To ###
 
-Workspaces, projects, and rule files.
+Workspace and project configurations and rule files.
 
 
 ### Examples ###

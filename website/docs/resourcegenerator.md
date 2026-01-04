@@ -1,22 +1,25 @@
-resourcegenerator
+Specifies the resource generator to use.
 
 ```lua
-resourcegenerator "value"
+resourcegenerator ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `internal` - needs documentation.
-* `public` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| internal | Use the internal dotnet resource generator. |
+| public | Use the PublicResXFileCode generator. |
 
 ### Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

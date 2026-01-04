@@ -10,11 +10,11 @@ shaderobjectfileoutput ("path")
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 

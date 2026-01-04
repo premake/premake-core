@@ -1,24 +1,24 @@
-shaderoptions - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies a list of options to pass to the shader compiler.
 
 ```lua
-shaderoptions (value)
+shaderoptions { "values" }
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`values` are a list of string options to pass to the shader compiler.
 
 ## Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-shaderoptions (value)
+shaderoptions { "-opt" }
 ```
 

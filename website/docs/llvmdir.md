@@ -1,7 +1,7 @@
 Specifies a custom LLVM install location for Visual Studio.
 
 ```lua
-llvmdir "path"
+llvmdir ("path")
 ```
 
 ### Parameters ###
@@ -14,7 +14,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later for Visual Studio 2019 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2019 and later.
 
 ## Examples ##
 

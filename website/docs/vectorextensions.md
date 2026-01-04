@@ -1,7 +1,7 @@
 Specifies the level of vector processing extensions to enable while compiling the target configuration.
 
 ```lua
-vectorextensions "level"
+vectorextensions ("level")
 ```
 
 If no value is set for a configuration, the toolset's default vector extension settings will be used.
@@ -32,7 +32,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

@@ -1,24 +1,27 @@
-xcodesystemcapabilities - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies a set of system capabilities to enable in the target.
 
 ```lua
-xcodesystemcapabilities (value)
+xcodesystemcapabilities (table)
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`table` is a table where keys are the capability and values are if they should be enabled or disabled.
 
 ## Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later.
 
 ### Examples ###
 
 ```lua
-xcodesystemcapabilities (value)
+xcodesystemcapabilities {
+    ["com.apple.InAppPurchase"] = "ON",
+    ["com.apple.GameCenter.iOS"] = "OFF",
+}
 ```
 

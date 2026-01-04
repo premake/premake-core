@@ -21,13 +21,14 @@ Each keyword must include a prefix to specify which field should be tested. The 
   * [options](globals/premake_OPTIONS.md)
   * [platforms](platforms.md)
   * [system](system.md)
+  * [tags](tags.md)
   * [toolset](toolset.md)
 
 Keywords may use the `\*` and `\*\*` wildcards to match more than one term or file. You may also use the modifiers `not` and `or` to build more complex conditions. Again, see the examples below for more information.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

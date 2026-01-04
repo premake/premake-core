@@ -42,7 +42,7 @@ Project and file configurations, though not all flags are yet supported for file
 
 ### Availability ###
 
-Flags are currently available in Premake 5.0 beta3, but are considered deprecated. Future releases will be deprecating and removing all flags in favor of dedicated APIs.
+Flags are deprecated as of 5.0.0-beta8 in favor of dedicated APIs.
 
 ### Examples ###
 

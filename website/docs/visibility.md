@@ -1,7 +1,7 @@
 Sets the default visibility for exported symbols in a shared object library.
 
 ```lua
-visibility "switch"
+visibility ("switch")
 ```
 
 By default, the generated project files will use the compilers default settings symbol visibility when building shared object libraries.
@@ -23,7 +23,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

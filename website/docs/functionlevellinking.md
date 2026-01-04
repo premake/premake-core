@@ -1,26 +1,29 @@
-functionlevellinking
+Specifies if the compiler should package individual functions as packaged functions (COMDATs).
 
 ```lua
-functionlevellinking "value"
+functionlevellinking ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - needs documentation.
-* `off` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Package indivudal functions as COMDATs. |
+| Off   | Do not package individual functions.    |
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later for Visual Studio.
 
 ### Examples ###
 
 ```lua
-functionlevellinking "value"
+functionlevellinking "Off"
 ```
 

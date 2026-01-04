@@ -1,7 +1,7 @@
 Specifies the target locale for the resources in a particular configuration.
 
 ```lua
-locale "code"
+locale ("code")
 ```
 
 This value is currently only used for the Microsoft Visual Studio resource compiler in C/C++ projects.
@@ -16,7 +16,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later for Visual Studio.
 
 ## Examples ##
 

@@ -12,11 +12,11 @@ If `platform_name` has not been defined using [`platforms`](platforms.md) the de
 
 ### Applies To ###
 
-The `workspace` scope.
+Workspace configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

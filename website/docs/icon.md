@@ -12,11 +12,11 @@ Currently, this is only used by Visual Studio C# projects.
 
 ### Applies To ###
 
-Projects.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

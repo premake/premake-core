@@ -10,11 +10,11 @@ A list of dot-prefixed file extensions to be cleaned.
 
 ### Applies To ###
 
-Projects.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later. This function is currently implemented only for Visual Studio 201x.
+Premake 5.0.0-alpha1 or later. This function is currently implemented only for Visual Studio 2010+.
 
 ### Examples ###
 

@@ -1,23 +1,25 @@
 Specifies the linker.
 
 ```lua
-linker("value")
+linker ("value")
 ```
 
 ### Parameters ###
 
-`value` string, one of:
+`value` is one of:
 
-* `Default` - uses the toolset platform default linker.
-* `LLD` - uses LLVM's LLD linker (supported on `gcc` and `clang` toolsets).
+| Value | Description | Notes |
+|-------|-------------|-------|
+| Default | Use the toolset default linker. |
+| LLD | Use LLVM's LLD linker | Supported by GCC and Clang | 
 
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0 beta 3 or later.
+Premake 5.0.0-beta3 or later.
 
 ### Examples ###
 

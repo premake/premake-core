@@ -12,7 +12,7 @@ The `externalproject()` function behaves the same as [project()](project.md), ta
 
 ### Availability ###
 
-Premake 5.0 or later; currently Visual Studio only.
+Premake 5.0.0-alpha1 or later for Visual Studio.
 
 ### Examples ###
 

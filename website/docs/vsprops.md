@@ -29,13 +29,13 @@ Nested values are also supported.
 
 Name and value are strings
 
-### Availability ###
-
-Premake 5.0-beta3 or later.
-
 ### Applies To ###
 
-The `config` scope.
+Project configurations.
+
+### Availability ###
+
+Premake 5.0.0-beta3 or later.
 
 ### Examples ###
 

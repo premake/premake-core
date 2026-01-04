@@ -775,14 +775,6 @@
 
 
 
-	function m.additionalImageOptions(cfg)
-		if #cfg.imageoptions > 0 then
-			p.x('AdditionalOptions="%s"', table.concat(cfg.imageoptions, " "))
-		end
-	end
-
-
-
 	function m.additionalIncludeDirectories(cfg)
 		if #cfg.includedirs > 0 then
 			local dirs = vstudio.path(cfg, cfg.includedirs)
@@ -1320,14 +1312,6 @@
 
 	function m.outputFile(cfg)
 		p.x('OutputFile="$(OutDir)\\%s"', cfg.buildtarget.name)
-	end
-
-
-
-	function m.outputFileName(cfg)
-		if cfg.imagepath ~= nil then
-			p.x('OutputFileName="%s"', path.translate(cfg.imagepath))
-		end
 	end
 
 

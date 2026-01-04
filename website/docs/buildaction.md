@@ -48,7 +48,7 @@ File configurations.
 
 Build actions are currently supported for C/C++ and C# projects.
 
-`Compile`, `Copy`, `Embed`, and `None` are available in Premake 4.4 or later. All actions are available in Premake 5.0 or later.
+`Compile`, `Copy`, `Embed`, and `None` are available in Premake 4.4 or later. All actions are available in Premake 5.0.0-alpha1 or later.
 
 ## Examples ##
 

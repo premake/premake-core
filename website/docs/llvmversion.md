@@ -1,7 +1,7 @@
 Specifies a version for a custom installation of LLVM for Visual Studio.
 
 ```lua
-llvmversion "version"
+llvmversion ("version")
 ```
 
 ### Parameters ###
@@ -14,7 +14,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later for Visual Studio 2019 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2019 and later.
 
 ## Examples ##
 

@@ -1,22 +1,25 @@
 Specify if generated file from [`buildcommands`](buildcommands.md) should be compiled or not.
 
 ```lua
-compilebuildoutputs "value"
+compilebuildoutputs ("value")
 ```
 
 ### Parameters ###
 
 `value` one of:
-* `on`  - generated file should be compiled.
-* `off` - generated file should not be compiled.
+
+| Value | Description |
+|-------|-------------|
+| On    | Generated file should be compiled. |
+| Off   | Generated file should not be compiled. |
 
 ### Applies To ###
 
-The `config` scope.
+File configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

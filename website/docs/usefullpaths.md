@@ -1,7 +1,7 @@
 Turn on/off full paths usage in diagnostics
 
 ```lua
-usefullpaths "value"
+usefullpaths ("value")
 ```
 
 By default, the generated project files will use the compilers default settings, which is in most cases "On" for debug and "Off" for release.
@@ -22,7 +22,7 @@ The `config` scope.
 
 ### Availability ###
 
-Premake 5.0.0 beta 1 or later.
+Premake 5.0.0-beta1 or later.
 
 ### Examples ###
 

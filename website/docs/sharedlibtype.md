@@ -1,27 +1,30 @@
-sharedlibtype
+Specifies the shared library type for Apple targets.
 
 ```lua
-sharedlibtype "value"
+sharedlibtype ("value")
 ```
 
 ### Parameters ###
 
-`value` one of:
-* `OSXBundle` - needs documentation.
-* `OSXFramework` - needs documentation.
-* `XCTest` - needs documentation.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| OSXBundle | Shared library is an OSX Bundle |
+| OSXFramework | Shared library is an OSX Framework |
+| XCTest | Shared library is an XCode test |
 
 ### Applies To ###
 
-The `project` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 
 ```lua
-sharedlibtype "value"
+sharedlibtype "OSXBundle"
 ```
 

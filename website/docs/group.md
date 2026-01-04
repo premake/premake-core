@@ -1,7 +1,7 @@
 Starts a "workspace group", a virtual folder to contain one or more projects.
 
 ```lua
-group("name")
+group ("name")
 ```
 
 ### Parameters ###
@@ -10,11 +10,11 @@ group("name")
 
 ### Applies To ###
 
-Workspaces.
+Workspace configurations.
 
 ### Availability ###
 
-5.0 or later.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 

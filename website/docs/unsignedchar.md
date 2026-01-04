@@ -1,4 +1,4 @@
-Force sign of `char`
+Force `char` to be unsigned.
 
 ```lua
 unsignedchar (value)
@@ -10,19 +10,18 @@ Note that `char` is still a distinct type from `signed char` and `unsigned char`
 
 `value` is one of:
 
-
-* Off: Make `char` signed. (default on msc)
-* On: Make `char` unsigned.
-
-Don't use that api to have default for gcc/clang
+| Value | Description |
+|-------|-------------|
+| On | Forces `char` to be unsigned. |
+| Off | Forces `char` to be signed. |
 
 ## Applies To ###
 
-The `config` scope.
+Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later.
 
 ### Examples ###
 

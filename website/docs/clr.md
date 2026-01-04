@@ -1,7 +1,7 @@
 Enables Microsoft's Common Language Runtime for a project or configuration.
 
 ```lua
-clr "value"
+clr ("value")
 ```
 
 See [/clr (Common Language Runtime Compilation)](http://msdn.microsoft.com/en-us/library/k8d11d4s.aspx) in the Visual Studio documentation for more information.
@@ -27,7 +27,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1 and later.
 
 ### Examples ###
 

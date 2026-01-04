@@ -6,7 +6,7 @@ useimportlib ("value")
 
 ### Parameters ###
 
-*value* specifies the desired import library behavior:
+`value` specifies the desired import library behavior:
 
 | Value       | Description                                                                           |
 |-------------|---------------------------------------------------------------------------------------|

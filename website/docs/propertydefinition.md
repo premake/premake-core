@@ -62,7 +62,7 @@ Rules.
 
 ### Availability ###
 
-Available in Premake 5.0 or later for Visual Studio 2010 or later.
+Available in Premake 5.0.0-alpha1 or later for Visual Studio 2010 or later.
 
 
 ### Examples ###

@@ -16,8 +16,8 @@ enable64bitchecks ("value")
 
 ### Applies To ###
 
-The `config` scope.
+Project and file configurations.
 
 ### Availability ###
 
-Premake 5.0-beta8 or later for Visual Studio 2008 and earlier.
+Premake 5.0.0-beta8 or later for Visual Studio 2008 and earlier.

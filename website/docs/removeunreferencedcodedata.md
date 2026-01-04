@@ -10,17 +10,20 @@ removeunreferencedcodedata ("value")
 
 ### Parameters ###
 
-`value` one of:
-* `on`  - Enables `RemoveUnreferencedCodeData`.
-* `off` - Disables `RemoveUnreferencedCodeData`.
+`value` is one of:
+
+| Value | Description |
+|-------|-------------|
+| On    | Enable removing of unreferenced COMDATs. |
+| Off   | Disable removing of unreferenced COMDATs. |
 
 ### Applies To ###
 
-Workspaces and projects.
+Workspace and project configurations.
 
 ### Availability ###
 
-Premake 5.0 alpha 16 or later.
+Premake 5.0.0-alpha16 or later in Visual Studio 2010+.
 
 ### Examples ###
 

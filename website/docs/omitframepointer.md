@@ -1,22 +1,26 @@
 Controls whether the frame pointer is omitted during compilation.
 
 ```lua
-omitframepointer (value)
+omitframepointer ("value")
 ```
 
-## Parameters
+### Parameters ###
+
 `value` is one of:
-* `Default`: Use the compiler's default behavior.
-* `On`: Omit the frame pointer.
-* `Off`: Keep the frame pointer.
 
-## Applies To
-The `config` scope.
+| Value | Description |
+|-------|-------------|
+| Default | Use toolset's default behavior. |
+| On | Omit frame pointer. |
+| Off | Retain frame pointer. |
 
-## Availability
-Premake 5.0.0 alpha 14 or later.
+### Applies To ###
+Project and file configurations.
 
-## Examples
+### Availability ###
+Premake 5.0.0-alpha14 or later.
+
+### Examples ###
 Keep frame pointer in debug builds for better stack traces:
 ```lua
 filter "configurations:Debug"

@@ -1,24 +1,24 @@
-xcodecodesigningidentity - This page was auto-generated. Feel free to help us improve the documentation by creating a pull request.
+Specifies identity for code signing in XCode.
 
 ```lua
-xcodecodesigningidentity (value)
+xcodecodesigningidentity ("value")
 ```
 
 ### Parameters ###
 
-`value` - needs documentation.
+`value` is the identity of the code signing.
 
 ## Applies To ###
 
-The `config` scope.
+Project configuration.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 14 or later.
+Premake 5.0.0-alpha14 or later for XCode.
 
 ### Examples ###
 
 ```lua
-xcodecodesigningidentity (value)
+xcodecodesigningidentity "Premake Developers"
 ```
 

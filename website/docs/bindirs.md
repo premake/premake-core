@@ -10,11 +10,11 @@ bindirs { "directories" }
 
 ### Applies To ###
 
-The `config` scope.
+Workspace, project, and file configurations.
 
 ### Availability ###
 
-Premake 5.0.0 alpha 12 or later.
+Premake 5.0.0-alpha12 or later.
 
 ### Examples ###
 

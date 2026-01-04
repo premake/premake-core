@@ -1,7 +1,7 @@
 Controls whether precompiled headers (PCH) are enabled for a configuration.
 
 ```lua
-enablepch "value"
+enablepch ("value")
 ```
 
 If no value is set for a configuration, the toolset's default behavior will be used.

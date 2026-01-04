@@ -18,7 +18,7 @@ Global scope.
 
 ### Availability ###
 
-Premake 5.0.0 beta 3 or later.
+Premake 5.0.0-beta3 or later.
 
 ### Examples ###
 

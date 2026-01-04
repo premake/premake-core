@@ -1,7 +1,7 @@
 Treats all headers included by `#include <header>`, where the header file is enclosed in angle brackets (`< >`), as external headers.
 
 ```lua
-externalanglebrackets "value"
+externalanglebrackets ("value")
 ```
 
 ### Parameters ###
@@ -19,8 +19,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 or later.
-Visual Studio 2019 version or later.
+Premake 5.0.0-alpha1 or later for Visual Studio 2019+.
 
 ### See Also ###
 

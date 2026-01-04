@@ -1,7 +1,7 @@
 Enables or disables native wchar (wide character) support by the compiler.
 
 ```lua
-nativewchar "value"
+nativewchar ("value")
 ```
 
 If no value is set for a configuration, the toolset's default wchar support will be used.
@@ -22,7 +22,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.
+Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 
