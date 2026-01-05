@@ -46,6 +46,10 @@
 #include <io.h>
 #endif
 
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
+
 #ifndef _ZIP_COMPILING_DEPRECATED
 #define ZIP_DISABLE_DEPRECATED
 #endif
