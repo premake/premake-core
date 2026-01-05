@@ -645,6 +645,6 @@ function suite.targetarch()
 	test.isequal(_TARGET_ARCH, os.targetarch())
 
 	-- --arch has priority over _TARGET_ARCH
-	_OPTIONS["arch"] = "arm64"
+	_OPTIONS["arch"] = "AARCH64"
 	test.isequal(_OPTIONS["arch"], os.targetarch())
 end

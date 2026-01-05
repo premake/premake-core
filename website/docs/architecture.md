@@ -14,7 +14,7 @@ architecture ("value")
 | x86         | x86 Architecture |
 | x86_64      | x86_64 Architecture |
 | ARM         | 32-bit ARM Architecture |
-| ARM64       | 64-bit ARM Architecture |
+| AARCH64     | 64-bit ARM Architecture |
 | RISCV64     | 64-bit RISCV Architecture |
 | loongarch64 | 64-bit LoongArch Architecture |
 | ppc         | 32-bit PowerPC Architecture |
@@ -25,7 +25,6 @@ architecture ("value")
 | mips64el    | 64-bit MIPS (Little Endian) Architecture |
 | armv5       | ARMv5 Architecture | Only supported in VSAndroid projects |
 | armv7       | ARMv7 Architecture | Only supported in VSAndroid projects |
-| aarch64     | 64-bit ARM Architecture | Only supported in VSAndroid projects |
 | mips        | 32-bit MIPS Architecture | Only supported in VSAndroid projects |
 | mips64      | 64-bit MIPS Architecture | Only supported in VSAndroid projects |
 
@@ -33,10 +32,11 @@ Additional values that are aliases for the above:
 
 | Value | Description |
 |-------|-------------|
-| i386 | Alias for `x86` |
+| ARM64 | Alias for `AARCH64` |
 | amd64 | Alias for `x86_64` |
-| x32 | Alias for `x86`. There is intent to deprecate this |
-| x64 | Alias for `x86_64`. There is intent to deprecate this |
+| i386  | Alias for `x86` | Deprecated in Premake 5.0.0-beta8. Use `x86` with `buildoptions { '-march=i386' }`. |
+| x32   | Alias for `x86`. | Deprecated in Premake 5.0.0-beta8. There is currently no support for `x32` ABI. |
+| x64   | Alias for `x86_64`. |
 
 ### Applies To ###
 

@@ -27,7 +27,7 @@
 			p.X86,
 			p.X86_64,
 			p.ARM,
-			p.ARM64,
+			p.AARCH64,
 			p.RISCV64,
 			p.LOONGARCH64,
 			p.PPC,
@@ -38,12 +38,16 @@
 			p.MIPS64EL
 		},
 		aliases = {
-			i386  = p.X86,
-			amd64 = p.X86_64,
-			x32   = p.X86,	-- these should be DEPRECATED
-			x64   = p.X86_64,
+			i386    = p.X86,
+			amd64   = p.X86_64,
+			x32     = p.X86,
+			x64     = p.X86_64,
+			ARM64   = p.AARCH64,
 		},
 	}
+
+	api.deprecateAlias("architecture", "i386", "Use 'x86' instead with `buildoptions { '-march=i386' }`.")
+	api.deprecateAlias("architecture", "x32", "Use 'x86' instead. There is no x32 ABI support currently.")
 
 	api.register {
 		name = "basedir",

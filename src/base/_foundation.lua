@@ -63,7 +63,7 @@
 	premake.X86         = "x86"
 	premake.X86_64      = "x86_64"
 	premake.ARM         = "ARM"
-	premake.ARM64       = "ARM64"
+	premake.AARCH64     = "AARCH64"
 	premake.RISCV64     = "RISCV64"
 	premake.LOONGARCH64 = "loongarch64"
 	premake.PPC         = "ppc"
