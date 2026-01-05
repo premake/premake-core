@@ -169,7 +169,7 @@
 		description = "Set the architecture of the binary to be built.",
 		allowed = {
 			{ "ARM", "ARM (On macOS, same as ARM64.)" },
-			{ "ARM64", "ARM64" },
+			{ "AARCH64", "AARCH64" },
 			{ "x86", "x86 (On macOS, same as x86_64.)" },
 			{ "x86_64", "x86_64" },
 			{ "ppc", "PowerPC 32-bit" },
@@ -178,6 +178,7 @@
 			--
 			{ "Win32", "Same as x86" },
 			{ "x64", "Same as x86_64" },
+			{ "ARM64", "Same as AARCH64" },
 		},
 		-- "Generates default platforms for targets, x86 and x86_64 projects for Windows." }
 		default = nil,
@@ -235,7 +236,7 @@
 		filter { "options:lua-src=contrib" }
 			defines { "LUA_STATICLIB" }
 
-		filter { "system:macosx", "options:arch=ARM or arch=ARM64" }
+		filter { "system:macosx", "options:arch=ARM or arch=AARCH64" }
 			buildoptions { "-arch arm64" }
 			linkoptions { "-arch arm64" }
 
@@ -258,7 +259,7 @@
 		filter { "system:windows", "options:arch=ARM" }
 			platforms { "ARM" }
 
-		filter { "system:windows", "options:arch=ARM64" }
+		filter { "system:windows", "options:arch=AARCH64" }
 			platforms { "ARM64" }
 
 		filter { "system:windows", "options:arch=x86 or arch=Win32" }

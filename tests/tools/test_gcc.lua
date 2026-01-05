@@ -644,16 +644,30 @@
 		test.contains({ "-arch x86_64" }, gcc.getldflags(cfg))
 	end
 
-	function suite.cflags_macosx_onarm64()
+	function suite.cflags_macosx_onAARCH64()
 		system "macosx"
-		architecture "arm64"
+		architecture "AARCH64"
 		prepare()
 		test.contains({ "-arch arm64" }, gcc.getcflags(cfg))
 	end
 
-	function suite.ldflags_macosx_onarm64()
+	function suite.cflags_macosx_onARM64()
 		system "macosx"
-		architecture "arm64"
+		architecture "ARM64"
+		prepare()
+		test.contains({ "-arch arm64" }, gcc.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onAARCH64()
+		system "macosx"
+		architecture "AARCH64"
+		prepare()
+		test.contains({ "-arch arm64" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onARM64()
+		system "macosx"
+		architecture "ARM64"
 		prepare()
 		test.contains({ "-arch arm64" }, gcc.getldflags(cfg))
 	end

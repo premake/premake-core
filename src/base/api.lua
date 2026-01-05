@@ -456,6 +456,37 @@
 
 
 --
+-- Mark a specific alias value of a field as deprecated.
+--
+-- @param name
+--   The name of the field containing the alias.
+-- @param alias
+--   The alias or aliases to mark as deprecated. May be a string
+--   for a single alias or an array of multiple aliases.
+-- @param message
+--   A optional message providing more information, to be shown
+--   as part of the deprecation warning message.
+--
+
+	function api.deprecateAlias(name, alias, message)
+		if type(alias) == "table" then
+			for _, a in pairs(alias) do
+				api.deprecateAlias(name, a, message)
+			end
+		else
+			local field = p.fields[name]
+			field.deprecatedaliases = field.deprecatedaliases or {}
+			local actual = field.aliases[alias:lower()]
+			if actual then
+				field.deprecatedaliases[alias] = {
+					message = message
+				}
+			end
+		end
+	end
+
+
+--
 -- Control the handling of API deprecations.
 --
 -- @param value
@@ -647,6 +678,18 @@
 
 			local canonical, result
 			local lowerValue = value:lower()
+
+			if field.deprecatedaliases and field.deprecatedaliases[lowerValue] then
+				local handler = field.deprecatedaliases[lowerValue]
+				if handler.message and api._deprecations ~= "off" then
+					local caller = filelineinfo(9)
+					local key = field.name .. "_" .. value .. "_" .. caller
+					p.warnOnce(key, "the %s alias %s has been deprecated and will be removed.\n   %s\n   @%s\n", field.name, lowerValue, handler.message, caller)
+					if api._deprecations == "error" then
+						return nil, "deprecation errors enabled"
+					end
+				end
+			end
 
 			if field.aliases then
 				canonical = field.aliases[lowerValue]

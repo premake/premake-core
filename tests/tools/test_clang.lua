@@ -364,11 +364,25 @@ end
 		test.contains({ "-arch x86_64" }, clang.getldflags(cfg))
 	end
 
+	function suite.cflags_macosx_onAARCH64()
+		system "macosx"
+		architecture "AARCH64"
+		prepare()
+		test.contains({ "-arch arm64" }, clang.getcflags(cfg))
+	end
+
 	function suite.cflags_macosx_onarm64()
 		system "macosx"
 		architecture "arm64"
 		prepare()
 		test.contains({ "-arch arm64" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_macosx_onAARCH64()
+		system "macosx"
+		architecture "AARCH64"
+		prepare()
+		test.contains({ "-arch arm64" }, clang.getldflags(cfg))
 	end
 
 	function suite.ldflags_macosx_onarm64()

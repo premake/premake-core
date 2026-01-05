@@ -3033,8 +3033,7 @@
 		if cfg.system == p.WINDOWS then
 			if cfg.architecture == p.ARM then
 				p.w('<WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>')
-			end
-			if cfg.architecture == p.ARM64 then
+			elseif cfg.architecture == p.AARCH64 then
 				p.w('<WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>')
 			end
 		end
@@ -4349,10 +4348,10 @@
 
 			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
 				local defaultToolsetMap = {
-					arm = "arm-linux-androideabi-",
+					[ p.ARM ] = "arm-linux-androideabi-",
 					armv5 = "arm-linux-androideabi-",
 					armv7 = "arm-linux-androideabi-",
-					aarch64 = "aarch64-linux-android-",
+					[ p.AARCH64 ] = "aarch64-linux-android-",
 					mips = "mipsel-linux-android-",
 					mips64 = "mips64el-linux-android-",
 					x86 = "x86-",

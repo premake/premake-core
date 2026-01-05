@@ -24,11 +24,11 @@
 
 	vstudio.vs200x_architectures =
 	{
-		win32   = "x86",
-		x86     = "x86",
-		x86_64  = "x64",
-		ARM     = "ARM",
-		ARM64   = "ARM64",
+		win32     = "x86",
+		x86       = "x86",
+		x86_64    = "x64",
+		ARM       = "ARM",
+		AARCH64   = "ARM64",
 	}
 
 	vstudio.vs2010_architectures =

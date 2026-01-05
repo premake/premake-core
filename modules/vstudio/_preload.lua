@@ -709,7 +709,7 @@
 	}
 
 	p.api.addAllowed("system", p.ANDROID)
-	p.api.addAllowed("architecture", { "armv5", "armv7", "aarch64", "mips", "mips64", "arm" })
+	p.api.addAllowed("architecture", { "armv5", "armv7", "mips", "mips64" })
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)
