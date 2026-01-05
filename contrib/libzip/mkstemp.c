@@ -41,6 +41,9 @@
 #ifdef _WIN32
 #include <io.h>
 #endif
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 
