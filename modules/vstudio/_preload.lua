@@ -638,7 +638,17 @@
 		"3.5",
 		"3.6",
 		"3.8",
-		"5.0", })
+		"5.0",
+	})
+
+	p.api.deprecateField("toolchainversion", "Use `toolchain 'gcc-<version>'` or `toolchain 'clang-<version>'` instead.",
+	function(value)
+		if value == "4.6" or value == "4.8" or value == "4.9" then
+			toolset("gcc-" .. value)
+		elseif value == "3.4" or value == "3.5" or value == "3.6" or value == "3.8" or value == "5.0" then
+			toolset("clang-" .. value)
+		end
+	end)
 
 	p.api.register {
 		name = "floatabi",

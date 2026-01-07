@@ -4004,12 +4004,9 @@
 	end
 
 	function m.linuxPlatformToolset(cfg)
-		local tool, version = p.config.toolset(cfg)
-
-		if not version then
-			local value = p.action.current().toolset
-			tool, version = p.tools.canonical(value)
-		end
+		local toolset = p.tools.normalize(cfg.toolset):explode("-", true, 1)
+		local tool = toolset[1]
+		local version = toolset[2]
 
 		local gcc_map = {
 			["remote"] = "Remote_GCC_1_0",
@@ -4023,17 +4020,34 @@
 			["wsl2"] = "WSL2_Clang_1_0",
 		}
 
-		if cfg.toolchainversion then
-
-			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
-			version  = map[cfg.toolchainversion]
-
-		end
+		local toolset_map = {
+			gcc = gcc_map,
+			clang = clang_map,
+		}
 
 		if version then
-			m.element("PlatformToolset", nil, version)
+			local map = toolset_map[tool]
+			if not map then
+				p.error('Invalid toolset (%s) for Linux platform.', tool)
+			end
+
+			local ts = map[version]
+			if not ts then
+				p.error('Invalid version (%s) for the selected toolset (%s).', version, cfg.toolset)
+			end
+
+			m.element("PlatformToolset", nil, ts)
+		elseif cfg.toolchainversion then
+			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+			local ts  = map[cfg.toolchainversion]
+
+			if ts then
+				m.element("PlatformToolset", nil, ts)
+			else
+				p.error('Invalid toolchainversion (%s) for the selected toolset (%s).', cfg.toolchainversion, cfg.toolset)
+			end
 		else
-			p.error('Invalid toolchainversion (%s) for the selected toolset (%s).', cfg.toolchainversion, cfg.toolset)
+			p.error('Specify a toolchain version for the selected toolset (%s). (%s - %s)', cfg.toolset, tool, version)
 		end
 	end
 
@@ -4327,7 +4341,26 @@
 				["5.0"] = "Clang_5_0",
 			}
 
-			if cfg.toolchainversion ~= nil then
+			local toolset_map = {
+				gcc = gcc_map,
+				clang = clang_map,
+			}
+
+			local toolset = p.tools.normalize(cfg.toolset):explode("-", true, 1)
+			local tool = toolset[1]
+			local version = toolset[2]
+
+			if version then
+				local tool_mapping = toolset_map[tool]
+				if tool_mapping then
+					local ts = tool_mapping[version]
+					if ts == nil then
+						p.error('Invalid version (%s) for the selected toolset (%s).', version, tool)
+					end
+
+					m.element("PlatformToolset", nil, ts)
+				end
+			elseif cfg.toolchainversion ~= nil then
 				local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
 				local ts  = map[cfg.toolchainversion]
 				if ts == nil then
