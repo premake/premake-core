@@ -46,3 +46,9 @@ Use the toolset for Windows XP
 ```lua
 toolset "v140_xp"
 ```
+
+Specify version 4.8 of GCC for Android
+```lua
+filter { "system:android" }
+   toolset "gcc-4.8"
+```

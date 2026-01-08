@@ -37,6 +37,7 @@ Project configurations.
 
 Premake 5.0.0-alpha14 or later, only applies to Android projects.
 Premake 5.0.0-beta3 or later, only applies to Visual Studio Linux projects.
+Deprecated in 5.0.0-beta8. Use `toolset` API with version instead, such as `toolset 'gcc-4.6'` or `toolset 'clang-wsl2'`.
 
 ### Examples ###
 

@@ -119,9 +119,11 @@ return {
 	"android/test_android_build_settings.lua",
 	"android/test_android_files.lua",
 	"android/test_android_project.lua",
+	"android/test_android_toolset.lua",
 
 	-- Linux projects
 	"linux/test_linux_files.lua",
+	"linux/test_linux_toolchains.lua",
 
 	-- Visual Studio 2026+ Solutions
 	"sln2026/test_configurations.lua",

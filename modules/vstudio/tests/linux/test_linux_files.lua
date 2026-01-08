@@ -32,11 +32,12 @@ local vc2010 = p.vstudio.vc2010
 
 	function suite.linkTimeOptimization_On()
 		linktimeoptimization('on')
+		toolset('gcc-remote')
 		prepareConfigProperties()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
-	<PlatformToolset>v142</PlatformToolset>
+	<PlatformToolset>Remote_GCC_1_0</PlatformToolset>
 	<LinkTimeOptimization>true</LinkTimeOptimization>
 </PropertyGroup>
 		]]
@@ -48,11 +49,12 @@ local vc2010 = p.vstudio.vc2010
 
 	function suite.linkTimeOptimization_Fast()
 		linktimeoptimization('fast')
+		toolset('gcc-remote')
 		prepareConfigProperties()
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
 	<ConfigurationType>Application</ConfigurationType>
-	<PlatformToolset>v142</PlatformToolset>
+	<PlatformToolset>Remote_GCC_1_0</PlatformToolset>
 	<LinkTimeOptimization>true</LinkTimeOptimization>
 </PropertyGroup>
 		]]
