@@ -863,6 +863,7 @@
 			"bsd",
 			"emscripten",
 			"haiku",
+			"hurd",
 			"ios",
 			"linux",
 			"macosx",

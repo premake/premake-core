@@ -17,6 +17,7 @@ If no system is specified, Premake will identify and target the current operatin
 | bsd | BSD Variants |
 | emscripten | Emscripten targets |
 | haiku | Haiku OS |
+| hurd | GNU Hurd |
 | ios | Apple iOS |
 | linux | Linux Variants |
 | macosx | Apple MacOSX |

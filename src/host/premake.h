@@ -56,7 +56,7 @@
 #error Unknown platform detected
 #endif
 
-#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU || PLATFORM_COSMO)
+#define PLATFORM_POSIX  (PLATFORM_LINUX || PLATFORM_BSD || PLATFORM_MACOSX || PLATFORM_SOLARIS || PLATFORM_HAIKU || PLATFORM_HURD || PLATFORM_COSMO)
 
 #if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || \
     defined(_M_X64) || defined(_M_AMD64)
