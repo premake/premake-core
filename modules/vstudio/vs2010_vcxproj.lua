@@ -4216,7 +4216,7 @@
 				return false
 			end
 
-			if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
+			if not cfg.architecture or string.startswith(cfg.architecture, p.ARM) then
 				-- we might want to define the arch to generate better code
 --				if not alreadyHas(cfg.buildoptions, "-march=") then
 --					if cfg.architecture == "armv6" then
@@ -4227,22 +4227,22 @@
 --				end
 
 				-- ARM has a comprehensive set of floating point options
-				if cfg.fpu ~= "Software" and cfg.floatabi ~= "soft" then
+				if cfg.fpu ~= "Software" and cfg.floatabi ~= "Soft" then
 
-					if cfg.architecture == "armv7" then
+					if cfg.architecture == p.ARMv7 then
 
 						-- armv7 always has VFP, may not have NEON
 
 						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
 							if cfg.vectorextensions == "NEON" then
 								table.insert(cfg.buildoptions, "-mfpu=neon")
-							elseif cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+							elseif cfg.fpu == "Hardware" or cfg.floatabi == "SoftFP" or cfg.floatabi == "Hard" then
 								table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
 							end
 						end
 
 						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-							if cfg.floatabi == "hard" then
+							if cfg.floatabi == "Hard" then
 								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
 							else
 								-- Android should probably use softfp by default for compatibility
@@ -4255,22 +4255,22 @@
 						-- armv5/6 may not have VFP
 
 						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-							if cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
+							if cfg.fpu == "Hardware" or cfg.floatabi == "SoftFP" or cfg.floatabi == "Hard" then
 								table.insert(cfg.buildoptions, "-mfpu=vfp")
 							end
 						end
 
 						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-							if cfg.floatabi == "softfp" then
+							if cfg.floatabi == "SoftFP" then
 								table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-							elseif cfg.floatabi == "hard" then
+							elseif cfg.floatabi == "Hard" then
 								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
 							end
 						end
 
 					end
 
-				elseif cfg.floatabi == "soft" then
+				elseif cfg.floatabi == "Soft" then
 
 					table.insert(cfg.buildoptions, "-mfloat-abi=soft")
 
@@ -4282,7 +4282,7 @@
 					table.insert(cfg.buildoptions, "-mbig-endian")
 				end
 
-			elseif cfg.architecture == "mips" then
+			elseif cfg.architecture == p.MIPS then
 
 				-- TODO...
 

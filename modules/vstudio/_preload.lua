@@ -655,11 +655,20 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
-			"soft",
-			"softfp",
-			"hard",
+			"Soft",
+			"SoftFP",
+			"Hard",
 		},
+		aliases = {
+			[ "soft" ] = "Soft",
+			[ "softfp" ] = "SoftFP",
+			[ "hard" ] = "Hard",
+		}
 	}
+
+	p.api.deprecateAlias("floatabi", "soft", "Use `Soft` instead.")
+	p.api.deprecateAlias("floatabi", "softfp", "Use `SoftFP` instead.")
+	p.api.deprecateAlias("floatabi", "hard", "Use `Hard` instead.")
 
 	p.api.register {
 		name = "androidapilevel",
@@ -718,8 +727,13 @@
 		kind = "string"
 	}
 
+	p.ARMv5 = "ARMv5"
+	p.ARMv7 = "ARMv7"
+	p.MIPS   = "MIPS"
+	p.MIPS64 = "MIPS64"
+
 	p.api.addAllowed("system", p.ANDROID)
-	p.api.addAllowed("architecture", { "armv5", "armv7", "mips", "mips64" })
+	p.api.addAllowed("architecture", { p.ARMv5, p.ARMv7, p.MIPS, p.MIPS64 })
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)
@@ -782,6 +796,19 @@
 	function(value)
 		runtimechecks("Default")
 	end)
+
+	-- Deprecate lower case versions of some architectures for consistency
+	p.api.addAliases("architecture", {
+		[ "armv5" ] = p.ARMv5,
+		[ "armv7" ] = p.ARMv7,
+		[ "mips" ] = p.MIPS,
+		[ "mips64" ] = p.MIPS64,
+	})
+
+	p.api.deprecateAlias("architecture", "armv5", "Use `ARMv5` instead.")
+	p.api.deprecateAlias("architecture", "armv7", "Use `ARMv7` instead.")
+	p.api.deprecateAlias("architecture", "mips", "Use `MIPS` instead.")
+	p.api.deprecateAlias("architecture", "mips64", "Use `MIPS64` instead.")
 
 --
 -- Decide when the full module should be loaded.

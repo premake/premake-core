@@ -118,6 +118,7 @@ return {
 	-- Android projects
 	"android/test_android_build_settings.lua",
 	"android/test_android_files.lua",
+	"android/test_android_floats.lua",
 	"android/test_android_project.lua",
 	"android/test_android_toolset.lua",
 
