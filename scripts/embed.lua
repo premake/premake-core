@@ -155,6 +155,10 @@
 
 	addScript(contentTable, "_modules.lua", "src/_modules.lua", "return {" .. table.implode(modules, '"', '"', ', ') .. "}")
 
+-- Sort scripts to ensure deterministic order
+
+	table.sort(contentTable, function(a, b) return a.name < b.name end)
+
 -- Embed the actual script contents
 
 	print("Embedding...")
