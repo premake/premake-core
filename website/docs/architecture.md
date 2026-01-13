@@ -23,10 +23,6 @@ architecture ("value")
 | wasm64      | 64-bit WASM Architecture |
 | e2k         | Elbrus-2000 Architecture |
 | mips64el    | 64-bit MIPS (Little Endian) Architecture |
-| armv5       | ARMv5 Architecture | Only supported in VSAndroid projects |
-| armv7       | ARMv7 Architecture | Only supported in VSAndroid projects |
-| mips        | 32-bit MIPS Architecture | Only supported in VSAndroid projects |
-| mips64      | 64-bit MIPS Architecture | Only supported in VSAndroid projects |
 
 Additional values that are aliases for the above:
 

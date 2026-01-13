@@ -609,27 +609,6 @@
 -- Register Android properties
 --
 
-	p.api.register {
-		name = "endian",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Default",
-			"Little",
-			"Big",
-		},
-	}
-
-	p.api.register {
-		name = "fpu",
-		scope = "config",
-		kind = "string",
-		allowed = {
-			"Software",
-			"Hardware",
-		}
-	}
-
 	p.api.addAllowed("toolchainversion", {
 		"4.6", -- NDK GCC versions
 		"4.8",
@@ -655,9 +634,9 @@
 		scope = "config",
 		kind = "string",
 		allowed = {
-			"soft",
-			"softfp",
-			"hard",
+			"Soft",
+			"SoftFP",
+			"Hard",
 		},
 	}
 
@@ -719,7 +698,6 @@
 	}
 
 	p.api.addAllowed("system", p.ANDROID)
-	p.api.addAllowed("architecture", { "armv5", "armv7", "mips", "mips64" })
 	p.api.addAllowed("vectorextensions", { "NEON", "MXU" })
 	p.api.addAllowed("exceptionhandling", {"UnwindTables"})
 	p.api.addAllowed("kind", p.PACKAGING)

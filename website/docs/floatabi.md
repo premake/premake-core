@@ -10,9 +10,9 @@ floatabi ("value")
 
 | Value | Description |
 |-------|-------------|
-| soft  | Compiler will generate software library calls for floating-point operations. |
-| softfp | Compiler will generate hardware floating-point instructions, but will still use software float calling conventions. |
-| hard | Compiler will generate floating-point instructions using FPU-specific calling conventions. |
+| Soft  | Compiler will generate software library calls for floating-point operations. |
+| SoftFP | Compiler will generate hardware floating-point instructions, but will still use software float calling conventions. |
+| Hard | Compiler will generate floating-point instructions using FPU-specific calling conventions. |
 
 ## Applies To ###
 
