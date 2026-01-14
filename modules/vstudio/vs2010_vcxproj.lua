@@ -88,11 +88,6 @@
 			if not table.contains(platforms, arch) then
 				table.insert(platforms, arch)
 			end
-
-			-- Android support is removed from core VS in 2026
-			if _ACTION >= "vs2026" and cfg.system == p.ANDROID then
-				p.error("Android projects are not supported in Visual Studio 2026 and later.")
-			end
 		end
 
 		local configs = {}
