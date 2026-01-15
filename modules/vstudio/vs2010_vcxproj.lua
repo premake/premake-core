@@ -508,8 +508,7 @@
 				m.buildLog,
 			}
 		else
-
-			local elements = {
+			return {
 				m.clCompile,
 				m.buildStep,
 				m.fxCompile,
@@ -520,15 +519,6 @@
 				m.ruleVars,
 				m.buildLog,
 			}
-
-			if cfg.system == p.ANDROID and _ACTION < "vs2015" then
-				elements = table.join(elements, {
-					m.androidAntBuildPreVS2015,
-				})
-			end
-
-			return elements
-
 		end
 	end
 
@@ -657,7 +647,7 @@
 			m.androidClCompilePreprocessorDefinitions,
 			m.androidDebugInformationFormat,
 			m.androidStrictAliasing,
-			m.androidFpu,
+			m.androidFloatAbi,
 			m.androidPIC,
 			m.androidShortEnums,
 			m.androidLinkSections,
@@ -667,7 +657,6 @@
 			m.androidEnableEnhancedInstructionSet,
 			m.androidExceptionHandling,
 			m.androidRuntimeTypeInfo,
-			m.androidAdditionalCompileOptions,
 			m.gccClangAdditionalCompileOptions,
 		}
 
@@ -1178,7 +1167,7 @@
 			-- Android
 			m.androidDebugInformationFormat,
 			m.androidStrictAliasing,
-			m.androidFpu,
+			m.androidFloatAbi,
 			m.androidPIC,
 			m.androidShortEnums,
 			m.androidLinkSections,
@@ -4136,32 +4125,21 @@
 			Off = "Disabled",
 			UnwindTables = "UnwindTables",
 		}
-		if _ACTION >= "vs2015" then
-			if exceptions[cfg.exceptionhandling] ~= nil then
-				m.element("ExceptionHandling", condition, exceptions[cfg.exceptionhandling])
-			end
-		else
-			if cfg.exceptionhandling == premake.ON then
-				m.element("GccExceptionHandling", condition, "true")
-			end
+		if exceptions[cfg.exceptionhandling] ~= nil then
+			m.element("ExceptionHandling", condition, exceptions[cfg.exceptionhandling])
 		end
 	end
 
 	function m.androidRuntimeTypeInfo(cfg, condition)
-		-- Note: Android defaults to 'off'
-		if cfg.rtti == premake.ON then
-			m.element("RuntimeTypeInfo", condition, "true")
+		if cfg.rtti ~= nil and cfg.rtti ~= "Default" then
+			m.element("RuntimeTypeInfo", condition, iif(cfg.rtti == p.ON, "true", "false"))
 		end
 	end
 
 	function m.androidWarningLevel(cfg, condition)
 
-		if _ACTION >= "vs2015" then
-			if cfg.warnings and cfg.warnings ~= "Off" then
-				m.element("WarningLevel", nil, "EnableAllWarnings")
-			else
-				m.warningLevel(cfg, condition)
-			end
+		if cfg.warnings and cfg.warnings ~= "Off" then
+			m.element("WarningLevel", nil, "EnableAllWarnings")
 		else
 			m.warningLevel(cfg, condition)
 		end
@@ -4202,101 +4180,16 @@
 		end
 	end
 
-	function m.androidAdditionalCompileOptions(cfg)
+	function m.androidFloatAbi(cfg)
+		local floatabi = {
+			Soft = "soft",
+			SoftFP = "softfp",
+			Hard = "hard",
+		}
 
-		if _ACTION >= "vs2015" then
-
-		else
-			local function alreadyHas(t, key)
-				for _, k in ipairs(t) do
-					if string.find(k, key) then
-						return true
-					end
-				end
-				return false
-			end
-
-			if not cfg.architecture or string.startswith(cfg.architecture, "arm") then
-				-- we might want to define the arch to generate better code
---				if not alreadyHas(cfg.buildoptions, "-march=") then
---					if cfg.architecture == "armv6" then
---						table.insert(cfg.buildoptions, "-march=armv6")
---					elseif cfg.architecture == "armv7" then
---						table.insert(cfg.buildoptions, "-march=armv7")
---					end
---				end
-
-				-- ARM has a comprehensive set of floating point options
-				if cfg.fpu ~= "Software" and cfg.floatabi ~= "soft" then
-
-					if cfg.architecture == "armv7" then
-
-						-- armv7 always has VFP, may not have NEON
-
-						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-							if cfg.vectorextensions == "NEON" then
-								table.insert(cfg.buildoptions, "-mfpu=neon")
-							elseif cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-								table.insert(cfg.buildoptions, "-mfpu=vfpv3-d16") -- d16 is the lowest common denominator
-							end
-						end
-
-						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-							if cfg.floatabi == "hard" then
-								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-							else
-								-- Android should probably use softfp by default for compatibility
-								table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-							end
-						end
-
-					else
-
-						-- armv5/6 may not have VFP
-
-						if not alreadyHas(cfg.buildoptions, "-mfpu=") then
-							if cfg.fpu == "Hardware" or cfg.floatabi == "softfp" or cfg.floatabi == "hard" then
-								table.insert(cfg.buildoptions, "-mfpu=vfp")
-							end
-						end
-
-						if not alreadyHas(cfg.buildoptions, "-mfloat-abi=") then
-							if cfg.floatabi == "softfp" then
-								table.insert(cfg.buildoptions, "-mfloat-abi=softfp")
-							elseif cfg.floatabi == "hard" then
-								table.insert(cfg.buildoptions, "-mfloat-abi=hard")
-							end
-						end
-
-					end
-
-				elseif cfg.floatabi == "soft" then
-
-					table.insert(cfg.buildoptions, "-mfloat-abi=soft")
-
-				end
-
-				if cfg.endian == "Little" then
-					table.insert(cfg.buildoptions, "-mlittle-endian")
-				elseif cfg.endian == "Big" then
-					table.insert(cfg.buildoptions, "-mbig-endian")
-				end
-
-			elseif cfg.architecture == "mips" then
-
-				-- TODO...
-
-				if cfg.vectorextensions == "MXU" then
-					table.insert(cfg.buildoptions, "-mmxu")
-				end
-
-			elseif cfg.architecture == "x86" then
-
-				-- TODO...
-
-			end
+		if cfg.floatabi ~= nil and floatabi[cfg.floatabi] ~= nil then
+			m.element("FloatABI", nil, floatabi[cfg.floatabi])
 		end
-	
 	end
 
 	function m.androidOptimization(cfg, condition)
@@ -4326,84 +4219,46 @@
 	end
 
 	function m.androidPlatformToolset(cfg)
+		local gcc_map = {
+			["4.6"] = "GCC_4_6",
+			["4.8"] = "GCC_4_8",
+			["4.9"] = "GCC_4_9",
+		}
+		local clang_map = {
+			["3.4"] = "Clang_3_4",
+			["3.5"] = "Clang_3_5",
+			["3.6"] = "Clang_3_6",
+			["3.8"] = "Clang_3_8",
+			["5.0"] = "Clang_5_0",
+		}
 
-		if _ACTION >= "vs2015" then
-			local gcc_map = {
-				["4.6"] = "GCC_4_6",
-				["4.8"] = "GCC_4_8",
-				["4.9"] = "GCC_4_9",
-			}
-			local clang_map = {
-				["3.4"] = "Clang_3_4",
-				["3.5"] = "Clang_3_5",
-				["3.6"] = "Clang_3_6",
-				["3.8"] = "Clang_3_8",
-				["5.0"] = "Clang_5_0",
-			}
+		local toolset_map = {
+			gcc = gcc_map,
+			clang = clang_map,
+		}
 
-			local toolset_map = {
-				gcc = gcc_map,
-				clang = clang_map,
-			}
+		local toolset = p.tools.normalize(cfg.toolset):explode("-", true, 1)
+		local tool = toolset[1]
+		local version = toolset[2]
 
-			local toolset = p.tools.normalize(cfg.toolset):explode("-", true, 1)
-			local tool = toolset[1]
-			local version = toolset[2]
-
-			if version then
-				local tool_mapping = toolset_map[tool]
-				if tool_mapping then
-					local ts = tool_mapping[version]
-					if ts == nil then
-						p.error('Invalid version (%s) for the selected toolset (%s).', version, tool)
-					end
-
-					m.element("PlatformToolset", nil, ts)
-				end
-			elseif cfg.toolchainversion ~= nil then
-				local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
-				local ts  = map[cfg.toolchainversion]
+		if version then
+			local tool_mapping = toolset_map[tool]
+			if tool_mapping then
+				local ts = tool_mapping[version]
 				if ts == nil then
-					p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
+					p.error('Invalid version (%s) for the selected toolset (%s).', version, tool)
 				end
 
 				m.element("PlatformToolset", nil, ts)
 			end
-		else
-			local archMap = {
-				arm = "armv5te", -- should arm5 be default? vs-android thinks so...
-				arm5 = "armv5te",
-				arm7 = "armv7-a",
-				mips = "mips",
-				x86 = "x86",
-			}
-			local arch = cfg.architecture or "arm"
-
-			if (cfg.architecture ~= nil or cfg.toolchainversion ~= nil) and archMap[arch] ~= nil then
-				local defaultToolsetMap = {
-					[ p.ARM ] = "arm-linux-androideabi-",
-					armv5 = "arm-linux-androideabi-",
-					armv7 = "arm-linux-androideabi-",
-					[ p.AARCH64 ] = "aarch64-linux-android-",
-					mips = "mipsel-linux-android-",
-					mips64 = "mips64el-linux-android-",
-					x86 = "x86-",
-					x86_64 = "x86_64-",
-				}
-				local toolset = defaultToolsetMap[arch]
-
-				if cfg.toolset == "clang" then
-					error("The clang toolset is not yet supported by vs-android", 2)
-					toolset = toolset .. "clang"
-				elseif cfg.toolset and cfg.toolset ~= "gcc" then
-					error("Toolset not supported by the android NDK: " .. cfg.toolset, 2)
-				end
-
-				local version = cfg.toolchainversion or iif(cfg.toolset == "clang", "3.5", "4.9")
-
-				m.element("PlatformToolset", nil, toolset .. version)
-				m.element("AndroidArch", nil, archMap[arch])
+		elseif cfg.toolchainversion ~= nil then
+			local map = iif(cfg.toolset == "gcc", gcc_map, clang_map)
+			local ts  = map[cfg.toolchainversion]
+			if ts == nil then
+				p.error('Invalid toolchainversion for the selected toolset (%s).', cfg.toolset or "clang")
 			end
+
+			m.element("PlatformToolset", nil, ts)
 		end
 	end
 
@@ -4420,11 +4275,7 @@
 			local postfix = iif(cfg.staticruntime == "On", "_static", "_shared")
 			local runtimeLib = iif(cfg.stl == "none", "system", stlType[cfg.stl] .. postfix)
 
-			if _ACTION >= "vs2015" then
-				m.element("UseOfStl", nil, runtimeLib)
-			else
-				m.element("AndroidStlType", nil, runtimeLib)
-			end
+			m.element("UseOfStl", nil, runtimeLib)
 		end
 	end
 
@@ -4437,13 +4288,6 @@
 	function m.androidAPILevel(cfg)
 		if cfg.androidapilevel ~= nil then
 			m.element("AndroidAPILevel", nil, "android-" .. cfg.androidapilevel)
-		end
-	end
-
-	function m.androidFpu(cfg)
-		if cfg.fpu ~= nil then
-			-- TODO REVIEW THIS
-			_p(3,'<SoftFloat>true</SoftFloat>', iif(cfg.fpu == "Software", "true", "false"))
 		end
 	end
 
@@ -4520,16 +4364,6 @@
 			m.element("LibraryDependencies", nil, "%%(LibraryDependencies);%s", links)
 		end
 
-	end
-
-	function m.androidAntBuildPreVS2015(cfg)
-		if cfg.kind == premake.STATICLIB or cfg.kind == premake.SHAREDLIB then
-			return
-		end
-
-		_p(2,'<AntBuild>')
-		_p(3,'<AntBuildType>%s</AntBuildType>', iif(premake.config.isDebugBuild(cfg), "Debug", "Release"))
-		_p(2,'</AntBuild>')
 	end
 
 	--

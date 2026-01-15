@@ -64,7 +64,6 @@
 | [editorintegration](editorintegration.md)                 | Enable or disable IDE integration |
 | [enableunitybuild](enableunitybuild.md)                   |  |
 | [enablewarnings](enablewarnings.md)                       |  |
-| [endian](endian.md)                                       |  |
 | [entrypoint](entrypoint.md)                               | Specify the program entry point function |
 | [exceptionhandling](exceptionhandling.md)                 | Enable or disable exception handling |
 | [external](external.md)                                   |  |
@@ -78,11 +77,11 @@
 | [files](files.md)                                         |  |
 | [filter](filter.md)                                       |  |
 | [flags](flags.md)                                         |  |
+| [floatabi](floatabi.md)                                   |  |
 | [floatingpoint](floatingpoint.md)                         |  |
 | [floatingpointexceptions](floatingpointexceptions.md)     |  |
 | [forceincludes](forceincludes.md)                         |  |
 | [forceusings](forceusings.md)                             |  |
-| [fpu](fpu.md)                                             |  |
 | [functionlevellinking](functionlevellinking.md)           |  |
 | [gccprefix](gccprefix.md)                                 |  |
 | [group](group.md)                                         |  |
