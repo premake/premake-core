@@ -78,7 +78,7 @@
 		self.name = name
 		self.filename = name
 		self.script = _SCRIPT
-		self.basedir = os.getcwd()
+		self.cwd = os.getcwd()
 		self.external = false
 
 		for childClass in container.eachChildClass(class) do
