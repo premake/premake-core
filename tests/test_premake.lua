@@ -4,6 +4,11 @@
 -- Copyright (c) 2008-2015 Jess Perkins and the Premake project
 --
 
+-- Start local lua debugger
+-- https://marketplace.visualstudio.com/items?itemName=tomblind.local-lua-debugger-vscode
+if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
+	require("lldebugger").start()
+end
 
 	local suite = test.declare("premake")
 
