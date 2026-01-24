@@ -5,6 +5,19 @@
  */
 
 #include "premake.h"
+#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD) || defined(PLATFORM_HAIKU) || defined(PLATFORM_COSMO)
+
+#if !defined(HAVE_UNAME)
+#define HAVE_UNAME 1
+#endif
+#include <sys/utsname.h>
+#include <string.h>
+
+#else
+
+#define HAVE_UNAME 0
+
+#endif
 
 int os_is64bit(lua_State* L)
 {
@@ -21,6 +34,30 @@ int os_is64bit(lua_State* L)
 		{
 			lua_pushboolean(L, isWow);
 			return 1;
+		}
+	}
+#endif
+#if HAVE_UNAME
+	struct utsname data;
+	if (uname(&data) >= 0)
+	{
+		// Non-exhaustive list of 64bit architectures reported by uname -m
+		static const char *knownArchitectures[] = {
+				"x86_64", "adm64",
+				"arm64", "aarch64",
+				"ppc64", "ppc64le",
+				"s390x",
+				"mips64", "mips64el",
+				"riscv64",
+				"longarch64"
+		};
+		for (size_t a = 0; a < (sizeof(knownArchitectures) / sizeof(const char *)); ++a)
+		{
+			if (strcmp(data.machine, knownArchitectures[a]) == 0)
+			{
+				lua_pushboolean(L, 1);
+				return 1;
+			}
 		}
 	}
 #endif
