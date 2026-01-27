@@ -632,6 +632,7 @@
 
 	function gcc.getlinks(cfg, systemonly, nogroups)
 		local result = {}
+		local lib_flag = iif(cfg.system == p.MACOSX and cfg.wholearchive == p.ON, "-force_load ", "-l")
 
 		if not systemonly then
 			if cfg.userelativelinks == p.ON then
@@ -640,7 +641,7 @@
 					if string.startswith(link, "lib") then
 						link = link:sub(4)
 					end
-					table.insert(result, "-l" .. link)
+					table.insert(result, lib_flag .. link)
 				end
 			else
 				-- Don't use the -l form for sibling libraries, since they may have
@@ -666,12 +667,12 @@
 				-- Check whether link mode decorator is present
 				if name:endswith(":static") then
 					name = string.sub(name, 0, -8)
-					table.insert(static_syslibs, "-l" .. name)
+					table.insert(static_syslibs, lib_flag .. name)
 				elseif name:endswith(":shared") then
 					name = string.sub(name, 0, -8)
-					table.insert(shared_syslibs, "-l" .. name)
+					table.insert(shared_syslibs, lib_flag .. name)
 				else
-					table.insert(shared_syslibs, "-l" .. name)
+					table.insert(shared_syslibs, lib_flag .. name)
 				end
 			end
 		end
@@ -689,6 +690,11 @@
 		if not nogroups and #result > 1 and (cfg.linkgroups == p.ON) then
 			table.insert(result, 1, "-Wl,--start-group")
 			table.insert(result, "-Wl,--end-group")
+		end
+
+		if cfg.wholearchive == p.ON and cfg.system ~= p.MACOSX and #result > 0 then
+			table.insert(result, 1, "-Wl,--whole-archive")
+			table.insert(result, "-Wl,--no-whole-archive")
 		end
 
 		return result
