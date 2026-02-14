@@ -213,6 +213,7 @@ int http_download(lua_State* L);
 
 #ifdef PREMAKE_COMPRESSION
 int zip_extract(lua_State* L);
+int zip_list(lua_State* L);
 #endif
 
 /* Engine interface */

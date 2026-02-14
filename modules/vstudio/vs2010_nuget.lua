@@ -49,6 +49,10 @@
 --
 
 	function nuget2010.packageAPIInfo(prj, package)
+		if packageAPIInfos[package] then
+			return packageAPIInfos[package]
+		end
+
 		local id = nuget2010.packageId(package)
 		local version = nuget2010.packageVersion(package)
 
@@ -56,26 +60,17 @@
 		-- that case we can examine the nuspec file and the file listing
 		-- locally.
 
-		local function examinePackageFromCache()
-			-- It should be possible to implement this for platforms other than
-			-- Windows, but we'll need to figure out where the NuGet cache is on
-			-- these platforms (or if they even have one).
-
-			if not os.ishost("windows") then
-				return
-			end
-
-			local cachePath = path.translate(path.join(os.getenv("userprofile"), ".nuget/packages", id))
-
-			if os.isdir(cachePath) then
+		local function examinePackageFromDirectory(directory)
+			if os.isdir(directory) then
 				local packageAPIInfo = {}
 
-				printf("Examining cached NuGet package '%s'...", id)
+				printf("Examining NuGet package '%s' from '%s'...", id, path.translate(directory))
 				io.flush()
 
-				local versionPath = path.translate(path.join(cachePath, version))
+				local versionPath = path.translate(path.join(directory, version))
 
 				local nuspecPath = path.translate(path.join(versionPath, id .. ".nuspec"))
+				local nupkgPath = path.translate(path.join(versionPath, id .. "." .. version .. ".nupkg"))
 
 				if not os.isfile(nuspecPath) then
 					return
@@ -102,11 +97,21 @@
 
 				packageAPIInfo.packageEntries = {}
 
-				for _, file in ipairs(os.matchfiles(path.translate(path.join(versionPath, "**")))) do
-					local extension = path.getextension(file)
+				if zip then
+					local entries, err = zip.list(nupkgPath)
 
-					if extension ~= ".nupkg" and extension ~= ".sha512" then
-						table.insert(packageAPIInfo.packageEntries, path.translate(path.getrelative(versionPath, file)))
+					if err ~= nil then
+						p.warn("Cannot list entries of '" .. nupkgPath "'")
+					else
+						packageAPIInfo.packageEntries = entries
+					end
+				else
+					for _, file in ipairs(os.matchfiles(path.translate(path.join(versionPath, "**")))) do
+						local extension = path.getextension(file)
+
+						if extension ~= ".nupkg" and extension ~= ".sha512" then
+							table.insert(packageAPIInfo.packageEntries, path.translate(path.getrelative(versionPath, file)))
+						end
 					end
 				end
 
@@ -127,8 +132,28 @@
 			end
 		end
 
+		if os.isdir(prj.nugetsource) then
+			examinePackageFromDirectory(path.join(prj.nugetsource, id))
+
+			if packageAPIInfos[package] then
+				return packageAPIInfos[package]
+			else
+				p.error("Cannot find package '" .. package .. "' in local directory: " .. prj.nugetsource)
+			end
+		end
+
 		if not packageAPIInfos[package] then
-			examinePackageFromCache()
+			-- Examine package from cache directory
+
+			-- It should be possible to implement this for platforms other than
+			-- Windows, but we'll need to figure out where the NuGet cache is on
+			-- these platforms (or if they even have one).
+
+			if os.ishost("windows") then
+				local cachePath = path.join(os.getenv("userprofile"), ".nuget/packages", id)
+				examinePackageFromDirectory(cachePath)
+			end
+
 		end
 
 		-- If we didn't find the package from the cache, use the NuGet API

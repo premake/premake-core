@@ -145,6 +145,7 @@ static const luaL_Reg http_functions[] = {
 #ifdef PREMAKE_COMPRESSION
 static const luaL_Reg zip_functions[] = {
 	{ "extract",  zip_extract },
+	{ "list", zip_list},
 	{ NULL, NULL }
 };
 #endif
