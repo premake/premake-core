@@ -1,8 +1,7 @@
-import React from 'react';
-import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
+import Layout from '@theme/Layout';
 
-import { Container, Column, Row } from '../components/Grid';
+import { Column, Container, Row } from '../components/Grid';
 
 
 const Banner = () =>
@@ -10,7 +9,7 @@ const Banner = () =>
 		<img className="feature-image" src="/img/premake-logo.png" alt="Premake logo" />
 		<h1 className="hero__title">Premake</h1>
 		<p className="hero__subtitle">Powerfully simple build configuration</p>
-		<div className=".buttons">
+		<div className="buttons">
 			<Link
 				className="button button--outline button--primary button--lg"
 				to="docs/">
@@ -38,6 +37,7 @@ function Home() {
 		<Layout>
 			<header className="hero hero-banner shadow--lw">
 				<Banner />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 			</header>
 			<main className="home">
 				<section className="features">

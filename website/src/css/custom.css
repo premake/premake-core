@@ -30,9 +30,9 @@
  * Navbar styles
  */
 
- .navbar .react-toggle {
+.navbar .react-toggle {
 	margin-left: var(--ifm-navbar-item-padding-horizontal)
- }
+}
 
 /**
  * Home page styles
@@ -50,11 +50,15 @@
 	text-align: center;
 	position: relative;
 	overflow: hidden;
-  }
+}
 
 @media screen and (max-width: 966px) {
 	.hero-banner {
 		padding: 2rem;
+	}
+
+	.buttons {
+		flex-direction: column;
 	}
 }
 
@@ -75,7 +79,9 @@
 	align-items: center;
 	justify-content: center;
 }
-
+.button {
+	min-width: 12rem;
+}
 
 /**
  * Download page styles
