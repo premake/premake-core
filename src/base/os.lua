@@ -159,7 +159,16 @@
 		elseif type(headerdirs) == "table" then
 			userpaths = headerdirs
 		end
-		paths = table.join(userpaths, paths)
+
+		for _, userpath in ipairs(userpaths) do
+			if path.isabsolute(userpath) then
+				paths = table.join({userpath}, paths)
+			else
+				for _, p in ipairs(paths) do
+					paths = table.join({path.join(p, userpath)}, paths)
+				end
+			end
+		end
 
 		local result = os.pathsearch (headerpath, table.unpack(paths))
 		return result

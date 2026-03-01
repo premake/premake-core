@@ -102,6 +102,15 @@
 					 os.findheader("test.h", path.getabsolute("folder/subfolder/include")))
 	end
 
+	function suite.findheader_provided_relative()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		test.isequal(path.getabsolute("folder/subfolder/include/testlib"), os.findheader("testlib2.h", "testlib"))
+
+		os.getenv = os_getenv
+	end
+
 	function suite.findheader_frompath_lib()
 		local os_getenv = os.getenv
 		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
