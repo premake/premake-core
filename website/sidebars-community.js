@@ -3,6 +3,7 @@ module.exports = {
 		'support',
 		'showcase',
 		'extensions',
-		'modules'
+		'modules',
+		'registries'
 	]
 };
