@@ -16,14 +16,15 @@
 #include <sys/sysctl.h>
 #elif PLATFORM_SOLARIS
 #include <unistd.h>
-#elif PLATFORM_WINDOWS
+#elif PLATFORM_WINDOWS | PLATFORM_CYGWIN
 #define WIN32_LEAN_AND_MEAN
+#define NOGDI
 #include <windows.h>
 #endif
 
 int do_getnumcpus()
 {
-#if PLATFORM_WINDOWS
+#if PLATFORM_WINDOWS | PLATFORM_CYGWIN
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;

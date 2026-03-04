@@ -386,7 +386,7 @@
 		filter { "system:solaris" }
 			links       { "m", "socket", "nsl" }
 
-		filter "system:aix"
+		filter "system:aix or cygwin"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 

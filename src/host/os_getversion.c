@@ -272,7 +272,7 @@ getversion_macosx_cleanup:
 
 /*************************************************************/
 
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD) || defined(PLATFORM_HAIKU) || defined(PLATFORM_COSMO)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_LINUX) || defined(PLATFORM_SOLARIS) || defined(PLATFORM_HURD) || defined(PLATFORM_HAIKU) || defined(PLATFORM_COSMO) || defined(__CYGWIN__)
 
 #include <string.h>
 #include <sys/utsname.h>

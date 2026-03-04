@@ -65,6 +65,8 @@
 	local function get_library_search_path()
 		if os.istarget("windows") then
 			return (os.getenv("PATH") or ""):explode(";")
+		elseif os.istarget("cygwin") then
+			return (os.getenv("PATH") or ""):explode(":")
 		elseif os.istarget("haiku") then
 			return (os.getenv("LIBRARY_PATH") or ""):explode(":")
 		else
@@ -84,7 +86,7 @@
 
 			local archpaths = {"/lib", "/usr/lib", "/usr/local/lib"}
 			if os.is64bit() and not (os.istarget("darwin")) then
-				archpaths = table.join({"/lib64", "/usr/lib64/", "usr/local/lib64"}, archpaths)
+				archpaths = table.join({"/lib64", "/usr/lib64", "usr/local/lib64"}, archpaths)
 			end
 			return table.join(paths, archpaths)
 		end
@@ -116,6 +118,8 @@
 		-- assemble a search path, depending on the platform
 		if os.istarget("windows") then
 			formats = { "%s.dll", "%s" }
+		elseif os.istarget("cygwin") then
+			formats = { "cyg%s.dll", "%s.dll", "%s" }
 		elseif os.istarget("haiku") then
 			formats = { "lib%s.so", "%s.so" }
 		else
@@ -868,6 +872,7 @@
 		["aix"]        = { "aix",     "posix", "desktop" },
 		["android"]    = { "android", "mobile" },
 		["bsd"]        = { "bsd",     "posix", "desktop" },
+		["cygwin"]     = { "cygwin",  "posix", "desktop" },
 		["emscripten"] = { "emscripten", "web" },
 		["haiku"]      = { "haiku",   "posix", "desktop" },
 		["ios"]        = { "ios",     "darwin", "posix", "mobile" },
