@@ -16,23 +16,24 @@ premake5 [action]
 
 Premake defines the following list of actions out of the box; projects may also add their own custom actions.
 
-| Action      | Description                                                   |
-|-------------|---------------------------------------------------------------|
-| codelite    | CodeLite projects                                             |
-| gmake       | Generate GNU Makefiles (including [Cygwin][1] and [MinGW][2]) |
-| gmakelegacy | Generate GNU Makefiles (deprecated exporter)                  |
-| ninja       | Ninja projects                                                |
-| vs2026      | Generate Visual Studio 2026 project files                     |
-| vs2022      | Generate Visual Studio 2022 project files                     |
-| vs2019      | Generate Visual Studio 2019 project files                     |
-| vs2017      | Generate Visual Studio 2017 project files                     |
-| vs2015      | Generate Visual Studio 2015 project files                     |
-| vs2013      | Generate Visual Studio 2013 project files                     |
-| vs2012      | Generate Visual Studio 2012 project files                     |
-| vs2010      | Generate Visual Studio 2010 project files                     |
-| vs2008      | Generate Visual Studio 2008 project files                     |
-| vs2005      | Generate Visual Studio 2005 project files                     |
-| xcode4      | XCode projects                                                |
+| Action          | Description                                                   |
+|-----------------|---------------------------------------------------------------|
+| codelite        | CodeLite projects                                             |
+| compilecommands | Generate compile_commands.json compilation database           |
+| gmake           | Generate GNU Makefiles (including [Cygwin][1] and [MinGW][2]) |
+| gmakelegacy     | Generate GNU Makefiles (deprecated exporter)                  |
+| ninja           | Ninja projects                                                |
+| vs2026          | Generate Visual Studio 2026 project files                     |
+| vs2022          | Generate Visual Studio 2022 project files                     |
+| vs2019          | Generate Visual Studio 2019 project files                     |
+| vs2017          | Generate Visual Studio 2017 project files                     |
+| vs2015          | Generate Visual Studio 2015 project files                     |
+| vs2013          | Generate Visual Studio 2013 project files                     |
+| vs2012          | Generate Visual Studio 2012 project files                     |
+| vs2010          | Generate Visual Studio 2010 project files                     |
+| vs2008          | Generate Visual Studio 2008 project files                     |
+| vs2005          | Generate Visual Studio 2005 project files                     |
+| xcode4          | XCode projects                                                |
 
 (Premake4 supported some additional actions that haven't yet been ported to this new version; see the [Available Feature Matrix](Feature-Matrix.md) for the whole list.)
 
@@ -72,6 +73,28 @@ make config=release clean  # to clean a different target
 ```
 
 Premake generated makefiles do not (currently) support a `make install` step. Instead, project owners are encouraged to [add an install action](Command-Line-Arguments.md) to their Premake scripts, which has the advantage of working with any toolset on any platform. You can check for the existence of an install action by viewing the help (run `premake5 --help` in the project directory).
+
+## Compilation Database
+
+By default, the `compilecommands` action will select the first configuration provided and the default platform, if specified. To select different configurations and platforms, the `cc-config` and `cc-platform` CLI options are provided. These options are case sensitive to what is specified in your Premake script.
+
+To specify a configuration:
+
+```
+premake5 compilecommands --cc-config=Release
+```
+
+To specify a platform:
+
+```
+premake5 compilecommands --cc-platform=x64
+```
+
+To specify a platform and a configuration:
+
+```
+premake5 compilecommands --cc-config=Release --cc-platform=x64
+```
 
 [1]: http://www.cygwin.com/
 [2]: http://www.mingw.org/

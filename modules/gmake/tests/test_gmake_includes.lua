@@ -37,6 +37,6 @@ function suite.includeDirsAfter()
     includedirsafter { 'DirAfter' }
     prepare()
     test.capture [[
-INCLUDES += -idirafter DirAfter
+INCLUDES += -idirafterDirAfter
     ]]
 end

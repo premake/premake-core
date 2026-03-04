@@ -313,32 +313,45 @@
 -- Decorate include file search paths for the MSVC command line.
 --
 
-	function msc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+	function msc.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = p.tools.getrelative(cfg.project, dir)
-			table.insert(result, '/I' ..  p.quoted(dir))
+			table.insert(result, { flag = '/I', value = p.quoted(dir) })
 		end
 
 		for _, dir in ipairs(extdirs or {}) do
 			dir = p.tools.getrelative(cfg.project, dir)
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
-				table.insert(result, '/external:I' ..  p.quoted(dir))
+				table.insert(result, { flag = '/external:I', value = p.quoted(dir) })
 			else
-				table.insert(result, '/I' ..  p.quoted(dir))
+				table.insert(result, { flag = '/I', value = p.quoted(dir) })
 			end
 		end
 
 		for _, dir in ipairs(includedirsafter or {}) do
 			dir = p.tools.getrelative(cfg.project, dir)
 			if isVersionGreaterOrEqualTo(cfg.toolset, "msc-v142") then
-				table.insert(result, '/external:I' ..  p.quoted(dir))
+				table.insert(result, { flag = '/external:I', value = p.quoted(dir) })
 			else
-				table.insert(result, '/I' ..  p.quoted(dir))
+				table.insert(result, { flag = '/I', value = p.quoted(dir) })
 			end
 		end
 
 		return result
+	end
+
+
+	function msc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+		local result = msc.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+		return table.flatten(table.translate(result, function(kv)
+			return kv.flag .. kv.value
+		end))
+	end
+
+
+	function msc.getstructuredimplicitincludedirs(toolname, language)
+		return {}
 	end
 
 

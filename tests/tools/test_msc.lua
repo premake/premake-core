@@ -358,6 +358,9 @@
 		externalincludedirs { "/usr/local/include" }
 		prepare()
 		test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({
+			{ flag = '/I', value = '/usr/local/include' },
+		}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 	function suite.cflags_onVs2008ExternalIncludeDirs()
@@ -365,6 +368,9 @@
 		externalincludedirs { "/usr/local/include" }
 		prepare()
 		test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({
+			{ flag = '/I', value = '/usr/local/include' },
+		}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 	function suite.cflags_onVs2022ExternalIncludeDirs()
@@ -373,6 +379,9 @@
 		prepare()
 		test.contains("/external:W3", msc.getsharedflags(cfg))
 		test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
+		test.isequal({
+			{ flag = '/external:I', value = '/usr/local/include' },
+		}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs))
 	end
 
 --
@@ -383,6 +392,9 @@ function suite.cflags_onIncludeDirsAfter()
 	includedirsafter { "/usr/local/include" }
 	prepare()
 	test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	test.isequal({
+		{ flag = '/I', value = '/usr/local/include' },
+	}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
 function suite.cflags_onVs2008IncludeDirsAfter()
@@ -390,6 +402,9 @@ function suite.cflags_onVs2008IncludeDirsAfter()
 	includedirsafter { "/usr/local/include" }
 	prepare()
 	test.contains("/I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	test.isequal({
+		{ flag = '/I', value = '/usr/local/include' },
+	}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
 function suite.cflags_onVs2022IncludeDirsAfter()
@@ -398,6 +413,9 @@ function suite.cflags_onVs2022IncludeDirsAfter()
 	prepare()
 	test.contains("/external:W3", msc.getsharedflags(cfg))
 	test.contains("/external:I/usr/local/include", msc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+	test.isequal({
+		{ flag = '/external:I', value = '/usr/local/include' },
+	}, msc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 end
 
 

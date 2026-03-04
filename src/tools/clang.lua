@@ -227,13 +227,16 @@
 --    An array of symbols with the appropriate flag decorations.
 --
 
-	function clang.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+	function clang.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 
 		-- Just pass through to GCC for now
-		local flags = gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+		local flags = gcc.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		return flags
 
 	end
+
+	clang.getincludedirs = gcc.getincludedirs
+	clang.getstructuredimplicitincludedirs = gcc.getstructuredimplicitincludedirs
 
 	clang.getrunpathdirs = gcc.getrunpathdirs
 

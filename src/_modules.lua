@@ -6,6 +6,7 @@
 
 	return {
 		"codelite",
+		"compilecommands",
 		"gmake",
 		"gmakelegacy",
 		"ninja",
