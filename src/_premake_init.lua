@@ -1026,6 +1026,12 @@
 	}
 
 	api.register {
+		name = "wholearchive",
+		scope = "config",
+		kind = "list:string"
+	}
+
+	api.register {
 		name = "editorintegration",
 		scope = "workspace",
 		kind = "boolean",

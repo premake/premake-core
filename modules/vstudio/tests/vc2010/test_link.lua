@@ -884,6 +884,23 @@
 
 
 --
+-- Whole archive should be listed in additional dependencies.
+--
+
+	function suite.wholearchive()
+		wholearchive { "kernel32" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>/WHOLEARCHIVE:kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+	end
+
+
+--
 -- Test for the Profile flag.
 --
 

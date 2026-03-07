@@ -260,7 +260,7 @@
 
 		if part == "directory" then
 			table.foreachi(cfg.libdirs, function(dir)
-				table.insert(result, project.getrelative(cfg.project, dir))
+				table.insert(result, p.tools.getrelative(cfg.project, dir))
 			end)
 		end
 
@@ -294,7 +294,7 @@
 					if part == "object" then
 						item = prjcfg
 					else
-						item = project.getrelative(cfg.project, prjcfg.linktarget.fullpath)
+						item = p.tools.getrelative(cfg.project, prjcfg.linktarget.fullpath)
 					end
 
 				end
@@ -309,7 +309,7 @@
 					-- system library or assembly), make it project-relative
 					item = link
 					if item:find("/", nil, true) then
-						item = project.getrelative(cfg.project, item)
+						item = p.tools.getrelative(cfg.project, item)
 					end
 				end
 
@@ -343,6 +343,26 @@
 		return result
 	end
 
+--
+-- Return list of (non-decorated) wholearchive fullpath
+--
+
+	function config.getwholearchive(cfg)
+		local getfullpath = function(libraryname)
+			local prj = p.workspace.findproject(cfg.workspace, libraryname)
+			local prjcfg = prj and project.getconfig(prj, cfg.buildcfg, cfg.platform)
+			if prj and config.canLink(cfg, prjcfg) then -- is sibling project
+				return p.tools.getrelative(cfg.project, prjcfg.linktarget.fullpath)
+			else
+				if path.isabsolute(libraryname) then
+					return libraryname
+				else
+					return p.tools.getrelative(cfg.project, libraryname)
+				end
+			end
+		end
+		return table.translate(cfg.wholearchive, getfullpath)
+	end
 
 --
 -- Returns the list of sibling target directories

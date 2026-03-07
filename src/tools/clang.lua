@@ -292,6 +292,9 @@
 
 	function clang.getldflags(cfg)
 		local flags = config.mapFlags(cfg, clang.ldflags)
+
+		flags = table.join(flags, gcc.wholearchive(cfg))
+
 		return flags
 	end
 

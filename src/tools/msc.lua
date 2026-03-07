@@ -381,6 +381,10 @@
 		}
 	}
 
+	function msc.wholearchive(cfg)
+		return table.translate(config.getwholearchive(cfg), function(libraryname) return "/WHOLEARCHIVE:" .. libraryname end)
+	end
+
 	function msc.getldflags(cfg)
 		local map = iif(cfg.kind ~= p.STATICLIB, msc.linkerFlags, msc.librarianFlags)
 		local flags = config.mapFlags(cfg, map)
@@ -411,6 +415,8 @@
 				table.insert(flags, "/PROFILE")
 			end
 		end
+
+		flags = table.join(flags, msc.wholearchive(cfg))
 
 		return flags
 	end

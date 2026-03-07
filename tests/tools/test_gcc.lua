@@ -498,6 +498,13 @@
 		test.contains({ "-shared" }, gcc.getldflags(cfg))
 	end
 
+	function suite.ldflags_onWholeArchive()
+		system "windows"
+		wholearchive { "ole32" }
+		prepare()
+		test.contains({ "-Wl,--whole-archive", "-lole32", "-Wl,--no-whole-archive" }, gcc.getldflags(cfg))
+	end
+
 --
 -- Check Mac OS X variants on LDFLAGS.
 --
@@ -537,6 +544,13 @@
 		kind "SharedLib"
 		prepare()
 		test.contains({ "-dynamiclib" }, gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onMacOSX_onWholeArchive()
+		system "MacOSX"
+		wholearchive { "ole32" }
+		prepare()
+		test.contains({ "-force_load ole32" }, gcc.getldflags(cfg))
 	end
 
 --
