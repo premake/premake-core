@@ -316,49 +316,6 @@
 		test.isequal("test a b; test c d; test e f;", os.translateCommands("{COPY} a b; {COPY} c d; {COPY} e f;", "test"))
 	end
 
---
--- os.translateCommand() windows COPY tests
---
-
-	function suite.translateCommand_windowsCopyNoDst()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a > nul) ELSE (xcopy /Q /Y /I a > nul)', os.translateCommands('{COPY} a', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoDst_ExtraSpace()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a > nul) ELSE (xcopy /Q /Y /I a > nul)', os.translateCommands('{COPY} a ', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotes()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a b > nul) ELSE (xcopy /Q /Y /I a b > nul)', os.translateCommands('{COPY} a b', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotes_ExtraSpace()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a b > nul) ELSE (xcopy /Q /Y /I a b > nul)', os.translateCommands('{COPY} a b ', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyQuotes()
-		test.isequal('IF EXIST "a a"\\ (xcopy /Q /E /Y /I "a a" "b" > nul) ELSE (xcopy /Q /Y /I "a a" "b" > nul)', os.translateCommands('{COPY} "a a" "b"', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyQuotes_ExtraSpace()
-		test.isequal('IF EXIST "a a"\\ (xcopy /Q /E /Y /I "a a" "b" > nul) ELSE (xcopy /Q /Y /I "a a" "b" > nul)', os.translateCommands('{COPY} "a a" "b" ', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotesDst()
-		test.isequal('IF EXIST "a a"\\ (xcopy /Q /E /Y /I "a a" b > nul) ELSE (xcopy /Q /Y /I "a a" b > nul)', os.translateCommands('{COPY} "a a" b', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotesDst_ExtraSpace()
-		test.isequal('IF EXIST "a a"\\ (xcopy /Q /E /Y /I "a a" b > nul) ELSE (xcopy /Q /Y /I "a a" b > nul)', os.translateCommands('{COPY} "a a" b ', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotesSrc()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b"', "windows"))
-	end
-
-	function suite.translateCommand_windowsCopyNoQuotesSrc_ExtraSpace()
-		test.isequal('IF EXIST a\\ (xcopy /Q /E /Y /I a "b" > nul) ELSE (xcopy /Q /Y /I a "b" > nul)', os.translateCommands('{COPY} a "b" ', "windows"))
-	end
 
 --
 -- os.translateCommand() COPYFILEIFNEWER tests

@@ -228,10 +228,10 @@ endif
 		]]
 	end
 
-	function suite.excludedFromBuild_onExcludeFlag()
+	function suite.excludedFromBuild_onExcludeFromBuild()
 		files { "hello.cpp" }
 		filter { "Debug", "files:hello.cpp" }
-		flags { "ExcludeFromBuild" }
+		excludefrombuild "On"
 		prepare()
 		test.capture [[
 OBJECTS := \

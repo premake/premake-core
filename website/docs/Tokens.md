@@ -115,7 +115,11 @@ The available tokens, and their replacements:
 | {TOUCH}    | type nul >> {arg} && copy /b {arg}+,, {arg} | touch {args}          |
 
 :::caution
-The following tokens are deprecated:
+The following tokens are deprecated in 5.0.0-beta1:
+:::
+
+:::danger
+The following tokens are removed in 5.0.0:
 :::
 
 | Token      | DOS                                         | Posix           | Remarks                             |

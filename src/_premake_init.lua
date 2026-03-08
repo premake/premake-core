@@ -335,31 +335,6 @@
 	}
 
 	api.register {
-		name = "flags",
-		scope = "config",
-		kind  = "list:string",
-		allowed = {
-			"DebugEnvsDontMerge",
-			"DebugEnvsInherit",
-			"ExcludeFromBuild",
-			"Maps",
-			"MultiProcessorCompile",
-			"No64BitChecks",
-			"NoImportLib",         -- DEPRECATED
-			"NoIncrementalLink",
-			"NoManifest",
-			"NoMinimalRebuild",
-			"NoPCH",
-			"NoBufferSecurityCheck",
-			"OmitDefaultLibrary",
-			"RelativeLinks",
-			"ShadowedVariables",
-			"UndefinedIdentifiers",
-			"WPF",
-		},
-	}
-
-	api.register {
 		name = "floatingpoint",
 		scope = "config",
 		kind = "string",
@@ -1119,15 +1094,6 @@
 		}
 	}
 
-	--25 November 2024
-	api.deprecateValue("flags", "WPF", 'Use `dotnetsdk "WindowsDesktop"` instead.',
-	function(value)
-		dotnetsdk "WindowsDesktop"
-	end,
-	function(value)
-		dotnetsdk "Default"
-	end)
-
 	premake.filterFatalWarnings = function(tbl)
 		if type(tbl) == "table" then
 			return table.filter(tbl, function(warning)
@@ -1189,14 +1155,6 @@
 		kind = "string",
 	}
 
-	api.deprecateValue("flags", "Maps", "Use `mapfile` instead.",
-	function(value)
-		mapfile("On")
-	end,
-	function(value)
-		mapfile("Default")
-	end)
-
 	api.register {
 		name = "enable64bitchecks",
 		scope = "config",
@@ -1208,14 +1166,6 @@
 		}
 	}
 
-	api.deprecateValue("flags", "No64BitChecks", "Use `enable64bitchecks` instead.",
-	function(value)
-		enable64bitchecks("Off")
-	end,
-	function(value)
-		enable64bitchecks("Default")
-	end)
-
 	api.register {
 		name = "multiprocessorcompile",
 		scope = "config",
@@ -1226,14 +1176,6 @@
 			"Off"
 		}
 	}
-	
-	api.deprecateValue("flags", "MultiProcessorCompile", "Use `multiprocessorcompile` instead.",
-	function(value)
-		multiprocessorcompile("On")
-	end,
-	function(value)
-		multiprocessorcompile("Default")
-	end)
 
 	api.register {
 		name = "buffersecuritycheck",
@@ -1246,14 +1188,6 @@
 		}
 	}
 
-	api.deprecateValue("flags", "NoBufferSecurityCheck", "Use `buffersecuritycheck` instead.",
-	function(value)
-		buffersecuritycheck("Off")
-	end,
-	function(value)
-		buffersecuritycheck("Default")
-	end)
-
 	api.register {
 		name = "useimportlib",
 		scope = "config",
@@ -1264,14 +1198,6 @@
 			"Off"
 		}
 	}
-
-	api.deprecateValue("flags", "NoImportLib", "Use `useimportlib` instead.",
-	function(value)
-		useimportlib("Off")
-	end,
-	function(value)
-		useimportlib("Default")
-	end)
 
 	api.register {
 		name = "incrementallink",
@@ -1284,14 +1210,6 @@
 		}
 	}
 
-	api.deprecateValue("flags", "NoIncrementalLink", "Use `incrementallink` instead.",
-	function(value)
-		incrementallink("Off")
-	end,
-	function(value)
-		incrementallink("Default")
-	end)
-
 	api.register {
 		name = "manifest",
 		scope = "config",
@@ -1302,14 +1220,6 @@
 			"Off",
 		}
 	}
-
-	api.deprecateValue("flags", "NoManifest", "Use `manifest` instead.",
-	function(value)
-		manifest("Off")
-	end,
-	function(value)
-		manifest("Default")
-	end)
 
 	api.register {
 		name = "minimalrebuild",
@@ -1322,14 +1232,6 @@
 		}
 	}
 
-	api.deprecateValue("flags", "NoMinimalRebuild", "Use `minimalrebuild` instead.",
-	function(value)
-		minimalrebuild("Off")
-	end,
-	function(value)
-		minimalrebuild("Default")
-	end)
-
 	api.register {
 		name = "enablepch",
 		scope = "config",
@@ -1340,14 +1242,6 @@
 			"Off",
 		},
 	}
-
-	api.deprecateValue("flags", "NoPCH", "Use `enablepch` instead.",
-	function(value)
-		enablepch("Off")
-	end,
-	function(value)
-		enablepch("Default")
-	end)
 
 	api.register {
 		name = "nodefaultlib",
@@ -1360,14 +1254,6 @@
 		},
 	}
 
-	api.deprecateValue("flags", "OmitDefaultLibrary", "Use `nodefaultlib` instead.",
-	function(value)
-		nodefaultlib "On"
-	end,
-	function(value)
-		nodefaultlib "Default"
-	end)
-
 	api.register {
 		name = "userelativelinks",
 		scope = "config",
@@ -1378,14 +1264,6 @@
 			"Off",
 		},
 	}
-
-	api.deprecateValue("flags", "RelativeLinks", "Use `userelativelinks` instead.",
-	function(value)
-		userelativelinks("On")
-	end,
-	function(value)
-		userelativelinks("Default")
-	end)
 
 	api.register {
 		name = "wpf",
@@ -1398,14 +1276,6 @@
 		},
 	}
 
-	api.deprecateValue("flags", "WPF", "Use `wpf` instead.",
-	function(value)
-		wpf("On")
-	end,
-	function(value)
-		wpf("Default")
-	end)
-
 	api.register {
 		name = "debugenvsinherit",
 		scope = "config",
@@ -1416,14 +1286,6 @@
 			"Off",
 		},
 	}
-
-	api.deprecateValue("flags", "DebugEnvsInherit", "Use `debugenvsinherit` instead.",
-	function(value)
-		debugenvsinherit("On")
-	end,
-	function(value)
-		debugenvsinherit("Default")
-	end)
 
 	api.register {
 		name = "debugenvsmerge",
@@ -1436,39 +1298,11 @@
 		},
 	}
 
-	api.deprecateValue("flags", "DebugEnvsDontMerge", "Use `debugenvsmerge` instead.",
-	function(value)
-		debugenvsmerge("Off")
-	end,
-	function(value)
-		debugenvsmerge("Default")
-	end)
-
-	api.deprecateValue("flags", "ShadowedVariables", "Use `buildoptions` to add warnings instead.",
-	function(value)
-	end,
-	function(value)
-	end)
-
-	api.deprecateValue("flags", "UndefinedIdentifiers", "Use `buildoptions` to add warnings instead.",
-	function(value)
-	end,
-	function(value)
-	end)
-
 	api.register {
 		name = "excludefrombuild",
 		scope = "config",
 		kind = "boolean",
 	}
-
-	api.deprecateValue("flags", "ExcludeFromBuild", "Use `excludefrombuild` API instead.",
-	function(value)
-		excludefrombuild("On")
-	end,
-	function(value)
-		excludefrombuild("Off")
-	end)
 
 	api.register {
 		name = "useshortenums",
@@ -1480,10 +1314,6 @@
 			"Off"
 		}
 	}
-
-	api.deprecateField("flags", "Use dedicated APIs instead.",
-	function(value)
-	end)
 
 	api.register {
 		name = "dynamicdebugging",

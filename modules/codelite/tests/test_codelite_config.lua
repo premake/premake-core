@@ -53,7 +53,7 @@
 		symbols "On"
 		language "C++"
 		cppdialect "C++11"
-		flags { "NoBufferSecurityCheck" }
+		buffersecuritycheck "Off"
 		forceincludes { "forced_include1.h", "forced_include2.h" }
 		buildoptions { "-opt1", "-opt2" }
 		prepare()

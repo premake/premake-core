@@ -175,7 +175,7 @@
 --
 
 	function suite.remove_onExactValueMatch()
-		local f = field.get("flags")
+		local f = field.get("buildoptions")
 
 		local r, err = configset.store(cset, f, { "WPF", "MultiProcessorCompile", "NoPCH" })
 		test.isnil(err)
@@ -188,7 +188,7 @@
 
 
 	function suite.remove_onMultipleValues()
-		local f = field.get("flags")
+		local f = field.get("buildoptions")
 
 		local r, err = configset.store(cset, f, { "WPF", "MultiProcessorCompile", "NoPCH" })
 		test.isnil(err)

@@ -190,7 +190,7 @@
 	function suite.PBXBuildFile_ExcludedFromBuildByFlags()
 		files { "source.cpp", "excluded.cpp" }
 		filter { "files:excluded.cpp" }
-			flags { "ExcludeFromBuild" }
+			excludefrombuild "On"
 		filter {}
 		prepare()
 		xcode.PBXBuildFile(tr)
@@ -3296,7 +3296,7 @@
 
 	function suite.XCBuildConfigurationProject_OnNoPCH()
 		pchheader "MyProject_Prefix.pch"
-		flags { "NoPCH" }
+		enablepch "Off"
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[

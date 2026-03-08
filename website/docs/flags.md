@@ -42,7 +42,16 @@ Project and file configurations, though not all flags are yet supported for file
 
 ### Availability ###
 
+Premake 5.0.0-alpha1 or later.
+
+:::caution
 Flags are deprecated as of 5.0.0-beta8 in favor of dedicated APIs.
+:::
+
+:::danger
+Flags are removed as of 5.0.0 in favor of dedicated APIs.
+:::
+
 
 ### Examples ###
 

@@ -122,7 +122,7 @@
 	function suite.OnProject_SourceFiles_excluded_by_flag()
 		files { "a.cpp" }
 		filter {"files:a.cpp"}
-			flags "ExcludeFromBuild"
+			excludefrombuild "On"
 		filter {}
 		prepare()
 		codelite.project.files(prj)

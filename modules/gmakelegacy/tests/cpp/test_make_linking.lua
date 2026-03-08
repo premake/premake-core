@@ -155,7 +155,7 @@
 
 	function suite.links_onSiblingSharedLibRelativeLinks()
 		links "MyProject2"
-		flags { "RelativeLinks" }
+		userelativelinks "On"
 
 		test.createproject(wks)
 		kind "SharedLib"
@@ -172,7 +172,7 @@
 	function suite.links_onMacOSXSiblingSharedLib()
 		_TARGET_OS = "macosx"
 		links "MyProject2"
-		flags { "RelativeLinks" }
+		userelativelinks "On"
 
 		test.createproject(wks)
 		kind "SharedLib"

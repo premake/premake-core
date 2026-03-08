@@ -71,21 +71,3 @@
 		prepare()
 		test.excludes("/NODEFAULTLIB", msc.getldflags(cfg))
 	end
-
-
---
--- Test deprecated flag still works
---
-
-	function suite.deprecatedFlag_OmitDefaultLibrary_cflags()
-		flags { "OmitDefaultLibrary" }
-		prepare()
-		test.contains("/Zl", msc.getcflags(cfg))
-	end
-
-	function suite.deprecatedFlag_OmitDefaultLibrary_ldflags()
-		kind "ConsoleApp"
-		flags { "OmitDefaultLibrary" }
-		prepare()
-		test.contains("/NODEFAULTLIB", msc.getldflags(cfg))
-	end

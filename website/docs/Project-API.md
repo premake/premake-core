@@ -35,7 +35,6 @@
 | [compilebuildoutputs](compilebuildoutputs.md)             |  |
 | [configfile](configfile.md)                               |  |
 | [configmap](configmap.md)                                 |  |
-| [configuration](configuration.md)                         |  |
 | [configurations](configurations.md)                       |  |
 | [copylocal](copylocal.md)                                 |  |
 | [cppdialect](cppdialect.md)                               |  |

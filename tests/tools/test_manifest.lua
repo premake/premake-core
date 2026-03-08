@@ -46,14 +46,3 @@
 		prepare()
 		test.excludes("/MANIFEST:NO", msc.getldflags(cfg))
 	end
-
-
---
--- Test deprecated NoManifest flag compatibility.
---
-
-	function suite.deprecatedFlag_NoManifest()
-		flags "NoManifest"
-		prepare()
-		test.contains("/MANIFEST:NO", msc.getldflags(cfg))
-	end

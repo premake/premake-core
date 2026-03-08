@@ -46,14 +46,3 @@
 		-- /Gm- should not be present when On
 		test.excludes("/Gm-", result)
 	end
-
---
--- Test deprecated flag
---
-
-	function suite.deprecatedFlag_NoMinimalRebuild()
-		flags "NoMinimalRebuild"
-		prepare()
-		local result = msc.getcflags(cfg)
-		test.contains("/Gm-", result)
-	end

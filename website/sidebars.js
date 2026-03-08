@@ -93,7 +93,6 @@ module.exports = {
 						'compilebuildoutputs',
 						'configfile',
 						'configmap',
-						'configuration',
 						'configurations',
 						'conformancemode',
 						'consumewinrtextension',

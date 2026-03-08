@@ -61,16 +61,3 @@
 		<UseWpf>true</UseWpf>
 		]]
 	end
-
-
---
--- Check deprecated flag
---
-
-	function suite.deprecatedFlag_WPF()
-		flags { "WPF" }
-		prepare()
-		test.capture [[
-		<UseWpf>true</UseWpf>
-		]]
-	end

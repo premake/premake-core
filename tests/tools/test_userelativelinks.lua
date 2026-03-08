@@ -45,14 +45,3 @@
 		prepare()
 		test.isequal("On", cfg.userelativelinks)
 	end
-
-
---
--- Test deprecated flag still works
---
-
-	function suite.deprecatedFlag_RelativeLinks()
-		flags { "RelativeLinks" }
-		prepare()
-		test.isequal("On", cfg.userelativelinks)
-	end

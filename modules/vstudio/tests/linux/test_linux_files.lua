@@ -64,22 +64,7 @@ local vc2010 = p.vstudio.vc2010
 -- Test multiprocessor compilation.
 --
 
-	function suite.multiProcessorCompile_On_Flags()
-		flags { "MultiProcessorCompile" }
-		prepareOutputProperties()
-		test.capture [[
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
-	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
-	<TargetName>MyProject</TargetName>
-	<TargetExt>
-	</TargetExt>
-	<MultiProcNumber>8</MultiProcNumber>
-</PropertyGroup>
-		]]
-	end
-
-	function suite.multiProcessorCompile_On_API()
+	function suite.multiProcessorCompile()
 		multiprocessorcompile "On"
 		prepareOutputProperties()
 		test.capture [[

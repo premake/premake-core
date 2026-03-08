@@ -606,18 +606,12 @@ end
 --
 
 	function suite.cflags_onNoMinimalRebuild()
-		flags "NoMinimalRebuild"
+		minimalrebuild "Off"
 		prepare()
 		test.contains("/Gm-", msc.getcflags(cfg))
 	end
 
-	function suite.cflags_onMultiProcessorCompile_Flag()
-		flags "MultiProcessorCompile"
-		prepare()
-		test.contains("/MP", msc.getcflags(cfg))
-	end
-
-	function suite.cflags_onMultiProcessorCompile_API()
+	function suite.cflags_onMultiProcessorCompile()
 		multiprocessorcompile "On"
 		prepare()
 		test.contains("/MP", msc.getcflags(cfg))
@@ -701,19 +695,19 @@ end
 --
 
 	function suite.ldflags_onOmitDefaultLibrary()
-		flags "OmitDefaultLibrary"
+		nodefaultlib "On"
 		prepare()
 		test.contains("/NODEFAULTLIB", msc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onNoIncrementalLink()
-		flags "NoIncrementalLink"
+		incrementallink "Off"
 		prepare()
 		test.contains("/INCREMENTAL:NO", msc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onNoManifest()
-		flags "NoManifest"
+		manifest "Off"
 		prepare()
 		test.contains("/MANIFEST:NO", msc.getldflags(cfg))
 	end

@@ -85,20 +85,3 @@
 		-- Default should respect optimization
 		test.isfalse(p.config.canLinkIncremental(cfg))
 	end
-
-
---
--- Test deprecated flag still works
---
-
-	function suite.deprecatedFlag_NoIncrementalLink()
-		flags "NoIncrementalLink"
-		prepare()
-		test.contains("/INCREMENTAL:NO", msc.getldflags(cfg))
-	end
-
-	function suite.deprecatedFlag_canLinkIncremental()
-		flags "NoIncrementalLink"
-		prepare()
-		test.isfalse(p.config.canLinkIncremental(cfg))
-	end
