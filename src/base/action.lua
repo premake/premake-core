@@ -232,6 +232,9 @@
 		if self.onProject or self.onproject then
 			return true
 		end
+		if self.configurable then
+			return true
+		end
 		return false
 	end
 

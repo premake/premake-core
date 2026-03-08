@@ -807,7 +807,14 @@
 		includedirs { "../include", "src/include" }
 		externalincludedirs { "test/include" }
 		prepare()
-		test.isequal({ '-I../include', '-Isrc/include', '-isystem test/include' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({
+			{ flag = '-I', value = '../include' },
+			{ flag = '-I', value = 'src/include' },
+			{ flag = '-isystem', value = 'test/include' },
+		}, gcc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({ '-I../include', '-Isrc/include', '-isystemtest/include' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 
@@ -831,14 +838,26 @@
 		includedirs { "include files" }
 		externalincludedirs { "test include" }
 		prepare()
-		test.isequal({ '-I"include files"', '-isystem "test include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({
+			{ flag = '-I', value = 'include files' },
+			{ flag = '-isystem', value = 'test include' },
+		}, gcc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({ '-I"include files"', '-isystem"test include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 	function suite.includeDirs_onEnvVars()
 		includedirs { "$(IntDir)/includes" }
 		externalincludedirs { "$(BinDir)/include" }
 		prepare()
-		test.isequal({ '-I"$(IntDir)/includes"', '-isystem "$(BinDir)/include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({
+			{ flag = '-I', value = '$(IntDir)/includes' },
+			{ flag = '-isystem', value = '$(BinDir)/include' },
+		}, gcc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({ '-I"$(IntDir)/includes"', '-isystem"$(BinDir)/include"' }, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 --
@@ -848,7 +867,12 @@
 	function suite.includeDirs_includeDirAfter()
 		includedirsafter { "after/path" }
 		prepare()
-		test.isequal({ '-idirafter after/path'}, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({
+			{ flag = '-idirafter', value = 'after/path' },
+		}, gcc.getstructuredincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
+
+		test.isequal({ '-idirafterafter/path'}, gcc.getincludedirs(cfg, cfg.includedirs, cfg.externalincludedirs, cfg.frameworkdirs, cfg.includedirsafter))
 	end
 
 
@@ -951,6 +975,7 @@
 		system "iOS"
 		frameworkdirs { "/Library/Frameworks" }
 		prepare()
+
 		test.contains("-F/Library/Frameworks", gcc.getincludedirs(cfg, {}, {}, cfg.frameworkdirs))
 	end
 

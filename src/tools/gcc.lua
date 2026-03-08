@@ -355,32 +355,86 @@
 --    An array of symbols with the appropriate flag decorations.
 --
 
-	function gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
+	function gcc.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, includedirsafter)
 		local result = {}
 		for _, dir in ipairs(dirs) do
 			dir = p.tools.getrelative(cfg.project, dir)
-			table.insert(result, '-I' .. p.quoted(dir))
+			table.insert(result, { flag = '-I', value = dir })
 		end
 
 		if table.contains(os.getSystemTags(cfg.system), "darwin") then
 			for _, dir in ipairs(frameworkdirs or {}) do
 				dir = p.tools.getrelative(cfg.project, dir)
-				table.insert(result, '-F' .. p.quoted(dir))
+				table.insert(result, { flag = '-F', value = dir })
 			end
 		end
 
 		for _, dir in ipairs(extdirs or {}) do
 			dir = p.tools.getrelative(cfg.project, dir)
-			table.insert(result, '-isystem ' .. p.quoted(dir))
+			table.insert(result, { flag = '-isystem', value = dir })
 		end
 
 		for _, dir in ipairs(includedirsafter or {}) do
 			dir = p.tools.getrelative(cfg.project, dir)
-			table.insert(result, '-idirafter ' .. p.quoted(dir))
+			table.insert(result, { flag = '-idirafter', value = dir })
 		end
 
 		return result
 	end
+
+
+	function gcc.getincludedirs(cfg, dirs, extdirs, frameworkdirs, incdirsafter)
+		local result = gcc.getstructuredincludedirs(cfg, dirs, extdirs, frameworkdirs, incdirsafter)
+		return table.translate(result, function(kv)
+			return kv.flag .. p.quoted(kv.value)
+		end)
+	end
+
+
+	function gcc.getstructuredimplicitincludedirs(cfg, toolname, language)
+		local cmd = nil
+
+		if language == "C" then
+			cmd = toolname .. " -v -E -x c " .. iif(os.istarget("windows"), "nul", "/dev/null")
+		elseif language == "C++" then
+			cmd = toolname .. " -v -E -x c++ " .. iif(os.istarget("windows"), "nul", "/dev/null")
+		else
+			p.warn("Unsupported language '%s' for implicit include directories", language)
+			return {}
+		end
+
+		local stdout, stderr = os.outputof(cmd, "both")
+		if not stdout or not stderr then
+			p.warn("Failed to execute command '%s' to get implicit include directories", cmd)
+			return {}
+		end
+
+		-- Lines between "#include <...> search starts here:" and "End of search list." are the implicit include directories
+		local result = {}
+		local inSearchList = false
+		for line in stdout:gmatch("[^\r\n]+") do
+			if line:find("#include <...> search starts here:") then
+				inSearchList = true
+			elseif line:find("End of search list.") then
+				inSearchList = false
+			elseif inSearchList then
+				local trimmed = line:match("^%s*(.-)%s*$") -- trim whitespace
+				
+				-- If on windows, replace backslashes with forward slashes to normalize the paths
+				if os.istarget("windows") then
+					trimmed = trimmed:gsub("\\", "/")
+				end
+
+				table.insert(result, {
+					flag = '-isystem',
+					value = trimmed
+				})
+			end
+		end
+
+		return result
+	end
+
 
 	-- relative pch file path if any
 	function gcc.getpch(cfg)

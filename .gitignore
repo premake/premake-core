@@ -42,6 +42,8 @@ Makefile
 *.ninja_deps
 *.ninja_log
 .vscode/
+*compile_commands.json
+.cache/
 
 *.bbprojectsettings
 Scratchpad.txt

@@ -100,7 +100,7 @@
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-isystem sysdir;-isystem sysdir2" C_Options="-isystem sysdir;-isystem sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-isystemsysdir;-isystemsysdir2" C_Options="-isystemsysdir;-isystemsysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
       </Compiler>
 		]]
 	end
@@ -110,7 +110,7 @@
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-idirafter sysdir;-idirafter sysdir2" C_Options="-idirafter sysdir;-idirafter sysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-idiraftersysdir;-idiraftersysdir2" C_Options="-idiraftersysdir;-idiraftersysdir2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
       </Compiler>
 		]]
 	end
