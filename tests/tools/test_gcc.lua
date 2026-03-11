@@ -920,6 +920,30 @@
 		test.excludes("-fopenmp", gcc.getcflags(cfg))
 	end
 
+	function suite.cxxflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", gcc.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", gcc.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", gcc.getldflags(cfg))
+	end
+
+	function suite.ldflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", gcc.getldflags(cfg))
+	end
+
 --
 -- Check handling of system search paths.
 --

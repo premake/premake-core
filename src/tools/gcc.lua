@@ -595,6 +595,9 @@
 		profile = {
 			On = "-pg",
 		},
+		openmp = {
+			On = "-fopenmp"
+		},
 		sanitize = {
 			Address = "-fsanitize=address",
 			Thread = "-fsanitize=thread",
