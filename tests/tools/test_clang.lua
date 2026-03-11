@@ -162,6 +162,30 @@ end
 		test.excludes("-fopenmp", clang.getcflags(cfg))
 	end
 
+	function suite.cxxflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", clang.getcxxflags(cfg))
+	end
+
+	function suite.cxxflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", clang.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onOpenmpOn()
+		openmp "On"
+		prepare()
+		test.contains("-fopenmp", clang.getldflags(cfg))
+	end
+
+	function suite.ldflags_onOpenmpOff()
+		openmp "Off"
+		prepare()
+		test.excludes("-fopenmp", clang.getldflags(cfg))
+	end
+
 --
 -- Check handling of linker flag.
 --
