@@ -7,7 +7,6 @@
 	local p = premake
 	local suite = test.declare("vs2010_link")
 	local vc2010 = p.vstudio.vc2010
-	local project = p.project
 
 
 --
@@ -877,6 +876,26 @@
 <Link>
 	<SubSystem>Windows</SubSystem>
 	<AdditionalDependencies>kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+	end
+
+
+--
+-- Whole archive should be listed in additional dependencies.
+--
+
+	function suite.wholearchive()
+		links { "MyProject2" }
+		wholearchive { "kernel32", "MyProject2" }
+		project "MyProject2"
+		kind "StaticLib"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>/WHOLEARCHIVE:kernel32;/WHOLEARCHIVE:bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
 	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
 </Link>
 		]]

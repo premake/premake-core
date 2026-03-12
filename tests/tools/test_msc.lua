@@ -745,6 +745,17 @@ end
 		test.missing("/PROFILE", msc.getldflags(cfg))
 	end
 
+	function suite.ldflags_wholearchive()
+		system "windows"
+		links { "MyProject2" }
+		wholearchive { "kernel32", "MyProject2" }
+		project "MyProject2"
+		system "windows"
+		kind "StaticLib"
+		prepare()
+		test.isequal({"/NOLOGO", "/DLL", "/WHOLEARCHIVE:kernel32", "/WHOLEARCHIVE:bin/Debug/MyProject2.lib"}, msc.getldflags(cfg))
+	end
+
 --
 -- Check handling of CLR settings.
 --

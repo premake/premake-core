@@ -288,15 +288,7 @@ function m.configurationVariables(cfg)
 	
 	local links = toolset.getlinks(cfg)
 	if #links > 0 then
-		local wksLinks = {}
-		for _, link in ipairs(links) do
-			if not path.isabsolute(link) and link:match('[/\\]') then
-				local absPath = path.join(cfg.project.location, link)
-				link = path.getrelative(cfg.workspace.location, absPath)
-			end
-			table.insert(wksLinks, link)
-		end
-		_p("links_%s = %s", ninja.key(cfg), table.concat(wksLinks, " "))
+		_p("links_%s = %s", ninja.key(cfg), table.concat(links, " "))
 	end
 	
 	_p("objdir_%s = %s", ninja.key(cfg), project.getrelative(cfg.project, cfg.objdir))
@@ -1131,13 +1123,7 @@ function m.linkTarget(cfg)
 	local deps = config.getlinks(cfg, "siblings", "fullpath")
 	local implicitDeps = ""
 	if #deps > 0 then
-		local wksRelDeps = {}
-		for _, dep in ipairs(deps) do
-			local absPath = path.join(cfg.project.location, dep)
-			local relDep = path.getrelative(cfg.workspace.location, absPath)
-			table.insert(wksRelDeps, relDep)
-		end
-		implicitDeps = " | " .. table.concat(wksRelDeps, " ")
+		implicitDeps = " | " .. table.concat(deps, " ")
 	end
 	
 	-- Use pre-computed dependency targets if available, otherwise compute them inline
