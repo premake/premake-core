@@ -384,6 +384,7 @@ module.exports = {
 						'os/os.execute',
 						'os/os.executef',
 						'os/os.findheader',
+						'os/os.findsubdirheader',
 						'os/os.findlib',
 						'os/os.get',
 						'os/os.getcwd',
