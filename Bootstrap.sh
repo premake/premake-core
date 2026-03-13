@@ -17,8 +17,13 @@ PREMAKE_OPTS_ARG=""
 SYSTEM=$(uname -s)
 
 # If the user has not explicitly selected an architecture, select one automatically
-if [ -z "$PLATFORM" ] && [ "$SYSTEM" = "Darwin" ] && [ "$(uname -m)" = "arm64" ]; then
-  PLATFORM="ARM64"
+if [ -z "$PLATFORM" ] && [ "$SYSTEM" = "Darwin" ]; then
+  OSX_ARCH=$(uname -m)
+  if [ "$OSX_ARCH" = "arm64" ]; then
+    PLATFORM="ARM64"
+  elif [ "$OSX_ARCH" = "x86_64" ]; then
+    PLATFORM="x64"
+  fi
 fi
 
 if [ -n "$PLATFORM" ]; then
