@@ -591,9 +591,6 @@
 			chdir = function(v)
 				return "cd " .. path.normalize(v)
 			end,
-			copy = function(v)
-				return "cp -rf " .. path.normalize(v)
-			end,
 			copyfile = function(v)
 				return "cp -f " .. path.normalize(v)
 			end,
@@ -659,17 +656,6 @@
 		cmd = {
 			chdir = function(v)
 				return "chdir " .. path.translate(path.normalize(v))
-			end,
-			copy = function(v)
-				v = path.translate(path.normalize(v))
-
-				-- Detect if there's multiple parts to the input, if there is grab the first part else grab the whole thing
-				local src = string.match(v, '^".-"') or string.match(v, '^.- ') or v
-
-				-- Strip the trailing space from the second condition so that we don't have a space between src and '\\NUL'
-				src = string.match(src, '^.*%S')
-
-				return "IF EXIST " .. src .. "\\ (xcopy /Q /E /Y /I " .. v .. " > nul) ELSE (xcopy /Q /Y /I " .. v .. " > nul)"
 			end,
 			copyfile = function(v)
 				v = path.translate(path.normalize(v))

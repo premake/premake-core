@@ -187,7 +187,7 @@ build bin/Debug/%s: link_gcc obj/Debug/main.o
 
 
 --
--- Test that shared library on Windows without NoImportLib flag works correctly with GCC
+-- Test that shared library on Windows with default importlib setting works correctly with GCC
 --
 	function suite.sharedLibWindowsGCC()
 		local wks = test.createWorkspace()
@@ -217,7 +217,7 @@ build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp bin/Debug/MyProject2.l
 
 
 --
--- Test that shared library on Windows without NoImportLib flag works correctly with MSVC
+-- Test that shared library on Windows with default importlib setting works correctly with MSVC
 --
 	function suite.sharedLibWindowsMSVC()
 		local wks = test.createWorkspace()
@@ -247,39 +247,11 @@ build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp bin/Debug/MyProject2.l
 
 
 --
--- Test that shared library on Windows with NoImportLib flag works correctly with GCC
+-- Test that shared library on Windows with importlib off works correctly with GCC
 --
 
-	function suite.sharedLibWindowsGCCNoImportLib_ViaFlag()
-		local wks = test.createWorkspace()
-		configurations { "Debug" }
-		toolset "gcc"
-		_OS = "windows"
 
-		local prj = test.createProject(wks)
-		kind "SharedLib"
-		language "C++"
-		files { "main.cpp" }
-		flags { "NoImportLib" }
-		toolset "gcc"
-
-		local cfg = test.getconfig(prj, "Debug")
-
-		-- Set up object files list (normally done by buildFiles)
-		cfg._objectFiles = { "obj/Debug/main.o" }
-
-		-- Call linkTarget and check output
-		ninja.cpp.linkTarget(cfg)
-
-		test.capture [[
-build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp: link_gcc obj/Debug/main.o
-  ldflags = $ldflags_MyProject2_Debug
-		]]
-		
-	end
-
-
-	function suite.sharedLibWindowsGCCUseImportLibOff_ViaAPI()
+	function suite.sharedLibWindowsGCCUseImportLibOff()
 		local wks = test.createWorkspace()
 		configurations { "Debug" }
 		toolset "gcc"
@@ -308,39 +280,11 @@ build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp: link_gcc obj/Debug/ma
 
 
 --
--- Test that shared library on Windows with NoImportLib flag works correctly with MSVC
+-- Test that shared library on Windows with importlib off works correctly with MSVC
 --
 
-	function suite.sharedLibWindowsMSVCNoImportLib_ViaFlag()
-		local wks = test.createWorkspace()
-		configurations { "Debug" }
-		toolset "msc"
-		_OS = "windows"
 
-		local prj = test.createProject(wks)
-		kind "SharedLib"
-		language "C++"
-		files { "main.cpp" }
-		flags { "NoImportLib" }
-		toolset "msc"
-
-		local cfg = test.getconfig(prj, "Debug")
-
-		-- Set up object files list (normally done by buildFiles)
-		cfg._objectFiles = { "obj/Debug/main.obj" }
-
-		-- Call linkTarget and check output
-		ninja.cpp.linkTarget(cfg)
-
-		test.capture [[
-build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp: link_msc obj/Debug/main.obj
-  ldflags = $ldflags_MyProject2_Debug
-		]]
-
-	end
-
-
-	function suite.sharedLibWindowsMSVCUseImportLibOff_ViaAPI()
+	function suite.sharedLibWindowsMSVCUseImportLibOff()
 		local wks = test.createWorkspace()
 		configurations { "Debug" }
 		toolset "msc"

@@ -45,14 +45,3 @@
 		prepare()
 		test.isequal("On", cfg.enablepch)
 	end
-
-
---
--- Test deprecated flag still works
---
-
-	function suite.deprecatedFlag_NoPCH()
-		flags { "NoPCH" }
-		prepare()
-		test.isequal("Off", cfg.enablepch)
-	end

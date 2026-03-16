@@ -158,7 +158,7 @@ LDDEPS += build/bin/Debug/libMyProject2.so
 
     function suite.links_onSiblingSharedLibRelativeLinks()
         links "MyProject2"
-        flags { "RelativeLinks" }
+        userelativelinks "On"
 
         test.createproject(wks)
         kind "SharedLib"
@@ -175,7 +175,7 @@ LDDEPS += build/bin/Debug/libMyProject2.so
     function suite.links_onMacOSXSiblingSharedLib()
     	_OS = "macosx"
         links "MyProject2"
-		flags { "RelativeLinks" }
+		userelativelinks "On"
 
         test.createproject(wks)
         kind "SharedLib"

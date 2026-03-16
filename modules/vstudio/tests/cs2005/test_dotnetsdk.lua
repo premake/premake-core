@@ -110,9 +110,9 @@
 		]]
 	end
 
-	function suite.testWPFFlag()
+	function suite.testWPF()
 		prepare()
-		flags { "WPF" }
+		wpf "On"
 		setConfig()
 
 		test.capture [[

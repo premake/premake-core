@@ -160,11 +160,11 @@
 
 
 --
--- Verify handling of the NoIncrementalLink flag.
+-- Verify handling of incrementallink API.
 --
 
 	function suite.onNoIncrementalLink()
-		flags { "NoIncrementalLink" }
+		incrementallink "Off"
 		prepare()
 		test.capture [[
 <Tool
@@ -231,21 +231,6 @@
 -- If the NoImplicitLinking flag is set, sibling projects should
 -- then be added to the list.
 --
-
-	function suite.includesSiblings_onNoImplicitLink_ViaFlag()
-		flags { "NoImplicitLink" }
-		links { "MyProject2" }
-		project ("MyProject2")
-		kind "StaticLib"
-		language "C++"
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCLinkerTool"
-	LinkLibraryDependencies="false"
-	AdditionalDependencies="bin\Debug\MyProject2.lib"
-		]]
-	end
 
 	function suite.includesSiblings_onNoImplicitLink_ViaAPI()
 		implicitlink "Off"

@@ -125,20 +125,6 @@
 -- Test the handling of the NoImplicitLink flag.
 --
 
-	function suite.linkDependencies_onNoImplicitLink_ViaFlag()
-		flags "NoImplicitLink"
-		prepare()
-		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
-</Link>
-<ProjectReference>
-	<LinkLibraryDependencies>false</LinkLibraryDependencies>
-</ProjectReference>
-		]]
-	end
-
 	function suite.linkDependencies_onNoImplicitLink_ViaAPI()
 		implicitlink "Off"
 		prepare()
@@ -540,24 +526,6 @@
 -- If the NoImplicitLink flag is set, all dependencies should be listed explicitly.
 --
 
-	function suite.includeSiblings_onNoImplicitLink_ViaFlag()
-		flags { "NoImplicitLink" }
-		links { "MyProject2" }
-		test.createproject(wks)
-		kind "SharedLib"
-		prepare()
-		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<AdditionalDependencies>bin\Debug\MyProject2.lib;%(AdditionalDependencies)</AdditionalDependencies>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
-</Link>
-<ProjectReference>
-	<LinkLibraryDependencies>false</LinkLibraryDependencies>
-</ProjectReference>
-		]]
-	end
-
 	function suite.includeSiblings_onNoImplicitLink_ViaAPI()
 		implicitlink "Off"
 		links { "MyProject2" }
@@ -766,19 +734,7 @@
 -- Test generating .map files.
 --
 
-	function suite.generateMapFile_onMapsFlag()
-		flags { "Maps" }
-		prepare()
-		test.capture [[
-<Link>
-	<SubSystem>Windows</SubSystem>
-	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
-	<GenerateMapFile>true</GenerateMapFile>
-</Link>
-		]]
-	end
-
-	function suite.generateMapFile_onMapFileAPI()
+	function suite.generateMapFile()
 		mapfile "On"
 		prepare()
 		test.capture [[

@@ -68,7 +68,7 @@
 
 	function suite.noPrecompiledHeaders_onNoPCH()
 		pchheader "afxwin.h"
-		flags "NoPCH"
+		enablepch "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -402,7 +402,7 @@
 --
 
 	function suite.minimalRebuild_onNoMinimalRebuild()
-		flags "NoMinimalRebuild"
+		minimalrebuild "Off"
 		prepare()
 		test.capture [[
 <ClCompile>
@@ -713,19 +713,7 @@
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onNoBufferSecurityCheck_ViaFlag()
-		flags "NoBufferSecurityCheck"
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<BufferSecurityCheck>false</BufferSecurityCheck>
-		]]
-	end
-
-	function suite.runtimeTypeInfo_onNoBufferSecurityCheck_ViaAPI()
+	function suite.runtimeTypeInfo_onNoBufferSecurityCheck()
 		buffersecuritycheck "Off"
 		prepare()
 		test.capture [[
@@ -737,7 +725,7 @@
 		]]
 	end
 
-	function suite.runtimeTypeInfo_onBufferSecurityCheck_ViaAPI()
+	function suite.runtimeTypeInfo_onBufferSecurityCheck()
 		buffersecuritycheck "On"
 		prepare()
 		test.capture [[
@@ -879,22 +867,6 @@
 
 
 --
--- Check handling of the NoRuntimeChecks flag.
---
-
-	function suite.onNoRuntimeChecks()
-		flags { "NoRuntimeChecks" }
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<BasicRuntimeChecks>Default</BasicRuntimeChecks>
-		]]
-	end
-
-
---
 -- Check handling of the runtimechecks API with "Off" value.
 --
 
@@ -946,20 +918,7 @@
 -- Check handling of the EnableMultiProcessorCompile flag.
 --
 
-	function suite.onMultiProcessorCompile_Flag()
-		flags { "MultiProcessorCompile" }
-		prepare()
-		test.capture [[
-<ClCompile>
-	<PrecompiledHeader>NotUsing</PrecompiledHeader>
-	<WarningLevel>Level3</WarningLevel>
-	<Optimization>Disabled</Optimization>
-	<MinimalRebuild>false</MinimalRebuild>
-	<MultiProcessorCompilation>true</MultiProcessorCompilation>
-		]]
-	end
-
-	function suite.onMultiProcessorCompile_API()
+	function suite.onMultiProcessorCompile()
 		multiprocessorcompile "On"
 		prepare()
 		test.capture [[
@@ -1025,11 +984,11 @@
 
 
 --
--- Check handling of the OmitDefaultLibrary flag.
+-- Check handling of the nodefaultlib API.
 --
 
 	function suite.onOmitDefaultLibrary()
-		flags { "OmitDefaultLibrary" }
+		nodefaultlib "On"
 		prepare()
 		test.capture [[
 <ClCompile>

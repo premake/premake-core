@@ -161,16 +161,6 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
 		]]
 	end
 
-	function suite.localDebuggerEnv_onDeprecatedDebugEnvsInherit()
-		debugenvs { "key=value" }
-		flags { "DebugEnvsInherit" }
-		prepare()
-		test.capture [[
-<LocalDebuggerEnvironment>key=value
-$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
-		]]
-	end
-
 --
 -- Check the handling of debugenvsmerge.
 --
@@ -185,17 +175,7 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
 		]]
 	end
 
-	function suite.localDebuggerEnv_onDeprecatedDebugEnvsDontMerge()
-		debugenvs { "key=value" }
-		flags { "DebugEnvsDontMerge" }
-		prepare()
-		test.capture [[
-<LocalDebuggerEnvironment>key=value</LocalDebuggerEnvironment>
-<LocalDebuggerMergeEnvironment>false</LocalDebuggerMergeEnvironment>
-		]]
-	end
-
-	function suite.localDebuggerEnv_onDebugEnvsBothFlags()
+	function suite.localDebuggerEnv_onDebugEnvsBoth()
 		debugenvs { "key=value" }
 		debugenvsinherit "On"
 		debugenvsmerge "Off"

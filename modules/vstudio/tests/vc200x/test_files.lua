@@ -358,10 +358,10 @@
 -- A file flagged with NoPCH should be marked as such.
 --
 
-	function suite.useNoPCHFlag()
+	function suite.useNoPCH()
 		files { "test.cpp" }
 		filter { "files:test.cpp" }
-			flags { "NoPCH" }
+			enablepch "Off"
 		prepare()
 		test.capture [[
 <Files>
@@ -404,37 +404,7 @@
 		]]
 	end
 
-	function suite.excludedFromBuild_onExcludeFlag()
-		files { "hello.cpp" }
-		filter "files:hello.cpp"
-		flags { "ExcludeFromBuild" }
-		prepare()
-		test.capture [[
-<Files>
-	<File
-		RelativePath="hello.cpp"
-		>
-		<FileConfiguration
-			Name="Debug|Win32"
-			ExcludedFromBuild="true"
-			>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-		</FileConfiguration>
-		<FileConfiguration
-			Name="Release|Win32"
-			ExcludedFromBuild="true"
-			>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-		</FileConfiguration>
-	</File>
-		]]
-	end
-
-	function suite.excludedFromBuild_onExcludeAPI()
+	function suite.excludedFromBuild()
 		files { "hello.cpp" }
 		filter "files:hello.cpp"
 		excludefrombuild "On"
@@ -490,36 +460,6 @@
 			>
 		]]
 	end
-
-	function suite.excludedFromBuild_onCustomBuildRule_excludeFlag()
-		files { "hello.cg" }
-		filter "files:**.cg"
-			buildcommands { "cgc $(InputFile)" }
-			buildoutputs { "$(InputName).obj" }
-			flags { "ExcludeFromBuild" }
-		prepare()
-		test.capture [[
-<Files>
-	<File
-		RelativePath="hello.cg"
-		>
-		<FileConfiguration
-			Name="Debug|Win32"
-			ExcludedFromBuild="true"
-			>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine="cgc $(InputFile)"
-				Outputs="$(InputName).obj"
-			/>
-		</FileConfiguration>
-		<FileConfiguration
-			Name="Release|Win32"
-			ExcludedFromBuild="true"
-			>
-		]]
-	end
-
 	
 	function suite.excludedFromBuild_onCustomBuildRule_excludeAPI()
 		files { "hello.cg" }

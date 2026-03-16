@@ -268,7 +268,7 @@
 
 	function suite.projectTypeGuids_onWPF()
 		p.action.set("vs2010")
-		flags { "WPF" }
+		wpf "On"
 		prepare()
 		test.capture [[
 	<PropertyGroup>

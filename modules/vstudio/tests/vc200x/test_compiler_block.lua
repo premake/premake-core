@@ -226,7 +226,7 @@
 --
 
 	function suite.minimalRebuildFlagsSet_onMinimalRebuildAndSymbols()
-		flags { "NoMinimalRebuild" }
+		minimalrebuild "Off"
 		symbols "On"
 		prepare()
 		test.capture [[
@@ -247,25 +247,7 @@
 -- Check that the "no buffer security check" flag is applied correctly.
 --
 
-	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck_ViaFlag()
-		flags { "NoBufferSecurityCheck" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-	BufferSecurityCheck="false"
-	RuntimeLibrary="2"
-	EnableFunctionLevelLinking="true"
-	UsePrecompiledHeader="0"
-	WarningLevel="3"
-	DebugInformationFormat="0"
-/>
-		]]
-	end
-
-	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck_ViaAPI()
+	function suite.noBufferSecurityFlagSet_onBufferSecurityCheck()
 		buffersecuritycheck "Off"
 		prepare()
 		test.capture [[
@@ -283,7 +265,7 @@
 		]]
 	end
 
-	function suite.bufferSecurityFlagSet_onBufferSecurityCheck_ViaAPI()
+	function suite.bufferSecurityFlagSet_onBufferSecurityCheck()
 		buffersecuritycheck "On"
 		prepare()
 		test.capture [[
@@ -473,25 +455,6 @@
 		]]
 	end
 
-	function suite._64BitPortabilityOff_onVS2005_Flags()
-		p.action.set("vs2005")
-		flags { "No64BitChecks" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-	RuntimeLibrary="2"
-	EnableFunctionLevelLinking="true"
-	UsePrecompiledHeader="0"
-	WarningLevel="3"
-	Detect64BitPortabilityProblems="false"
-	DebugInformationFormat="0"
-/>
-		]]
-	end
-
 	function suite._64BitPortabilityOff_onVS2005_API()
 		p.action.set("vs2005")
 		enable64bitchecks "Off"
@@ -591,23 +554,6 @@
 
 
 --
--- Verify handling of the NoRuntimeChecks flag.
---
-
-	function suite.onNoRuntimeChecks()
-		flags { "NoRuntimeChecks" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	Optimization="0"
-	BasicRuntimeChecks="0"
-	RuntimeLibrary="2"
-		]]
-	end
-
-
---
 -- Check handling of the runtimechecks API with "Off" value.
 --
 
@@ -676,22 +622,10 @@
 
 
 --
--- Check handling of the EnableMultiProcessorCompile flag.
+-- Check handling of multiprocessorcompile.
 --
 
-	function suite.onMultiProcessorCompile_Flag()
-		flags { "MultiProcessorCompile" }
-		prepare()
-		test.capture [[
-<Tool
-	Name="VCCLCompilerTool"
-	AdditionalOptions="/MP"
-	Optimization="0"
-	BasicRuntimeChecks="3"
-		]]
-	end
-
-	function suite.onMultiProcessorCompile_API()
+	function suite.onMultiProcessorCompile()
 		multiprocessorcompile "On"
 		prepare()
 		test.capture [[
@@ -844,7 +778,7 @@
 --
 
 	function suite.onOmitDefaultLibrary()
-		flags { "OmitDefaultLibrary" }
+		nodefaultlib "On"
 		prepare()
 		test.capture [[
 <Tool

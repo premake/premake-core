@@ -38,6 +38,5 @@ project "MyProject"
 ### See Also ###
 
 * [group](group.md)
-* [configuration](configuration.md)
 * [location](location.md)
 * [filename](filename.md)

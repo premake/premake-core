@@ -52,13 +52,13 @@
 
 
 --
--- If a header is set, but the NoPCH flag is also set, then
+-- If a header is set, but EnablePCH is set to Off, then
 -- nothing should be output.
 --
 
-	function suite.noConfig_onHeaderAndNoPCHFlag()
+	function suite.noConfig_onHeaderAndEnablePCHOff()
 		pchheader "include/myproject.h"
-		flags "NoPCH"
+		enablepch "Off"
 
 		files { 'a.cpp', 'b.cpp' }
 
@@ -204,7 +204,7 @@ $(OBJDIR)/b.o: b.cpp
 		files { 'a.cpp', 'b.cpp' }
 
 		filter { "files:a.cpp" }
-			flags "NoPCH"
+			enablepch "Off"
 
 		prepareFlags()
 		test.capture [[

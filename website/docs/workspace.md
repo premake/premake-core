@@ -32,6 +32,6 @@ workspace "MyWorkspace"
 
 * [project](project.md)
 * [group](group.md)
-* [configuration](configuration.md)
+* [filter](filter.md)
 * [location](location.md)
 * [filename](filename.md)

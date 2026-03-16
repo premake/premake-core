@@ -81,13 +81,13 @@
 
 
 --
--- Check PCH path returns nil when NoPCH flag is set.
+-- Check PCH path returns nil when EnablePCH flag is set to Off.
 --
 
-	function suite.getPchPath_onNoPCHFlag()
+	function suite.getPchPath_onEnablePCHOff()
 		toolset "gcc"
 		pchheader "pch.h"
-		flags { "NoPCH" }
+		enablepch "Off"
 		
 		local cfg = prepare()
 		local pchPath = cpp.getPchPath(cfg)
@@ -179,14 +179,14 @@ build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
 
 
 --
--- Check that PCH build respects NoPCH flag.
+-- Check that PCH build respects EnablePCH off.
 --
 
-	function suite.buildPch_onNoPCHFlag()
+	function suite.buildPch_onEnablePCHOff()
 		toolset "gcc"
 		language "C++"
 		pchheader "pch.h"
-		flags { "NoPCH" }
+		enablepch "Off"
 		files { "pch.h", "main.cpp" }
 		
 		local cfg = prepare()
@@ -254,7 +254,7 @@ build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
 
 
 --
--- Verify that per-file NoPCH flag is respected - file without PCH.
+-- Verify that per-file EnablePCH Off is respected - file without PCH.
 --
 
 	function suite.perFileNoPCH_noInclude()
@@ -264,7 +264,7 @@ build obj/Debug/pch.h.gch | obj/Debug/pch.h.gch.d: pch_gcc pch.h
 		files { "pch.h", "nopch.cpp" }
 		
 		filter "files:nopch.cpp"
-			flags "NoPCH"
+			enablepch "Off"
 		
 		local cfg = prepare()
 		local tr = p.project.getsourcetree(cfg.project)
