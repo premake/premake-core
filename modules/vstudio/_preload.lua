@@ -38,6 +38,12 @@
 	}
 
 	p.api.register {
+		name = "publicmoduledirectories",
+		scope = "config",
+		kind = "list:string",
+	}
+
+	p.api.register {
 		name = "assemblydebug",
 		scope = "config",
 		kind  = "boolean"
