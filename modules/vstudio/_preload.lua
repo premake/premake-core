@@ -41,6 +41,7 @@
 		name = "publicmoduledirectories",
 		scope = "config",
 		kind = "list:string",
+		tokens = true,
 	}
 
 	p.api.register {

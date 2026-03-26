@@ -2102,8 +2102,8 @@
 
 	function m.publicModuleDirectories(cfg)
 		if _ACTION >= "vs2019" then
-			if cfg.publicmoduledirectories ~= nil then
-				m.element("PublicModuleDirectories", nil,"%s;$(PublicModuleDirectories)", table.concat(cfg.publicModuleDirectories, ";"))
+			if cfg.publicmoduledirectories ~= nil and #cfg.publicmoduledirectories > 0 then
+				m.element("PublicModuleDirectories", nil,"%s;$(PublicModuleDirectories)", table.concat(cfg.publicmoduledirectories, ";"))
 			end
 		end
 	end
