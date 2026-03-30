@@ -63,7 +63,7 @@ rule cc_msc
 		cpp.ccrule(cfg)
 		test.capture [[
 rule cc_gcc
-  command = gcc $cflags -c $in -o $out
+  command = gcc $cflags -c $in -o $out -MD -MF $out.d
   deps = gcc
   depfile = $out.d
   description = Compiling C source $in
@@ -83,7 +83,7 @@ rule cc_gcc
 		cpp.ccrule(cfg)
 		test.capture [[
 rule cc_clang
-  command = clang $cflags -c $in -o $out
+  command = clang $cflags -c $in -o $out -MD -MF $out.d
   deps = gcc
   depfile = $out.d
   description = Compiling C source $in
@@ -126,7 +126,7 @@ rule cxx_msc
 		cpp.cxxrule(cfg)
 		test.capture [[
 rule cxx_gcc
-  command = g++ $cxxflags -c $in -o $out
+  command = g++ $cxxflags -c $in -o $out -MD -MF $out.d
   deps = gcc
   depfile = $out.d
   description = Compiling C++ source $in
@@ -146,7 +146,7 @@ rule cxx_gcc
 		cpp.cxxrule(cfg)
 		test.capture [[
 rule cxx_clang
-  command = clang++ $cxxflags -c $in -o $out
+  command = clang++ $cxxflags -c $in -o $out -MD -MF $out.d
   deps = gcc
   depfile = $out.d
   description = Compiling C++ source $in

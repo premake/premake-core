@@ -67,7 +67,7 @@ function m.ccrule(cfg, toolset)
 		_p("  command = %s $cflags /nologo /showIncludes -c /Tc$in /Fo$out", ccname)
 		_p("  deps = msvc")
 	else
-		_p("  command = %s $cflags -c $in -o $out", ccname)
+		_p("  command = %s $cflags -c $in -o $out -MD -MF $out.d", ccname)
 		_p("  deps = gcc")
 		_p("  depfile = $out.d")
 	end
@@ -86,7 +86,7 @@ function m.cxxrule(cfg, toolset)
 		_p("  command = %s $cxxflags /nologo /showIncludes -c /Tp$in /Fo$out", cxxname)
 		_p("  deps = msvc")
 	else
-		_p("  command = %s $cxxflags -c $in -o $out", cxxname)
+		_p("  command = %s $cxxflags -c $in -o $out -MD -MF $out.d", cxxname)
 		_p("  deps = gcc")
 		_p("  depfile = $out.d")
 	end
@@ -819,23 +819,6 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 			end
 		end
 		
-		if not prebuildTarget and (not cfg._customRuleOutputs or #cfg._customRuleOutputs == 0) then
-			-- Use pre-computed dependency targets if available, otherwise compute them inline
-			local depTargets = cfg._dependsOnTargets
-			if not depTargets and cfg.dependson and #cfg.dependson > 0 then
-				depTargets = gatherDepTargets(cfg)
-			end
-			
-			if depTargets then
-				if implicitDeps == "" then
-					implicitDeps = " |"
-				end
-				for _, depTarget in ipairs(depTargets) do
-					implicitDeps = implicitDeps .. " " .. depTarget
-				end
-			end
-		end
-		
 		_p("build %s: %s_%s %s%s", objFile, rule, cfg.toolset, relPath, implicitDeps)
 		
 		if usePch then
@@ -1195,6 +1178,10 @@ function m.linkTarget(cfg)
 		if #links > 0 then
 			_p("  links = $links_%s", ninja.key(cfg))
 		end
+	end
+
+	if cfg.kind == p.SHAREDLIB then
+		_p("  restat = 1")
 	end
 	
 	if hasPostBuild then
