@@ -1273,6 +1273,20 @@ end
 		test.isequal({ }, gcc.getcflags(cfg))
 	end
 
+	function suite.cxxflags_onCpp2c()
+		cppdialect "C++2c"
+		prepare()
+		test.contains({ "-std=c++2c" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCpp26()
+		cppdialect "C++26"
+		prepare()
+		test.contains({ "-std=c++26" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
 	function suite.cxxflags_onCppLatest()
 		cppdialect "C++latest"
 		prepare()
@@ -1333,6 +1347,20 @@ end
 		cppdialect "gnu++2b"
 		prepare()
 		test.contains({ "-std=gnu++2b" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu2c()
+		cppdialect "gnu++2c"
+		prepare()
+		test.contains({ "-std=gnu++2c" }, gcc.getcxxflags(cfg))
+		test.isequal({ }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onCppGnu26()
+		cppdialect "gnu++26"
+		prepare()
+		test.contains({ "-std=gnu++26" }, gcc.getcxxflags(cfg))
 		test.isequal({ }, gcc.getcflags(cfg))
 	end
 

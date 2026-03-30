@@ -259,6 +259,8 @@
 			["C++20"] = "-std=c++20",
 			["C++2b"] = "-std=c++2b",
 			["C++23"] = "-std=c++23",
+			["C++2c"] = "-std=c++2c",
+			["C++26"] = "-std=c++26",
 			["gnu++98"] = "-std=gnu++98",
 			["gnu++0x"] = "-std=gnu++0x",
 			["gnu++11"] = "-std=gnu++11",
@@ -270,6 +272,8 @@
 			["gnu++20"] = "-std=gnu++20",
 			["gnu++2b"] = "-std=gnu++2b",
 			["gnu++23"] = "-std=gnu++23",
+			["gnu++2c"] = "-std=gnu++2c",
+			["gnu++26"] = "-std=gnu++26",
 			["C++latest"] = "-std=c++23",
 		},
 		buffersecuritycheck = {

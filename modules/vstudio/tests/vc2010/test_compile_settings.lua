@@ -1464,6 +1464,38 @@
 		]]
 	end
 
+	function suite.onLanguage_Cpp26_VS2022()
+		p.action.set("vs2022")
+
+		cppdialect 'C++26'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+</ClCompile>
+		]]
+	end
+
+	function suite.onLanguage_Cpp26_VS2026()
+		p.action.set("vs2026")
+
+		cppdialect 'C++26'
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<LanguageStandard>stdcpplatest</LanguageStandard>
+	<ExternalWarningLevel>Level3</ExternalWarningLevel>
+</ClCompile>
+		]]
+	end
+
 	function suite.onLanguage_C11_VS2019()
 		p.action.set("vs2019")
 
