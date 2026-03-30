@@ -23,6 +23,8 @@ cppdialect ("value")
 | C++20     | ISO C++20 Standard |
 | C++2b     | ISO C++23 Draft |
 | C++23     | ISO C++23 Standard |
+| C++2c     | ISO C++26 Draft |
+| C++26     | ISO C++26 Standard |
 | gnu++98   | GNU dialect of ISO C++98 Standard |
 | gnu++0x   | GNU dialect of ISO C++11 Draft |
 | gnu++11   | GNU dialect of ISO C++11 Standard |
@@ -34,6 +36,8 @@ cppdialect ("value")
 | gnu++20   | GNU dialect of ISO C++20 Standard |
 | gnu++2b   | GNU dialect of ISO C++23 Draft |
 | gnu++23   | GNU dialect of ISO C++23 Standard |
+| gnu++2c   | GNU dialect of ISO C++23 Draft |
+| gnu++26   | GNU dialect of ISO C++26 Standard |
 
 ### Applies To ###
 
