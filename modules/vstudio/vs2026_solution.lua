@@ -241,8 +241,10 @@ function m.projects(wks)
 
 			-- Exclude from build if either config doesn't exist or manually specified
 			for _, context in ipairs(sortedSolutionContexts) do
-				p.push('<Build Solution="%s|%s" Project="false" />', context.solCfg.buildcfg, context.solCfg.platform)
-				p.pop()
+				if context.excludefrombuild then
+					p.push('<Build Solution="%s|%s" Project="false" />', context.solCfg.buildcfg, context.solCfg.platform)
+					p.pop()
+				end
 			end
 
 			-- Get a list of sorted local configs
