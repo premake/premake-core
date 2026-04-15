@@ -28,7 +28,6 @@ m.elements.project = function(prj)
 	return {
 		m.projectDependencies,
 		m.projectConfigMap,
-		m.projectExclusion,
 	}
 end
 
@@ -36,6 +35,24 @@ function sln2026.generate(wks)
 	p.utf8()
 	p.callArray(m.elements.solution, wks)
 	p.pop('</Solution>')
+end
+
+function sln2026.allowDeployment(prj, cfg)
+
+	local prjCfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+
+	if not prjCfg.excludefrombuild then
+
+		if prjCfg.system == p.UWP and (prjCfg.kind == p.WINDOWEDAPP or prjCfg.kind == p.CONSOLEAPP) then
+			return true
+		elseif cfg.system == p.ANDROID and prjCfg.kind == p.PACKAGING then
+			return true
+		end
+
+	end
+
+	return false
+
 end
 
 function m.solution(wks)
@@ -148,6 +165,13 @@ function m.projects(wks)
 	end
 	table.sort(sortedKeys)
 
+	-- Sort the solution configurations
+	local sortedSolCfgs = {}
+	for solcfg in p.workspace.eachconfig(wks) do
+		table.insert(sortedSolCfgs, solcfg);
+	end
+	table.sort(sortedSolCfgs, function(a, b) return a.name:lower() < b.name:lower() end)
+
 	for _, groupName in ipairs(sortedKeys) do
 		local projects = groups[groupName]
 		table.sort(projects, function(a, b) return a.name:lower() < b.name:lower() end)
@@ -156,10 +180,84 @@ function m.projects(wks)
 			p.push('<Folder Name="%s">', groupName)
 		end
 		for _, prj in ipairs(projects) do
+
+			local typeID = vstudio.tool(prj)
+
+			local projectPathStrings = {}
+
+			-- Open the XML tag, add common properties
+			table.insert(projectPathStrings, '<')
+			table.insert(projectPathStrings, string.format('Project Path="%s" Id="%s"', m.buildRelativePath(prj), prj.uuid))
+
+			-- Mark startup project
 			if startupProject and startupProject.name == prj.name then
-				p.push('<Project Path="%s" Id="%s" DefaultStartup="true">', m.buildRelativePath(prj), prj.uuid)
-			else
-				p.push('<Project Path="%s" Id="%s">', m.buildRelativePath(prj), prj.uuid)
+				table.insert(projectPathStrings, ' DefaultStartup="true"')
+			end
+
+			-- Mark projects with uncommon types
+			if prj.kind == p.PACKAGING then
+				table.insert(projectPathStrings, string.format(' Type="%s"', typeID))
+			end
+
+			-- Close the XML tag
+			table.insert(projectPathStrings, '>')
+
+			-- Concatenate all the parts of the project description
+			p.push(table.concat(projectPathStrings))
+
+			-- Get a list of contexts, a set of precomputed properties we can reference later
+			local sortedSolutionContexts = {}
+
+			-- Precompute the project configs and architectures
+			for _, solcfg in ipairs(sortedSolCfgs) do
+
+				local context = {}
+				context.solCfg = solcfg
+				context.prjCfg = project.getconfig(prj, solcfg.buildcfg, solcfg.platform)
+				context.excluded = context.prjCfg == nil or context.prjCfg.excludefrombuild
+
+				if context.prjCfg == nil then
+					context.prjCfg = project.findClosestMatch(prj, solcfg.buildcfg, solcfg.platform)
+				end
+
+				context.arch = vstudio.archFromConfig(context.prjCfg, true)
+				context.buildType = context.solCfg.buildcfg.." "..context.prjCfg.platform
+
+				table.insert(sortedSolutionContexts, context)
+			
+			end
+
+			-- BuildType
+			for _, context in ipairs(sortedSolutionContexts) do
+				p.push('<BuildType Solution="%s|%s" Project="%s" />', context.solCfg.buildcfg, context.solCfg.platform, context.buildType)
+				p.pop()
+			end
+
+			-- Map Platform to Arch
+			for _, context in ipairs(sortedSolutionContexts) do
+				p.push('<Platform Solution="%s|%s" Project="%s" />', context.solCfg.buildcfg, context.solCfg.platform, context.arch)
+				p.pop()
+			end
+
+			-- Exclude from build if either config doesn't exist or manually specified
+			for _, context in ipairs(sortedSolutionContexts) do
+				p.push('<Build Solution="%s|%s" Project="false" />', context.solCfg.buildcfg, context.solCfg.platform)
+				p.pop()
+			end
+
+			-- Get a list of sorted local configs
+			local sortedConfigs = {}
+			for cfg in project.eachconfig(prj) do
+				table.insert(sortedConfigs, cfg)
+			end
+			table.sort(sortedConfigs, function(a, b) return a.name:lower() < b.name:lower() end)
+
+			-- Deployment. Only mark available solutions as deployable
+			for _, cfg in ipairs(sortedConfigs) do
+				if sln2026.allowDeployment(prj, cfg) then
+					p.push('<Deploy Solution="%s|%s" />', cfg.buildcfg, cfg.platform)
+					p.pop()
+				end
 			end
 
 			p.callArray(m.elements.project, prj)
@@ -184,7 +282,9 @@ end
 
 
 function m.projectConfigMap(prj)
+
 	local cfgmap = prj.configmap or {}
+
 	for mi = 1, #cfgmap do
 		-- Key may be a string (buildcfg only) or a table (buildcfg + platform)
 		-- Sort the keys to ensure stable output
@@ -288,22 +388,6 @@ function m.projectConfigMap(prj)
 			if buildcfg ~= nil then
 				output(cfg, buildcfg, "BuildType")
 			end
-		end
-	end
-end
-
-
-function m.projectExclusion(prj)
-	-- For each configuration + platform in the solution, find the matching project configuration
-	-- If the project configuration is missing or excluded, add an exclusion entry
-	local wks = prj.workspace
-
-	for solcfg in p.workspace.eachconfig(wks) do
-		local prjcfg = project.getconfig(prj, solcfg.buildcfg, solcfg.platform)
-		if prjcfg == nil or prjcfg.excludefrombuild then
-			local platform = vstudio.solutionPlatform(solcfg)
-			p.push('<Build Solution="%s|%s" Project="false" />', solcfg.buildcfg, platform or "*")
-			p.pop()
 		end
 	end
 end
