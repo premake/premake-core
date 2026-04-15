@@ -241,7 +241,7 @@ function m.projects(wks)
 
 			-- Exclude from build if either config doesn't exist or manually specified
 			for _, context in ipairs(sortedSolutionContexts) do
-				if context.excludefrombuild then
+				if context.excluded then
 					p.push('<Build Solution="%s|%s" Project="false" />', context.solCfg.buildcfg, context.solCfg.platform)
 					p.pop()
 				end
