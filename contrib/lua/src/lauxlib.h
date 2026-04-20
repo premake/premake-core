@@ -106,6 +106,8 @@ LUALIB_API void (luaL_traceback) (lua_State *L, lua_State *L1,
 LUALIB_API void (luaL_requiref) (lua_State *L, const char *modname,
                                  lua_CFunction openf, int glb);
 
+LUALIB_API const char *(luaL_getenv) (lua_State *L, const char *name);
+
 /*
 ** ===============================================================
 ** some useful macros
@@ -257,6 +259,32 @@ LUALIB_API void (luaL_openlib) (lua_State *L, const char *libname,
 #endif
 /* }============================================================ */
 
+
+/*
+** {============================================================
+** Lua wide-string support (Windows only)
+** =============================================================
+*/
+#if defined(LUA_USE_WINDOWS)
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+LUALIB_API const wchar_t *(luaL_convertlstringi) (lua_State *L, int idx, size_t *len);
+/* converts a wide string at `idx` to a UTF-8 Lua string */
+LUALIB_API const char *(luaL_convertlwstring) (lua_State *L, const wchar_t *ws, size_t wlen, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+LUALIB_API const wchar_t *(luaL_convertlstring) (lua_State *L, const char *s, size_t nlen, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+LUALIB_API const wchar_t *(luaL_checkconvertlstring) (lua_State *L, int idx, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+LUALIB_API const wchar_t *(luaL_optconvertlstring) (lua_State *L, int idx, const wchar_t *def, size_t *len);
+
+LUALIB_API const char *(luaL_convertwstring) (lua_State *l, const wchar_t *ws, size_t *len);
+
+#define luaL_convertstringi(L,i) (luaL_convertlstringi(L, (i), NULL))
+#define luaL_convertstring(L,s) (luaL_convertlstring(L, (s), (s ? strlen(s) : 0), NULL))
+#define luaL_checkconvertstring(L,i) (luaL_checkconvertlstring(L, (i), NULL))
+#define luaL_optconvertstring(L,i,d) (luaL_optconvertlstring(L, (i), (d), NULL))
+#endif
+/* }============================================================ */
 
 
 #endif

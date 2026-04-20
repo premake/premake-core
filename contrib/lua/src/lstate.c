@@ -344,4 +344,3 @@ LUA_API void lua_close (lua_State *L) {
   close_state(L);
 }
 
-

@@ -20,7 +20,6 @@
 #include "lualib.h"
 
 
-
 #if !defined(LUA_PROMPT)
 #define LUA_PROMPT		"> "
 #define LUA_PROMPT2		">> "
@@ -534,16 +533,20 @@ static int runargs (lua_State *L, char **argv, int n) {
 
 static int handle_luainit (lua_State *L) {
   const char *name = "=" LUA_INITVARVERSION;
-  const char *init = getenv(name + 1);
+  const char *init = luaL_getenv(L, name + 1);
+  int r, idx;
   if (init == NULL) {
     name = "=" LUA_INIT_VAR;
-    init = getenv(name + 1);  /* try alternative name */
+    init = luaL_getenv(L, name + 1);  /* try alternative name */
   }
   if (init == NULL) return LUA_OK;
-  else if (init[0] == '@')
-    return dofile(L, init+1);
+  idx = lua_gettop(L);
+  if (init[0] == '@')
+    r = dofile(L, init+1);
   else
-    return dostring(L, init, name);
+    r = dostring(L, init, name);
+  lua_remove(L, idx);  /* remove the env var */
+  return r;
 }
 
 
