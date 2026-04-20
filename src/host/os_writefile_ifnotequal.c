@@ -10,7 +10,7 @@
 #include <string.h>
 #include "premake.h"
 
-static int compare_file(const char* content, size_t length, const char* dst)
+static int compare_file(lua_State *L, const char* content, size_t length, const char* dst)
 {
 	FILE* file;
 	size_t size;
@@ -18,15 +18,17 @@ static int compare_file(const char* content, size_t length, const char* dst)
 	char buffer[4096];
 	size_t num;
 
-	#if PLATFORM_WINDOWS
-	wchar_t wide_path[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+#if PLATFORM_WINDOWS
+	const wchar_t *wpath = luaL_convertstring(L, dst);
+	if (!wpath)
 		return FALSE;
 
-	file = _wfopen(wide_path, L"rb");
-	#else
+	file = _wfopen(wpath, L"rb");
+	lua_pop(L, 1);
+#else
+	(void)(L);
 	file = fopen(dst, "rb");
-	#endif
+#endif
 
 	if (file == NULL)
 	{
@@ -78,29 +80,34 @@ int os_writefile_ifnotequal(lua_State* L)
 	const char* dst     = luaL_checkstring(L, 2);
 
 	// if destination exist, and they are the same, no need to copy.
-	if (do_isfile(L, dst) && compare_file(content, length, dst))
+	if (do_isfile(L, dst) && compare_file(L, content, length, dst))
 	{
 		lua_pushinteger(L, 0);
 		return 1;
 	}
 
 	#if PLATFORM_WINDOWS
-	wchar_t wide_path[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_path, PATH_MAX) == 0)
+	const wchar_t *wpath = luaL_convertstring(L, dst);
+	if (!wpath)
 		return FALSE;
 
-	file = _wfopen(wide_path, L"wb");
+	file = _wfopen(wpath, L"wb");
+	lua_pop(L, 1);
 	#else
+	(void)(L);
 	file = fopen(dst, "wb");
 	#endif
 
 	if (file != NULL)
 	{
-		fwrite(content, 1, length, file);
+		int error = fwrite(content, length, 1, file) != 1;
 		fclose(file);
 
-		lua_pushinteger(L, 1);
-		return 1;
+		if (!error)
+		{
+			lua_pushinteger(L, error ? -1 : 0);
+			return 1;
+		}
 	}
 
 	lua_pushinteger(L, -1);

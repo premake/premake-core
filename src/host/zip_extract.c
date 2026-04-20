@@ -72,13 +72,25 @@ static int is_directory(zip_uint8_t opsys, zip_uint32_t attrib)
 }
 
 
-static int write_link(const char* filename, const char* bytes, size_t count)
+static int write_link(lua_State *L, const char* filename, const char* bytes, size_t count)
 {
 #if PLATFORM_POSIX
+	(void)(L);
 	(void)(count);
 	return symlink(bytes, filename);
 #else
+#if PLATFORM_WINDOWS
+	const wchar_t *wfilename = luaL_convertstring(L, filename);
+	if (!wfilename)
+	{
+		printf("Unable to encode filename: %s\n", filename);
+		return -1;
+	}
+	FILE* fp = _wfopen(wfilename, L"wb");
+	lua_pop(L, 1);
+#else
 	FILE* fp = fopen(filename, "wb");
+#endif
 	if (fp == NULL)
 	{
 		printf("Error creating file:\n  %s\n", filename);
@@ -90,7 +102,7 @@ static int write_link(const char* filename, const char* bytes, size_t count)
 #endif
 }
 
-extern int do_mkdir(const char* path);
+extern int do_mkdir(lua_State *L, const char* path);
 
 static void parse_path(const char* full_name, char* filename, char* directory)
 {
@@ -121,7 +133,7 @@ static void parse_path(const char* full_name, char* filename, char* directory)
 }
 
 
-static int extract(const char* src, const char* destination)
+static int extract(lua_State *L, const char* src, const char* destination)
 {
 	int err = 0;
 	FILE *fp = NULL;
@@ -159,14 +171,14 @@ static int extract(const char* src, const char* destination)
 		do_translate(appended_full_name, '/');
 
 		parse_path(appended_full_name, filename, directory);
-		do_mkdir(directory);
+		do_mkdir(L, directory);
 
 		// is this a symbolic link?
 		if (is_symlink(opsys, attrib))
 		{
 			bytes_read = zip_fread(zf, buffer, sizeof(buffer));
 			buffer[bytes_read] = '\0';
-			if (write_link(appended_full_name, buffer, (size_t)bytes_read) != 0)
+			if (write_link(L, appended_full_name, buffer, (size_t)bytes_read) != 0)
 			{
 				printf("  Failed to create symbolic link [%s->%s]\n", appended_full_name, buffer);
 				return -1;
@@ -179,7 +191,19 @@ static int extract(const char* src, const char* destination)
 				// mark as read-write, so we can overwrite the file if it already exists.
 				chmod(appended_full_name, 0666);
 
+#if PLATFORM_WINDOWS
+				{
+					const wchar_t *wpath = luaL_convertlstring(L, appended_full_name, strlen(appended_full_name), NULL);
+					if (!wpath)
+					{
+						printf("  Unable to encode appended full name: %s\n", appended_full_name);
+						return -1;
+					}
+					fp = _wfopen(wpath, L"wb");
+				}
+#else
 				fp = fopen(appended_full_name, "wb");
+#endif
 				if (fp == NULL)
 				{
 					printf("Error creating file:\n  %s\n", appended_full_name);
@@ -225,7 +249,7 @@ int zip_extract(lua_State* L)
 	const char* src = luaL_checkstring(L, 1);
 	const char* dst = luaL_checkstring(L, 2);
 
-	int res = extract(src, dst);
+	int res = extract(L, src, dst);
 
 	lua_pushnumber(L, (lua_Number)res);
 	return 1;

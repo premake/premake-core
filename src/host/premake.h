@@ -91,8 +91,10 @@
 #if PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <tchar.h>
 #else
 #include <unistd.h>
+#define TCHAR char
 #endif
 
 /* not all platforms define this */
@@ -230,12 +232,12 @@ extern void  registerModules(lua_State* L);
 
 int premake_init(lua_State* L);
 int premake_pcall(lua_State* L, int nargs, int nresults);
-int premake_execute(lua_State* L, int argc, const char** argv, const char* script);
+int premake_execute(lua_State* L, int argc, const TCHAR** argv, const char* script);
 
 int premake_load_embedded_script(lua_State* L, const char* filename);
 const buildin_mapping* premake_find_embedded_script(const char* filename);
 
-int premake_locate_executable(lua_State* L, const char* argv0);
+int premake_locate_executable(lua_State* L, const TCHAR* argv0);
 int premake_locate_file(lua_State* L, const char* filename, int searchMask);
 void premake_handle_lua_error(lua_State* L);
 
@@ -248,3 +250,26 @@ int premake_searcher_Lua(lua_State *L);
 #define premake_luaL_loadfile(L,f)	premake_luaL_loadfilex(L,f,NULL)
 #define premake_luaL_dofile(L, fn) \
 	(premake_luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))
+
+#ifndef LUA_STATICLIB
+// Functions added to our version of Lua in contrib/lua; need to reimplement when building against system Lua
+// Copied from lauxlib.c in contrib/lua
+const char *(luaL_getenv) (lua_State *L, const char *name);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+const wchar_t *(luaL_convertlstringi) (lua_State *L, int idx, size_t *len);
+/* converts a wide string at `idx` to a UTF-8 Lua string */
+const char *(luaL_convertlwstring) (lua_State *L, const wchar_t *ws, size_t wlen, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+const wchar_t *(luaL_convertlstring) (lua_State *L, const char *s, size_t nlen, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+const wchar_t *(luaL_checkconvertlstring) (lua_State *L, int idx, size_t *len);
+/* converts a UTF-8 Lua string at `idx` to a wide string */
+const wchar_t *(luaL_optconvertlstring) (lua_State *L, int idx, const wchar_t *def, size_t *len);
+
+const char *(luaL_convertwstring) (lua_State *l, const wchar_t *ws, size_t *len);
+
+#define luaL_convertstringi(L,i) (luaL_convertlstringi(L, (i), NULL))
+#define luaL_convertstring(L,s) (luaL_convertlstring(L, (s), (s ? strlen(s) : 0), NULL))
+#define luaL_checkconvertstring(L,i) (luaL_checkconvertlstring(L, (i), NULL))
+#define luaL_optconvertstring(L,i,d) (luaL_optconvertlstring(L, (i), (d), NULL))
+#endif

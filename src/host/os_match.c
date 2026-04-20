@@ -8,6 +8,7 @@
 #include <string.h>
 #include "premake.h"
 
+#define METATABLE_NAME "premake.matchinfo"
 
 #if PLATFORM_WINDOWS
 
@@ -18,60 +19,60 @@ typedef struct struct_MatchInfo
 	WIN32_FIND_DATAW entry;
 } MatchInfo;
 
-int os_matchstart(lua_State* L)
+static int gc_MatchInfo(lua_State *L)
 {
-	const char* mask = luaL_checkstring(L, 1);
-	MatchInfo* m;
-
-	wchar_t wide_mask[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, mask, -1, wide_mask, PATH_MAX) == 0)
-	{
-		lua_pushstring(L, "unable to encode mask");
-		return lua_error(L);
-	}
-
-	m = (MatchInfo*)malloc(sizeof(MatchInfo));
-
-	m->handle = FindFirstFileW(wide_mask, &m->entry);
-	m->is_first = 1;
-	lua_pushlightuserdata(L, m);
-	return 1;
-}
-
-int os_matchdone(lua_State* L)
-{
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle != INVALID_HANDLE_VALUE)
+	/* can be called twice per object */
+	MatchInfo *m = (MatchInfo *)lua_touserdata(L, 1);
+	if (m->handle != INVALID_HANDLE_VALUE) {
 		FindClose(m->handle);
-	free(m);
+		m->handle = INVALID_HANDLE_VALUE;
+	}
 	return 0;
 }
 
-int os_matchname(lua_State* L)
+int os_matchstart(lua_State *L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-
-	char filename[PATH_MAX];
-	if (WideCharToMultiByte(CP_UTF8, 0, m->entry.cFileName, -1, filename, PATH_MAX, NULL, NULL) == 0)
+	const wchar_t *mask = luaL_checkconvertstring(L, 1);
+	MatchInfo *m = (MatchInfo *)lua_newuserdata(L, sizeof(MatchInfo));
+	memset(m, 0, sizeof(MatchInfo));
+	m->handle = INVALID_HANDLE_VALUE;
+	m->is_first = 1;
+	if (luaL_newmetatable(L, METATABLE_NAME)) /* creating metatable? */
 	{
-		lua_pushstring(L, "unable to decode filename");
-		return lua_error(L);
+		lua_pushcfunction(L, gc_MatchInfo);
+		lua_setfield(L, -2, "__gc"); /* metatable.__gc = gc_MatchInfo */
 	}
+	lua_setmetatable(L, -2);
 
-	lua_pushstring(L, filename);
+	m->handle = FindFirstFileW(mask, &m->entry);
 	return 1;
 }
 
-int os_matchisfile(lua_State* L)
+int os_matchdone(lua_State *L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
+	/* memory will be GC'd, but still close it here */
+	luaL_checkudata(L, 1, METATABLE_NAME);
+	gc_MatchInfo(L);
+	return 0;
+}
+
+int os_matchname(lua_State *L)
+{
+	MatchInfo *m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
+
+	return luaL_convertwstring(L, m->entry.cFileName, NULL) != NULL;
+}
+
+int os_matchisfile(lua_State *L)
+{
+	MatchInfo *m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
 	lua_pushboolean(L, (m->entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0);
 	return 1;
 }
 
-int os_matchnext(lua_State* L)
+int os_matchnext(lua_State *L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
+	MatchInfo *m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
 	if (m->handle == INVALID_HANDLE_VALUE) {
 		return 0;
 	}
@@ -80,11 +81,8 @@ int os_matchnext(lua_State* L)
 	{
 		if (m->is_first)
 			m->is_first = 0;
-		else
-		{
-			if (!FindNextFileW(m->handle, &m->entry))
-				return 0;
-		}
+		else if (!FindNextFileW(m->handle, &m->entry))
+			return 0;
 
 		if (wcscmp(m->entry.cFileName, L".") != 0 && wcscmp(m->entry.cFileName, L"..") != 0)
 		{
@@ -104,62 +102,74 @@ int os_matchnext(lua_State* L)
 
 typedef struct struct_MatchInfo
 {
-	DIR* handle;
-	struct dirent* entry;
-	char* path;
-	char* mask;
+	DIR *handle;
+	struct dirent *entry;
+	char *path;
+	char *mask;
+	int mask_is_literal;
 } MatchInfo;
+
+static int gc_MatchInfo(lua_State *L)
+{
+	/* can be called twice per object */
+	MatchInfo *m = (MatchInfo *)lua_touserdata(L, 1);
+	if (m->handle != NULL) { closedir(m->handle); m->handle = NULL; }
+	if (m->path != NULL) { free(m->path); m->path = NULL; }
+	if (m->mask != NULL) { free(m->mask); m->mask = NULL; }
+	return 0;
+}
 
 int os_matchstart(lua_State* L)
 {
-	const char* split;
 	const char* mask = luaL_checkstring(L, 1);
-	MatchInfo* m = (MatchInfo*)malloc(sizeof(MatchInfo));
+	const char* split;
+	MatchInfo *m = (MatchInfo *)lua_newuserdata(L, sizeof(MatchInfo));
+	memset(m, 0, sizeof(MatchInfo));
+	if (luaL_newmetatable(L, METATABLE_NAME)) /* creating metatable? */
+	{
+		lua_pushcfunction(L, gc_MatchInfo);
+		lua_setfield(L, -2, "__gc"); /* metatable.__gc = gc_MatchInfo */
+	}
+	lua_setmetatable(L, -2);
 
 	/* split the mask into path and filename components */
 	split = strrchr(mask, '/');
 	if (split)
 	{
-		m->path = (char*)malloc(split - mask + 1);
-		strncpy(m->path, mask, split - mask);
+		m->path = (char*)malloc((split - mask) + 1);
+		memcpy(m->path, mask, split - mask);
 		m->path[split - mask] = '\0';
-		m->mask = (char*)malloc(mask + strlen(mask) - split);
-		strcpy(m->mask, split + 1);
+		m->mask = strdup(split + 1);
 	}
 	else
 	{
-		m->path = (char*)malloc(2);
-		strcpy(m->path, ".");
-		m->mask = (char*)malloc(strlen(mask)+1);
-		strcpy(m->mask, mask);
+		m->path = strdup(".");
+		m->mask = strdup(mask);
 	}
 
+	m->mask_is_literal = (strpbrk(m->mask, "*?[") == NULL);
 	m->handle = opendir(m->path);
-	lua_pushlightuserdata(L, m);
 	return 1;
 }
 
 int os_matchdone(lua_State* L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
-	if (m->handle != NULL)
-		closedir(m->handle);
-	free(m->path);
-	free(m->mask);
-	free(m);
+	/* memory will be GC'd, but still close it here */
+	luaL_checkudata(L, 1, METATABLE_NAME);
+	gc_MatchInfo(L);
 	return 0;
 }
 
 int os_matchname(lua_State* L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
+	MatchInfo * m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
 	lua_pushstring(L, m->entry->d_name);
 	return 1;
 }
 
 int os_matchisfile(lua_State* L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
+	MatchInfo * m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
 #if defined(_DIRENT_HAVE_D_TYPE)
 	// Dirent marks symlinks as DT_LNK, not (DT_LNK|DT_DIR). The fallback handles symlinks using stat.
 	if (m->entry->d_type == DT_DIR)
@@ -172,7 +182,6 @@ int os_matchisfile(lua_State* L)
 		const char* fname;
 		lua_pushfstring(L, "%s/%s", m->path, m->entry->d_name);
 		fname = lua_tostring(L, -1);
-		lua_pop(L, 1);
 
 		lua_pushboolean(L, do_isfile(L, fname));
 	}
@@ -181,24 +190,22 @@ int os_matchisfile(lua_State* L)
 
 int os_matchnext(lua_State* L)
 {
-	MatchInfo* m = (MatchInfo*)lua_touserdata(L, 1);
+	MatchInfo *m = (MatchInfo *)luaL_checkudata(L, 1, METATABLE_NAME);
 	if (m->handle == NULL) {
 		return 0;
 	}
 
-	m->entry = readdir(m->handle);
-	while (m->entry != NULL)
+	for (m->entry = readdir(m->handle); m->entry != NULL; m->entry = readdir(m->handle))
 	{
 		const char* name = m->entry->d_name;
-		if (strcmp(name, ".") != 0 && strcmp(name, "..") != 0)
+		/* skip . and .. */
+		if (name[0] == '.' && (name[1] == '\0' || (name[1] == '.' && name[2] == '\0')))
+			continue;
+		if (m->mask_is_literal ? strcmp(m->mask, name) == 0 : fnmatch(m->mask, name, 0) == 0)
 		{
-			if (fnmatch(m->mask, name, 0) == 0)
-			{
-				lua_pushboolean(L, 1);
-				return 1;
-			}
+			lua_pushboolean(L, 1);
+			return 1;
 		}
-		m->entry = readdir(m->handle);
 	}
 
 	return 0;

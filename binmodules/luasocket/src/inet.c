@@ -12,6 +12,11 @@
 
 #include "inet.h"
 
+#ifdef _WIN32 /* PREMAKE: Fix for unicode Windows build */
+#undef gai_strerror
+#define gai_strerror gai_strerrorA
+#endif
+
 /*=========================================================================*\
 * Internal function prototypes.
 \*=========================================================================*/

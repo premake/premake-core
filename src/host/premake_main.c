@@ -5,11 +5,30 @@
  */
 
 #include "premake.h"
+#include <locale.h>
+#if PLATFORM_WINDOWS
+#include <shellapi.h>
+#include <assert.h>
+#endif
 
+#if PLATFORM_WINDOWS
+int wmain(int argc, const wchar_t** argv)
+#else
 int main(int argc, const char** argv)
+#endif
 {
-	lua_State* L;
+	lua_State *L;
 	int z;
+
+#if PLATFORM_WINDOWS
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+	if (!setlocale(LC_CTYPE, ".UTF-8"))
+		setlocale(LC_CTYPE, "");
+#else
+	if (!setlocale(LC_CTYPE, "C.UTF-8"))
+		setlocale(LC_CTYPE, "");
+#endif
 
 	L = luaL_newstate();
 	luaL_openlibs(L);

@@ -224,6 +224,7 @@
 
 		multiprocessorcompile "On"
 		warnings "Extra"
+		symbols "On"
 
 		filter { "options:not zlib-src=none" }
 			defines { "PREMAKE_COMPRESSION" }
@@ -273,7 +274,6 @@
 
 		filter "configurations:Debug"
 			defines     "_DEBUG"
-			symbols	    "On"
 
 		filter "configurations:Release"
 			defines             "NDEBUG"
@@ -286,6 +286,14 @@
 
 		filter { "system:windows", "configurations:Release" }
 			incrementallink "Off"
+
+		filter { "system:windows", "action:vs*" }
+			characterset "Unicode"
+
+		filter { "system:windows", "action:not vs*" } -- TODO: mingw doesn't support `characterset "Unicode"`
+			defines { "UNICODE", "_UNICODE" }
+			buildoptions { "-municode" }
+			linkoptions { "-municode" }
 
 		-- MinGW AR does not handle LTO out of the box and need a plugin to be setup
 		filter { "system:windows", "configurations:Release", "toolset:not gcc" }
@@ -351,7 +359,7 @@
 			targetdir   "bin/release"
 
 		filter "system:windows"
-			links       { "ole32", "ws2_32", "advapi32", "version" }
+			links       { "ole32", "ws2_32", "advapi32", "version", "user32" }
 
 		filter { "system:windows", "toolset:msc*" }
 			files       { "src/**.rc" }

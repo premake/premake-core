@@ -22,9 +22,14 @@ int http_download(lua_State* L)
 	long responseCode = 0;
 
 	FILE* fp;
+#if PLATFORM_WINDOWS
+	const wchar_t *file = luaL_checkconvertstring(L, 2);
+	fp = _wfopen(file, L"wb");
+	lua_pop(L, 1);
+#else
 	const char* file = luaL_checkstring(L, 2);
-
 	fp = fopen(file, "wb");
+#endif
 	if (!fp)
 	{
 		lua_pushstring(L, "Unable to open file.");

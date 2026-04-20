@@ -29,7 +29,7 @@ In addition to those general categories, there are a few special files of note:
 
 ## Code Execution Overview ##
 
-Execution starts at `main()` in `src/host/premake_main.c`, which calls into to `src/host/premake.c` to do the real bootstrapping work:
+Execution starts at `main()` (or `wmain()` for Windows) in `src/host/premake_main.c`, which calls into to `src/host/premake.c` to do the real bootstrapping work:
 
 * `premake_init()` installs all of Premake's native C extensions to the Lua scripting environment.
 
