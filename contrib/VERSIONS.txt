@@ -1,0 +1,8 @@
+Dependency Versions
+
+curl - 8.11
+libzip - 0.11.2
+lua - 5.3.5
+luasocket - 3.0
+mbedtls - 3.6.2
+zlib - 1.3.2
