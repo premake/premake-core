@@ -102,6 +102,35 @@
 					 os.findheader("test.h", path.getabsolute("folder/subfolder/include")))
 	end
 
+	function suite.findsubdirheader_provided_relative()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		test.isequal(path.getabsolute("folder/subfolder/include/testlib"), os.findsubdirheader("testlib2.h", "testlib"))
+
+		os.getenv = os_getenv
+	end
+
+	function suite.findsubdirheader_failure()
+		test.isfalse(os.findsubdirheader("Knights/who/say/Ni.hpp", "nonexistent"))
+	end
+
+	function suite.findsubdirheader_provided_absolute()
+		test.isequal(path.getabsolute("folder/subfolder/include"),
+					 os.findsubdirheader("test.h", path.getabsolute("folder/subfolder/include")))
+	end
+
+	function suite.findsubdirheader_mixed_with_empty()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		-- "testlib" finds testlib2.h; "" allows test.h to be found in the base include dir
+		test.isequal(path.getabsolute("folder/subfolder/include/testlib"), os.findsubdirheader("testlib2.h", {"testlib", ""}))
+		test.isequal(path.getabsolute("folder/subfolder/include"), os.findsubdirheader("test.h", {"testlib", ""}))
+
+		os.getenv = os_getenv
+	end
+
 	function suite.findheader_frompath_lib()
 		local os_getenv = os.getenv
 		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })

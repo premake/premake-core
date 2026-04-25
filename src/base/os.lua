@@ -143,10 +143,22 @@
 		end
 	end
 
+---
+-- Attempt to locate and return the path to a header file.
+--
+-- Searches the same well-known system locations as os.findlib(), but replaces any /lib or /bin
+-- components with /include, and also searches in additional headerdirs provided by the caller.
+--
+-- @param headerpath
+--    A partial header file path.
+-- @param headerdirs
+--    Optional; a string or table of additional paths.
+--    If an input is an absolute path, it will be searched directly.
+--    If an input is a relative path, it will be treated as is, relative to the current working directory.
+-- @return
+--    The full path to the directory containing the headerpath if found; `nil` otherwise.
+---
 	function os.findheader(headerpath, headerdirs)
-		-- headerpath: a partial header file path
-		-- headerdirs: additional header search paths
-
 		local paths = get_library_search_path()
 
 		-- replace all /lib and /bin by /include
@@ -162,6 +174,60 @@
 		paths = table.join(userpaths, paths)
 
 		local result = os.pathsearch (headerpath, table.unpack(paths))
+		return result
+	end
+
+---
+-- Attempt to locate and return the path to a header file under additional subdirectories.
+--
+-- Searches the same well-known system locations as os.findheader(), but appends additional
+-- subdirectory paths provided by the caller to the system search paths before searching.
+--
+-- @param headerpath
+--    A partial header file path.
+-- @param additionalpaths
+--    Required; a string or table of additional paths.
+--    If an input is an absolute path, it will be searched directly.
+--    If an input is a relative path, it will be appended to each system search path separately.
+--    If an input is an empty string, the system search paths will be searched (path.join returns the original path).
+-- @return
+--    The full path to the directory containing the headerpath if found; `nil` otherwise.
+---
+	function os.findsubdirheader(headerpath, additionalpaths)
+		if additionalpaths == nil then
+			error("os.findsubdirheader: additionalpaths is required", 2)
+		end
+
+		local paths = get_library_search_path()
+
+		-- replace all /lib and /bin by /include
+		paths = table.translate(paths, function (p) return p:gsub('[/\\]lib[0-9]*', '/include'):gsub('[/\\]bin', '/include') end)
+
+		local userpaths = {}
+
+		if type(additionalpaths) == "string" then
+			userpaths = { additionalpaths }
+		elseif type(additionalpaths) == "table" then
+			userpaths = additionalpaths
+		end
+
+		if #userpaths > 0 then
+			local basepaths = paths
+			local newpaths = {}
+			for _, userpath in ipairs(userpaths) do
+				if path.isabsolute(userpath) then
+					-- absolute path: search directly, same as os.findheader
+					table.insert(newpaths, userpath)
+				else
+					for _, p in ipairs(basepaths) do
+						table.insert(newpaths, path.join(p, userpath))
+					end
+				end
+			end
+			paths = newpaths
+		end
+
+		local result = os.pathsearch(headerpath, table.unpack(paths))
 		return result
 	end
 
