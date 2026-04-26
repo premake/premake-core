@@ -11,6 +11,7 @@
 		printf("Premake %s, a build script generator", _PREMAKE_VERSION)
 		printf(_PREMAKE_COPYRIGHT)
 		printf("%s %s", _VERSION, _COPYRIGHT)
+		if _UTF8_ENABLED then printf("UTF-8 support enabled") end
 		printf("")
 		printf("Usage: premake5 [options] action [arguments]")
 		printf("")

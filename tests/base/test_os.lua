@@ -544,6 +544,9 @@
 
 	local tmpname = function()
 		local p = os.tmpname()
+        if p:startswith("\\") then
+            p = "." .. p
+        end
 		os.remove(p) -- just needed on POSIX
 		return p
 	end

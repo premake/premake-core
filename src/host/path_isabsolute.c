@@ -23,7 +23,7 @@ int do_absolutetype(const char* path)
 		path++;
 	if (path[0] == '/' || path[0] == '\\')
 		return JOIN_ABSOLUTE;
-	if (isalpha(path[0]) && path[1] == ':')
+	if (isalpha((int)path[0]) && path[1] == ':')
 		return JOIN_ABSOLUTE;
 
 	// $(foo) and %(foo)

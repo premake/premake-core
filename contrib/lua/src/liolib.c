@@ -25,7 +25,7 @@
 /*
 * PREMAKE change: UTF-8 character support on windows.
 */
-#if defined(LUA_WIN)
+#if defined(LUA_USE_WINDOWS)  /* PREMAKE: UTF-8 support on Windows */
 #include <windows.h>
 #endif
 
@@ -253,7 +253,14 @@ static LStream *newfile (lua_State *L) {
 
 static void opencheck (lua_State *L, const char *fname, const char *mode) {
   LStream *p = newfile(L);
+#if defined(LUA_USE_WINDOWS)  /* PREMAKE: UTF-8 support on Windows */
+  const wchar_t *wfname = luaL_convertstring(L, fname), *wmode = luaL_convertstring(L, mode);
+  if (wfname == NULL || wmode == NULL) luaL_error(L, "encoding error");
+  p->f = _wfopen(wfname, wmode);
+  lua_pop(L, 2); /* pop converted strings */
+#else
   p->f = fopen(fname, mode);
+#endif
   if (p->f == NULL)
     luaL_error(L, "cannot open file '%s' (%s)", fname, strerror(errno));
 }
@@ -265,26 +272,14 @@ static int io_open (lua_State *L) {
   LStream *p = newfile(L);
   const char *md = mode;  /* to traverse/check mode */
   luaL_argcheck(L, l_checkmode(md), 2, "invalid mode");
-
-  /*
-   * PREMAKE change: UTF-8 character support on windows.
-   */
-#if defined(LUA_WIN)
-  wchar_t wide_path[4096];
-  if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_path, 4096) == 0)
+#if defined(LUA_USE_WINDOWS)  /* PREMAKE: UTF-8 support on Windows */
   {
-    lua_pushstring(L, "unable to encode path");
-    return lua_error(L);
+    const wchar_t *wfilename = luaL_convertstring(L, filename), *wmode = luaL_convertstring(L, md);
+    if (wfilename == NULL || wmode == NULL)
+      return (errno = EINVAL, luaL_fileresult(L, 0, filename)); /* encoding error */
+    p->f = _wfopen(wfilename, wmode);
+    lua_pop(L, 2); /* pop converted strings */
   }
-
-  wchar_t wide_mode[64];
-  if (MultiByteToWideChar(CP_UTF8, 0, mode, -1, wide_mode, 64) == 0)
-  {
-    lua_pushstring(L, "unable to encode open mode");
-    return lua_error(L);
-  }
-
-  p->f = _wfopen(wide_path, wide_mode);
 #else
   p->f = fopen(filename, mode);
 #endif
@@ -303,12 +298,21 @@ static int io_pclose (lua_State *L) {
 
 
 static int io_popen (lua_State *L) {
+#if defined(LUA_USE_WINDOWS)
+  const wchar_t* wmode = luaL_optconvertstring(L, 2, L"r");
+  const wchar_t *wfilename = luaL_checkconvertstring(L, 1);
+  LStream* p = newprefile(L);
+  p->f = _wpopen(wfilename, wmode);
+  p->closef = &io_pclose;
+  return (p->f == NULL) ? luaL_fileresult(L, 0, lua_tostring(L, 1)) : 1;
+#else
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
   LStream *p = newprefile(L);
   p->f = l_popen(L, filename, mode);
   p->closef = &io_pclose;
   return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
+#endif
 }
 
 

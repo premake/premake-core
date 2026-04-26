@@ -13,10 +13,13 @@ int os_is64bit(lua_State* L)
 	// checking will need to be done on the Lua side of things.
 #if PLATFORM_WINDOWS
 	typedef BOOL (WINAPI* WowFuncSig)(HANDLE, PBOOL);
-	WowFuncSig func = (WowFuncSig)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
-	if (func)
+	FARPROC found = GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+	if (found)
 	{
 		BOOL isWow = FALSE;
+		WowFuncSig func;
+		memcpy(&func, &found, sizeof(func)); // fix warnings around aliasing
+
 		if (func(GetCurrentProcess(), &isWow))
 		{
 			lua_pushboolean(L, isWow);

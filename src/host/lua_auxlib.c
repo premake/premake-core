@@ -103,7 +103,7 @@ int premake_luaL_loadfilex (lua_State* L, const char* filename, const char* mode
 	 * script chunk on the stack. Turn these into a closure that will call my
 	 * wrapper below when the loaded script needs to be executed. */
 
-	assert(lua_gettop(L) == bottom + 2);
+	assert(lua_gettop(L) == bottom + (z == OKAY ? 2 : 0));
 
 	if (z == OKAY) {
 		/* if we are called with an env, then our caller, luaB_loadfile, will
@@ -149,7 +149,7 @@ static int chunk_wrapper(lua_State* L)
 	/* Remember the current _SCRIPT and working directory so I can
 	 * restore them after this new chunk has been run. */
 
-	do_getcwd(cwd, PATH_MAX);
+	do_getcwd(cwd, sizeof(cwd) / sizeof(cwd[0]));
 	lua_getglobal(L, "_SCRIPT");
 	lua_getglobal(L, "_SCRIPT_DIR");
 
@@ -265,11 +265,19 @@ int premake_luaB_dofile(lua_State *L)
  /**
   * Copy of readable from loadlib.c in Lua source
   */
-static int readable(const char *filename) {
-	FILE *f = fopen(filename, "r");  /* try to open file */
-	if (f == NULL) return 0;  /* open failed */
-	fclose(f);
-	return 1;
+static int readable(lua_State *L, const char *filename) {
+#if PLATFORM_WINDOWS
+  const wchar_t *wfilename = luaL_convertstring(L, filename);
+  if (wfilename == NULL) return 0;  /* conversion failed */
+  FILE *f = _wfopen(wfilename, L"r");
+  lua_pop(L, 1);
+#else
+  (void)(L);
+  FILE *f = fopen(filename, "r");
+#endif
+  if (f == NULL) return 0;  /* open failed */
+  fclose(f);
+  return 1;
 }
 
 
@@ -302,7 +310,7 @@ static const char *searchpath(lua_State *L, const char *name,
 		const char *filename = luaL_gsub(L, lua_tostring(L, -1),
 			LUA_PATH_MARK, name);
 		lua_remove(L, -2);  /* remove path template */
-		if (readable(filename))  /* does file exist and is readable? */
+		if (readable(L, filename))  /* does file exist and is readable? */
 			return filename;  /* return that file name */
 		lua_pushfstring(L, "\n\tno file '%s'", filename);
 		lua_remove(L, -2);  /* remove file name */

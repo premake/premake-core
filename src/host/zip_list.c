@@ -18,7 +18,7 @@ int zip_list(lua_State* L)
         return 2;
     }
     const zip_int64_t entries_count = zip_get_num_entries(z_archive, 0);
-    lua_createtable(L, entries_count, 0);
+    lua_createtable(L, (int)entries_count, 0);
     for(zip_int64_t i = 0; i != entries_count; ++i)
     {
         const char* full_name = zip_get_name(z_archive, i, 0);

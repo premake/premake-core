@@ -13,16 +13,32 @@
 #if PLATFORM_WINDOWS
 #include <direct.h>
 #include <errno.h>
+#if _MSC_VER
+#define alloca _alloca
+#endif
+#endif
+#if defined(__has_include)
+#if __has_include(<alloca.h>)
+#include <alloca.h>
+#endif
 #endif
 
-int do_mkdir(const char* path)
+int do_mkdir(lua_State *L, const char* path)
 {
+	int i, length, s;
+#if PLATFORM_WINDOWS
+	struct _stat sb;
+	const wchar_t *wpath = luaL_convertstring(L, path);
+	if (!wpath) return 0;  /* unable to encode path */
+	s = _wstat(wpath, &sb);
+	lua_pop(L, 1);
+#else
 	struct stat sb;
-	char sub_path[1024];
-	int i, length;
+	s = stat(path, &sb);
+#endif
 
 	// if it already exists, return.
-	if (stat(path, &sb) == 0)
+	if (s == 0)
 		return 1;
 
 	// find the parent folder name.
@@ -33,9 +49,11 @@ int do_mkdir(const char* path)
 			break;
 	}
 
-	// if we found one, create it.
+	// if we found one, recursively create it.
 	if (i > 0)
 	{
+		char* sub_path = alloca(i + 2); /* null terminator plus trailing slash on Windows */
+
 		memcpy(sub_path, path, i);
 		sub_path[i] = '\0';
 
@@ -47,13 +65,16 @@ int do_mkdir(const char* path)
 		}
 #endif
 
-		if (!do_mkdir(sub_path))
+		if (!do_mkdir(L, sub_path))
 			return 0;
 	}
 
 	// now finally create the actual folder we want.
 #if PLATFORM_WINDOWS
-	return _mkdir(path) == 0;
+	if ((wpath = luaL_convertstring(L, path)) == NULL) return 0;
+	int res = (_wmkdir(wpath) == 0);
+	lua_pop(L, 1);
+	return res;
 #else
 	return  mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
 #endif
@@ -64,7 +85,7 @@ int os_mkdir(lua_State* L)
 {
 	const char* path = luaL_checkstring(L, 1);
 
-	int z = do_mkdir(path);
+	int z = do_mkdir(L, path);
 	if (!z)
 	{
 		lua_pushnil(L);
