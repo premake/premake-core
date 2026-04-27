@@ -14,15 +14,17 @@ int os_rename(lua_State* L)
 	const wchar_t *fromname = luaL_checkconvertstring(L, 1);
 
 	BOOL b = MoveFileExW(fromname, toname, MOVEFILE_COPY_ALLOWED);
-	lua_pop(L, 2);
 	if (b)
 	{
+		lua_pop(L, 2);
 		lua_pushboolean(L, 1);
 		return 1;
 	}
 	else
 	{
 		DWORD err = GetLastError();
+		const char *fromname_utf8 = lua_tostring(L, 1); /* get original UTF-8 before popping converted strings */
+		lua_pop(L, 2);
 
 		LPWSTR messageBuffer = NULL;
 		int pushed = 0;
@@ -33,7 +35,7 @@ int os_rename(lua_State* L)
 			LocalFree(messageBuffer);
 		}
 
-		lua_pushfstring(L, "%s: %s (%I)", fromname, pushed ? lua_tostring(L, -1) : "<failed to get error message>", (lua_Integer)err);
+		lua_pushfstring(L, "%s: %s (%I)", fromname_utf8, pushed ? lua_tostring(L, -1) : "<failed to get error message>", (lua_Integer)err);
 		if (pushed) lua_remove(L, -2); /* remove converted string */
 		lua_pushinteger(L, err);
 		return 3;
