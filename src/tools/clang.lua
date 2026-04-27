@@ -50,6 +50,8 @@
 		flags = gcc.shared.flags,
 		floatingpoint = {
 			Fast = "-ffast-math",
+			Strict = "-ffp-model=strict",
+			Precise = "-ffp-model=precise"
 		},
 		strictaliasing = gcc.shared.strictaliasing,
 		openmp = gcc.shared.openmp,
