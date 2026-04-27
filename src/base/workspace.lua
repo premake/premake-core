@@ -50,13 +50,19 @@
 	function workspace.eachconfig(self)
 		self = p.oven.bakeWorkspace(self)
 
+		local sorted = {}
+		for _, item in ipairs(self.configs) do
+			table.insert(sorted, item)
+		end
+		table.sort(sorted, function(a,b) return a.name < b.name end)
+
 		local i = 0
 		return function()
 			i = i + 1
-			if i > #self.configs then
+			if i > #sorted then
 				return nil
 			else
-				return self.configs[i]
+				return sorted[i]
 			end
 		end
 	end
@@ -70,11 +76,17 @@
 --
 
 	function workspace.eachproject(self)
+		local sorted = {}
+		for id, _ in ipairs(self.projects) do
+			table.insert(sorted, p.workspace.getproject(self, id))
+		end
+		table.sort(sorted, function(a,b) return a.name < b.name end)
+
 		local i = 0
 		return function ()
 			i = i + 1
-			if i <= #self.projects then
-				return p.workspace.getproject(self, i)
+			if i <= #sorted then
+				return sorted[i]
 			end
 		end
 	end
