@@ -59,11 +59,15 @@ end
 	end
 
 	function suite.remove_ReturnsError_OnNonExistingUnicodePath()
-		local ok, err, exitcode = os.remove(tmpname() .. "_café")
+		local p = tmpname() .. "_café"
+		local ok, err, exitcode = os.remove(p)
 		test.isnil(ok)
 		test.isequal("string", type(err))
 		test.isequal("number", type(exitcode))
 		test.istrue(0 ~= exitcode)
+		if os.ishost("windows") then
+			test.istrue(err:find(p, 1, true) ~= nil)
+		end
 	end
 
 
@@ -81,9 +85,13 @@ end
 	end
 
 	function suite.rename_ReturnsError_OnNonExistingSource()
-		local ok, err = os.rename(tmpname(), tmpname())
+		local src = tmpname() .. "_café"
+		local ok, err = os.rename(src, tmpname())
 		test.isnil(ok)
 		test.isequal("string", type(err))
+		if os.ishost("windows") then
+			test.istrue(err:find(src, 1, true) ~= nil)
+		end
 	end
 
 	function suite.rename_ReturnsTrue_OnUnicodeSrc()
@@ -316,6 +324,17 @@ end
 		test.istrue(os.isfile(dst))
 		os.remove(src)
 		os.remove(dst)
+	end
+
+	function suite.copyfile_ReturnsError_OnNonExistingSource()
+		local src = tmpname() .. "_café"
+		local dst = tmpname() .. "_naïve"
+		local ok, err = os.copyfile(src, dst)
+		test.isnil(ok)
+		test.isequal("string", type(err))
+		if os.ishost("windows") then
+			test.istrue(err:find(dst, 1, true) ~= nil)
+		end
 	end
 
 

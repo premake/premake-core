@@ -35,11 +35,11 @@ int os_copyfile(lua_State* L)
 		if (FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, ec,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL) && (err = luaL_convertwstring(L, buf, NULL)) != NULL)
 		{
-			lua_pushfstring(L, "unable to copy file to '%s', reason: '%s' (%lu)", dst, err, ec);
+			lua_pushfstring(L, "unable to copy file to '%s', reason: '%s' (%I)", lua_tostring(L, 2), err, (lua_Integer)ec);
 			lua_remove(L, -2); /* converted string */
 		}
 		else
-			lua_pushfstring(L, "unable to copy file to '%s', error code: %lu", dst, ec);
+			lua_pushfstring(L, "unable to copy file to '%s', error code: %I", lua_tostring(L, 2), (lua_Integer)ec);
 #else
 		lua_pushfstring(L, "unable to copy file to '%s'", dst);
 #endif

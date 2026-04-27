@@ -13,10 +13,11 @@ int os_stat(lua_State* L)
 {
 
 #if PLATFORM_WINDOWS
-	const wchar_t *filename = luaL_checkconvertstring(L, 1);
+	const wchar_t *wfilename = luaL_checkconvertstring(L, 1);
+	const char *filename = lua_tostring(L, 1); /* save original path before popping converted string */
 	struct _stat s;
 
-	int failed = (_wstat(filename, &s) != 0);
+	int failed = (_wstat(wfilename, &s) != 0);
 	lua_pop(L, 1);
 #else
 	const char* filename = luaL_checkstring(L, 1);
