@@ -46,8 +46,8 @@
 		print_id("project", "Debug")
 		print_id("project", "Release")
 		test.capture [[
-B266956655B21E987082EBA6
-DAC961207F1BFED291544760
+1B9ADE9E44525F311E1DCAF7
+1C7505637BC5CA3F72E6A346
 		]]
 	end
 
@@ -55,8 +55,8 @@ DAC961207F1BFED291544760
 		print_id("project", "Debug", "file")
 		print_id("project", "Debug", "hello")
 		test.capture [[
-47C6E72E5ED982604EF57D6E
-8DCA12C2873014347ACB7102
+0841357000244C08F1470FB6
+5A6D3CBF0E50D8D5D9076DB1
 		]]
 	end
 
@@ -65,9 +65,9 @@ DAC961207F1BFED291544760
 		print_id("project", "Release", "file")
 		print_id("project", "Release", "file")
 		test.capture [[
-022ECCE82854FC9A8F5BF328
-022ECCE82854FC9A8F5BF328
-022ECCE82854FC9A8F5BF328
+B9F6F6E0F4404DF6AA66C210
+B9F6F6E0F4404DF6AA66C210
+B9F6F6E0F4404DF6AA66C210
 		]]
 	end
 
@@ -75,8 +75,8 @@ DAC961207F1BFED291544760
 		print_id("a", "b", "c", "d", "e", "f")
 		print_id("abcdef")
 		test.capture [[
-63AEF3DD89D5238FF0DC1A1D
-9F1AF6957CC5F947506A7CD5
+3D6F76621AE4F528C384DF1F
+DC3F187E78586A6ADD10D791
 		]]
 	end
 
@@ -89,7 +89,7 @@ DAC961207F1BFED291544760
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
