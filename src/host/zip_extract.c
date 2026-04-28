@@ -200,6 +200,7 @@ static int extract(lua_State *L, const char* src, const char* destination)
 						return -1;
 					}
 					fp = _wfopen(wpath, L"wb");
+					lua_pop(L, 1); /* pop converted wide path */
 				}
 #else
 				fp = fopen(appended_full_name, "wb");
