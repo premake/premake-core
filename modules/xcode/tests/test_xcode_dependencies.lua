@@ -53,7 +53,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		5931FBCA4D31453CD21C5A0A /* libMyProject2-d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB6C53210CA9664049C1B72 /* libMyProject2-d.a */; };
+		2F94773A02AA944E30F15EB3 /* libMyProject2-d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E0BB4A5ECEA9F79291B44FDE /* libMyProject2-d.a */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -64,7 +64,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+		1D069AC79B8AAE38BF343B15 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 333AB282CB1B2A216C4859C9 /* libMyProject2-d.dylib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -79,8 +79,8 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
-		3C920BDD1B34A74FD016AA1D /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
+		1D069AC79B8AAE38BF343B15 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 333AB282CB1B2A216C4859C9 /* libMyProject2-d.dylib */; };
+		6BC26EEF1B0718BCCE190FC0 /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 333AB282CB1B2A216C4859C9 /* libMyProject2-d.dylib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -95,8 +95,8 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; };
-		3C920BDD1B34A74FD016AA1D /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 107168B810144BEA4A68FEF8 /* libMyProject2-d.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1D069AC79B8AAE38BF343B15 /* libMyProject2-d.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 333AB282CB1B2A216C4859C9 /* libMyProject2-d.dylib */; };
+		6BC26EEF1B0718BCCE190FC0 /* libMyProject2-d.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 333AB282CB1B2A216C4859C9 /* libMyProject2-d.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -111,18 +111,18 @@
 		xcode.PBXContainerItemProxy(tr)
 		test.capture [[
 /* Begin PBXContainerItemProxy section */
-		17DF877139AB34A376605DB1 /* PBXContainerItemProxy */ = {
+		09112916D122CACC9994A304 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CBD893DEB01F9C10340CCA1E /* MyProject2.xcodeproj */;
+			containerPortal = 026A2D9F664E1FB990F29FAF /* MyProject2.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E052136F28C2F7A16D61C9AF;
+			remoteGlobalIDString = 40A82D46749A09A676592446;
 			remoteInfo = "libMyProject2-d.a";
 		};
-		6A19FA0A8BE5A73CC89AD04A /* PBXContainerItemProxy */ = {
+		D976322FD9860EA24851484C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CBD893DEB01F9C10340CCA1E /* MyProject2.xcodeproj */;
+			containerPortal = 026A2D9F664E1FB990F29FAF /* MyProject2.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = DA5DB975C549DF670D2FA7B5;
+			remoteGlobalIDString = A679A446400799097E12FCA9;
 			remoteInfo = "libMyProject2-d.a";
 		};
 /* End PBXContainerItemProxy section */
@@ -139,8 +139,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		CBD893DEB01F9C10340CCA1E /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
+		026A2D9F664E1FB990F29FAF /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -152,8 +152,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		149CF6C96C0269BB1E108509 /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = ../MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		F600AA92BED2D479CE828780 /* libMyProject2-d.a */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "MyProject2.xcodeproj"; path = ../MyProject2.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -168,11 +168,11 @@
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+		80C3A7BC2BDDF59FD06C145A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5931FBCA4D31453CD21C5A0A /* libMyProject2-d.a in Frameworks */,
+				2F94773A02AA944E30F15EB3 /* libMyProject2-d.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,11 +186,11 @@
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+		80C3A7BC2BDDF59FD06C145A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BC538B0FA67D422AF49D6F0 /* libMyProject2-d.dylib in Frameworks */,
+				1D069AC79B8AAE38BF343B15 /* libMyProject2-d.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,11 +205,11 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+		80C3A7BC2BDDF59FD06C145A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B7205267D294518F2973366 /* libMyProject2-d.plugin in Frameworks */,
+				37CE8D67AE0E879481A5551F /* libMyProject2-d.plugin in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,13 +230,13 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
 		test.capture [[
 /* Begin PBXCopyFilesBuildPhase section */
-		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+		9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3C920BDD1B34A74FD016AA1D /* MyProject2 in Projects */,
+				6BC26EEF1B0718BCCE190FC0 /* MyProject2 in Projects */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,37 +254,37 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		0428AEAFE473CF24256EC332 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A6C936B49B3FADE6EA134CF4 /* Products */,
-				9D968EAA920D05DCE0E0A4EA /* Projects */,
+				E0BB4A5ECEA9F79291B44FDE /* libMyProject2-d.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
+			isa = PBXGroup;
+			children = (
+				990A9E97AA7ABFD9D0C572FA /* Products */,
+				EC3797AC2F8E8FF50A219880 /* Projects */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		9D968EAA920D05DCE0E0A4EA /* Projects */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CBD893DEB01F9C10340CCA1E /* MyProject2.xcodeproj */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC3797AC2F8E8FF50A219880 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				026A2D9F664E1FB990F29FAF /* MyProject2.xcodeproj */,
 			);
 			name = Projects;
-			sourceTree = "<group>";
-		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		C7F36A91F7853983D29278D1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CCB6C53210CA9664049C1B72 /* libMyProject2-d.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -301,24 +301,24 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				0FC4B7F6B3104128CDE10E36 /* Resources */,
-				7971D14D1CBD5A7F378E278D /* Sources */,
-				9FDD37564328C0885DF98D96 /* Frameworks */,
-				E1D3B542862652F4985E9B82 /* Embed Libraries */,
+				6CE3CBF45F92A436D14B9854 /* Resources */,
+				0E6E09EDF485325B3B2F59FC /* Sources */,
+				80C3A7BC2BDDF59FD06C145A /* Frameworks */,
+				9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B5ABA79AE53D768CC04AB5DA /* PBXTargetDependency */,
+				516749527AB8F602ACAC6ABD /* PBXTargetDependency */,
 			);
 			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
-			productReference = 19A5C4E61D1697189E833B26 /* MyProject */;
+			productReference = 27CCF7ECD6074ECEF6698AFF /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -340,17 +340,17 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
-			mainGroup = 12F5A37D963B00EFBF8281BD /* MyProject */;
+			mainGroup = 92D64CFF9D6F878B547A3D17 /* MyProject */;
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = C7F36A91F7853983D29278D1 /* Products */;
-					ProjectRef = CBD893DEB01F9C10340CCA1E /* MyProject2.xcodeproj */;
+					ProductGroup = 0428AEAFE473CF24256EC332 /* Products */;
+					ProjectRef = 026A2D9F664E1FB990F29FAF /* MyProject2.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				48B5980C775BEBFED09D464C /* MyProject */,
+				C12DD7380DD8DCCCA0B1C207 /* MyProject */,
 			);
 		};
 /* End PBXProject section */
@@ -367,11 +367,11 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXReferenceProxy(tr)
 		test.capture [[
 /* Begin PBXReferenceProxy section */
-		CCB6C53210CA9664049C1B72 /* libMyProject2-d.a */ = {
+		E0BB4A5ECEA9F79291B44FDE /* libMyProject2-d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libMyProject2-d.a";
-			remoteRef = 17DF877139AB34A376605DB1 /* PBXContainerItemProxy */;
+			remoteRef = 09112916D122CACC9994A304 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -388,10 +388,10 @@ function suite.PBXFrameworksBuildPhase_ListsDependencies_OnSharedLibWithTargetEx
 		xcode.PBXTargetDependency(tr)
 		test.capture [[
 /* Begin PBXTargetDependency section */
-		B5ABA79AE53D768CC04AB5DA /* PBXTargetDependency */ = {
+		516749527AB8F602ACAC6ABD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "libMyProject2-d.a";
-			targetProxy = 6A19FA0A8BE5A73CC89AD04A /* PBXContainerItemProxy */;
+			targetProxy = D976322FD9860EA24851484C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 		]]

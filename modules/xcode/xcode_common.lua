@@ -365,13 +365,13 @@
 
 	function xcode.newid(...)
 		local name = ''
-		local arg = {...}
-		for i, v in pairs(arg) do
-			name = name..v..'****'
+		local arg = { n = select("#", ...), ... }
+		for i=1, arg.n do
+			name = name .. tostring(arg[i]) .. '****'
 		end
 
-
-		return ("%08X%08X%08X"):format(name:hash(16777619), name:hash(2166136261), name:hash(46577619))
+		local sha1 = name:sha1():upper()
+		return sha1:sub(1, 24)
 	end
 
 
