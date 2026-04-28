@@ -542,6 +542,18 @@
 -- Helpers
 --
 
+	-- Save the real functions before test runner installs its stubs.
+	local real_writefile_ifnotequal = os.writefile_ifnotequal
+	local real_io_open = io.open
+
+	local function real_readfile(filepath)
+		local f = real_io_open(filepath, "rb")
+		if not f then return nil end
+		local content = f:read("*a")
+		f:close()
+		return content
+	end
+
 	local tmpname = function()
 		local p = os.tmpname()
         if p:startswith("\\") then
@@ -575,31 +587,26 @@
 	function suite.writefile_ifnotequal_WritesNewFile()
 		local filepath = tmpname()
 		local content = "Hello, World!"
-		local ok, err = os.writefile_ifnotequal(content, filepath)
-		
+		local ok, err = real_writefile_ifnotequal(content, filepath)
 		test.isequal(1, ok)
 		test.isnil(err)
 		test.istrue(os.isfile(filepath))
-		test.isequal(content, os.readfile(filepath))
-		
+		test.isequal(content, real_readfile(filepath))
 		os.remove(filepath)
 	end
 
 	function suite.writefile_ifnotequal_SkipsIdenticalContent()
 		local filepath = tmpname()
 		local content = "Identical content"
-		
 		-- Write the file first
-		local ok1, err1 = os.writefile_ifnotequal(content, filepath)
+		local ok1, err1 = real_writefile_ifnotequal(content, filepath)
 		test.isequal(1, ok1)
 		test.isnil(err1)
-		
 		-- Try to write identical content
-		local ok2, err2 = os.writefile_ifnotequal(content, filepath)
+		local ok2, err2 = real_writefile_ifnotequal(content, filepath)
 		test.isequal(0, ok2)
 		test.isnil(err2)
-		test.isequal(content, os.readfile(filepath))
-		
+		test.isequal(content, real_readfile(filepath))
 		os.remove(filepath)
 	end
 
@@ -607,18 +614,15 @@
 		local filepath = tmpname()
 		local content1 = "First content"
 		local content2 = "Second content"
-		
 		-- Write the file first
-		local ok1, err1 = os.writefile_ifnotequal(content1, filepath)
+		local ok1, err1 = real_writefile_ifnotequal(content1, filepath)
 		test.isequal(1, ok1)
 		test.isnil(err1)
-		
 		-- Write different content
-		local ok2, err2 = os.writefile_ifnotequal(content2, filepath)
+		local ok2, err2 = real_writefile_ifnotequal(content2, filepath)
 		test.isequal(1, ok2)
 		test.isnil(err2)
-		test.isequal(content2, os.readfile(filepath))
-		
+		test.isequal(content2, real_readfile(filepath))
 		os.remove(filepath)
 	end
 
