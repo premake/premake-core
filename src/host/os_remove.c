@@ -29,7 +29,7 @@ int os_remove(lua_State* L)
 			LocalFree(messageBuffer);
 		}
 
-		lua_pushfstring(L, "%s: %s (%lu)", filename, pushed ? lua_tostring(L, -1) : "<failed to get error message>", err);
+		lua_pushfstring(L, "%s: %s (%I)", lua_tostring(L, 1), pushed ? lua_tostring(L, -1) : "<failed to get error message>", (lua_Integer)err);
 		if (pushed) lua_remove(L, -2);
 		lua_pushinteger(L, err);
 		return 3;
