@@ -206,17 +206,17 @@
 <CodeLite_Workspace Name="MyWorkspace" Database="" Version="10000">
   <Project Name="MyProject" Path="MyProject.project"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="x86_64-Debug" Selected="yes">
-      <Project Name="MyProject" ConfigName="x86_64-Debug"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="x86-Debug" Selected="no">
+    <WorkspaceConfiguration Name="x86-Debug" Selected="yes">
       <Project Name="MyProject" ConfigName="x86-Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="x86_64-Release" Selected="no">
-      <Project Name="MyProject" ConfigName="x86_64-Release"/>
+    <WorkspaceConfiguration Name="x86_64-Debug" Selected="no">
+      <Project Name="MyProject" ConfigName="x86_64-Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="x86-Release" Selected="no">
       <Project Name="MyProject" ConfigName="x86-Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="x86_64-Release" Selected="no">
+      <Project Name="MyProject" ConfigName="x86_64-Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

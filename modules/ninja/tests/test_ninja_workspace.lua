@@ -261,7 +261,7 @@ default TestProject_Debug
 		test.capture [[
 
 # Default build target
-default TestProject_Debug_x86
+default TestProject_Debug_x64
 		]]
 	end
 
@@ -294,5 +294,3 @@ build all: phony
   build ProjectB: phony
 		]]
 	end
-
-
