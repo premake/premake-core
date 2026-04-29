@@ -342,6 +342,7 @@
 			"Default",
 			"Fast",
 			"Strict",
+			"Precise"
 		}
 	}
 
