@@ -88,6 +88,23 @@ newaction {
 		elseif f ~= 0 then
 			printf("Generated %s...", path.getrelative(os.getcwd(), output_path))
 		end
+
+		-- clangd relies on the "directory" entries in compile_commands.json to exist in order to properly
+		-- resolve relative paths. This is to ensure that the compilecommands action generates them.
+		local paths_to_generate = {}
+		for _, cmd in ipairs(all_commands) do
+			local dir = cmd.directory
+			if dir and not os.isdir(dir) then
+				paths_to_generate[dir] = true
+			end
+		end
+
+		for dir, _ in pairs(paths_to_generate) do
+			local ok, err = os.mkdir(dir)
+			if not ok then
+				error(err, 0)
+			end
+		end
 	end
 }
 
