@@ -824,3 +824,10 @@
 	function gcc.gettooloutputext(tool)
 		return iif(tool == "rc", ".res", ".o")
 	end
+
+	function gcc.getLibraryExtensions()
+		return {
+			["a"] = true,
+			["so"] = true,
+		}
+	end

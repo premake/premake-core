@@ -489,6 +489,55 @@
 
 
 --
+-- When using a non-MSC toolset (e.g. clang or gcc), links with native
+-- extensions (.a, .so) should be passed through as-is without .lib appended.
+--
+
+	function suite.additionalDependencies_dotA_onClangToolset()
+		toolset "clang"
+		links { "mylib.a" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>mylib.a;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.additionalDependencies_dotSo_onClangToolset()
+		toolset "clang"
+		links { "mylib.so" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>mylib.so;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.additionalDependencies_dotA_onGccToolset()
+		toolset "gcc"
+		links { "mylib.a" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>mylib.a;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+	function suite.additionalDependencies_dotSo_onGccToolset()
+		toolset "gcc"
+		links { "mylib.so" }
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<AdditionalDependencies>mylib.so;%(AdditionalDependencies)</AdditionalDependencies>
+		]]
+	end
+
+--
 -- Additional library directories should be specified, relative to the project.
 --
 
