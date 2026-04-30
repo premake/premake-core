@@ -25,6 +25,7 @@ int canUseColors()
 
 static const char *getenvOrFallback(const char *var, const char *fallback)
 {
+	// Note: we don't need to handle UTF-8 here because we're handling specific vars that have boolean results
 	const char *value = getenv(var);
 	return (value != NULL) ? value : fallback;
 }

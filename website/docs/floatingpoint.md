@@ -10,11 +10,12 @@ If no value is set for a configuration, the toolset's default floating point set
 
 `value` specifies the desired style of floating point math:
 
-| Value       | Description                                                       |
-|-------------|-------------------------------------------------------------------|
-| Default     | Use the toolset's floating point settings.                        |
-| Fast        | Enable floating point optimizations at the expense of accuracy.   |
-| Strict      | Improve floating point consistency at the expense of performance. |
+| Value       | Description                                                                             |
+|-------------|-----------------------------------------------------------------------------------------|
+| Default     | Use the toolset's floating point settings.                                              |
+| Fast        | Enable floating point optimizations at the expense of accuracy.                         |
+| Strict      | Improve floating point consistency at the expense of performance.                       |
+| Precise     | Preserves the source expression ordering and rounding properties of the target machine. |
 
 ### Applies To ###
 

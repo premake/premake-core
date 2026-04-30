@@ -18,7 +18,11 @@ static int writer(lua_State* L, const void* p, size_t size, void* u)
 int os_compile(lua_State* L)
 {
 	const char* input = luaL_checkstring(L, 1);
+#if PLATFORM_WINDOWS
+	const wchar_t *output = luaL_checkconvertstring(L, 2);
+#else
 	const char* output = luaL_checkstring(L, 2);
+#endif
 	lua_State* P = luaL_newstate();
 
 	if (luaL_loadfilex(P, input, NULL) != LUA_OK)
@@ -35,7 +39,15 @@ int os_compile(lua_State* L)
 	}
 	else
 	{
-		FILE* outputFile = (output == NULL) ? stdout : fopen(output, "wb");
+		FILE* outputFile = stdout;
+		if (output != NULL)
+		{
+#if PLATFORM_WINDOWS
+			outputFile = _wfopen(output, L"wb");
+#else
+			outputFile = fopen(output, "wb");
+#endif
+		}
 		if (outputFile == NULL)
 		{
 			lua_close(P);

@@ -7,27 +7,26 @@
 #include "premake.h"
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
 
 int os_stat(lua_State* L)
 {
-	const char* filename = luaL_checkstring(L, 1);
 
 #if PLATFORM_WINDOWS
+	const wchar_t *wfilename = luaL_checkconvertstring(L, 1);
+	const char *filename = lua_tostring(L, 1); /* save original path before popping converted string */
 	struct _stat s;
 
-	wchar_t wide_filename[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, filename, -1, wide_filename, PATH_MAX) == 0)
-	{
-		lua_pushstring(L, "unable to encode source path");
-		return lua_error(L);
-	}
-
-	if (_wstat(wide_filename, &s) != 0)
+	int failed = (_wstat(wfilename, &s) != 0);
+	lua_pop(L, 1);
 #else
+	const char* filename = luaL_checkstring(L, 1);
 	struct stat s;
 
-	if (stat(filename, &s) != 0)
+	int failed = (stat(filename, &s) != 0);
 #endif
+
+	if (failed)
 	{
 		lua_pushnil(L);
 		switch (errno)
@@ -39,7 +38,7 @@ int os_stat(lua_State* L)
 			lua_pushfstring(L, "'%s' was not found", filename);
 			break;
 		default:
-			lua_pushfstring(L, "An  unknown error %d occured while accessing '%s'", errno, filename);
+			lua_pushfstring(L, "An unknown error %d (%s) occurred while accessing '%s'", errno, strerror(errno), filename);
 			break;
 		}
 		return 2;

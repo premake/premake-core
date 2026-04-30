@@ -102,6 +102,35 @@
 					 os.findheader("test.h", path.getabsolute("folder/subfolder/include")))
 	end
 
+	function suite.findsubdirheader_provided_relative()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		test.isequal(path.getabsolute("folder/subfolder/include/testlib"), os.findsubdirheader("testlib2.h", "testlib"))
+
+		os.getenv = os_getenv
+	end
+
+	function suite.findsubdirheader_failure()
+		test.isfalse(os.findsubdirheader("Knights/who/say/Ni.hpp", "nonexistent"))
+	end
+
+	function suite.findsubdirheader_provided_absolute()
+		test.isequal(path.getabsolute("folder/subfolder/include"),
+					 os.findsubdirheader("test.h", path.getabsolute("folder/subfolder/include")))
+	end
+
+	function suite.findsubdirheader_mixed_with_empty()
+		local os_getenv = os.getenv
+		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
+
+		-- "testlib" finds testlib2.h; "" allows test.h to be found in the base include dir
+		test.isequal(path.getabsolute("folder/subfolder/include/testlib"), os.findsubdirheader("testlib2.h", {"testlib", ""}))
+		test.isequal(path.getabsolute("folder/subfolder/include"), os.findsubdirheader("test.h", {"testlib", ""}))
+
+		os.getenv = os_getenv
+	end
+
 	function suite.findheader_frompath_lib()
 		local os_getenv = os.getenv
 		os.getenv = create_mock_os_getenv({ [get_LD_PATH_variable_name()] = get_surrounded_env_path("folder/subfolder/lib") })
@@ -515,6 +544,9 @@
 
 	local tmpname = function()
 		local p = os.tmpname()
+        if p:startswith("\\") then
+            p = "." .. p
+        end
 		os.remove(p) -- just needed on POSIX
 		return p
 	end
@@ -539,6 +571,31 @@
 --
 -- os.remove() tests.
 --
+
+	function suite.remove_OnSymlink_RemovesLinkNotTarget()
+		-- Create a real file with content
+		local realfile = tmpfile()
+
+		-- Create a symlink pointing to the real file
+		local linkpath = tmpname()
+		os.linkfile(realfile, linkpath)
+
+		-- Verify setup
+		test.istrue(os.islink(linkpath))
+		test.istrue(os.isfile(realfile))
+
+		-- Remove the symlink - should remove only the link, not the target
+		test.istrue(os.remove(linkpath))
+
+		-- Symlink must be gone
+		test.isfalse(os.islink(linkpath))
+
+		-- Target file must still exist (link was not followed)
+		test.istrue(os.isfile(realfile))
+
+		-- Cleanup
+		os.remove(realfile)
+	end
 
 	function suite.remove_ReturnsError_OnNonExistingPath()
 		local ok, err, exitcode = os.remove(tmpname())
@@ -567,6 +624,26 @@
 --
 -- os.rmdir() tests.
 --
+
+	function suite.rmdir_OnSymlink_RemovesLinkNotTarget()
+		-- Create a symlink pointing to folder/subfolder (which contains hello.txt)
+		test.istrue(os.linkdir("folder/subfolder", "folder/symlink_nofollow"))
+
+		-- Verify setup
+		test.istrue(os.islink("folder/symlink_nofollow"))
+		test.istrue(os.isfile("folder/subfolder/hello.txt"))
+
+		-- Remove the symlink - should remove only the link, not the target
+		test.istrue(os.rmdir("folder/symlink_nofollow"))
+
+		-- Symlink must be gone
+		test.isfalse(os.islink("folder/symlink_nofollow"))
+		test.isfalse(os.isdir("folder/symlink_nofollow"))
+
+		-- Target directory and its contents must still exist (link was not followed)
+		test.istrue(os.isdir("folder/subfolder"))
+		test.istrue(os.isfile("folder/subfolder/hello.txt"))
+	end
 
 	function suite.rmdir_ReturnsError_OnNonExistingPath()
 		local ok, err = os.rmdir(tmpname())

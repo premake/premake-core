@@ -19,32 +19,20 @@ int os_comparefiles(lua_State* L)
 	size_t read;
 	char firstBuffer[4096];
 	char secondBuffer[4096];
+
+#if PLATFORM_WINDOWS
+	// if we read the first argument first, it might push to the stack obscuring
+	// a missing second argument. So read the second argument first.
+	const wchar_t *secondPath = luaL_checkconvertstring(L, 2);
+	const wchar_t *firstPath = luaL_checkconvertstring(L, 1);
+	firstFile = _wfopen(firstPath, L"rb");
+	secondFile = _wfopen(secondPath, L"rb");
+#else
 	const char* firstPath = luaL_checkstring(L, 1);
 	const char* secondPath = luaL_checkstring(L, 2);
-
-	#if PLATFORM_WINDOWS
-	wchar_t wide_firstPath[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, firstPath, -1, wide_firstPath, PATH_MAX) == 0)
-	{
-		lua_pushnil(L);
-		lua_pushstring(L, "unable to encode first path");
-		return 2;
-	}
-
-	wchar_t wide_secondPath[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, secondPath, -1, wide_secondPath, PATH_MAX) == 0)
-	{
-		lua_pushnil(L);
-		lua_pushstring(L, "unable to encode second path");
-		return 2;
-	}
-
-	firstFile = _wfopen(wide_firstPath, L"rb");
-	secondFile = _wfopen(wide_secondPath, L"rb");
-	#else
 	firstFile = fopen(firstPath, "rb");
 	secondFile = fopen(secondPath, "rb");
-	#endif
+#endif
 
 	if (!firstFile)
 	{

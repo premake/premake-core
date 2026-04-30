@@ -61,46 +61,62 @@ int os_getversion(lua_State* L)
 
 int getKernelVersion(struct OsVersionInfo* info)
 {
-	DWORD size = GetFileVersionInfoSizeA("kernel32.dll", NULL);
+	int success = 0;
+	DWORD size = GetFileVersionInfoSizeW(L"kernel32.dll", NULL);
 	if (size > 0)
 	{
 		void* data = malloc(size);
-		if (GetFileVersionInfoA("kernel32.dll", 0, size, data))
+		if (data && GetFileVersionInfoW(L"kernel32.dll", 0, size, data))
 		{
 			void* fixedInfoPtr;
 			UINT fixedInfoSize;
-			if (VerQueryValueA(data, "\\", &fixedInfoPtr, &fixedInfoSize))
+			if (VerQueryValueW(data, L"\\", &fixedInfoPtr, &fixedInfoSize))
 			{
 				VS_FIXEDFILEINFO* fileInfo = (VS_FIXEDFILEINFO*)fixedInfoPtr;
 				info->majorversion = HIWORD(fileInfo->dwProductVersionMS);
 				info->minorversion = LOWORD(fileInfo->dwProductVersionMS);
 				info->revision = HIWORD(fileInfo->dwProductVersionLS);
-				return TRUE;
+				success = 1;
 			}
 		}
+		if (data) free(data);
 	}
-	return FALSE;
+	return success;
+}
+
+static int getProductName(struct OsVersionInfo* info)
+{
+	// First get a friendly product name from the registry.
+	HKEY key;
+	info->description = "Windows";
+	info->isalloc = 0;
+	if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &key) == ERROR_SUCCESS)
+	{
+		#define CHARS 512
+		wchar_t wvalue[CHARS];
+		DWORD wvalue_bytes = sizeof(wvalue);
+		DWORD type;
+		if (RegQueryValueExW(key, L"productName", NULL, &type, (LPBYTE)wvalue, &wvalue_bytes) == ERROR_SUCCESS)
+		{
+			int size = WideCharToMultiByte(CP_UTF8, 0, wvalue, wvalue_bytes / sizeof(wchar_t), NULL, 0, NULL, NULL);
+			char *value = size > 0 ? malloc(size + 1) : NULL;
+			if (value)
+			{
+				WideCharToMultiByte(CP_UTF8, 0, wvalue, wvalue_bytes / sizeof(wchar_t), value, size, NULL, NULL);
+				value[size] = '\0';
+				info->description = value;
+				info->isalloc = 1;
+			}
+		}
+		RegCloseKey(key);
+		#undef CHARS
+	}
+	return info->isalloc;
 }
 
 int getversion(struct OsVersionInfo* info)
 {
-	HKEY key;
-	info->description = "Windows";
-
-	// First get a friendly product name from the registry.
-	if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &key) == ERROR_SUCCESS)
-	{
-		char value[512];
-		DWORD value_length = sizeof(value);
-		DWORD type;
-		RegQueryValueExA(key, "productName", NULL, &type, (LPBYTE)value, &value_length);
-		RegCloseKey(key);
-		if (type == REG_SZ)
-		{
-			info->description = strdup(value);
-			info->isalloc = 1;
-		}
-	}
+	getProductName(info);
 
 	// See if we can get a product version number from kernel32.dll
 	return getKernelVersion(info);

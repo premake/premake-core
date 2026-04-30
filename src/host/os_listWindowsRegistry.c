@@ -5,21 +5,41 @@
  */
 
 #include "premake.h"
+#include <assert.h>
 
 #if PLATFORM_WINDOWS
 
 typedef struct RegNodeInfo
 {
 	const char * name;
-	const char * value;
-	DWORD valueSize;
+	LPBYTE value;
+	DWORD valueBytes;
 	DWORD type;
 } RegNodeInfo;
 
-typedef void (*ListCallback)(const RegNodeInfo * info, void * user);
-extern HKEY getRegistryKey(const char** path);
+typedef struct State
+{
+	lua_State *L;
+	char *valbuf;
+	int valsize;
+} State;
 
-static const char* getTypeString(DWORD type)
+static void initState(State *state, lua_State *L)
+{
+	state->L = L;
+	state->valbuf = NULL;
+	state->valsize = 0;
+}
+
+static void freeState(State *state)
+{
+	if (state->valbuf) free(state->valbuf);
+}
+
+typedef void (*ListCallback)(const RegNodeInfo * info, void * user);
+extern HKEY getRegistryKey(const wchar_t** path); /* from os_getWindowsRegistry.c */
+
+static const char *getTypeString(DWORD type)
 {
 	switch (type)
 	{
@@ -35,11 +55,11 @@ static const char* getTypeString(DWORD type)
 		case REG_FULL_RESOURCE_DESCRIPTOR:   return "REG_FULL_RESOURCE_DESCRIPTOR";
 		case REG_RESOURCE_REQUIREMENTS_LIST: return "REG_RESOURCE_REQUIREMENTS_LIST";
 		case REG_QWORD:                      return "REG_QWORD";
-		default:                             return NULL;
+		default:                             return "Unknown";
 	}
 }
 
-static HKEY openKey(const char *path)
+static HKEY openKey(const wchar_t *path)
 {
 	HKEY key, subkey;
 
@@ -53,60 +73,91 @@ static HKEY openKey(const char *path)
 		return NULL;
 
 	// skip the initial path separator
-	if (path[0] == '\\')
+	if (path[0] == L'\\')
 		path++;
 
 	// open the key for reading
-	if (RegOpenKeyExA(key, path, 0, KEY_READ, &subkey) != ERROR_SUCCESS)
+	if (RegOpenKeyExW(key, path, 0, KEY_READ, &subkey) != ERROR_SUCCESS)
 		subkey = NULL;
 
 	return subkey;
 }
 
+int convertString(const wchar_t *value, char **pbuf, int *psize)
+{
+	int size = WideCharToMultiByte(CP_UTF8, 0, value, -1, *pbuf, *psize, NULL, NULL);
+	if (!size)
+	{
+		// If we give it a valid size, but it's too small, we get an error with INSUFFICIENT_BUFFER
+		if (!*psize || GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+			return 0;
+		// Got INSUFFICIENT_BUFFER; need to get the required size without trying to convert
+		size = WideCharToMultiByte(CP_UTF8, 0, value, -1, NULL, 0, NULL, NULL);
+		if (!size)
+			return 0;
+		assert(size > *psize);
+	}
+	if (size > *psize)
+	{
+		*pbuf = realloc(*pbuf, size);
+		if (!*pbuf)
+			return 0;
+		*psize = size;
+		WideCharToMultiByte(CP_UTF8, 0, value, -1, *pbuf, size, NULL, NULL);
+	}
+	return 1;
+}
+
 static int listNodes(HKEY key, ListCallback callback, void * user)
 {
-	RegNodeInfo node;
-	DWORD maxSubkeyLength;
-	DWORD maxValueLength;
-	DWORD maxNameLength;
+	RegNodeInfo node = {NULL, NULL, 0, REG_NONE};
+	DWORD maxSubkeyLength; // in characters
+	DWORD maxNameLength; // in characters
+	DWORD maxValueBytes; // in bytes
 	DWORD numSubkeys;
 	DWORD numValues;
 	DWORD length;
 	DWORD index;
-	char* name;
-	char* value;
+	wchar_t *name;
+	char *namebuf = NULL;
+	LPBYTE value;
+	void *buf;
+	int namesize = 0;
 	int ok;
 
 	if (key == NULL || callback == NULL)
 		return 0;
 
-	// Initialize node structure
-	node.value = NULL;
-	node.valueSize = 0;
-	node.type = REG_NONE;
-
 	// Fetch info about key content
-	if (RegQueryInfoKeyA(key, NULL, NULL, NULL, &numSubkeys, &maxSubkeyLength, NULL, &numValues, &maxNameLength, &maxValueLength, NULL, NULL) != ERROR_SUCCESS)
+	if (RegQueryInfoKeyW(key, NULL, NULL, NULL, &numSubkeys, &maxSubkeyLength, NULL, &numValues, &maxNameLength, &maxValueBytes, NULL, NULL) != ERROR_SUCCESS)
 		return 0;
 
 	// Allocate name and value buffers
 	if (maxSubkeyLength > maxNameLength)
 		maxNameLength = maxSubkeyLength;
 
-	maxNameLength++;
-	maxValueLength++;
-	name = (char*)malloc((size_t)maxNameLength);
-	value = (char*)malloc((size_t)maxValueLength + 1);
+	maxNameLength++; // space for null terminator
+	maxValueBytes += (2 * sizeof(wchar_t)); // space for two null terminators (for REG_MULTI_SZ)
+	buf = malloc((maxNameLength * sizeof(wchar_t)) + maxValueBytes);
+	if (!buf)
+		return 0;
+
+	name = (wchar_t *)buf;
+	value = (LPBYTE)(name + maxNameLength);
 
 	// Iterate over subkeys
 	ok = 1;
-	node.name = name;
 	for (index = 0; index < numSubkeys; index++) {
 		length = maxNameLength;
-		if (RegEnumKeyExA(key, index, name, &length, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) {
+		if (RegEnumKeyExW(key, index, name, &length, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) {
 			ok = 0;
 			break;
 		}
+		if (!convertString(name, &namebuf, &namesize)) {
+			ok = 0;
+			break;
+		}
+		node.name = namebuf;
 		callback(&node, user);
 	}
 
@@ -115,30 +166,35 @@ static int listNodes(HKEY key, ListCallback callback, void * user)
 		node.value = value;
 		for (index = 0; index < numValues; index++) {
 			length = maxNameLength;
-			node.valueSize = maxValueLength;
-			if (RegEnumValueA(key, index, name, &length, NULL, &node.type, (LPBYTE)value, &node.valueSize) != ERROR_SUCCESS) {
+			node.valueBytes = maxValueBytes;
+			if (RegEnumValueW(key, index, name, &length, NULL, &node.type, value, &node.valueBytes) != ERROR_SUCCESS) {
 				ok = 0;
 				break;
 			}
 
 			// Ensure proper termination of strings (two terminators for the REG_MULTI_SZ)
-			value[node.valueSize] = '\0';
-			value[node.valueSize + 1] = '\0';
+			memset(value + node.valueBytes, 0, 2 * sizeof(wchar_t));
+
+			if (!convertString(name, &namebuf, &namesize)) {
+				ok = 0;
+				break;
+			}
+			node.name = namebuf;
 			callback(&node, user);
 		}
 	}
 
 	// Free buffers
-	free(name);
-	free(value);
+	free(buf);
+	if (namebuf) free(namebuf);
 
 	return ok;
 }
 
 static void listCallback(const RegNodeInfo* info, void* user)
 {
-	lua_State* L = (lua_State*)user;
-	const char* typeString;
+	State *state = (State*)user;
+	lua_State* L = state->L;
 
 	// Insert key into the result table (keys are represented as empty tables)
 	if (info->value == NULL) {
@@ -148,9 +204,8 @@ static void listCallback(const RegNodeInfo* info, void* user)
 	}
 
 	// Values are represented as tables containing "type" and "value" records
-	typeString = getTypeString(info->type);
 	lua_createtable(L, 0, 2);
-	lua_pushstring(L, typeString ? typeString : "Unknown");
+	lua_pushstring(L, getTypeString(info->type));
 	lua_setfield(L, -2, "type");
 
 	switch (info->type)
@@ -161,7 +216,7 @@ static void listCallback(const RegNodeInfo* info, void* user)
 		case REG_RESOURCE_LIST:
 		case REG_FULL_RESOURCE_DESCRIPTOR:
 		case REG_RESOURCE_REQUIREMENTS_LIST: {
-			lua_pushlstring(L, info->value, info->valueSize);
+			lua_pushlstring(L, (char *)info->value, info->valueBytes);
 			break;
 		}
 
@@ -169,7 +224,8 @@ static void listCallback(const RegNodeInfo* info, void* user)
 		case REG_SZ:
 		case REG_EXPAND_SZ:
 		case REG_LINK: {
-			lua_pushstring(L, info->value);
+			const char *str = convertString((const wchar_t *)info->value, &state->valbuf, &state->valsize) ? state->valbuf : "Error converting value";
+			lua_pushstring(L, str);
 			break;
 		}
 
@@ -191,21 +247,13 @@ static void listCallback(const RegNodeInfo* info, void* user)
 
 		// Multiple strings
 		case REG_MULTI_SZ: {
-			DWORD i, j, k;
-
+			int k = 1;
+			const wchar_t *end = (const wchar_t *)(info->value + info->valueBytes);
 			lua_newtable(L);
-			for (i = j = 0, k = 1; i < info->valueSize; i++)
-			{
-				if (info->value[i] != 0)
-					continue;
-
-				if (i == j)
-					break;
-
-				lua_pushlstring(L, &info->value[j], i - j);
-				lua_rawseti(L, -2, k);
-				j = i + 1;
-				k++;
+			for (const wchar_t *p = (const wchar_t *)info->value; p < end; p += wcslen(p) + 1) {
+				char *str = convertString(p, &state->valbuf, &state->valsize) ? state->valbuf : "Error converting value";
+				lua_pushstring(L, str);
+				lua_rawseti(L, -2, k++);
 			}
 			break;
 		}
@@ -224,18 +272,23 @@ static void listCallback(const RegNodeInfo* info, void* user)
 
 int os_listWindowsRegistry(lua_State* L)
 {
-	HKEY key = openKey(luaL_checkstring(L, 1));
+	State state;
+	HKEY key = openKey(luaL_checkconvertstring(L, 1));
+	lua_pop(L, 1);
 	if (key == NULL) {
 		lua_pushnil(L);
 		return 1;
 	}
 
+	initState(&state, L);
 	lua_newtable(L);
-	if (!listNodes(key, listCallback, (void *)L)) {
+	if (!listNodes(key, listCallback, &state)) {
 		// Discard table in case of fault and push nil instead
 		lua_pop(L, 1);
 		lua_pushnil(L);
 	}
+
+	freeState(&state);
 
 	RegCloseKey(key);
 	return 1;

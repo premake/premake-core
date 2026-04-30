@@ -10,27 +10,17 @@
 int os_copyfile(lua_State* L)
 {
 	int z;
-	const char* src = luaL_checkstring(L, 1);
-	const char* dst = luaL_checkstring(L, 2);
+
 
 #if PLATFORM_WINDOWS
-	wchar_t wide_src[PATH_MAX];
-	wchar_t wide_dst[PATH_MAX];
-
-	if (MultiByteToWideChar(CP_UTF8, 0, src, -1, wide_src, PATH_MAX) == 0)
-	{
-		lua_pushstring(L, "unable to encode source path");
-		return lua_error(L);
-	}
-
-	if (MultiByteToWideChar(CP_UTF8, 0, dst, -1, wide_dst, PATH_MAX) == 0)
-	{
-		lua_pushstring(L, "unable to encode source path");
-		return lua_error(L);
-	}
-
-	z = CopyFileW(wide_src, wide_dst, FALSE);
+	// if we read the first argument first, it might push to the stack obscuring
+	// a missing second argument. So read the second argument first.
+	const wchar_t* dst = luaL_checkconvertstring(L, 2);
+	const wchar_t* src = luaL_checkconvertstring(L, 1);
+	z = CopyFileW(src, dst, FALSE);
 #else
+	const char* src = luaL_checkstring(L, 1);
+	const char* dst = luaL_checkstring(L, 2);
 	lua_pushfstring(L, "cp \"%s\" \"%s\"", src, dst);
 	z = (system(lua_tostring(L, -1)) == 0);
 #endif
@@ -40,13 +30,16 @@ int os_copyfile(lua_State* L)
 		lua_pushnil(L);
 #if PLATFORM_WINDOWS
 		wchar_t buf[256];
-		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL);
-
-		char bufA[256];
-		WideCharToMultiByte(CP_UTF8, 0, buf, 256, bufA, 256, 0, 0);
-
-		lua_pushfstring(L, "unable to copy file to '%s', reason: '%s'", dst, bufA);
+		DWORD ec = GetLastError();
+		const char *err = NULL;
+		if (FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, ec,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL) && (err = luaL_convertwstring(L, buf, NULL)) != NULL)
+		{
+			lua_pushfstring(L, "unable to copy file to '%s', reason: '%s' (%I)", lua_tostring(L, 2), err, (lua_Integer)ec);
+			lua_remove(L, -2); /* converted string */
+		}
+		else
+			lua_pushfstring(L, "unable to copy file to '%s', error code: %I", lua_tostring(L, 2), (lua_Integer)ec);
 #else
 		lua_pushfstring(L, "unable to copy file to '%s'", dst);
 #endif

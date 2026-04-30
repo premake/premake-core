@@ -11,6 +11,7 @@
 #include "premake.h"
 #ifdef LUA_STATICLIB
 #include "lua_shimtable.h"
+#include "lauxlib.h"
 #endif
 
 #if PLATFORM_MACOSX
@@ -26,7 +27,7 @@
 
 
 static void build_premake_path(lua_State* L);
-static int process_arguments(lua_State* L, int argc, const char** argv);
+static int process_arguments(lua_State* L, int argc, const TCHAR** argv);
 static int run_premake_main(lua_State* L, const char* script);
 
 
@@ -179,14 +180,20 @@ void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
 	lua_pop(L, 1);
 }
 
+static void set_home_dir(lua_State* L)
+{
+	const char *value = luaL_getenv(L, "HOME");
+	if (!value) value = luaL_getenv(L, "USERPROFILE");
+	if (!value) lua_pushstring(L, "~");
+	lua_setglobal(L, "_USER_HOME_DIR");
+}
+
 
 /**
  * Initialize the Premake Lua environment.
  */
 int premake_init(lua_State* L)
 {
-	const char* value;
-
 	// Replace Lua functions
 	lua_pushcfunction(L, premake_luaB_loadfile);
 	lua_setglobal(L, "loadfile");
@@ -237,6 +244,12 @@ int premake_init(lua_State* L)
 	lua_pushstring(L, PREMAKE_PROJECT_URL);
 	lua_setglobal(L, "_PREMAKE_URL");
 
+	/* for Windows builds we require building with our own Lua for UTF-8 support */
+#if !PLATFORM_WINDOWS || defined(LUA_STATICLIB)
+	lua_pushboolean(L, TRUE);
+	lua_setglobal(L, "_UTF8_ENABLED");
+#endif
+
 #if PLATFORM_COSMO
 	/* set _COSMOPOLITAN if its a Cosmopolitan build */
 	lua_pushboolean(L, TRUE);
@@ -244,11 +257,7 @@ int premake_init(lua_State* L)
 #endif
 
 	/* find the user's home directory */
-	value = getenv("HOME");
-	if (!value) value = getenv("USERPROFILE");
-	if (!value) value = "~";
-	lua_pushstring(L, value);
-	lua_setglobal(L, "_USER_HOME_DIR");
+	set_home_dir(L);
 
 	/* publish the initial working directory */
 	os_getcwd(L);
@@ -320,7 +329,7 @@ int premake_pcall(lua_State* L, int nargs, int nresults)
 	return result;
 }
 
-int premake_execute(lua_State* L, int argc, const char** argv, const char* script)
+int premake_execute(lua_State* L, int argc, const TCHAR** argv, const char* script)
 {
 	/* push the absolute path to the Premake executable */
 	lua_pushcfunction(L, path_getabsolute);
@@ -363,44 +372,56 @@ int premake_execute(lua_State* L, int argc, const char** argv, const char* scrip
  * http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
  * http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
  */
-int premake_locate_executable(lua_State* L, const char* argv0)
+int premake_locate_executable(lua_State* L, const TCHAR* argv0)
 {
-	char buffer[PATH_MAX];
 	const char* path = NULL;
+	const char *pargv0 = NULL;
 
 #if PLATFORM_WINDOWS
-	wchar_t widebuffer[PATH_MAX];
+	int argv0idx = lua_gettop(L) + 1;
+	int filenameidx = lua_gettop(L) + 2;
 
-	DWORD len = GetModuleFileNameW(NULL, widebuffer, PATH_MAX);
-	if (len > 0)
+	pargv0 = luaL_convertwstring(L, argv0, NULL);
+	if (!pargv0)
 	{
-		WideCharToMultiByte(CP_UTF8, 0, widebuffer, len, buffer, PATH_MAX, NULL, NULL);
-
-		buffer[len] = 0;
-		path = buffer;
+		argv0idx = 0;
+		--filenameidx;
 	}
+
+	{
+		wchar_t widebuffer[PATH_MAX + 1];
+		DWORD len = GetModuleFileNameW(NULL, widebuffer, PATH_MAX + 1);
+		if (len > 0 && len <= PATH_MAX)
+		{
+			path = luaL_convertwstring(L, widebuffer, NULL);
+			if (!path) filenameidx = 0;
+		}
+	}
+#else
+	char buffer[PATH_MAX + 1];
+	pargv0 = argv0;
 #endif
 
 #if PLATFORM_MACOSX
 	CFURLRef bundleURL = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
 	CFStringRef pathRef = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
-	if (CFStringGetCString(pathRef, buffer, PATH_MAX - 1, kCFStringEncodingUTF8))
+	if (CFStringGetCString(pathRef, buffer, PATH_MAX, kCFStringEncodingUTF8))
 		path = buffer;
 #endif
 
 #if PLATFORM_LINUX
-	int len = readlink("/proc/self/exe", buffer, PATH_MAX - 1);
+	int len = readlink("/proc/self/exe", buffer, PATH_MAX);
 	if (len > 0)
 	{
-		buffer[len] = 0;
+		buffer[len] = '\0';
 		path = buffer;
 	}
 #endif
 
 #if PLATFORM_BSD && !defined(__OpenBSD__)
-	int len = readlink("/proc/curproc/file", buffer, PATH_MAX - 1);
+	int len = readlink("/proc/curproc/file", buffer, PATH_MAX);
 	if (len < 0)
-		len = readlink("/proc/curproc/exe", buffer, PATH_MAX - 1);
+		len = readlink("/proc/curproc/exe", buffer, PATH_MAX);
 	if (len < 0)
 	{
 		int mib[4];
@@ -414,32 +435,30 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	}
 	if (len > 0)
 	{
-		buffer[len] = 0;
+		buffer[len] = '\0';
 		path = buffer;
 	}
 #endif
 
 #if PLATFORM_SOLARIS
-	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX - 1);
+	int len = readlink("/proc/self/path/a.out", buffer, PATH_MAX);
 	if (len > 0)
 	{
-		buffer[len] = 0;
+		buffer[len] = '\0';
 		path = buffer;
 	}
 #endif
-
-	(void)buffer;
 
 	/* As a fallback, search the PATH with argv[0] */
 	if (!path)
 	{
 		lua_pushcfunction(L, os_pathsearch);
-		lua_pushstring(L, argv0);
-		lua_pushstring(L, getenv("PATH"));
+		lua_pushstring(L, pargv0);
+		if (!luaL_getenv(L, "PATH")) lua_pushnil(L);
 		if (lua_pcall(L, 2, 1, 0) == OKAY && !lua_isnil(L, -1))
 		{
 			lua_pushstring(L, "/");
-			lua_pushstring(L, argv0);
+			lua_pushstring(L, pargv0);
 			lua_concat(L, 3);
 			path = lua_tostring(L, -1);
 		}
@@ -452,14 +471,14 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 		/* make it absolute, if needed */
 		os_getcwd(L);
 		lua_pushstring(L, "/");
-		lua_pushstring(L, argv0);
+		lua_pushstring(L, pargv0);
 
-		if (!do_isabsolute(argv0)) {
+		if (!do_isabsolute(pargv0)) {
 			lua_concat(L, 3);
 		}
 		else {
 			lua_pop(L, 3);
-			lua_pushstring(L, argv0);
+			lua_pushstring(L, pargv0);
 		}
 
 		path = lua_tostring(L, -1);
@@ -467,6 +486,11 @@ int premake_locate_executable(lua_State* L, const char* argv0)
 	}
 
 	lua_pushstring(L, path);
+#if PLATFORM_WINDOWS
+	/* cleanup translation stack slots; note this must be in reverse order */
+	if (filenameidx) lua_remove(L, filenameidx);
+	if (argv0idx) lua_remove(L, argv0idx);
+#endif
 	return 1;
 }
 
@@ -493,8 +517,14 @@ int premake_locate_file(lua_State* L, const char* filename, int searchMask)
 	}
 
 	if (searchMask & SEARCH_PATH) {
-		const char* path = getenv("PREMAKE_PATH");
-		if (path && do_locate(L, filename, path)) return OKAY;
+		const char *path = luaL_getenv(L, "PREMAKE_PATH");
+		if (path)
+		{
+			int idx = lua_gettop(L);
+			int result = do_locate(L, filename, path);
+			lua_remove(L, idx); /* remove env var from stack */
+			if (result) return OKAY;
+		}
 	}
 
 #if !defined(PREMAKE_NO_BUILTIN_SCRIPTS)
@@ -531,7 +561,6 @@ static const char* set_scripts_path(const char* relativePath)
 static void build_premake_path(lua_State* L)
 {
 	int top;
-	const char* value;
 
 	lua_getglobal(L, "premake");
 	top = lua_gettop(L);
@@ -546,14 +575,11 @@ static void build_premake_path(lua_State* L)
 	}
 
 	/* Then the PREMAKE_PATH environment variable */
-	value = getenv("PREMAKE_PATH");
-	if (value) {
-		lua_pushstring(L, ";");
-		lua_pushstring(L, value);
-	}
+	lua_pushstring(L, ";");
+	if (luaL_getenv(L, "PREMAKE_PATH"))
+		lua_pushstring(L, ";");  /* push another ';' for the next path */
 
 	/* Then in ~/.premake */
-	lua_pushstring(L, ";");
 	lua_getglobal(L, "_USER_HOME_DIR");
 	lua_pushstring(L, "/.premake");
 
@@ -599,27 +625,37 @@ static void build_premake_path(lua_State* L)
  * the manifest if needed.
  * \returns OKAY if successful.
  */
-static int process_arguments(lua_State* L, int argc, const char** argv)
+static int process_arguments(lua_State* L, int argc, const TCHAR** argv)
 {
-	int i;
-
 	/* Copy all arguments in the _ARGV global */
+	int table_idx = lua_gettop(L) + 1;
 	lua_newtable(L);
-	for (i = 1; i < argc; ++i)
+	for (int i = 1; i < argc; ++i)
 	{
-		lua_pushstring(L, argv[i]);
-		lua_rawseti(L, -2, luaL_len(L, -2) + 1);
+#if PLATFORM_WINDOWS
+		const char *parg = luaL_convertwstring(L, argv[i], NULL);
+		if (!parg)
+			parg = lua_pushstring(L, "<conversion error>");
+		lua_pushvalue(L, -1); /* make a copy so `parg` can still be used */
+#else
+		const char *parg = argv[i];
+		lua_pushstring(L, parg);
+#endif
+		lua_rawseti(L, table_idx, i);
 
 		/* The /scripts option gets picked up here; used later to find the
 		 * manifest and scripts later if necessary */
-		if (strncmp(argv[i], "/scripts=", 9) == 0)
+		if (strncmp(parg, "/scripts=", 9) == 0)
 		{
-			argv[i] = set_scripts_path(argv[i] + 9);
+			set_scripts_path(parg + 9);
 		}
-		else if (strncmp(argv[i], "--scripts=", 10) == 0)
+		else if (strncmp(parg, "--scripts=", 10) == 0)
 		{
-			argv[i] = set_scripts_path(argv[i] + 10);
+			set_scripts_path(parg + 10);
 		}
+#if PLATFORM_WINDOWS
+		lua_pop(L, 1); /* pop the original converted parg string */
+#endif
 	}
 	lua_setglobal(L, "_ARGV");
 
@@ -736,3 +772,144 @@ int premake_getEmbeddedResource(lua_State* L)
 	lua_pushlstring(L, (const char*)chunk->bytecode, chunk->length);
 	return 1;
 }
+
+#ifndef LUA_STATICLIB
+// Functions added to our version of Lua in contrib/lua; need to reimplement when building against system Lua
+// Copied from lauxlib.c in contrib/lua
+const char *luaL_getenv(lua_State *L, const char *name)
+{
+#if PLATFORM_WINDOWS
+	const wchar_t *wname = luaL_convertstring(L, name);
+	const char *s;
+	wchar_t *wvar;
+	DWORD rc;
+	luaL_Buffer wbuf;
+	if (wname == NULL) return NULL;
+	rc = GetEnvironmentVariableW(wname, NULL, 0);
+	if (!rc) {
+	  lua_pop(L, 1);
+	  return NULL;
+	}
+	wvar = (wchar_t *)luaL_buffinitsize(L, &wbuf, rc * sizeof(wchar_t));
+	GetEnvironmentVariableW(wname, wvar, rc);
+	luaL_pushresultsize(&wbuf, rc * sizeof(wchar_t));
+	wvar = (wchar_t *)lua_tostring(L, -1);
+	s = luaL_convertlwstring(L, wvar, rc - 1, NULL);
+	lua_remove(L, -2); /* remove the string from wbuf */
+	lua_remove(L, -2); /* remove the string from wname */
+	return s;
+#else
+	const char *value = getenv(name);
+	if (!value) return NULL;
+	lua_pushstring(L, value);
+	return lua_tostring(L, -1);
+#endif
+}
+
+#if PLATFORM_WINDOWS
+typedef struct UWideString {
+	size_t len;
+	wchar_t s[1]; /* actual size is len + 1 */
+} UWideString;
+  
+#define LUA_WIDESTRING "LUA_WIDESTRING"
+  
+static UWideString *newwidestr (lua_State *L, const wchar_t *s, size_t len) {
+	UWideString *ws = (UWideString *)lua_newuserdata(L, sizeof(UWideString) + len * sizeof(wchar_t));
+	luaL_newmetatable(L, LUA_WIDESTRING);
+	lua_setmetatable(L, -2);
+	if (s) memcpy(ws->s, s, len * sizeof(wchar_t));
+	ws->s[len] = L'\0';
+	ws->len = len;
+	return ws;
+}
+  
+const wchar_t *luaL_convertlstringi (lua_State *L, int idx, size_t *len)
+{
+	size_t nlen;
+	const char *s = lua_tolstring(L, idx, &nlen);
+	return luaL_convertlstring(L, s, nlen, len);
+}
+  
+const char *luaL_convertlwstring (lua_State *L, const wchar_t *ws, size_t wlen, size_t *len)
+{
+	int size;
+	luaL_Buffer buf;
+	char *s;
+	if (ws == NULL) {
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+	size = WideCharToMultiByte(CP_UTF8, 0, ws, wlen, NULL, 0, NULL, NULL);
+	if (size == 0) { /* conversion failure */
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+	s = luaL_buffinitsize(L, &buf, size);
+	WideCharToMultiByte(CP_UTF8, 0, ws, wlen, s, size, NULL, NULL);
+	luaL_pushresultsize(&buf, size);
+	if (len != NULL) *len = size;
+	return lua_tostring(L, -1);
+}
+  
+const wchar_t *luaL_convertlstring (lua_State *L, const char *s, size_t nlen, size_t *len)
+{
+	int size;
+	UWideString *ws;
+	if (s == NULL) {
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+	size = MultiByteToWideChar(CP_UTF8, 0, s, nlen, NULL, 0);
+	if (size == 0) { /* conversion failure */
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+  
+	ws = newwidestr(L, NULL, size);
+	MultiByteToWideChar(CP_UTF8, 0, s, nlen, ws->s, size);
+	if (len != NULL) *len = size;
+	return ws->s;
+}
+  
+const char *(luaL_convertwstring) (lua_State *L, const wchar_t *ws, size_t *len)
+{
+	int size, wlen;
+	luaL_Buffer buf;
+	char *s;
+	if (ws == NULL) {
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+	wlen = wcslen(ws);
+	size = WideCharToMultiByte(CP_UTF8, 0, ws, wlen, NULL, 0, NULL, NULL);
+	if (size == 0) { /* conversion failure */
+	  if (len != NULL) *len = 0;
+	  return NULL;
+	}
+	s = luaL_buffinitsize(L, &buf, size);
+	WideCharToMultiByte(CP_UTF8, 0, ws, wlen, s, size, NULL, NULL);
+	luaL_pushresultsize(&buf, size);
+	if (len != NULL) *len = size;
+	return lua_tostring(L, -1);
+}
+  
+const wchar_t *luaL_checkconvertlstring (lua_State *L, int idx, size_t *len)
+{
+	size_t nlen;
+	const char *s = luaL_checklstring(L, idx, &nlen);
+	const wchar_t *ws = luaL_convertlstring(L, s, nlen, len);
+	if (ws == NULL) luaL_error(L, "conversion failure");
+	return ws;
+}
+  
+const wchar_t *luaL_optconvertlstring (lua_State *L, int idx, const wchar_t *def, size_t *len)
+{
+	if (lua_isnoneornil(L, idx)) {
+	  if (len != NULL) *len = (def ? wcslen(def) : 0);
+	  return def;
+	}
+	return luaL_checkconvertlstring(L, idx, len);
+}
+#endif /* PLATFORM_WINDOWS */
+#endif /* LUA_STATICLIB */

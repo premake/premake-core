@@ -534,6 +534,12 @@ end
 		test.contains("/fp:strict", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onFloatingPointPrecise()
+		floatingpoint "Precise"
+		prepare()
+		test.contains("/fp:precise", msc.getcflags(cfg))
+	end
+
 	function suite.cflags_onSSE()
 		vectorextensions "SSE"
 		prepare()

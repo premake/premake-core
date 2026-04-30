@@ -10,47 +10,33 @@
 
 int os_rename(lua_State* L)
 {
-	const char *fromname = luaL_checkstring(L, 1);
-	const char *toname = luaL_checkstring(L, 2);
+	const wchar_t *toname = luaL_checkconvertstring(L, 2);
+	const wchar_t *fromname = luaL_checkconvertstring(L, 1);
 
-	wchar_t wide_frompath[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, fromname, -1, wide_frompath, PATH_MAX) == 0)
+	BOOL b = MoveFileExW(fromname, toname, MOVEFILE_COPY_ALLOWED);
+	if (b)
 	{
-		lua_pushstring(L, "unable to encode source path");
-		return lua_error(L);
-	}
-
-	wchar_t wide_topath[PATH_MAX];
-	if (MultiByteToWideChar(CP_UTF8, 0, toname, -1, wide_topath, PATH_MAX) == 0)
-	{
-		lua_pushstring(L, "unable to encode dest path");
-		return lua_error(L);
-	}
-
-	if (MoveFileExW(wide_frompath, wide_topath, MOVEFILE_COPY_ALLOWED))
-	{
+		lua_pop(L, 2);
 		lua_pushboolean(L, 1);
 		return 1;
 	}
 	else
 	{
 		DWORD err = GetLastError();
-
-		char unicodeErr[512];
+		const char *fromname_utf8 = lua_tostring(L, 1); /* get original UTF-8 before popping converted strings */
+		lua_pop(L, 2);
 
 		LPWSTR messageBuffer = NULL;
+		int pushed = 0;
+		lua_pushnil(L);
 		if (FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR) &messageBuffer, 0, NULL) != 0)
 		{
-			if (WideCharToMultiByte(CP_UTF8, 0, messageBuffer, -1, unicodeErr, sizeof(unicodeErr), NULL, NULL) == 0)
-				strcpy(unicodeErr, "failed to translate error message");
-
+			pushed = !!luaL_convertwstring(L, messageBuffer, NULL);
 			LocalFree(messageBuffer);
 		}
-		else
-			strcpy(unicodeErr, "failed to get error message");
 
-		lua_pushnil(L);
-		lua_pushfstring(L, "%s: %s", fromname, unicodeErr);
+		lua_pushfstring(L, "%s: %s (%I)", fromname_utf8, pushed ? lua_tostring(L, -1) : "<failed to get error message>", (lua_Integer)err);
+		if (pushed) lua_remove(L, -2); /* remove converted string */
 		lua_pushinteger(L, err);
 		return 3;
 	}

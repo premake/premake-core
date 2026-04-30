@@ -12,28 +12,32 @@ typedef struct RegKeyInfo
 {
 	HKEY key;
 	HKEY subkey;
-	char * value;
+	DWORD keyType;
+	LPBYTE value;
+	DWORD valueBytes;
 } RegKeyInfo;
 
-HKEY getRegistryKey(const char **path)
+extern int convertString(const wchar_t *value, char **pbuf, int *psize); /* from os_listWindowsRegistry.c */
+
+HKEY getRegistryKey(const wchar_t **path)
 {
-	if (_strnicmp(*path, "HKCU:", 5) == 0) {
+	if (_wcsnicmp(*path, L"HKCU:", 5) == 0) {
 		*path += 5;
 		return HKEY_CURRENT_USER;
 	}
-	if (_strnicmp(*path, "HKLM:", 5) == 0) {
+	if (_wcsnicmp(*path, L"HKLM:", 5) == 0) {
 		*path += 5;
 		return HKEY_LOCAL_MACHINE;
 	}
-	if (_strnicmp(*path, "HKCR:", 5) == 0) {
+	if (_wcsnicmp(*path, L"HKCR:", 5) == 0) {
 		*path += 5;
 		return HKEY_CLASSES_ROOT;
 	}
-	if (_strnicmp(*path, "HKU:", 4) == 0) {
+	if (_wcsnicmp(*path, L"HKU:", 4) == 0) {
 		*path += 4;
 		return HKEY_USERS;
 	}
-	if (_strnicmp(*path, "HKCC:", 5) == 0) {
+	if (_wcsnicmp(*path, L"HKCC:", 5) == 0) {
 		*path += 5;
 		return HKEY_CURRENT_CONFIG;
 	}
@@ -42,38 +46,38 @@ HKEY getRegistryKey(const char **path)
 	return NULL;
 }
 
-static HKEY getSubkey(HKEY key, const char **path)
+static HKEY getSubkey(HKEY key, const wchar_t **path)
 {
 	HKEY subkey;
 	size_t length;
-	char *subpath;
-	const char *value;
+	wchar_t *subpath;
+	const wchar_t *valueName;
 	char hasValue;
 
 	if (key == NULL)
 		return NULL;
 
 	// skip the initial path separator
-	if ((*path)[0] == '\\')
+	if (**path == L'\\')
 		(*path)++;
 
 	// make a copy of the subkey path that excludes the value name (if present)
-	value = strrchr(*path, '\\');
-	hasValue = value ? value[1] : 0;
+	valueName = wcsrchr(*path, L'\\');
+	hasValue = valueName ? valueName[1] != L'\0' : 0;
 	if (hasValue) {
-		length = (size_t)(value - *path);
-		subpath = (char *)malloc(length + 1);
-		strncpy(subpath, *path, length);
-		subpath[length] = 0;
+		length = (size_t)(valueName - *path);
+		subpath = (wchar_t *)malloc((length + 1) * sizeof(wchar_t));
+		wcsncpy(subpath, *path, length);
+		subpath[length] = L'\0';
 	}
 	// no value separator means we should check the default value
 	else {
-		subpath = (char *)*path;
-		length = strlen(subpath);
+		subpath = (wchar_t *)*path;
+		length = wcslen(subpath);
 	}
 
 	// open the key for reading
-	if (RegOpenKeyExA(key, subpath, 0, KEY_READ, &subkey) != ERROR_SUCCESS)
+	if (RegOpenKeyExW(key, subpath, 0, KEY_READ, &subkey) != ERROR_SUCCESS)
 		subkey = NULL;
 
 	// free the subpath if one was allocated
@@ -84,51 +88,83 @@ static HKEY getSubkey(HKEY key, const char **path)
 	return subkey;
 }
 
-static char * getValue(HKEY key, const char * name)
+static LPBYTE getValue(HKEY key, const wchar_t * name, RegKeyInfo *info)
 {
-	DWORD length;
-	char * value;
+	DWORD length_bytes;
+	LPBYTE value;
 
+	info->value = NULL;
+	info->valueBytes = 0;
 	if (key == NULL || name == NULL)
 		return NULL;
 
 	// skip the initial path separator
-	if (name[0] == '\\')
+	if (name[0] == L'\\')
 		name++;
 
 	// query length of value
-	if (RegQueryValueExA(key, name, NULL, NULL, NULL, &length) != ERROR_SUCCESS)
+	if (RegQueryValueExW(key, name, NULL, NULL, NULL, &length_bytes) != ERROR_SUCCESS)
 		return NULL;
 
 	// allocate room for the value and fetch it
-	value = (char *)malloc((size_t)length + 1);
-	if (RegQueryValueExA(key, name, NULL, NULL, (LPBYTE)value, &length) != ERROR_SUCCESS) {
+	value = (LPBYTE)malloc(length_bytes + (2 * sizeof(wchar_t)));
+	if (!value)
+		return NULL;
+
+	if (RegQueryValueExW(key, name, NULL, &info->keyType, value, &length_bytes) != ERROR_SUCCESS) {
 		free(value);
 		return NULL;
 	}
 
-	value[length] = 0;
+	// ensure proper termination of strings (two terminators for the REG_MULTI_SZ)
+	memset(value + length_bytes, 0, 2 * sizeof(wchar_t));
+
+	info->value = value;
+	info->valueBytes = length_bytes;
 	return value;
 }
 
-static void fetchKeyInfo(struct RegKeyInfo *info, const char *path)
+static void fetchKeyInfo(struct RegKeyInfo *info, const wchar_t *path)
 {
 	info->key = getRegistryKey(&path);
 	info->subkey = getSubkey(info->key, &path);
-	info->value = getValue(info->subkey, path);
+	getValue(info->subkey, path, info);
 }
 
 static void releaseKeyInfo(struct RegKeyInfo *info)
 {
-	free(info->value);
-	RegCloseKey(info->subkey);
+	if (info->value) free(info->value);
+	if (info->subkey) RegCloseKey(info->subkey);
 }
 
 int os_getWindowsRegistry(lua_State *L)
 {
-	RegKeyInfo info;
-	fetchKeyInfo(&info, luaL_checkstring(L, 1));
-	lua_pushstring(L, info.value);
+	RegKeyInfo info = {0, 0, 0, NULL, 0};
+	const wchar_t *wpath = luaL_checkconvertstring(L, 1);
+	fetchKeyInfo(&info, wpath);
+	lua_pop(L, 1);
+
+	switch (info.keyType)
+	{
+		case REG_NONE:
+			lua_pushnil(L);
+			break;
+
+		case REG_SZ:
+		case REG_EXPAND_SZ:
+		case REG_LINK: {
+			char *value = NULL;
+			int size = 0;
+			lua_pushstring(L, convertString((const wchar_t *)info.value, &value, &size) ? value : "Error converting value");
+			free(value);
+			break;
+		}
+
+		default: /* some of these are strange to push as a string... */
+			lua_pushlstring(L, (char *)info.value, info.valueBytes);
+			break;
+	}
+
 	releaseKeyInfo(&info);
 	return 1;
 }

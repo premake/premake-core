@@ -307,6 +307,28 @@ end
 	end
 
 --
+-- Check handling of floating point modifiers.
+--
+
+	function suite.cflags_onFloatingPointFast()
+		floatingpoint "Fast"
+		prepare()
+		test.contains({ "-ffast-math" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointStrict()
+		floatingpoint "Strict"
+		prepare()
+		test.contains({ "-ffp-model=strict" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onFloatingPointPrecise()
+		floatingpoint "Precise"
+		prepare()
+		test.contains({ "-ffp-model=precise" }, clang.getcflags(cfg))
+	end
+
+--
 -- Test profiling flag
 --
 

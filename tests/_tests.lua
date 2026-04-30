@@ -1,6 +1,7 @@
 return {
 	-- Base API tests
 	"test_lua.lua",
+	"test_lua_unicode.lua",
 	"test_string.lua",
 	"base/test_aliasing.lua",
 	"base/test_binmodules.lua",
@@ -12,6 +13,7 @@ return {
 	"base/test_module_loader.lua",
 	"base/test_option.lua",
 	"base/test_os.lua",
+	"base/test_os_unicode.lua",
 	"base/test_override.lua",
 	"base/test_path.lua",
 	"base/test_premake_command.lua",

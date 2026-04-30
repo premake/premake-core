@@ -21,20 +21,26 @@ int os_getcwd(lua_State* L)
 
 int do_getcwd(char* buffer, size_t size)
 {
-	int result;
-
 #if PLATFORM_WINDOWS
-	wchar_t wbuffer[PATH_MAX];
-
-	result = (GetCurrentDirectoryW(PATH_MAX, wbuffer) != 0);
-	if (result) {
-		WideCharToMultiByte(CP_UTF8, 0, wbuffer, -1, buffer, (int)size, NULL, NULL);
-
-		do_translate(buffer, '/');
+	DWORD result = GetCurrentDirectoryW(0, NULL), result2;
+	wchar_t *wbuffer;
+	int s;
+	if (!result) return 0;
+	wbuffer = (wchar_t *)malloc(result * sizeof(wchar_t));
+	if (!wbuffer) return 0;
+	result2 = GetCurrentDirectoryW(result, wbuffer);
+	if (!result2 || result2 >= result)
+	{
+		free(wbuffer);
+		return 0;
 	}
+	s = WideCharToMultiByte(CP_UTF8, 0, wbuffer, result2, buffer, (int)(size ? size - 1 : 0), NULL, NULL);
+	free(wbuffer);
+	if (!s || s >= (int)size) return 0;
+	buffer[s] = '\0';
+	do_translate(buffer, '/');
+	return 1;
 #else
-	result = (getcwd(buffer, size) != 0);
+	return (getcwd(buffer, size) != 0);
 #endif
-
-	return result;
 }

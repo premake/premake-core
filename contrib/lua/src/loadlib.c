@@ -166,15 +166,17 @@ static lua_CFunction lsys_sym (lua_State *L, void *lib, const char *sym) {
 ** of LUA_EXEC_DIR with the executable's path.
 */
 static void setprogdir (lua_State *L) {
-  char buff[MAX_PATH + 1];
-  char *lb;
-  DWORD nsize = sizeof(buff)/sizeof(char);
-  DWORD n = GetModuleFileNameA(NULL, buff, nsize);  /* get exec. name */
-  if (n == 0 || n == nsize || (lb = strrchr(buff, '\\')) == NULL)
+  wchar_t wbuff[MAX_PATH + 1];
+  wchar_t *lb;
+  DWORD nsize = sizeof(wbuff)/sizeof(wchar_t);
+  DWORD n = GetModuleFileNameW(NULL, wbuff, nsize);  /* get exec. name */
+  if (n == 0 || n == nsize || (lb = wcsrchr(wbuff, L'\\')) == NULL)
     luaL_error(L, "unable to get ModuleFileName");
   else {
-    *lb = '\0';  /* cut name on the last '\\' to get the path */
-    luaL_gsub(L, lua_tostring(L, -1), LUA_EXEC_DIR, buff);
+    const char *buff = luaL_convertlwstring(L, wbuff, lb - wbuff, NULL);
+    if (buff == NULL) luaL_error(L, "encoding error");
+    luaL_gsub(L, lua_tostring(L, -2), LUA_EXEC_DIR, buff);
+    lua_remove(L, -2);  /* remove converted string */
     lua_remove(L, -2);  /* remove original string */
   }
 }
@@ -184,11 +186,10 @@ static void setprogdir (lua_State *L) {
 
 static void pusherror (lua_State *L) {
   int error = GetLastError();
-  char buffer[128];
-  if (FormatMessageA(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL, error, 0, buffer, sizeof(buffer)/sizeof(char), NULL))
-    lua_pushstring(L, buffer);
-  else
+  wchar_t wbuffer[128];
+  if (!FormatMessageW(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, error, 0, wbuffer, sizeof(wbuffer)/sizeof(wchar_t), NULL) ||
+      !luaL_convertwstring(L, wbuffer, NULL))
     lua_pushfstring(L, "system error %d\n", error);
 }
 
@@ -198,8 +199,10 @@ static void lsys_unloadlib (void *lib) {
 
 
 static void *lsys_load (lua_State *L, const char *path, int seeglb) {
-  HMODULE lib = LoadLibraryExA(path, NULL, LUA_LLE_FLAGS);
+  const wchar_t *wpath = luaL_convertstring(L, path);
+  HMODULE lib = wpath ? LoadLibraryExW(wpath, NULL, LUA_LLE_FLAGS) : NULL;
   (void)(seeglb);  /* not used: symbols are 'global' by default */
+  if (wpath) lua_pop(L, 1); /* pop converted string */
   if (lib == NULL) pusherror(L);
   return lib;
 }
@@ -283,25 +286,27 @@ static int noenv (lua_State *L) {
   return b;
 }
 
-
 /*
 ** Set a path
 */
 static void setpath (lua_State *L, const char *fieldname,
                                    const char *envname,
                                    const char *dft) {
+
   const char *nver = lua_pushfstring(L, "%s%s", envname, LUA_VERSUFFIX);
-  const char *path = getenv(nver);  /* use versioned name */
+  const char *path = luaL_getenv(L, nver);  /* use versioned name */
   if (path == NULL)  /* no environment variable? */
-    path = getenv(envname);  /* try unversioned name */
-  if (path == NULL || noenv(L))  /* no environment variable? */
+    path = luaL_getenv(L, envname);  /* try unversioned name */
+  if (path == NULL || noenv(L)) {  /* no environment variable? */
+    if (path) lua_pop(L, 1);  /* pop environment variable */
     lua_pushstring(L, dft);  /* use default */
-  else {
+  } else {
     /* replace ";;" by ";AUXMARK;" and then AUXMARK by default path */
     path = luaL_gsub(L, path, LUA_PATH_SEP LUA_PATH_SEP,
                               LUA_PATH_SEP AUXMARK LUA_PATH_SEP);
     luaL_gsub(L, path, AUXMARK, dft);
     lua_remove(L, -2); /* remove result from 1st 'gsub' */
+    lua_remove(L, -2); /* remove environment variable */
   }
   setprogdir(L);
   lua_setfield(L, -3, fieldname);  /* package[fieldname] = path value */
@@ -413,8 +418,16 @@ static int ll_loadlib (lua_State *L) {
 */
 
 
-static int readable (const char *filename) {
-  FILE *f = fopen(filename, "r");  /* try to open file */
+static int readable (lua_State *L, const char *filename) {
+#if defined(LUA_USE_WINDOWS)  /* PREMAKE: UTF-8 support on Windows */
+  const wchar_t *wfilename = luaL_convertstring(L, filename);
+  if (wfilename == NULL) return 0;  /* conversion failed */
+  FILE *f = _wfopen(wfilename, L"r");
+  lua_pop(L, 1);
+#else
+  (void)(L);
+  FILE *f = fopen(filename, "r");
+#endif
   if (f == NULL) return 0;  /* open failed */
   fclose(f);
   return 1;
@@ -444,7 +457,7 @@ static const char *searchpath (lua_State *L, const char *name,
     const char *filename = luaL_gsub(L, lua_tostring(L, -1),
                                      LUA_PATH_MARK, name);
     lua_remove(L, -2);  /* remove path template */
-    if (readable(filename))  /* does file exist and is readable? */
+    if (readable(L, filename))  /* does file exist and is readable? */
       return filename;  /* return that file name */
     lua_pushfstring(L, "\n\tno file '%s'", filename);
     lua_remove(L, -2);  /* remove file name */

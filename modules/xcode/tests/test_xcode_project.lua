@@ -43,8 +43,8 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
-		F3989C244A260696229F1A64 /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 7DC6D30C8137A53E02A4494C /* source.c */; };
+		35577DC49A68E0BFA5CD8E2E /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 355BDE2DE052BFF7EFB8694A /* source.c */; };
+		447D19DD46B100440A5E6445 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36DC1F666EB6A5674FBEC63 /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -55,8 +55,8 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		8A01A092B9936F8494A0AED2 /* source.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCAA329A6F98594CFEBE38DA /* source.mm */; };
-		CBA890782235FAEAFAAF0EB8 /* source.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AFE9C203E6F6E52BFDC1260 /* source.m */; };
+		4CD6A26AD82F01674D3F8855 /* source.mm in Sources */ = {isa = PBXBuildFile; fileRef = F817D5D384E5B260534AC6A0 /* source.mm */; };
+		4F008352971BD4BD134C9D21 /* source.m in Sources */ = {isa = PBXBuildFile; fileRef = 442494BA13B0596B0E2AD250 /* source.m */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -67,7 +67,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		4616E7383FD8A3AA79D7A578 /* source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2BDAE0539CBF12983B9120 /* source.swift */; };
+		067FE2ED29E0F2000C52AD83 /* source.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDE4B77A26BA904C66CCBA8 /* source.swift */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -78,7 +78,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		3873A08432355CF66C345EC4 /* source.metal in Resources */ = {isa = PBXBuildFile; fileRef = 35B2856C7E23699EC2C23BAC /* source.metal */; };
+		CDA7AF4CBE6E595A18561C03 /* source.metal in Resources */ = {isa = PBXBuildFile; fileRef = 132351CC9AD52EEA9065913E /* source.metal */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -89,7 +89,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		6FE0F2A3E16C0B15906D30E3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6CB8FB6B191BBB9DD7A431AB /* MainMenu.xib */; };
+		977F767D41E0D44ADC67BAA8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = B449E194DDB32B9A3212BE09 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -101,7 +101,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		F8E8DBA28B76A594F44F49E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */; };
+		988CB889A3791927F4872C2A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B587975EA46A3FBB349F0F7 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -112,9 +112,9 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		3C98627697D9B5E86B3400B6 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
-		91686CDFDECB631154EA631F /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; };
-		A7E42B5676077F08FD15D196 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0547FE2A469B70FDA0E63E /* libC.dylib */; };
+		56EBB39CDD2B11E89097BF99 /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5F789121DD3DE1AA7FA1626 /* libA.dylib */; };
+		A848415143ACB45312860B59 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CDF9054D5D149B5FC96A421 /* libB.dylib */; };
+		C8B1CD7D1390DE4007326BE9 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED73A31E1A60F6E8AC0B1F50 /* libC.dylib */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -142,15 +142,15 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		12F1B82D44EB02DFBECA3E6D /* E.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; };
-		773ADFBAA9342A6C231365FA /* E.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = A817AE35FEA518A7D71E2C75 /* E.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		3C98627697D9B5E86B3400B6 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
-		3369CB838EAB1EF5620569C3 /* libB.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = D413533EEB25EE70DB41E97E /* libB.dylib */; };
-		91686CDFDECB631154EA631F /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; };
-		9C3456CCE9974CFE5FB64D0C /* libA.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 5F9AE5C74A870BB9926CD407 /* libA.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		A7E42B5676077F08FD15D196 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0547FE2A469B70FDA0E63E /* libC.dylib */; };
-		F56B754B2764BFFDA143FB8B /* D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; };
-		59B49CD88BADE78A058D2318 /* D.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = F3987C734A25E6E5229EFAB3 /* D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1407C2306EE31068F533A8EA /* E.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E07CF4977BFEC816856A22 /* E.framework */; };
+		42DE816C37F42CD889D2F776 /* E.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = C1E07CF4977BFEC816856A22 /* E.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		56EBB39CDD2B11E89097BF99 /* libA.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5F789121DD3DE1AA7FA1626 /* libA.dylib */; };
+		A6B3A88B0F2BA60D4DA5F0A4 /* libA.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B5F789121DD3DE1AA7FA1626 /* libA.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		A848415143ACB45312860B59 /* libB.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CDF9054D5D149B5FC96A421 /* libB.dylib */; };
+		DAA1F0DDF5C0DB4B3585B088 /* libB.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 2CDF9054D5D149B5FC96A421 /* libB.dylib */; };
+		C8B1CD7D1390DE4007326BE9 /* libC.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED73A31E1A60F6E8AC0B1F50 /* libC.dylib */; };
+		E6B4C3430C2875342F59825C /* D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20C83CA924447B05CBCE50F7 /* D.framework */; };
+		072AD85CB34A2A1953A0D113 /* D.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 20C83CA924447B05CBCE50F7 /* D.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -162,8 +162,8 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
-		F3989C244A260696229F1A64 /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 7DC6D30C8137A53E02A4494C /* source.c */; };
+		35577DC49A68E0BFA5CD8E2E /* source.c in Sources */ = {isa = PBXBuildFile; fileRef = 355BDE2DE052BFF7EFB8694A /* source.c */; };
+		447D19DD46B100440A5E6445 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36DC1F666EB6A5674FBEC63 /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -179,10 +179,10 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		628F3826BDD08B98912AD666 /* file-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 992385EEB0362120A0521C2E /* file-3.png */; };
-		93485EDEC2DA2DD09DE76D1E /* file1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F78562642667CD8D18C5C66 /* file1.txt */; };
-		C87AFEAA23BC521CF7169CEA /* file02.png in Resources */ = {isa = PBXBuildFile; fileRef = D54D8E32EC602964DC7C2472 /* file02.png */; };
-		EE9FC5C849E1193A1D3B6408 /* file01.png in Resources */ = {isa = PBXBuildFile; fileRef = 989B7E70AFAE19A29FCA14B0 /* file01.png */; };
+		75AAC02624BF3C2854762392 /* file-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 083C625898E992F7CD560873 /* file-3.png */; };
+		7C1E025638CCD25495A6119A /* file1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 62E5366754A8165A121A73E8 /* file1.txt */; };
+		A0DC3B515C40CEBDC19F4D0A /* file01.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EE54939CA505F888C9EA53 /* file01.png */; };
+		ECA420C3F91DF29369EC5E0C /* file02.png in Resources */ = {isa = PBXBuildFile; fileRef = A2668049077D2C815A66D5C5 /* file02.png */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -196,7 +196,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
+		447D19DD46B100440A5E6445 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36DC1F666EB6A5674FBEC63 /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -210,7 +210,7 @@
 		xcode.PBXBuildFile(tr)
 		test.capture [[
 /* Begin PBXBuildFile section */
-		7018C364CB5A16D69EB461A4 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B47484CB259E37EA275DE8C /* source.cpp */; };
+		447D19DD46B100440A5E6445 /* source.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36DC1F666EB6A5674FBEC63 /* source.cpp */; };
 /* End PBXBuildFile section */
 		]]
 	end
@@ -225,7 +225,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -237,7 +237,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		E5FB9875FD0E33A7ED2A2EB5 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B06BC58A6356BA784E31B149 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -250,7 +250,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		E5FB9875FD0E33A7ED2A2EB5 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B06BC58A6356BA784E31B149 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -263,7 +263,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		E5FB9875FD0E33A7ED2A2EB5 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B06BC58A6356BA784E31B149 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -275,7 +275,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		FDCF31ACF735331EEAD08FEC /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A6C9E5B498E784009B4A162 /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -288,7 +288,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		FDCF31ACF735331EEAD08FEC /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A6C9E5B498E784009B4A162 /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -301,7 +301,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		FDCF31ACF735331EEAD08FEC /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A6C9E5B498E784009B4A162 /* libMyProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMyProject.a; path = libMyProject.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -313,7 +313,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2781AF7F7E0F19F156882DBF /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		172A27FF3F3DDEF6701C628B /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -326,7 +326,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2781AF7F7E0F19F156882DBF /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		172A27FF3F3DDEF6701C628B /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -339,7 +339,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2781AF7F7E0F19F156882DBF /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		172A27FF3F3DDEF6701C628B /* libMyProject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libMyProject.dylib; path = libMyProject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -352,7 +352,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		8AD066EE75BC8CE0BDA2552E /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		74E02A79ED88DFE8AA62010A /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -366,7 +366,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		8AD066EE75BC8CE0BDA2552E /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		74E02A79ED88DFE8AA62010A /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -379,7 +379,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		8AD066EE75BC8CE0BDA2552E /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		74E02A79ED88DFE8AA62010A /* MyProject.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.bundle; path = MyProject.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -391,7 +391,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		F573990FE05FBF012845874F /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9596B55878E8A8F3CB142E48 /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -404,7 +404,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		F573990FE05FBF012845874F /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9596B55878E8A8F3CB142E48 /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -417,7 +417,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		F573990FE05FBF012845874F /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9596B55878E8A8F3CB142E48 /* MyProject.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MyProject.xctest; path = MyProject.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -429,7 +429,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2D914F2255CC07D43D679562 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		98C01C776D64F2AEAA476E54 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -443,7 +443,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2D914F2255CC07D43D679562 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		98C01C776D64F2AEAA476E54 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -457,7 +457,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		2D914F2255CC07D43D679562 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		98C01C776D64F2AEAA476E54 /* MyProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MyProject.framework; path = MyProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -469,8 +469,9 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		7DC6D30C8137A53E02A4494C /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		355BDE2DE052BFF7EFB8694A /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = source.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -486,10 +487,11 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		7DC6D30C8137A53E02A4494C /* source.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = source.c; path = source.c; sourceTree = "<group>"; };
-		C8C6CC62F1018514D89D12A2 /* objsource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = objsource.cpp; path = objsource.cpp; sourceTree = "<group>"; };
-		E4BF12E20AE5429471EC3922 /* objsource.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; name = objsource.c; path = objsource.c; sourceTree = "<group>"; };
+		20CDBF281D09614E3DAEAD0D /* objsource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = objsource.cpp; path = objsource.cpp; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		355BDE2DE052BFF7EFB8694A /* source.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = source.c; path = source.c; sourceTree = "<group>"; };
+		98FA8EFFFC1245BF93F3C62A /* objsource.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; name = objsource.c; path = objsource.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -500,9 +502,10 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		31594983623D4175755577C3 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		625C7BEB5C1E385D961D3A2B /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		1A71C7234CDD8D1EC51EE0FE /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		68B1393CD4735703F91F39D4 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/MainMenu.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -513,9 +516,10 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		A329C1B0714D1562F85B67F0 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		C3BECE4859358D7AC7D1E488 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		A67EF7BBC560894B73AA4333 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DBBE4EE595A715BE738405FF /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -526,8 +530,8 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B587975EA46A3FBB349F0F7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -539,10 +543,10 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F9AE5C74A870BB9926CD407 /* libA.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libA.dylib; path = ../libA.dylib; sourceTree = SOURCE_ROOT; };
-		CF0547FE2A469B70FDA0E63E /* libC.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libC.dylib; path = /usr/lib/libC.dylib; sourceTree = "<absolute>"; };
-		D413533EEB25EE70DB41E97E /* libB.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libB.dylib; path = libB.dylib; sourceTree = SOURCE_ROOT; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CDF9054D5D149B5FC96A421 /* libB.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libB.dylib; path = libB.dylib; sourceTree = SOURCE_ROOT; };
+		B5F789121DD3DE1AA7FA1626 /* libA.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libA.dylib; path = ../libA.dylib; sourceTree = SOURCE_ROOT; };
+		ED73A31E1A60F6E8AC0B1F50 /* libC.dylib */ = {isa = PBXFileReference; lastKnownFileType = compiled.mach-o.dylib; name = libC.dylib; path = /usr/lib/libC.dylib; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -581,8 +585,9 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A07B4D0BCF5DB824C1BBB10 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = Icon.icns; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEB6934BB38B31BDBF5AB1CD /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = Icon.icns; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -593,7 +598,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		E5FB9875FD0E33A7ED2A2EB5 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B06BC58A6356BA784E31B149 /* MyProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = MyProject.app; path = MyProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -606,7 +611,7 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		9E361150CDC7E042A8D51F90 /* libMyProject-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "libMyProject-d.dylib"; path = "libMyProject-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		28D8A0497F90CC587B76562F /* libMyProject-d.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "libMyProject-d.dylib"; path = "libMyProject-d.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 		]]
 	end
@@ -619,8 +624,9 @@
 		xcode.PBXFileReference(tr)
 		test.capture [[
 /* Begin PBXFileReference section */
-		19A5C4E61D1697189E833B26 /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
-		721A4003892CDB357948D643 /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = src/source.c; sourceTree = "<group>"; };
+		27CCF7ECD6074ECEF6698AFF /* MyProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = MyProject; path = MyProject; sourceTree = BUILT_PRODUCTS_DIR; };
+		51CFACCD660567169A9046CF /* source.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = source.c; path = src/source.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 		]]
 	end
 
@@ -634,7 +640,7 @@
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+		80C3A7BC2BDDF59FD06C145A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -652,11 +658,11 @@
 		xcode.PBXFrameworksBuildPhase(tr)
 		test.capture [[
 /* Begin PBXFrameworksBuildPhase section */
-		9FDD37564328C0885DF98D96 /* Frameworks */ = {
+		80C3A7BC2BDDF59FD06C145A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8E8DBA28B76A594F44F49E2 /* Cocoa.framework in Frameworks */,
+				988CB889A3791927F4872C2A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,7 +680,7 @@
 		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
 		test.capture [[
 /* Begin PBXCopyFilesBuildPhase section */
-		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+		9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -701,14 +707,14 @@
 		xcode.PBXCopyFilesBuildPhaseForEmbedFrameworks(tr)
 		test.capture [[
 /* Begin PBXCopyFilesBuildPhase section */
-		E1D3B542862652F4985E9B82 /* Embed Libraries */ = {
+		9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9C3456CCE9974CFE5FB64D0C /* libA.dylib in Frameworks */,
-				59B49CD88BADE78A058D2318 /* D.framework in Frameworks */,
+				A6B3A88B0F2BA60D4DA5F0A4 /* libA.dylib in Frameworks */,
+				072AD85CB34A2A1953A0D113 /* D.framework in Frameworks */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -727,18 +733,18 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -754,19 +760,19 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				5C62B7965FD389C8E1402DD6 /* source.h */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				56D28F0EE11C57A6181B5835 /* source.h */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -782,19 +788,19 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				5C62B7965FD389C8E1402DD6 /* source.h */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				56D28F0EE11C57A6181B5835 /* source.h */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -820,21 +826,21 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				9B47484CB259E37EA275DE8C /* source.cpp */,
-				5C62B7965FD389C8E1402DD6 /* source.h */,
-				ABEF15744F3A9EA66A0B6BB4 /* test.h */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				C36DC1F666EB6A5674FBEC63 /* source.cpp */,
+				56D28F0EE11C57A6181B5835 /* source.h */,
+				E795861641BFB0F09FE876D8 /* test.h */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -850,20 +856,20 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				ACC2AED4C3D54A06B3F14514 /* Info.plist */,
-				6CB8FB6B191BBB9DD7A431AB /* MainMenu.xib */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				32C857FB6214B9D42F546F24 /* Info.plist */,
+				B449E194DDB32B9A3212BE09 /* MainMenu.xib */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -879,31 +885,32 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				BBF76781A7E87333FA200DC1 /* Frameworks */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				A9A80184BAE508CFF0B8ACFA /* Frameworks */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				19A5C4E61D1697189E833B26 /* MyProject */,
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BBF76781A7E87333FA200DC1 /* Frameworks */ = {
+		A9A80184BAE508CFF0B8ACFA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */,
+				7B587975EA46A3FBB349F0F7 /* Cocoa.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+/* End PBXGroup section */
 		]]
 	end
 
@@ -915,23 +922,32 @@
 		xcode.PBXGroup(tr)
 		test.capture [[
 /* Begin PBXGroup section */
-		12F5A37D963B00EFBF8281BD /* MyProject */ = {
+		92D64CFF9D6F878B547A3D17 /* MyProject */ = {
 			isa = PBXGroup;
 			children = (
-				20D885C0C52B2372D7636C00 /* Headers */,
-				A6C936B49B3FADE6EA134CF4 /* Products */,
+				988AE0972E7462E1F5FB09C7 /* Headers */,
+				990A9E97AA7ABFD9D0C572FA /* Products */,
 			);
 			name = MyProject;
 			sourceTree = "<group>";
 		};
-		20D885C0C52B2372D7636C00 /* Headers */ = {
+		988AE0972E7462E1F5FB09C7 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				E91A2DDD367D240FAC9C241D /* source.h */,
+				5C259874C80E0CB8C1DD125B /* source.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
 		};
+		990A9E97AA7ABFD9D0C572FA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				27CCF7ECD6074ECEF6698AFF /* MyProject */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
 		]]
 	end
 
@@ -945,14 +961,14 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				0FC4B7F6B3104128CDE10E36 /* Resources */,
-				7971D14D1CBD5A7F378E278D /* Sources */,
-				9FDD37564328C0885DF98D96 /* Frameworks */,
-				E1D3B542862652F4985E9B82 /* Embed Libraries */,
+				6CE3CBF45F92A436D14B9854 /* Resources */,
+				0E6E09EDF485325B3B2F59FC /* Sources */,
+				80C3A7BC2BDDF59FD06C145A /* Frameworks */,
+				9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -961,7 +977,7 @@
 			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
-			productReference = 19A5C4E61D1697189E833B26 /* MyProject */;
+			productReference = 27CCF7ECD6074ECEF6698AFF /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -975,14 +991,14 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		D2C7B5BBD37AB2AD475C83FB /* MyProject */ = {
+		3BE660BEF53FAB033FA66FA3 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8DCCE3C4913DB5F612AA5A04 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = 6E9E7F89AE17678F4C7E9E81 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				0F791C0512E9EE3794569245 /* Resources */,
-				7926355C7C97078EFE03AB9C /* Sources */,
-				9F919B65A3026D97246F11A5 /* Frameworks */,
-				A0315911431F7FC3D2455F51 /* Embed Libraries */,
+				EB578587022543EA21430AA4 /* Resources */,
+				A2D1BA157B4FFE4A6587AC53 /* Sources */,
+				0328B25E9101AAFEA29DEB87 /* Frameworks */,
+				DB71100D543A621032EBCB30 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -991,7 +1007,7 @@
 			name = MyProject;
 			productInstallPath = "$(HOME)/Applications";
 			productName = MyProject;
-			productReference = E5FB9875FD0E33A7ED2A2EB5 /* MyProject.app */;
+			productReference = B06BC58A6356BA784E31B149 /* MyProject.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1005,14 +1021,14 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		CD0213851572F7B75A11C9C5 /* MyProject */ = {
+		C32D948A0BCC1C24CC7DF570 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1F5D05CE18C307400C5E640E /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = DBC9A8B9DDFA05AEC0A41C2B /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				A1093E0F9A6F3F818E0A9C4F /* Resources */,
-				0AB65766041C58D8F7B7B5A6 /* Sources */,
-				3121BD6F2A87BEE11E231BAF /* Frameworks */,
-				D652259BC13E4B8D092413DB /* Embed Libraries */,
+				C4301E6E382569C9A7B4260B /* Resources */,
+				52698E69F56BF5880F5DD055 /* Sources */,
+				137C4293AB3370EF0492906E /* Frameworks */,
+				D0719A92F25F69562D8AD8BE /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -1020,7 +1036,7 @@
 			);
 			name = MyProject;
 			productName = MyProject;
-			productReference = 2781AF7F7E0F19F156882DBF /* libMyProject.dylib */;
+			productReference = 172A27FF3F3DDEF6701C628B /* libMyProject.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -1040,17 +1056,17 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
 				9607AE1010C857E500CD1376 /* Prebuild */,
-				C06220C983CDE27BC2718709 /* Build "file.in" */,
-				0FC4B7F6B3104128CDE10E36 /* Resources */,
-				7971D14D1CBD5A7F378E278D /* Sources */,
+				26D623A11A3A9E17DCDC0C78 /* Build "file.in" */,
+				6CE3CBF45F92A436D14B9854 /* Resources */,
+				0E6E09EDF485325B3B2F59FC /* Sources */,
 				9607AE3510C85E7E00CD1376 /* Prelink */,
-				9FDD37564328C0885DF98D96 /* Frameworks */,
-				E1D3B542862652F4985E9B82 /* Embed Libraries */,
+				80C3A7BC2BDDF59FD06C145A /* Frameworks */,
+				9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */,
 				9607AE3710C85E8F00CD1376 /* Postbuild */,
 			);
 			buildRules = (
@@ -1060,7 +1076,7 @@
 			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
-			productReference = 19A5C4E61D1697189E833B26 /* MyProject */;
+			productReference = 27CCF7ECD6074ECEF6698AFF /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -1083,17 +1099,17 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				A50DBDBDC6D96AEF038E93FD /* Build "file.1" */,
-				71E4A5FF93B05331D0657C3F /* Build "file.2" */,
-				3EBB8E4160873B739D3C6481 /* Build "file.3" */,
-				0FC4B7F6B3104128CDE10E36 /* Resources */,
-				7971D14D1CBD5A7F378E278D /* Sources */,
-				9FDD37564328C0885DF98D96 /* Frameworks */,
-				E1D3B542862652F4985E9B82 /* Embed Libraries */,
+				3D1318787BFF407F3A974F10 /* Build "file.1" */,
+				D0E944B966F56775C77E0099 /* Build "file.2" */,
+				552FF695669A8587BA1DFD65 /* Build "file.3" */,
+				6CE3CBF45F92A436D14B9854 /* Resources */,
+				0E6E09EDF485325B3B2F59FC /* Sources */,
+				80C3A7BC2BDDF59FD06C145A /* Frameworks */,
+				9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -1102,7 +1118,7 @@
 			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
-			productReference = 19A5C4E61D1697189E833B26 /* MyProject */;
+			productReference = 27CCF7ECD6074ECEF6698AFF /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -1127,17 +1143,17 @@
 		xcode.PBXNativeTarget(tr)
 		test.capture [[
 /* Begin PBXNativeTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */;
 			buildPhases = (
-				A50DBDBDC6D96AEF038E93FD /* Build "file.1" */,
-				71E4A5FF93B05331D0657C3F /* Build "file.2" */,
-				3EBB8E4160873B739D3C6481 /* Build "file.3" */,
-				0FC4B7F6B3104128CDE10E36 /* Resources */,
-				7971D14D1CBD5A7F378E278D /* Sources */,
-				9FDD37564328C0885DF98D96 /* Frameworks */,
-				E1D3B542862652F4985E9B82 /* Embed Libraries */,
+				3D1318787BFF407F3A974F10 /* Build "file.1" */,
+				D0E944B966F56775C77E0099 /* Build "file.2" */,
+				552FF695669A8587BA1DFD65 /* Build "file.3" */,
+				6CE3CBF45F92A436D14B9854 /* Resources */,
+				0E6E09EDF485325B3B2F59FC /* Sources */,
+				80C3A7BC2BDDF59FD06C145A /* Frameworks */,
+				9C2DDF21AC2D004A3938CFF7 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -1146,7 +1162,7 @@
 			name = MyProject;
 			productInstallPath = "$(HOME)/bin";
 			productName = MyProject;
-			productReference = 19A5C4E61D1697189E833B26 /* MyProject */;
+			productReference = 27CCF7ECD6074ECEF6698AFF /* MyProject */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -1164,9 +1180,9 @@
 		xcode.PBXAggregateTarget(tr)
 		test.capture [[
 /* Begin PBXAggregateTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXAggregateTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXAggregateTarget "MyProject" */;
 			buildPhases = (
 			);
 			buildRules = (
@@ -1194,12 +1210,12 @@
 		xcode.PBXAggregateTarget(tr)
 		test.capture [[
 /* Begin PBXAggregateTarget section */
-		48B5980C775BEBFED09D464C /* MyProject */ = {
+		C12DD7380DD8DCCCA0B1C207 /* MyProject */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 8E187FB5316408E74C34D5F5 /* Build configuration list for PBXAggregateTarget "MyProject" */;
+			buildConfigurationList = A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXAggregateTarget "MyProject" */;
 			buildPhases = (
 				9607AE1010C857E500CD1376 /* Prebuild */,
-				C06220C983CDE27BC2718709 /* Build "file.in" */,
+				26D623A11A3A9E17DCDC0C78 /* Build "file.in" */,
 				9607AE3510C85E7E00CD1376 /* Prelink */,
 				9607AE3710C85E8F00CD1376 /* Postbuild */,
 			);
@@ -1229,11 +1245,11 @@
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
-			mainGroup = 12F5A37D963B00EFBF8281BD /* MyProject */;
+			mainGroup = 92D64CFF9D6F878B547A3D17 /* MyProject */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				48B5980C775BEBFED09D464C /* MyProject */,
+				C12DD7380DD8DCCCA0B1C207 /* MyProject */,
 			);
 		};
 /* End PBXProject section */
@@ -1255,7 +1271,7 @@
 			isa = PBXProject;
 			attributes = {
 				TargetAttributes = {
-					48B5980C775BEBFED09D464C = {
+					C12DD7380DD8DCCCA0B1C207 = {
 						SystemCapabilities = {
 							com.apple.GameCenter.iOS = {
 								enabled = 0;
@@ -1273,11 +1289,11 @@
 			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */;
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
-			mainGroup = 12F5A37D963B00EFBF8281BD /* MyProject */;
+			mainGroup = 92D64CFF9D6F878B547A3D17 /* MyProject */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				48B5980C775BEBFED09D464C /* MyProject */,
+				C12DD7380DD8DCCCA0B1C207 /* MyProject */,
 			);
 		};
 /* End PBXProject section */
@@ -1294,7 +1310,7 @@
 		xcode.PBXResourcesBuildPhase(tr)
 		test.capture [[
 /* Begin PBXResourcesBuildPhase section */
-		0FC4B7F6B3104128CDE10E36 /* Resources */ = {
+		6CE3CBF45F92A436D14B9854 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1312,11 +1328,11 @@
 		xcode.PBXResourcesBuildPhase(tr)
 		test.capture [[
 /* Begin PBXResourcesBuildPhase section */
-		0FC4B7F6B3104128CDE10E36 /* Resources */ = {
+		6CE3CBF45F92A436D14B9854 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FE0F2A3E16C0B15906D30E3 /* MainMenu.xib in Resources */,
+				977F767D41E0D44ADC67BAA8 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1372,7 +1388,7 @@
 		xcode.PBXShellScriptBuildPhase(tr)
 		test.capture [[
 /* Begin PBXShellScriptBuildPhase section */
-		9AE2196BE8450F9D5E640FAB /* Build "file.in1" */ = {
+		C9AFD4E5D29B331CE7FDE141 /* Build "file.in1" */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1390,7 +1406,7 @@
 			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tls src\n\tcp \"a\" \"b\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
-		]]
+				]]
 	end
 
 
@@ -1431,7 +1447,7 @@
 		xcode.PBXShellScriptBuildPhase(tr)
 		test.capture [[
 /* Begin PBXShellScriptBuildPhase section */
-		0D594A1D2F24F74F6BDA205D /* Build "file.a" */ = {
+		47B6FB476781055880A27063 /* Build "file.a" */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1453,7 +1469,7 @@
 			shellScript = "set -e\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n\tbuildcmd\nfi\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n\tbuildcmd\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
-		]]
+				]]
 	end
 
 
@@ -1466,7 +1482,7 @@
 		xcode.PBXSourcesBuildPhase(tr)
 		test.capture [[
 /* Begin PBXSourcesBuildPhase section */
-		7971D14D1CBD5A7F378E278D /* Sources */ = {
+		0E6E09EDF485325B3B2F59FC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1474,7 +1490,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-		]]
+				]]
 	end
 
 
@@ -1484,17 +1500,17 @@
 		xcode.PBXSourcesBuildPhase(tr)
 		test.capture [[
 /* Begin PBXSourcesBuildPhase section */
-		7971D14D1CBD5A7F378E278D /* Sources */ = {
+		0E6E09EDF485325B3B2F59FC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7426C94082664861B3E9AD4 /* goodbye.cpp in Sources */,
-				EF69EEEA1EFBBDDCFA08FD2A /* hello.cpp in Sources */,
+				D09EB72189721E6925B7EC03 /* goodbye.cpp in Sources */,
+				3779963E6EF4F73268CEE8C7 /* hello.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-		]]
+				]]
 	end
 
 
@@ -1518,17 +1534,17 @@
 		xcode.PBXVariantGroup(tr)
 		test.capture [[
 /* Begin PBXVariantGroup section */
-		6CB8FB6B191BBB9DD7A431AB /* MainMenu.xib */ = {
+		B449E194DDB32B9A3212BE09 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				625C7BEB5C1E385D961D3A2B /* English */,
-				31594983623D4175755577C3 /* French */,
+				1A71C7234CDD8D1EC51EE0FE /* English */,
+				68B1393CD4735703F91F39D4 /* French */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
-		]]
+				]]
 	end
 
 
@@ -1540,7 +1556,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1552,7 +1568,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1561,7 +1577,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1573,7 +1589,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1582,7 +1598,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1594,7 +1610,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1603,7 +1619,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1615,7 +1631,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1624,7 +1640,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		F1C0BE8A138C6BBC504194CA /* Debug */ = {
+		F57DA7D7FC484190A1555D3E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1636,7 +1652,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1645,7 +1661,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		92D99EC1EE1AF233C1753D01 /* Debug */ = {
+		0A90B00819062C4A2D931158 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1657,7 +1673,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1666,7 +1682,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		144A3F940E0BFC06480AFDD4 /* Debug */ = {
+		99B88B531D467C4A2D67BC11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1679,7 +1695,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1689,7 +1705,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		5C54F6038D38EDF5A0512443 /* Debug */ = {
+		4AC5FEA44C2969A6958660FD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1701,7 +1717,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnXCTest()
@@ -1710,7 +1726,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		0C14B9243CF8B1165010E764 /* Debug */ = {
+		04472F8DA81995F09E08ADBE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1721,7 +1737,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1731,7 +1747,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		2EC4D23760BE1CE9DA9D5877 /* Debug */ = {
+		7CF05EB92200400498D17A2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1743,7 +1759,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1753,7 +1769,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		33365BC82CF8183A66F71A08 /* Debug */ = {
+		61A03AD1E10B5C8C082AB916 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1766,7 +1782,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1776,7 +1792,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		4FD8665471A41386AE593C94 /* Debug */ = {
+		A78D7C3488B6D1936BEABD53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1788,7 +1804,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1798,7 +1814,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1810,7 +1826,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1820,7 +1836,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		8FB8842BC09C7C1DD3B4B26B /* Debug */ = {
+		B7B0934F0376B995EDCB4262 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1834,7 +1850,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1844,7 +1860,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		5E2996528DBB654468C8A492 /* Debug */ = {
+		F2A8EDD06A3BE84AA38E047E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1858,7 +1874,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1868,7 +1884,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		8FB8842BC09C7C1DD3B4B26B /* Debug */ = {
+		B7B0934F0376B995EDCB4262 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1881,7 +1897,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1891,7 +1907,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		5E2996528DBB654468C8A492 /* Debug */ = {
+		F2A8EDD06A3BE84AA38E047E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1904,7 +1920,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1914,7 +1930,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		4FD8665471A41386AE593C94 /* Debug */ = {
+		A78D7C3488B6D1936BEABD53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1927,7 +1943,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1937,7 +1953,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1950,7 +1966,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1961,7 +1977,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		4FD8665471A41386AE593C94 /* Debug */ = {
+		A78D7C3488B6D1936BEABD53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1974,7 +1990,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -1985,7 +2001,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1998,7 +2014,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2009,7 +2025,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		4FD8665471A41386AE593C94 /* Debug */ = {
+		A78D7C3488B6D1936BEABD53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2022,7 +2038,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2033,7 +2049,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2046,7 +2062,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
     function suite.XCBuildConfigurationTarget_OnOSXMinVersion()
@@ -2055,7 +2071,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2068,7 +2084,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
     function suite.XCBuildConfigurationTarget_OnOSXUnSpecificedVersion()
@@ -2077,7 +2093,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2089,7 +2105,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2098,7 +2114,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2111,7 +2127,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2120,7 +2136,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2132,7 +2148,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2141,7 +2157,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		46BCF44C6EF7ACFE56933A8C /* Debug */ = {
+		6E7E103728F9B6D241B0463A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2153,7 +2169,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2162,7 +2178,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2174,7 +2190,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2184,7 +2200,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2196,7 +2212,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnIOS()
@@ -2204,7 +2220,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2218,7 +2234,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnIOSMinVersion()
@@ -2227,7 +2243,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2242,7 +2258,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnIOSMinMaxVersion()
@@ -2251,7 +2267,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2266,7 +2282,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnIOSCodeSigningIdentity()
@@ -2275,7 +2291,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2289,7 +2305,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnIOSFamily()
@@ -2298,7 +2314,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2313,7 +2329,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnTVOS()
@@ -2321,7 +2337,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2335,7 +2351,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnTVOSMinVersion()
@@ -2344,7 +2360,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2359,7 +2375,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnTVOSMinMaxVersion()
@@ -2368,7 +2384,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2383,7 +2399,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationTarget_OnTVOSCodeSigningIdentity()
@@ -2392,7 +2408,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
 		test.capture [[
-		FDC4CBFB4635B02D8AD4823B /* Debug */ = {
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2406,7 +2422,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2418,7 +2434,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2434,7 +2450,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnOptimizeDebug()
@@ -2442,7 +2458,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2458,7 +2474,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2467,7 +2483,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2492,7 +2508,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2517,7 +2533,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2533,7 +2549,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2542,7 +2558,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2558,7 +2574,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2567,7 +2583,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2595,7 +2611,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2612,7 +2628,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2621,7 +2637,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2637,7 +2653,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2646,7 +2662,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2666,7 +2682,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2675,7 +2691,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2696,7 +2712,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnExternalIncludeDirs()
@@ -2704,7 +2720,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2726,7 +2742,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnIncludeDirsAfter()
@@ -2734,7 +2750,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2756,7 +2772,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnBuildOptions()
@@ -2764,7 +2780,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2784,7 +2800,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnRunPathSearchPaths()
@@ -2792,7 +2808,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2811,7 +2827,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnLinks()
@@ -2819,7 +2835,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2838,7 +2854,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnLinkOptions()
@@ -2846,7 +2862,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2866,7 +2882,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnNoWarnings()
@@ -2874,7 +2890,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2891,7 +2907,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnHighWarnings()
@@ -2899,7 +2915,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2916,7 +2932,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnExtraWarnings()
@@ -2924,7 +2940,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -2941,7 +2957,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -2950,7 +2966,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3020,7 +3036,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3030,7 +3046,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3047,7 +3063,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3056,7 +3072,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3075,7 +3091,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnOpenMP()
@@ -3083,7 +3099,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3102,7 +3118,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnFloatStrict()
@@ -3110,7 +3126,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3126,7 +3142,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3136,7 +3152,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3153,7 +3169,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3162,7 +3178,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3180,7 +3196,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3189,7 +3205,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3208,7 +3224,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3217,7 +3233,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3236,7 +3252,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3245,7 +3261,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3264,7 +3280,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnStructmemberalign()
@@ -3272,7 +3288,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3291,7 +3307,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnNoPCH()
@@ -3300,7 +3316,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3316,7 +3332,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3325,7 +3341,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3342,7 +3358,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3351,7 +3367,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3369,7 +3385,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3378,7 +3394,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3398,7 +3414,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3407,7 +3423,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3437,7 +3453,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3459,7 +3475,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3469,7 +3485,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3500,7 +3516,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3518,7 +3534,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3528,7 +3544,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
@@ -3544,7 +3560,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3554,7 +3570,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -3570,7 +3586,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3580,7 +3596,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
@@ -3596,7 +3612,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3606,7 +3622,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3622,7 +3638,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3632,7 +3648,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = i386;
@@ -3648,7 +3664,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 
@@ -3658,7 +3674,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = x86_64;
@@ -3674,7 +3690,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnMultiplePlatforms()
@@ -3683,7 +3699,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -3699,7 +3715,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCDefault()
@@ -3708,7 +3724,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3725,7 +3741,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC89()
@@ -3734,7 +3750,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3751,7 +3767,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC90()
@@ -3760,7 +3776,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3777,7 +3793,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC99()
@@ -3786,7 +3802,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3803,7 +3819,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC11()
@@ -3812,7 +3828,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3829,7 +3845,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC17()
@@ -3838,7 +3854,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3855,7 +3871,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnC23()
@@ -3864,7 +3880,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3881,7 +3897,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu89()
@@ -3890,7 +3906,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3907,7 +3923,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu90()
@@ -3916,7 +3932,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3933,7 +3949,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu99()
@@ -3942,7 +3958,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3959,7 +3975,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu11()
@@ -3968,7 +3984,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -3985,7 +4001,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu17()
@@ -3994,7 +4010,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4011,7 +4027,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnGnu23()
@@ -4020,7 +4036,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4037,7 +4053,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppDefault()
@@ -4046,7 +4062,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4063,7 +4079,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp98()
@@ -4072,7 +4088,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4089,7 +4105,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCpp11()
@@ -4098,7 +4114,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4115,7 +4131,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp0x()
@@ -4124,7 +4140,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4141,7 +4157,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp14()
@@ -4150,7 +4166,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4167,7 +4183,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCpp1y()
@@ -4176,7 +4192,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4193,7 +4209,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp17()
@@ -4202,7 +4218,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4219,7 +4235,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCpp1z()
@@ -4228,7 +4244,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4245,7 +4261,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp20()
@@ -4254,7 +4270,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4271,7 +4287,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCpp2a()
@@ -4280,7 +4296,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4297,7 +4313,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp2b()
@@ -4306,7 +4322,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4323,7 +4339,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCpp23()
@@ -4332,7 +4348,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4349,7 +4365,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu98()
@@ -4358,7 +4374,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4375,7 +4391,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu11()
@@ -4384,7 +4400,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4401,7 +4417,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCppGnu0x()
@@ -4410,7 +4426,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4427,7 +4443,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu14()
@@ -4436,7 +4452,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4453,7 +4469,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCppGnu1y()
@@ -4462,7 +4478,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4479,7 +4495,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu17()
@@ -4488,7 +4504,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4505,7 +4521,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCppGnu1z()
@@ -4514,7 +4530,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4531,7 +4547,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu20()
@@ -4540,7 +4556,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4557,7 +4573,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
     function suite.XCBuildConfigurationProject_OnCppGnu2a()
@@ -4566,7 +4582,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4583,7 +4599,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu2b()
@@ -4592,7 +4608,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4609,7 +4625,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
 	function suite.XCBuildConfigurationProject_OnCppGnu23()
@@ -4618,7 +4634,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4635,7 +4651,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
     end
 
 	function suite.XCBuildConfigurationProject_OnUnsignedCharOn()
@@ -4644,7 +4660,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4661,7 +4677,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnUnsignedCharOff()
@@ -4670,7 +4686,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4687,7 +4703,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnRemoveXcodebuildSettings()
@@ -4697,7 +4713,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
@@ -4712,7 +4728,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnSwift4_0()
@@ -4721,7 +4737,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4738,7 +4754,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnSwift4_2()
@@ -4747,7 +4763,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4764,7 +4780,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 	function suite.XCBuildConfigurationProject_OnSwift5_0()
@@ -4773,7 +4789,7 @@
 		prepare()
 		xcode.XCBuildConfiguration_Project(tr, tr.configs[1])
 		test.capture [[
-		A14350AC4595EE5E57CE36EC /* Debug */ = {
+		347EC2AEE119A7C9E4B36F9E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -4790,7 +4806,7 @@
 			};
 			name = Debug;
 		};
-		]]
+				]]
 	end
 
 ---------------------------------------------------------------------------
@@ -4805,23 +4821,23 @@
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A14350AC4595EE5E57CE36EC /* Debug */,
-				F3C205E6F732D818789F7C26 /* Release */,
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FDC4CBFB4635B02D8AD4823B /* Debug */,
-				C8EAD1B5F1258A67D8C117F5 /* Release */,
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-		]]
+				]]
 	end
 
 
@@ -4834,23 +4850,23 @@
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A14350AC4595EE5E57CE36EC /* Debug */,
-				F3C205E6F732D818789F7C26 /* Release */,
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FDC4CBFB4635B02D8AD4823B /* Debug */,
-				C8EAD1B5F1258A67D8C117F5 /* Release */,
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-		]]
+				]]
 	end
 
 
@@ -4864,27 +4880,27 @@
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A14350AC4595EE5E57CE36EC /* Debug */,
-				A14350AC4595EE5E57CE36EC /* Debug */,
-				F3C205E6F732D818789F7C26 /* Release */,
-				F3C205E6F732D818789F7C26 /* Release */,
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8E187FB5316408E74C34D5F5 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FDC4CBFB4635B02D8AD4823B /* Debug */,
-				FDC4CBFB4635B02D8AD4823B /* Debug */,
-				C8EAD1B5F1258A67D8C117F5 /* Release */,
-				C8EAD1B5F1258A67D8C117F5 /* Release */,
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-		]]
+				]]
 	end
 
 function suite.defaultVisibility_settingIsFound()

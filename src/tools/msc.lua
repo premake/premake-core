@@ -68,6 +68,7 @@
 		floatingpoint = {
 			Fast = "/fp:fast",
 			Strict = "/fp:strict",
+			Precise = "/fp:precise",
 		},
 		floatingpointexceptions = {
 			On  = "/fp:except",
