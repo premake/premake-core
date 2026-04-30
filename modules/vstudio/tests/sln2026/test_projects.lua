@@ -14,13 +14,16 @@ function suite.setup()
 	p.action.set("vs2026")
 end
 
+function prepare(wks)
+	wks = test.getWorkspace(wks)
+	sln2026.projects(wks)
+end
 
 function suite.single_project()
 	local wks = workspace "MyWorkspace"
 	local prj = project "MyProject"
-		uuid "AE61726D-187C-E440-BD07-2556188A6565"
-
-	sln2026.projects(wks)
+	uuid "AE61726D-187C-E440-BD07-2556188A6565"
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
@@ -38,7 +41,7 @@ function suite.multiple_projects_no_dependencies()
 	local prj2 = project "MyProject2"
 		uuid "BE62726D-187C-E440-BD07-2556188A6565"
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
@@ -64,12 +67,20 @@ function suite.multiple_projects_with_dependency()
 		language "C++"
 		kind "StaticLib"
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
 </Project>
 <Project Path="MyProject2.vcxproj" Id="BE62726D-187C-E440-BD07-2556188A6565">
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
 	<BuildDependency Project="MyProject1.vcxproj" />
 </Project>
 	]]
@@ -84,16 +95,19 @@ function suite.project_in_groups()
 	local prj1 = project "MyProject1"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Folder Name="/Group1/">
 	<Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+		<BuildType Solution="Debug|Win32" Project="Debug" />
+		<BuildType Solution="Release|Win32" Project="Release" />
+		<Platform Solution="Debug|Win32" Project="Win32" />
+		<Platform Solution="Release|Win32" Project="Win32" />
 	</Project>
 </Folder>
 	]]
 end
-
 
 function suite.project_with_configmap()
 	local wks = workspace "MyWorkspace"
@@ -107,13 +121,16 @@ function suite.project_with_configmap()
 			[ "Debug" ] = "Debug",
 		}
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
-	<BuildType Solution="Debug|*" Project="Debug" />
-	<BuildType Solution="Release|*" Project="Release" />
-	<BuildType Solution="SpecialRelease|*" Project="Release" />
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<BuildType Solution="SpecialRelease|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
+	<Platform Solution="SpecialRelease|Win32" Project="Win32" />
 </Project>
 	]]
 end
@@ -129,11 +146,16 @@ function suite.project_with_single_configmap()
 			[ "SpecialRelease" ] = "Release",
 		}
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
-	<BuildType Solution="SpecialRelease|*" Project="Release" />
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<BuildType Solution="SpecialRelease|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
+	<Platform Solution="SpecialRelease|Win32" Project="Win32" />
 </Project>
 	]]
 end
@@ -150,11 +172,18 @@ function suite.project_with_platform_configmap()
 			[ "MyPlatform" ] = "x64",
 		}
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
-	<Platform Solution="*|MyPlatform" Project="x64" />
+	<BuildType Solution="Debug|MyPlatform" Project="Debug" />
+	<BuildType Solution="Debug|x64" Project="Debug" />
+	<BuildType Solution="Release|MyPlatform" Project="Release" />
+	<BuildType Solution="Release|x64" Project="Release" />
+	<Platform Solution="Debug|MyPlatform" Project="x64" />
+	<Platform Solution="Debug|x64" Project="x64" />
+	<Platform Solution="Release|MyPlatform" Project="x64" />
+	<Platform Solution="Release|x64" Project="x64" />
 </Project>
 	]]
 end
@@ -171,12 +200,18 @@ function suite.project_with_platform_and_config_configmap()
 			[ { "Debug", "MyPlatform" } ] = { "Debug", "x64" },
 		}
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
-	<Platform Solution="Debug|MyPlatform" Project="x64" />
 	<BuildType Solution="Debug|MyPlatform" Project="Debug" />
+	<BuildType Solution="Debug|x64" Project="Debug" />
+	<BuildType Solution="Release|MyPlatform" Project="Release MyPlatform" />
+	<BuildType Solution="Release|x64" Project="Release" />
+	<Platform Solution="Debug|MyPlatform" Project="x64" />
+	<Platform Solution="Debug|x64" Project="x64" />
+	<Platform Solution="Release|MyPlatform" Project="Win32" />
+	<Platform Solution="Release|x64" Project="x64" />
 </Project>
 	]]
 end
@@ -191,10 +226,14 @@ function suite.project_excluded_from_build()
 		filter "configurations:Release"
 			excludefrombuild "On"
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
 	<Build Solution="Release|Win32" Project="false" />
 </Project>
 	]]
@@ -209,11 +248,16 @@ function suite.project_remove_configuration()
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
 		removeconfigurations { "Release" }
 
-	sln2026.projects(wks)
+	prepare(wks)
 
 	test.capture [[
 <Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
-	<Build Solution="Release|Win32" Project="false" />
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Project="Debug" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Project="Win32" />
+	<Build Solution="Debug|Win32" Project="true" />
+	<Build Project="false" />
 </Project>
 	]]
 end

@@ -26,8 +26,7 @@ end
 
 m.elements.project = function(prj)
 	return {
-		m.projectDependencies,
-		m.projectConfigMap,
+		m.projectDependencies
 	}
 end
 
@@ -166,11 +165,12 @@ function m.projects(wks)
 	table.sort(sortedKeys)
 
 	-- Sort the solution configurations
-	local sortedSolCfgs = {}
-	for solcfg in p.workspace.eachconfig(wks) do
-		table.insert(sortedSolCfgs, solcfg);
+	local sortedSolutionConfigs = {}
+	local solutionConfigCount = 0
+	for solutionConfig in p.workspace.eachconfig(wks) do
+		table.insert(sortedSolutionConfigs, solutionConfig);
+		solutionConfigCount = solutionConfigCount + 1
 	end
-	table.sort(sortedSolCfgs, function(a, b) return a.name:lower() < b.name:lower() end)
 
 	for _, groupName in ipairs(sortedKeys) do
 		local projects = groups[groupName]
@@ -179,92 +179,160 @@ function m.projects(wks)
 		if groupName ~= "" then
 			p.push('<Folder Name="%s">', groupName)
 		end
-		for _, prj in ipairs(projects) do
 
-			local typeID = vstudio.tool(prj)
+		local tr = p.workspace.grouptree(wks)
+		tree.traverse(tr, {
+			onleaf = function(n)
+				local prj = n.project
 
-			local projectPathStrings = {}
+				local typeID = vstudio.tool(prj)
 
-			-- Open the XML tag, add common properties
-			table.insert(projectPathStrings, '<')
-			table.insert(projectPathStrings, string.format('Project Path="%s" Id="%s"', m.buildRelativePath(prj), prj.uuid))
+				local projectPath = ''
 
-			-- Mark startup project
-			if startupProject and startupProject.name == prj.name then
-				table.insert(projectPathStrings, ' DefaultStartup="true"')
-			end
+				-- Open the XML tag, add common properties
+				projectPath = projectPath .. '<'
+				projectPath = projectPath ..  string.format('Project Path="%s" Id="%s"', m.buildRelativePath(prj), prj.uuid)
 
-			-- Mark projects with uncommon types
-			if prj.kind == p.PACKAGING then
-				table.insert(projectPathStrings, string.format(' Type="%s"', typeID))
-			end
-
-			-- Close the XML tag
-			table.insert(projectPathStrings, '>')
-
-			-- Concatenate all the parts of the project description
-			p.push(table.concat(projectPathStrings))
-
-			-- Get a list of contexts, a set of precomputed properties we can reference later
-			local sortedSolutionContexts = {}
-
-			-- Precompute the project configs and architectures
-			for _, solcfg in ipairs(sortedSolCfgs) do
-
-				local context = {}
-				context.solCfg = solcfg
-				context.prjCfg = project.getconfig(prj, solcfg.buildcfg, solcfg.platform)
-				context.excluded = context.prjCfg == nil or context.prjCfg.excludefrombuild
-
-				if context.prjCfg == nil then
-					context.prjCfg = project.findClosestMatch(prj, solcfg.buildcfg, solcfg.platform)
+				-- Mark startup project
+				if startupProject and startupProject.name == prj.name then
+					projectPath = projectPath .. ' DefaultStartup="true"'
 				end
 
-				context.arch = vstudio.archFromConfig(context.prjCfg, true)
-				context.buildType = context.solCfg.buildcfg.." "..context.prjCfg.platform
+				-- Mark projects with uncommon types
+				if prj.kind == p.PACKAGING then
+					projectPath = projectPath .. string.format(' Type="%s"', typeID)
+				end
 
-				table.insert(sortedSolutionContexts, context)
-			
-			end
+				
 
-			-- BuildType
-			for _, context in ipairs(sortedSolutionContexts) do
-				p.push('<BuildType Solution="%s|%s" Project="%s" />', context.solCfg.buildcfg, context.solCfg.platform, context.buildType)
-				p.pop()
-			end
+				-- SharedItems projects don't have any configuration platform entries
+				if prj.kind == p.SHAREDITEMS then
 
-			-- Map Platform to Arch
-			for _, context in ipairs(sortedSolutionContexts) do
-				p.push('<Platform Solution="%s|%s" Project="%s" />', context.solCfg.buildcfg, context.solCfg.platform, context.arch)
-				p.pop()
-			end
-
-			-- Exclude from build if either config doesn't exist or manually specified
-			for _, context in ipairs(sortedSolutionContexts) do
-				if context.excluded then
-					p.push('<Build Solution="%s|%s" Project="false" />', context.solCfg.buildcfg, context.solCfg.platform)
+					-- Directly close the XML tag
+					projectPath = projectPath .. '/>'
+					p.push(projectPath)
 					p.pop()
+
+				else
+
+					-- Close the opening XML tag
+					projectPath = projectPath .. '>'
+					p.push(projectPath)
+
+					-- Create a context with all the properties we need to populate the relevant fields
+					-- Many of these are repeated and it's useful to have them in a single place
+					local sortedContexts = {}
+					local availableConfigCount = 0
+					local excludedConfigCount = 0
+					for _, solutionConfig in ipairs(sortedSolutionConfigs) do
+						local context = {}
+
+						local projectConfig = project.getconfig(prj, solutionConfig.buildcfg, solutionConfig.platform)
+
+						if projectConfig then
+
+							context.solutionConfig = solutionConfig
+							context.solutionPlatform = vstudio.solutionPlatform(solutionConfig)
+							context.allowDeployment = sln2026.allowDeployment(prj, solutionConfig)
+							context.descriptor = string.format("%s|%s", solutionConfig.buildcfg, context.solutionPlatform)
+
+							context.projectPlatform = vstudio.projectPlatform(projectConfig)
+							context.arch = vstudio.archFromConfig(projectConfig, true)
+							context.excluded = projectConfig.excludefrombuild
+
+							if projectConfig.excludefrombuild then
+								excludedConfigCount = excludedConfigCount + 1
+							end
+
+							table.insert(sortedContexts, context)
+
+							availableConfigCount = availableConfigCount + 1
+
+						end
+					end
+
+					-- Are all available configs for this project excluded
+					local allExcluded = excludedConfigCount == availableConfigCount
+
+					-- Output properties if there are any configs
+					if next(sortedContexts) ~= nil then
+
+						local closestCfg = project.findClosestMatch(prj, sortedContexts[1].solutionConfig.buildcfg, sortedContexts[1].solutionConfig.platform)
+						local closestArch = vstudio.archFromConfig(closestCfg, true)
+						local closestProjectPlatform = vstudio.projectPlatform(closestCfg)
+
+						-- BuildType
+						for _, context in ipairs(sortedContexts) do
+							p.push('<BuildType Solution="%s" Project="%s" />', context.descriptor, context.projectPlatform)
+							p.pop()
+						end
+
+						-- We might have more, in which case we'll have accounted for all of them above
+						if availableConfigCount < solutionConfigCount then
+							p.push('<BuildType Project="%s" />', closestProjectPlatform)
+							p.pop()
+						end
+
+						-- Platform to Arch
+						for _, context in ipairs(sortedContexts) do
+							p.push('<Platform Solution="%s" Project="%s" />', context.descriptor, context.arch)
+							p.pop()
+						end
+
+						if availableConfigCount < solutionConfigCount then
+							p.push('<Platform Project="%s" />', closestArch)
+							p.pop()
+						end
+
+						-- Build Status
+						-- If this project has all solution configs (or more, perhaps a per-project platform), set them individually or all to false if we detected it previously
+						if availableConfigCount >= solutionConfigCount then
+							-- If they are all excluded, set them all to false
+							if allExcluded then
+								p.push('<Build Project="false" />')
+								p.pop()
+							else
+								-- Otherwise set excluded ones to false, as the default is true
+								for _, context in ipairs(sortedContexts) do
+									if context.excluded then
+										p.push('<Build Solution="%s" Project="false" />', context.descriptor)
+										p.pop()
+									end
+								end
+							end
+						else
+							-- Set the included ones to true, as we change the default to false (we don't know the rest of the configs)
+							for _, context in ipairs(sortedContexts) do
+								if not context.excluded then
+									p.push('<Build Solution="%s" Project="true" />', context.descriptor)
+									p.pop()
+								end
+							end
+					
+							p.push('<Build Project="false" />')
+							p.pop()
+						end
+
+						-- Deployment
+						for _, context in ipairs(sortedContexts) do
+							if context.allowDeployment then
+								p.push('<Deploy Solution="%s" />', context.descriptor)
+								p.pop()
+							end
+						end
+
+					end
+
+					p.callArray(m.elements.project, prj)
+
+					-- Close the project XML tag
+					p.pop('</Project>')
+
 				end
-			end
 
-			-- Get a list of sorted local configs
-			local sortedConfigs = {}
-			for cfg in project.eachconfig(prj) do
-				table.insert(sortedConfigs, cfg)
 			end
-			table.sort(sortedConfigs, function(a, b) return a.name:lower() < b.name:lower() end)
+		})
 
-			-- Deployment. Only mark available solutions as deployable
-			for _, cfg in ipairs(sortedConfigs) do
-				if sln2026.allowDeployment(prj, cfg) then
-					p.push('<Deploy Solution="%s|%s" />', cfg.buildcfg, cfg.platform)
-					p.pop()
-				end
-			end
-
-			p.callArray(m.elements.project, prj)
-			p.pop('</Project>')
-		end
 		if groupName ~= "" then
 			p.pop('</Folder>')
 		end
@@ -278,118 +346,6 @@ function m.projectDependencies(prj)
 		for _, dep in ipairs(deps) do
 			p.push('<BuildDependency Project="%s" />', m.buildRelativePath(dep))
 			p.pop()
-		end
-	end
-end
-
-
-function m.projectConfigMap(prj)
-
-	local cfgmap = prj.configmap or {}
-
-	for mi = 1, #cfgmap do
-		-- Key may be a string (buildcfg only) or a table (buildcfg + platform)
-		-- Sort the keys to ensure stable output
-		-- If the key is a table, sort by buildcfg first, then platform
-		-- On comparison of a string and a table
-		--   If the string matches the buildcfg portion of the table, the string is "less than" the table
-		--   If the string does not match the buildcfg portion of the table, sort by buildcfg alphabetically
-		local slncfgmaps = cfgmap[mi]
-		local sortedkeys = {}
-		for slncfg, _ in pairs(slncfgmaps) do
-			table.insert(sortedkeys, slncfg)
-		end
-
-		table.sort(sortedkeys, function(a, b)
-			if type(a) == "string" and type(b) == "string" then
-				return a:lower() < b:lower()
-			elseif type(a) == "string" then
-				return a:lower() < b[1]:lower()
-			elseif type(b) == "string" then
-				return false
-			else
-				if a[1]:lower() == b[1]:lower() then
-					return a[2]:lower() < b[2]:lower()
-				else
-					return a[1]:lower() < b[1]:lower()
-				end
-			end
-		end)
-
-		-- Iterate over each sorted key
-		for _, cfg in ipairs(sortedkeys) do
-			local target = slncfgmaps[cfg]
-			-- Determine if the target is a platform or a configuration, or both
-			-- Target may be a length 1 table (buildcfg or platform) or a length 2 table (buildcfg + platform)
-			
-			local getplatform = function(tgt)
-				if type(tgt) == "string" then
-					if table.contains(prj.workspace.platforms, tgt) then
-						return tgt
-					end
-				elseif type(tgt) == "table" then
-					for _, plat in ipairs(tgt) do
-						if table.contains(prj.workspace.platforms, plat) then
-							return plat
-						end
-					end
-				end
-				return nil
-			end
-
-			local getbuildcfg = function(tgt)
-				if type(tgt) == "string" then
-					if table.contains(prj.workspace.configurations, tgt) then
-						return tgt
-					end
-				elseif type(tgt) == "table" then
-					for _, cfg in ipairs(tgt) do
-						if table.contains(prj.workspace.configurations, cfg) then
-							return cfg
-						end
-					end
-				end
-				return nil
-			end
-
-			local platform = getplatform(target)
-			local buildcfg = getbuildcfg(target)
-
-			local output = function(cfg, platform, tag)
-				if type(cfg) == "string" then
-					local isplatform = getplatform(cfg) ~= nil
-					local isbuildcfg = getbuildcfg(cfg) ~= nil
-					if isplatform then
-						p.push('<%s Solution="*|%s" Project="%s" />', tag, cfg, platform)
-						p.pop()
-					elseif isbuildcfg then
-						p.push('<%s Solution="%s|*" Project="%s" />', tag, cfg, platform)
-						p.pop()
-					end
-				else
-					local isplatform = getplatform(cfg) ~= nil
-					local isbuildcfg = getbuildcfg(cfg) ~= nil
-					
-					if isplatform and isbuildcfg then
-						p.push('<%s Solution="%s|%s" Project="%s" />', tag, cfg[1], cfg[2], platform)
-						p.pop()
-					elseif isplatform then
-						p.push('<%s Solution="*|%s" Project="%s" />', tag, cfg[2], platform)
-						p.pop()
-					elseif isbuildcfg then
-						p.push('<%s Solution="%s|*" Project="%s" />', tag, cfg[1], platform)
-						p.pop()
-					end
-				end
-			end
-
-			if platform ~= nil then
-				output(cfg, platform, "Platform")
-			end
-
-			if buildcfg ~= nil then
-				output(cfg, buildcfg, "BuildType")
-			end
 		end
 	end
 end
