@@ -65,3 +65,54 @@
 		includeexternal (_TESTS_DIR .. "/folder/premake5.lua")
 		test.isequal("okokok", p.captured())
 	end
+
+
+--
+-- Tests for local-first search priority (fix for issue #1783):
+-- Local files must be found before identically-named files in premake.path.
+--
+
+	-- Helper: run fn with CWD and premake.path temporarily overridden.
+	local function withLocalPriority(cwd, searchPath, fn)
+		local savedPath = premake.path
+		local savedCwd  = os.getcwd()
+		premake.path = searchPath
+		os.chdir(cwd)
+		local ok, err = pcall(fn)
+		os.chdir(savedCwd)
+		premake.path = savedPath
+		if not ok then error(err, 2) end
+	end
+
+	-- A local "name/premake5.lua" must be preferred over a plain file named
+	-- "name" that lives only in a premake.path search directory.
+	function suite.findProjectScript_prefersLocalSubdir_overPathDecoy()
+		local folder = _TESTS_DIR .. "/folder"
+		withLocalPriority(folder, folder .. "/subfolder", function()
+			local res, _ = premake.findProjectScript("shadowlib")
+			test.isequal(
+				path.normalize(folder .. "/shadowlib/premake5.lua"),
+				path.normalize(res))
+		end)
+	end
+
+	-- A local "name.lua" must be preferred over a plain file named "name"
+	-- (no extension) that lives only in a premake.path search directory.
+	function suite.findProjectScript_prefersLocalLuaFile_overPathDecoy()
+		local folder = _TESTS_DIR .. "/folder"
+		withLocalPriority(folder, folder .. "/subfolder", function()
+			local res, _ = premake.findProjectScript("ok")
+			test.isequal(
+				path.normalize(folder .. "/ok.lua"),
+				path.normalize(res))
+		end)
+	end
+
+	-- Verify the full include() call for the subdir-priority scenario.
+	function suite.include_prefersLocalSubdir_overPathDecoy()
+		local folder = _TESTS_DIR .. "/folder"
+		withLocalPriority(folder, folder .. "/subfolder", function()
+			include("shadowlib")
+		end)
+		test.isequal("shadowlocal", p.captured())
+	end

@@ -1,0 +1,1 @@
+-- decoy: this file should NOT be loaded by include("shadowlib") when a local shadowlib/ directory exists

@@ -1,0 +1,1 @@
+-- decoy: this file should NOT be loaded by include("ok") when a local ok.lua exists
