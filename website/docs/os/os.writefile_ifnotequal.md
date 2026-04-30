@@ -13,7 +13,7 @@ ok, err = os.writefile_ifnotequal("text", "filename")
 
 ### Return Value ###
 
-True if successful, otherwise nil and an error message.
+`1` if successful, `0` if the string is identical to the current file contents, otherwise `-1` and an error message.
 
 
 ### Availability ###
