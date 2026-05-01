@@ -180,158 +180,152 @@ function m.projects(wks)
 			p.push('<Folder Name="%s">', groupName)
 		end
 
-		local tr = p.workspace.grouptree(wks)
-		tree.traverse(tr, {
-			onleaf = function(n)
-				local prj = n.project
+		for _, prj in ipairs(projects) do
 
-				local typeID = vstudio.tool(prj)
+			local typeID = vstudio.tool(prj)
 
-				local projectPath = ''
+			local projectPath = ''
 
-				-- Open the XML tag, add common properties
-				projectPath = projectPath .. '<'
-				projectPath = projectPath ..  string.format('Project Path="%s" Id="%s"', m.buildRelativePath(prj), prj.uuid)
+			-- Open the XML tag, add common properties
+			projectPath = projectPath .. '<'
+			projectPath = projectPath ..  string.format('Project Path="%s" Id="%s"', m.buildRelativePath(prj), prj.uuid)
 
-				-- Mark startup project
-				if startupProject and startupProject.name == prj.name then
-					projectPath = projectPath .. ' DefaultStartup="true"'
-				end
+			-- Mark startup project
+			if startupProject and startupProject.name == prj.name then
+				projectPath = projectPath .. ' DefaultStartup="true"'
+			end
 
-				-- Mark projects with uncommon types
-				if prj.kind == p.PACKAGING then
-					projectPath = projectPath .. string.format(' Type="%s"', typeID)
-				end
+			-- Mark projects with uncommon types
+			if prj.kind == p.PACKAGING then
+				projectPath = projectPath .. string.format(' Type="%s"', typeID)
+			end
 
-				
+			-- SharedItems projects don't have any configuration platform entries
+			if prj.kind == p.SHAREDITEMS then
 
-				-- SharedItems projects don't have any configuration platform entries
-				if prj.kind == p.SHAREDITEMS then
+				-- Directly close the XML tag
+				projectPath = projectPath .. '/>'
+				p.push(projectPath)
+				p.pop()
 
-					-- Directly close the XML tag
-					projectPath = projectPath .. '/>'
-					p.push(projectPath)
-					p.pop()
+			else
 
-				else
+				-- Close the opening XML tag
+				projectPath = projectPath .. '>'
+				p.push(projectPath)
 
-					-- Close the opening XML tag
-					projectPath = projectPath .. '>'
-					p.push(projectPath)
+				-- Create a context with all the properties we need to populate the relevant fields
+				-- Many of these are repeated and it's useful to have them in a single place
+				local sortedContexts = {}
+				local availableConfigCount = 0
+				local excludedConfigCount = 0
+				for _, solutionConfig in ipairs(sortedSolutionConfigs) do
+					local context = {}
 
-					-- Create a context with all the properties we need to populate the relevant fields
-					-- Many of these are repeated and it's useful to have them in a single place
-					local sortedContexts = {}
-					local availableConfigCount = 0
-					local excludedConfigCount = 0
-					for _, solutionConfig in ipairs(sortedSolutionConfigs) do
-						local context = {}
+					local projectConfig = project.getconfig(prj, solutionConfig.buildcfg, solutionConfig.platform)
 
-						local projectConfig = project.getconfig(prj, solutionConfig.buildcfg, solutionConfig.platform)
+					if projectConfig then
 
-						if projectConfig then
+						context.solutionConfig = solutionConfig
+						context.solutionPlatform = vstudio.solutionPlatform(solutionConfig)
+						context.allowDeployment = sln2026.allowDeployment(prj, solutionConfig)
+						context.descriptor = string.format("%s|%s", solutionConfig.buildcfg, context.solutionPlatform)
 
-							context.solutionConfig = solutionConfig
-							context.solutionPlatform = vstudio.solutionPlatform(solutionConfig)
-							context.allowDeployment = sln2026.allowDeployment(prj, solutionConfig)
-							context.descriptor = string.format("%s|%s", solutionConfig.buildcfg, context.solutionPlatform)
+						context.projectPlatform = vstudio.projectPlatform(projectConfig)
+						context.arch = vstudio.archFromConfig(projectConfig, true)
+						context.excluded = projectConfig.excludefrombuild
 
-							context.projectPlatform = vstudio.projectPlatform(projectConfig)
-							context.arch = vstudio.archFromConfig(projectConfig, true)
-							context.excluded = projectConfig.excludefrombuild
-
-							if projectConfig.excludefrombuild then
-								excludedConfigCount = excludedConfigCount + 1
-							end
-
-							table.insert(sortedContexts, context)
-
-							availableConfigCount = availableConfigCount + 1
-
+						if projectConfig.excludefrombuild then
+							excludedConfigCount = excludedConfigCount + 1
 						end
+
+						table.insert(sortedContexts, context)
+
+						availableConfigCount = availableConfigCount + 1
+
+					end
+				end
+
+				-- Are all available configs for this project excluded
+				local allExcluded = excludedConfigCount == availableConfigCount
+
+				-- Output properties if there are any configs
+				if next(sortedContexts) ~= nil then
+
+					local closestCfg = project.findClosestMatch(prj, sortedContexts[1].solutionConfig.buildcfg, sortedContexts[1].solutionConfig.platform)
+					local closestArch = vstudio.archFromConfig(closestCfg, true)
+					local closestProjectPlatform = vstudio.projectPlatform(closestCfg)
+
+					-- BuildType
+					for _, context in ipairs(sortedContexts) do
+						p.push('<BuildType Solution="%s" Project="%s" />', context.descriptor, context.projectPlatform)
+						p.pop()
 					end
 
-					-- Are all available configs for this project excluded
-					local allExcluded = excludedConfigCount == availableConfigCount
+					-- We might have more, in which case we'll have accounted for all of them above
+					if availableConfigCount < solutionConfigCount then
+						p.push('<BuildType Project="%s" />', closestProjectPlatform)
+						p.pop()
+					end
 
-					-- Output properties if there are any configs
-					if next(sortedContexts) ~= nil then
+					-- Platform to Arch
+					for _, context in ipairs(sortedContexts) do
+						p.push('<Platform Solution="%s" Project="%s" />', context.descriptor, context.arch)
+						p.pop()
+					end
 
-						local closestCfg = project.findClosestMatch(prj, sortedContexts[1].solutionConfig.buildcfg, sortedContexts[1].solutionConfig.platform)
-						local closestArch = vstudio.archFromConfig(closestCfg, true)
-						local closestProjectPlatform = vstudio.projectPlatform(closestCfg)
+					if availableConfigCount < solutionConfigCount then
+						p.push('<Platform Project="%s" />', closestArch)
+						p.pop()
+					end
 
-						-- BuildType
-						for _, context in ipairs(sortedContexts) do
-							p.push('<BuildType Solution="%s" Project="%s" />', context.descriptor, context.projectPlatform)
+					-- Build Status
+					-- If this project has all solution configs (or more, perhaps a per-project platform), set them individually or all to false if we detected it previously
+					if availableConfigCount >= solutionConfigCount then
+						-- If they are all excluded, set them all to false
+						if allExcluded then
+							p.push('<Build Project="false" />')
 							p.pop()
-						end
-
-						-- We might have more, in which case we'll have accounted for all of them above
-						if availableConfigCount < solutionConfigCount then
-							p.push('<BuildType Project="%s" />', closestProjectPlatform)
-							p.pop()
-						end
-
-						-- Platform to Arch
-						for _, context in ipairs(sortedContexts) do
-							p.push('<Platform Solution="%s" Project="%s" />', context.descriptor, context.arch)
-							p.pop()
-						end
-
-						if availableConfigCount < solutionConfigCount then
-							p.push('<Platform Project="%s" />', closestArch)
-							p.pop()
-						end
-
-						-- Build Status
-						-- If this project has all solution configs (or more, perhaps a per-project platform), set them individually or all to false if we detected it previously
-						if availableConfigCount >= solutionConfigCount then
-							-- If they are all excluded, set them all to false
-							if allExcluded then
-								p.push('<Build Project="false" />')
-								p.pop()
-							else
-								-- Otherwise set excluded ones to false, as the default is true
-								for _, context in ipairs(sortedContexts) do
-									if context.excluded then
-										p.push('<Build Solution="%s" Project="false" />', context.descriptor)
-										p.pop()
-									end
-								end
-							end
 						else
-							-- Set the included ones to true, as we change the default to false (we don't know the rest of the configs)
+							-- Otherwise set excluded ones to false, as the default is true
 							for _, context in ipairs(sortedContexts) do
-								if not context.excluded then
-									p.push('<Build Solution="%s" Project="true" />', context.descriptor)
+								if context.excluded then
+									p.push('<Build Solution="%s" Project="false" />', context.descriptor)
 									p.pop()
 								end
 							end
-					
-							p.push('<Build Project="false" />')
-							p.pop()
 						end
-
-						-- Deployment
+					else
+						-- Set the included ones to true, as we change the default to false (we don't know the rest of the configs)
 						for _, context in ipairs(sortedContexts) do
-							if context.allowDeployment then
-								p.push('<Deploy Solution="%s" />', context.descriptor)
+							if not context.excluded then
+								p.push('<Build Solution="%s" Project="true" />', context.descriptor)
 								p.pop()
 							end
 						end
-
+					
+						p.push('<Build Project="false" />')
+						p.pop()
 					end
 
-					p.callArray(m.elements.project, prj)
-
-					-- Close the project XML tag
-					p.pop('</Project>')
+					-- Deployment
+					for _, context in ipairs(sortedContexts) do
+						if context.allowDeployment then
+							p.push('<Deploy Solution="%s" />', context.descriptor)
+							p.pop()
+						end
+					end
 
 				end
 
+				p.callArray(m.elements.project, prj)
+
+				-- Close the project XML tag
+				p.pop('</Project>')
+
 			end
-		})
+
+		end
 
 		if groupName ~= "" then
 			p.pop('</Folder>')
