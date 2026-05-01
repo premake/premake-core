@@ -90,16 +90,24 @@ function suite.project_in_groups()
 	local wks = workspace "MyWorkspace"
 	configurations { "Debug", "Release" }
 
-	local grp1 = group "Group1"
-
 	local prj1 = project "MyProject1"
 		uuid "AE61726D-187C-E440-BD07-2556188A6565"
+
+	local grp1 = group "Group1"
+		local prj2 = project "MyProject2"
+			uuid "BE61726D-187C-E440-BD07-2556188A6565"
 
 	prepare(wks)
 
 	test.capture [[
+<Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+	<BuildType Solution="Debug|Win32" Project="Debug" />
+	<BuildType Solution="Release|Win32" Project="Release" />
+	<Platform Solution="Debug|Win32" Project="Win32" />
+	<Platform Solution="Release|Win32" Project="Win32" />
+</Project>
 <Folder Name="/Group1/">
-	<Project Path="MyProject1.vcxproj" Id="AE61726D-187C-E440-BD07-2556188A6565">
+	<Project Path="MyProject2.vcxproj" Id="BE61726D-187C-E440-BD07-2556188A6565">
 		<BuildType Solution="Debug|Win32" Project="Debug" />
 		<BuildType Solution="Release|Win32" Project="Release" />
 		<Platform Solution="Debug|Win32" Project="Win32" />
