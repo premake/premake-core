@@ -105,7 +105,7 @@ int os_writefile_ifnotequal(lua_State* L)
 
 		if (!error)
 		{
-			lua_pushinteger(L, error ? -1 : 0);
+			lua_pushinteger(L, 1);
 			return 1;
 		}
 	}
