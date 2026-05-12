@@ -352,7 +352,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Build on OmniOS VM
-      uses: vmactions/omnios-vm@v1.2.9
+      uses: vmactions/omnios-vm@v1.3.0
       with:
         usesh: true
         prepare: |
