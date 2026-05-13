@@ -483,10 +483,15 @@
 
 		-- Then the system libraries, which come undecorated
 		local system = config.getlinks(cfg, "system", "fullpath")
+
+		local toolset = config.toolset(cfg)
+		local toolsetExts = toolset and toolset.getLibraryExtensions and toolset.getLibraryExtensions() or {}
+		local libExts = table.merge(p.tools.msc.getLibraryExtensions(), toolsetExts)
+
 		for i = 1, #system do
 			-- Add extension if required
 			local link = system[i]
-			if not p.tools.msc.getLibraryExtensions()[link:match("[^.]+$")] then
+			if not libExts[link:match("[^.]+$")] then
 				link = path.appendextension(link, ".lib")
 			end
 

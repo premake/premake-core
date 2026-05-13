@@ -402,3 +402,10 @@
 	function clang.gettooloutputext(tool)
 		return gcc.gettooloutputext(tool)
 	end
+
+	function clang.getLibraryExtensions()
+		return {
+			["a"] = true,
+			["so"] = true,
+		}
+	end
