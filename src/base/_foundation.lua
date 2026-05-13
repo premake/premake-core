@@ -227,8 +227,22 @@
 			table.insert(filenames, path.getabsolute(fname, _SCRIPT_DIR))
 		end
 
-		local compiled_chunk
-		local res = os.locate(table.unpack(filenames))
+		local compiled_chunk = nil
+		local res = nil
+
+		-- First try to find the file directly on file system.
+		for _, candidate in ipairs(filenames) do
+			if os.isfile(candidate) then
+				res = path.getabsolute(candidate)
+				break
+			end
+		end
+
+		-- If that fails, try to find the file using the search paths.
+		if res == nil then
+			res = os.locate(table.unpack(filenames))
+		end
+
 		if res == nil then
 			local caller = filelineinfo(3)
 			premake.error(caller .. ": Cannot find neither " .. table.implode(filenames, "", "", " nor "))
