@@ -16,6 +16,7 @@
 	m.elements.userProjectPropertyGroup = function()
 		return {
 			m.referencePath,
+			m.startWorkingDir,
 		}
 	end
 
@@ -82,7 +83,14 @@
 		end
 	end
 
-
+	function m.startWorkingDir(prj)
+		-- Per-configuration reference paths aren't supported (are they?) so just
+		-- use the first configuration in the project
+		local cfg = p.project.getfirstconfig(prj)
+		if cfg.debugdir then
+			p.x('<StartWorkingDirectory>%s</StartWorkingDirectory>', cfg.debugdir)
+		end
+	end
 
 	function m.localDebuggerCommandArguments(cfg)
 		if #cfg.debugargs > 0 then
