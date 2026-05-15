@@ -18,116 +18,116 @@ local project = p.project
 local wks, prj
 
 function suite.setup()
-    p.action.set("vs2005")
-    wks, prj = test.createWorkspace()
+	p.action.set("vs2005")
+	wks, prj = test.createWorkspace()
 	configurations { "Debug", "Release", "Distribution"}
-    language "C#"
+	language "C#"
 end
 
 local function targetFrameworkPrepare()
-    local cfg = test.getconfig(prj, "Debug")
-    dn2005.netcore.targetFramework(cfg)
+	local cfg = test.getconfig(prj, "Debug")
+	dn2005.netcore.targetFramework(cfg)
 end
 
 local function targetFrameworkVersionPrepare()
-    local cfg = test.getconfig(prj, "Debug")
-    dn2005.targetFrameworkVersion(cfg)
+	local cfg = test.getconfig(prj, "Debug")
+	dn2005.targetFrameworkVersion(cfg)
 end
 
 local function projectConfigurationsPrepare()
-    dn2005.projectConfigurations(prj)
+	dn2005.projectConfigurations(prj)
 end
 
 local function prepareNetcore()
-    dn2005.projectElement(prj)
+	dn2005.projectElement(prj)
 end
 
 local function prepareProjectProperties()
-    local localProj = test.getproject(wks, 1)
+	local localProj = test.getproject(wks, 1)
 
-    dn2005.prepare(cs2005)
-    dn2005.projectProperties(localProj)
+	dn2005.prepare(cs2005)
+	dn2005.projectProperties(localProj)
 end
 
 function suite.targetFrameworkProperty_framework()
-    dotnetframework "4.7.2"
-    targetFrameworkPrepare()
-    test.isemptycapture()
+	dotnetframework "4.7.2"
+	targetFrameworkPrepare()
+	test.isemptycapture()
 end
 
 function suite.targetFrameworkProperty_core()
-    dotnetframework "netcoreapp2.2"
-    targetFrameworkPrepare()
-    test.capture [[
+	dotnetframework "netcoreapp2.2"
+	targetFrameworkPrepare()
+	test.capture [[
 		<TargetFramework>netcoreapp2.2</TargetFramework>
 	]]
 end
 
 function suite.targetFrameworkProperty_standard()
-    dotnetframework "netstandard1.2"
-    targetFrameworkPrepare()
-    test.capture [[
+	dotnetframework "netstandard1.2"
+	targetFrameworkPrepare()
+	test.capture [[
 		<TargetFramework>netstandard1.2</TargetFramework>
-    ]]
+	]]
 end
 
 function suite.targetFrameworkVersionProperty_framework()
-    dotnetframework "4.7.2"
-    targetFrameworkVersionPrepare()
-    test.capture [[
+	dotnetframework "4.7.2"
+	targetFrameworkVersionPrepare()
+	test.capture [[
 		<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    ]]
+	]]
 end
 
 function suite.targetFrameworkVersionProperty_core()
-    dotnetframework "netcoreapp2.2"
-    targetFrameworkVersionPrepare()
-    test.isemptycapture()
+	dotnetframework "netcoreapp2.2"
+	targetFrameworkVersionPrepare()
+	test.isemptycapture()
 end
 
 function suite.targetFrameworkVersionProperty_standard()
-    dotnetframework "netstandard1.2"
-    targetFrameworkVersionPrepare()
-    test.isemptycapture()
+	dotnetframework "netstandard1.2"
+	targetFrameworkVersionPrepare()
+	test.isemptycapture()
 end
 
 function suite.project_element_standard()
-    dotnetframework "netstandard1.2"
-    prepareNetcore()
-    test.capture [[
+	dotnetframework "netstandard1.2"
+	prepareNetcore()
+	test.capture [[
 <Project Sdk="Microsoft.NET.Sdk">
-    ]]
+	]]
 end
 
 function suite.project_element_core()
-    dotnetframework "netcoreapp1.2"
-    prepareNetcore()
-    test.capture [[
+	dotnetframework "netcoreapp1.2"
+	prepareNetcore()
+	test.capture [[
 <Project Sdk="Microsoft.NET.Sdk">
-    ]]
+	]]
 end
 
 function suite.project_element_net5()
-    dotnetframework "net5.0"
-    prepareNetcore()
-    test.capture [[
+	dotnetframework "net5.0"
+	prepareNetcore()
+	test.capture [[
 <Project Sdk="Microsoft.NET.Sdk">
-    ]]
+	]]
 end
 
 function suite.project_element_framework()
-    dotnetframework "4.7.2"
-    prepareNetcore()
-    test.capture [[
+	dotnetframework "4.7.2"
+	prepareNetcore()
+	test.capture [[
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    ]]
+	]]
 end
 
 function suite.allowUnsafeProperty_core()
-    dotnetframework "netcoreapp2.2"
-    clr "Unsafe"
-    prepareProjectProperties()
-    test.capture [[
+	dotnetframework "netcoreapp2.2"
+	clr "Unsafe"
+	prepareProjectProperties()
+	test.capture [[
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
@@ -135,15 +135,15 @@ function suite.allowUnsafeProperty_core()
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 	</PropertyGroup>
-    ]]
+	]]
 end
 
 function suite.implicitUsings_on()
-    p.action.set("vs2022")
-    dotnetframework "net10.0"
-    enableimplicitusings "On"
-    prepareProjectProperties()
-    test.capture [[
+	p.action.set("vs2022")
+	dotnetframework "net10.0"
+	enableimplicitusings "On"
+	prepareProjectProperties()
+	test.capture [[
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
@@ -152,15 +152,15 @@ function suite.implicitUsings_on()
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<ImplicitUsings>true</ImplicitUsings>
 	</PropertyGroup>
-    ]]
+	]]
 end
 
 function suite.implicitUsings_off()
-    p.action.set("vs2022")
-    dotnetframework "net10.0"
-    enableimplicitusings "Off"
-    prepareProjectProperties()
-    test.capture [[
+	p.action.set("vs2022")
+	dotnetframework "net10.0"
+	enableimplicitusings "Off"
+	prepareProjectProperties()
+	test.capture [[
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
@@ -169,7 +169,22 @@ function suite.implicitUsings_off()
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<ImplicitUsings>false</ImplicitUsings>
 	</PropertyGroup>
-    ]]
+	]]
+end
+
+function suite.multiple_target_dotnet_frameworks()
+	p.action.set("vs2022")
+	dotnetframework { "net8.0", "net10.0" }
+	prepareProjectProperties()
+	test.capture [[
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+		<Configurations>Debug;Release;Distribution</Configurations>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	</PropertyGroup>
+	]]
 end
 
 function suite.project_element_configurations()

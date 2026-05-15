@@ -1,24 +1,20 @@
-Selects a .NET framework version.
+Selects a .NET framework version(s).
 
 ```lua
-dotnetframework ("version")
+dotnetframework (versions)
 ```
 
 This value currently is only applied to Visual Studio 2005 or later, and GNU makefiles using Mono. If no .NET framework version is specified the toolset default is used.
 
 ### Parameters ###
 
-`version` is one of:
+`versions` is a list of version name strings where each element is one of:
 
 | Version | Documentation |
-| 1.0 | .NET Framework 1.0 |
-| 1.1 | .NET Framework 1.1 |
-| 2.0 | .NET Framework 2.0 |
-| 3.0 | .NET Framework 3.0 |
-| 3.5 | .NET Framework 3.5 |
-| 4.0 | .NET Framework 4.0 |
-| 4.5 | .NET Framework 4.5 |
-| 4.6 | .NET Framework 4.6 |
+| X.X | .NET Framework X.X |
+| netcoreappX.X | .NET Core X.X |
+| netstandardX.X | .NET Standard X.X |
+| netX.X | .NET X.X |
 
 ### Applies To ###
 
@@ -30,10 +26,35 @@ Premake 5.0.0-alpha1 or later.
 
 ### Examples ###
 
-Use the .NET framework 3.0.
+Use .NET 10.0:
 
 ```lua
-dotnetframework "3.0"
+dotnetframework "net10.0"
+```
+
+Use .NET 8.0 and .NET 10.0:
+
+```lua
+dotnetframework { "net8.0", "net10.0" }
+```
+
+Use .NET Core 2.1:
+
+```lua
+dotnetframework "netcoreapp2.1"
+```
+
+Use .NET Standard 2.1:
+
+```lua
+dotnetframework "netstandard2.1"
+```
+
+
+Use the .NET framework 4.6:
+
+```lua
+dotnetframework "4.6"
 ```
 
 ### See Also ###
