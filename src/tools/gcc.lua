@@ -710,7 +710,7 @@
 
 		if not systemonly then
 			if cfg.userelativelinks == p.ON then
-				local libFiles = config.getlinks(cfg, "siblings", "basename")
+				local libFiles = config.getlinks(cfg, "siblings", "basename", nil, true)
 				for _, link in ipairs(libFiles) do
 					if string.startswith(link, "lib") then
 						link = link:sub(4)
@@ -721,12 +721,12 @@
 				-- Don't use the -l form for sibling libraries, since they may have
 				-- custom prefixes or extensions that will confuse the linker. Instead
 				-- just list out the full relative path to the library.
-				result = config.getlinks(cfg, "siblings", "fullpath")
+				result = config.getlinks(cfg, "siblings", "fullpath", nil, true)
 			end
 		end
 
 		-- The "-l" flag is fine for system libraries
-		local links = config.getlinks(cfg, "system", "fullpath")
+		local links = config.getlinks(cfg, "system", "fullpath", nil, true)
 		local static_syslibs = {"-Wl,-Bstatic"}
 		local shared_syslibs = {}
 

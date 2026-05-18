@@ -478,11 +478,11 @@
 
 		-- If we need sibling projects to be listed explicitly, grab them first
 		if not systemonly then
-			links = config.getlinks(cfg, "siblings", "fullpath")
+			links = config.getlinks(cfg, "siblings", "fullpath", nil, true)
 		end
 
 		-- Then the system libraries, which come undecorated
-		local system = config.getlinks(cfg, "system", "fullpath")
+		local system = config.getlinks(cfg, "system", "fullpath", nil, true)
 		for i = 1, #system do
 			-- Add extension if required
 			local link = system[i]

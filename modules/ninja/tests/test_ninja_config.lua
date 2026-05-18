@@ -371,6 +371,27 @@ target_MyProject_Debug = MyProject
 		]]
 	end
 
+	function suite.configVars_withWholeArchiveAndLinks_Linux()
+		toolset "gcc"
+		_OS = "Linux"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+		links { "m", "pthread" }
+		wholearchive { "m" }
+
+		local cfg = prepare()
+		cpp.configurationVariables(cfg)
+
+		test.capture [[
+ldflags_MyProject_Debug = -s -Wl,--whole-archive m -Wl,--no-whole-archive
+links_MyProject_Debug = -lpthread
+objdir_MyProject_Debug = obj/Debug
+targetdir_MyProject_Debug = bin/Debug
+target_MyProject_Debug = MyProject
+
+		]]
+	end
+
 
 	function suite.configVars_withLinks_Windows()
 		toolset "msc"
