@@ -75,7 +75,11 @@
 				info.action = "Page"
 			end
 		else
-			info.action = "None"
+			if fcfg.buildaction == nil then
+				info.action = "None"
+			else
+				info.action = fcfg.buildaction
+			end
 		end
 
 		-- Try to work out any subtypes, based on the files in the project
