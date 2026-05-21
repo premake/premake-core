@@ -153,6 +153,27 @@ LDDEPS += build/bin/Debug/libMyProject2.so
 	end
 
 --
+-- Check a linking to a sibling when using wholearchive.
+--
+
+	function suite.links_onSiblingWholeArchiveAndLinks()
+		links "MyProject2"
+		wholearchive "MyProject2"
+
+		test.createproject(wks)
+		kind "SharedLib"
+		location "build"
+
+		prepare { cpp.ldFlags, cpp.libs, cpp.ldDeps }
+		test.capture [[
+ALL_LDFLAGS += $(LDFLAGS) -Wl,-rpath,'$$ORIGIN/../../build/bin/Debug' -s -Wl,--whole-archive build/bin/Debug/libMyProject2.so -Wl,--no-whole-archive
+LIBS +=
+LDDEPS += build/bin/Debug/libMyProject2.so
+		]]
+	end
+
+
+--
 -- Check a linking to a sibling shared library using -l and -L.
 --
 

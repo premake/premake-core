@@ -253,7 +253,7 @@
 --    An array containing the requested link target information.
 --
 
-	function config.getlinks(cfg, kind, part, linkage)
+	function config.getlinks(cfg, kind, part, linkage, drop_wholearchive)
 		local result = {}
 
 		-- If I'm building a list of link directories, include libdirs
@@ -278,66 +278,79 @@
 				name = string.sub(name, 0, -8)
 			end
 
-			-- Sort the links into "sibling" (is another project in this same
-			-- workspace) and "system" (is not part of this workspace) libraries.
+			local is_wholearchive = false
+			if drop_wholearchive and cfg.wholearchive then
+				for _, wa in ipairs(cfg.wholearchive) do
+					if type(wa) == "string" and (wa == name or wa == link) then
+						is_wholearchive = true
+						break
+					end
+				end
+			end
 
-			local prj = p.workspace.findproject(cfg.workspace, name)
-			if prj and kind ~= "system" then
+			if kind == "dependencies" or not is_wholearchive then
 
-				-- Sibling; is there a matching configuration in this project that
-				-- is compatible with linking to me?
+				-- Sort the links into "sibling" (is another project in this same
+				-- workspace) and "system" (is not part of this workspace) libraries.
 
-				local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
-				if prjcfg and (kind == "dependencies" or config.canLink(cfg, prjcfg)) then
+				local prj = p.workspace.findproject(cfg.workspace, name)
+				if prj and kind ~= "system" then
 
-					-- Yes; does the caller want the whole project config or only part?
-					if part == "object" then
-						item = prjcfg
-					else
-						item = p.tools.getrelative(cfg.project, prjcfg.linktarget.fullpath)
+					-- Sibling; is there a matching configuration in this project that
+					-- is compatible with linking to me?
+
+					local prjcfg = project.getconfig(prj, cfg.buildcfg, cfg.platform)
+					if prjcfg and (kind == "dependencies" or config.canLink(cfg, prjcfg)) then
+
+						-- Yes; does the caller want the whole project config or only part?
+						if part == "object" then
+							item = prjcfg
+						else
+							item = p.tools.getrelative(cfg.project, prjcfg.linktarget.fullpath)
+						end
+
+					end
+
+				elseif not prj and (kind == "system" or kind == "all") then
+
+					-- Make sure this library makes sense for the requested linkage; don't
+					-- link managed .DLLs into unmanaged code, etc.
+
+					if config.canLink(cfg, link, linkage) then
+						-- if the target is listed via an explicit path (i.e. not a
+						-- system library or assembly), make it project-relative
+						item = link
+						if item:find("/", nil, true) then
+							item = p.tools.getrelative(cfg.project, item)
+						end
 					end
 
 				end
 
-			elseif not prj and (kind == "system" or kind == "all") then
-
-				-- Make sure this library makes sense for the requested linkage; don't
-				-- link managed .DLLs into unmanaged code, etc.
-
-				if config.canLink(cfg, link, linkage) then
-					-- if the target is listed via an explicit path (i.e. not a
-					-- system library or assembly), make it project-relative
-					item = link
-					if item:find("/", nil, true) then
-						item = p.tools.getrelative(cfg.project, item)
+				-- If this is something I can link against, pull out the requested part
+				-- don't link against my self
+				if item and item ~= cfg then
+					if part == "directory" then
+						item = path.getdirectory(item)
+						if item == "." then
+							item = nil
+						end
+					elseif part == "name" then
+						item = path.getname(item)
+					elseif part == "basename" then
+						item = path.getbasename(item)
+					elseif type(part) == "function" then
+						part(link, item)
 					end
 				end
 
-			end
+				-- Add it to the list, skipping duplicates
 
-			-- If this is something I can link against, pull out the requested part
-			-- don't link against my self
-			if item and item ~= cfg then
-				if part == "directory" then
-					item = path.getdirectory(item)
-					if item == "." then
-						item = nil
-					end
-				elseif part == "name" then
-					item = path.getname(item)
-				elseif part == "basename" then
-					item = path.getbasename(item)
-				elseif type(part) == "function" then
-					part(link, item)
+				if item and not table.contains(result, item) then
+					table.insert(result, item)
 				end
+
 			end
-
-			-- Add it to the list, skipping duplicates
-
-			if item and not table.contains(result, item) then
-				table.insert(result, item)
-			end
-
 		end
 
 		return result
@@ -374,7 +387,7 @@
 --
 	function config.getsiblingtargetdirs(cfg)
 		local paths = {}
-		for _, sibling in ipairs(config.getlinks(cfg, "siblings", "object")) do
+		for _, sibling in ipairs(config.getlinks(cfg, "dependencies", "object")) do
 			if (sibling.kind == p.SHAREDLIB) then
 				local p = sibling.linktarget.directory
 				if not (table.contains(paths, p)) then

@@ -219,3 +219,34 @@ build obj/Debug/App/data.cpp: custom data.in | bin/Debug/Generator
   customcommand = sh -c 'bin/Debug/Generator data.in'
 		]]
 	end
+
+--
+-- Check that wholearchive and links preserves dependson behavior
+--
+
+	function suite.dependson_wholeArchiveSibling()
+		toolset "gcc"
+		_OS = "Linux"
+
+		project "LibraryA"
+		kind "StaticLib"
+		files { "a.cpp" }
+
+		project "App"
+		kind "ConsoleApp"
+		files { "app.cpp" }
+		links { "LibraryA" }
+		wholearchive { "LibraryA" }
+
+		local prj = test.getproject(wks, 2)  -- Get App
+		local cfg = test.getconfig(prj, "Debug")
+
+		cfg._objectFiles = { "obj/Debug/App/app.o" }
+		cpp.linkTarget(cfg)
+
+		-- Should have LibraryA as an order-only dep (or implicit dep) because it's a sibling
+		test.capture [[
+build bin/Debug/App: link_gcc obj/Debug/App/app.o | bin/Debug/libLibraryA.a
+  ldflags = $ldflags_App_Debug
+		]]
+	end

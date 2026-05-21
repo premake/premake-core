@@ -59,7 +59,7 @@ jobs:
         name: premake-macosx-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
   windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
     strategy:
       matrix:
         config: [debug, release]

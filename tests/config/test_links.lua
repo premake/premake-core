@@ -21,9 +21,9 @@
 		wks, prj = test.createWorkspace()
 	end
 
-	local function prepare(kind, part, linkage)
+	local function prepare(kind, part, linkage, drop_wholearchive)
 		cfg = test.getconfig(prj, "Debug")
-		return config.getlinks(cfg, kind, part, linkage)
+		return config.getlinks(cfg, kind, part, linkage, drop_wholearchive)
 	end
 
 
@@ -264,3 +264,39 @@
 		local r = prepare("all", "fullpath")
 		test.isequal({ "bin/Debug/SiblingLibrary.lib" }, r)
 	end
+
+--
+-- wholearchive
+--
+
+	function suite.skipsWholeArchiveNormalLink_onSystem()
+		links { "SystemLibrary" }
+		wholearchive { "SystemLibrary" }
+		local r = prepare("all", "fullpath", nil, true)
+		test.isequal({}, r)
+	end
+
+	function suite.skipsWholeArchiveNormalLink_onSibling()
+		links { "MyProject2" }
+		wholearchive { "MyProject2" }
+
+		project "MyProject2"
+		kind "StaticLib"
+		language "C++"
+
+		local r = prepare("all", "fullpath", nil, true)
+		test.isequal({}, r)
+	end
+
+	function suite.keepsWholeArchiveNormalLink_onSiblingDependencies()
+		links { "MyProject2" }
+		wholearchive { "MyProject2" }
+
+		project "MyProject2"
+		kind "StaticLib"
+		language "C++"
+
+		local r = prepare("dependencies", "fullpath")
+		test.isequal({ "bin/Debug/MyProject2.lib" }, r)
+	end
+

@@ -4372,11 +4372,11 @@
 
 		-- If we need sibling projects to be listed explicitly, grab them first
 		if explicit then
-			links = config.getlinks(cfg, "siblings", "fullpath")
+			links = config.getlinks(cfg, "siblings", "fullpath", nil, true)
 		end
 
 		-- Then the system libraries, which come undecorated
-		local system = config.getlinks(cfg, "system", "name")
+		local system = config.getlinks(cfg, "system", "name", nil, true)
 		for i = 1, #system do
 			local link = system[i]
 			table.insert(links, link)
