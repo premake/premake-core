@@ -210,7 +210,37 @@ build bin/Debug/%s: link_gcc obj/Debug/main.o
 		ninja.cpp.linkTarget(cfg)
 
 		test.capture [[
-build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp bin/Debug/MyProject2.lib: link_gcc obj/Debug/main.o
+build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.lib: link_gcc obj/Debug/main.o
+  ldflags = $ldflags_MyProject2_Debug
+		]]
+	end
+
+
+--
+-- Test that shared library on Windows with default importlib setting works correctly with Clang
+--
+	function suite.sharedLibWindowsClang()
+		local wks = test.createWorkspace()
+		configurations { "Debug" }
+		toolset "clang"
+		_OS = "windows"
+
+		local prj = test.createProject(wks)
+		kind "SharedLib"
+		language "C++"
+		files { "main.cpp" }
+		toolset "gcc"
+
+		local cfg = test.getconfig(prj, "Debug")
+
+		-- Set up object files list (normally done by buildFiles)
+		cfg._objectFiles = { "obj/Debug/main.o" }
+
+		-- Call linkTarget and check output
+		ninja.cpp.linkTarget(cfg)
+
+		test.capture [[
+build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.lib: link_gcc obj/Debug/main.o
   ldflags = $ldflags_MyProject2_Debug
 		]]
 	end
@@ -273,7 +303,7 @@ build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp bin/Debug/MyProject2.l
 		ninja.cpp.linkTarget(cfg)
 
 		test.capture [[
-build bin/Debug/MyProject2.dll | bin/Debug/MyProject2.exp: link_gcc obj/Debug/main.o
+build bin/Debug/MyProject2.dll: link_gcc obj/Debug/main.o
   ldflags = $ldflags_MyProject2_Debug
 		]]
 	end

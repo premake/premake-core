@@ -1150,10 +1150,21 @@ function m.linkTarget(cfg)
 	-- for the .lib file
 	-- If this is on windows and building a shared library, emit a exp file as an implicit output
 	if cfg.system == p.WINDOWS and cfg.kind == p.SHAREDLIB then
-		local expFileName = cfg.buildtarget.name:gsub("%..-$", "") .. ".exp"
-		if expFileName then
-			local expFilePath = path.getrelative(cfg.workspace.location, cfg.buildtarget.directory) .. "/" .. expFileName
-			table.insert(implicitoutputs, expFilePath)
+		-- exp files are only required with link.exe
+		-- If using MSVC or clang with link as the linker, emit the exp file
+		local shouldEmitExp = false
+		if toolset == p.tools.msc then
+			shouldEmitExp = true
+		elseif toolset == p.tools.clang and toolset.linker == "link" then
+			shouldEmitExp = true
+		end
+
+		if shouldEmitExp then
+			local expFileName = cfg.buildtarget.name:gsub("%..-$", "") .. ".exp"
+			if expFileName then
+				local expFilePath = path.getrelative(cfg.workspace.location, cfg.buildtarget.directory) .. "/" .. expFileName
+				table.insert(implicitoutputs, expFilePath)
+			end
 		end
 
 		if cfg.useimportlib ~= p.OFF then
