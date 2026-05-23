@@ -231,6 +231,22 @@ local function gatherDepTargets(cfg)
 			if depcfg then
 				local depTarget = path.getrelative(cfg.workspace.location, depcfg.buildtarget.directory) .. "/" .. depcfg.buildtarget.name
 				table.insert(depTargets, depTarget)
+
+				local depTargetEventRoot = path.getrelative(cfg.workspace.location, depcfg.objdir) .. "/" .. depcfg.project.name
+
+				-- Check if the dependency has a prebuild command, postbuild command, or prelink command
+				-- If so, add the outputs of those commands as dependencies as well
+				if depcfg.prebuildcommands and #depcfg.prebuildcommands > 0 then
+					table.insert(depTargets, depTargetEventRoot .. ".prebuild")
+				end
+
+				if depcfg.postbuildcommands and #depcfg.postbuildcommands > 0 then
+					table.insert(depTargets, depTargetEventRoot .. ".postbuild")
+				end
+
+				if depcfg.prelinkcommands and #depcfg.prelinkcommands > 0 then
+					table.insert(depTargets, depTargetEventRoot .. ".prelinkevents")
+				end
 			end
 		end
 	end
@@ -1002,7 +1018,7 @@ local function buildCommandString(cmds, message, touchFile)
 	elseif shell == "cmd" then
 		local joined = table.concat(allcmds, " && ")
 		-- Escape double quotes
-		joined = joined:gsub('"', '\\"')
+		joined = joined:gsub('"', '^"')
 		return "cmd /C \"" .. joined .. "\""
 	else
 		return table.concat(allcmds, " && ")
@@ -1313,7 +1329,7 @@ function m.projectPhonies(prj)
 		
 		local hasPostBuild = #firstCfg.postbuildcommands > 0 or firstCfg.postbuildmessage
 		if hasPostBuild then
-			local postbuildTarget = path.getrelative(firstCfg.workspace.location, firstCfg.buildtarget.directory) .. "/" .. firstCfg.project.name .. ".postbuild"
+			local postbuildTarget = path.getrelative(firstCfg.workspace.location, firstCfg.objdir) .. "/" .. firstCfg.project.name .. ".postbuild"
 			_p("build %s: phony %s", prj.name, postbuildTarget)
 		else
 			_p("build %s: phony %s", prj.name, targetPath)
