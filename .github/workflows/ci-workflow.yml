@@ -217,7 +217,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Start OpenBSD VM
-      uses: vmactions/openbsd-vm@v1.4.0
+      uses: vmactions/openbsd-vm@v1.4.1
       with:
         usesh: true
         sync: sshfs
@@ -320,7 +320,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Build on Solaris VM
-      uses: vmactions/solaris-vm@v1.3.3
+      uses: vmactions/solaris-vm@v1.3.5
       with:
         usesh: true
         cpu: 4
