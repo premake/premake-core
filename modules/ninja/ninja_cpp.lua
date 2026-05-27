@@ -222,6 +222,10 @@ function m.customrule(cfg, toolset, prj)
 	end
 end
 
+local function kindHasOutputFile(kind)
+	return kind == p.STATICLIB or kind == p.SHAREDLIB or kind == p.CONSOLEAPP or kind == p.WINDOWSAPP
+end
+
 local function gatherDepTargets(cfg)
 	local depTargets = {}
 	for _, depname in ipairs(cfg.dependson) do
@@ -229,23 +233,22 @@ local function gatherDepTargets(cfg)
 		if depprj then
 			local depcfg = project.getconfig(depprj, cfg.buildcfg, cfg.platform)
 			if depcfg then
-				local depTarget = path.getrelative(cfg.workspace.location, depcfg.buildtarget.directory) .. "/" .. depcfg.buildtarget.name
-				table.insert(depTargets, depTarget)
-
+				-- Dependency hierarchy is as follows:
+				-- 1) If the dependent config has post-build commands, depend on the post-build target
+				-- 2) If the dependent config produces an output file (exe/dll/lib), depend on that
+				-- 3) If the dependent config has pre-link commands, depend on the pre-link target
+				-- 4) If the dependent config has pre-build commands, depend on the pre-build target
+				
 				local depTargetEventRoot = path.getrelative(cfg.workspace.location, depcfg.objdir) .. "/" .. depcfg.project.name
-
-				-- Check if the dependency has a prebuild command, postbuild command, or prelink command
-				-- If so, add the outputs of those commands as dependencies as well
-				if depcfg.prebuildcommands and #depcfg.prebuildcommands > 0 then
-					table.insert(depTargets, depTargetEventRoot .. ".prebuild")
-				end
-
 				if depcfg.postbuildcommands and #depcfg.postbuildcommands > 0 then
 					table.insert(depTargets, depTargetEventRoot .. ".postbuild")
-				end
-
-				if depcfg.prelinkcommands and #depcfg.prelinkcommands > 0 then
+				elseif kindHasOutputFile(depcfg.kind) then
+					local depTarget = path.getrelative(cfg.workspace.location, depcfg.buildtarget.directory) .. "/" .. depcfg.buildtarget.name
+					table.insert(depTargets, depTarget)
+				elseif depcfg.prelinkcommands and #depcfg.prelinkcommands > 0 then
 					table.insert(depTargets, depTargetEventRoot .. ".prelinkevents")
+				elseif depcfg.prebuildcommands and #depcfg.prebuildcommands > 0 then
+					table.insert(depTargets, depTargetEventRoot .. ".prebuild")
 				end
 			end
 		end
@@ -573,8 +576,8 @@ function m.buildPch(cfg)
 	end
 	
 	local implicitDeps = ""
-	if cfg._dependsOnTarget then
-		implicitDeps = " | " .. cfg._dependsOnTarget
+	if cfg._dependsOnTargets then
+		implicitDeps = " | " .. table.concat(cfg._dependsOnTargets, " ")
 	end
 	
 	if toolset == p.tools.msc then
@@ -834,6 +837,14 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 				implicitDeps = implicitDeps .. " " .. output
 			end
 		end
+
+		-- Check if there are any dependson targets and add them as implicit dependencies
+		if cfg._dependsOnTargets then
+			if implicitDeps == "" then
+				implicitDeps = " |"
+			end
+			implicitDeps = implicitDeps .. " " .. table.concat(cfg._dependsOnTargets, " ")
+		end
 		
 		_p("build %s: %s_%s %s%s", objFile, rule, cfg.toolset, relPath, implicitDeps)
 		
@@ -971,11 +982,11 @@ function m.checkCustomRuleFile(cfg, node, filecfg, outputTracking)
 		end
 	end
 	
-	if cfg._dependsOnTarget and not cfg._hasPrebuild then
+	if cfg._dependsOnTargets and not cfg._hasPrebuild then
 		if deps == "" then
 			deps = " |"
 		end
-		deps = deps .. " " .. cfg._dependsOnTarget
+		deps = deps .. " " .. table.concat(cfg._dependsOnTargets, " ")
 	end
 	
 	local commands = {}
@@ -1227,8 +1238,8 @@ function m.buildPreBuildEvents(cfg)
 	local prebuildTarget = path.getrelative(cfg.workspace.location, cfg.objdir) .. "/" .. cfg.project.name .. ".prebuild"
 
 	local implicitDeps = ""
-	if cfg._dependsOnTarget then
-		implicitDeps = " | " .. cfg._dependsOnTarget
+	if cfg._dependsOnTargets then
+		implicitDeps = " | " .. table.concat(cfg._dependsOnTargets, " ")
 	end
 	
 	if hasMessage and not hasCommands then
