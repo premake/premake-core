@@ -477,3 +477,254 @@ build bin/Debug/MyProject.exe: link_gcc obj/Debug/test.o | bin/Debug/prebuilt.o
 		]]
 	end
 
+
+--
+-- Check that a build with a dependency on a prebuild action correctly tracks the prebuild output as an implicit dependency of the link step.
+--
+
+	function suite.buildaction_PrebuildAction_ImplicitDependency_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.prebuild
+		]]
+	end
+
+
+--
+-- Check that a build with a dependency on a postbuild action correctly tracks the postbuild output as an implicit dependency of the link step.
+--
+
+	function suite.buildaction_PostbuildAction_ImplicitDependency_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			postbuildmessage "Generating code..."
+			postbuildcommands { "echo Postbuilding..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.postbuild
+		]]
+	end
+
+
+--
+-- Check that a build with a dependency on a prelink action correctly tracks the prelink output as an implicit dependency of the link step.
+--
+
+	function suite.buildaction_PrelinkAction_ImplicitDependency_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.prelinkevents
+		]]
+	end
+
+
+--
+-- Test that postbuild commands take priority over prelink and prebuild for implicit dependencies.
+--
+
+	function suite.buildaction_PostbuildTakesPriority_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+			postbuildmessage "Generating code..."
+			postbuildcommands { "echo Postbuilding..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.postbuild
+		]]
+	end
+
+
+--
+-- Test that the postbuild commands takes priority over build type with output
+--
+
+	function suite.buildaction_PostbuildTakesPriorityOverOutput_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "ConsoleApp"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+			postbuildmessage "Generating code..."
+			postbuildcommands { "echo Postbuilding..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.postbuild
+		]]
+	end
+
+
+--
+-- Test that the output file of a dependent project takes priority over prebuild and prelink commands for implicit dependencies.
+--
+	
+	function suite.buildaction_OutputTakesPriorityOverPrebuildPrelink_GCC()
+		toolset "gcc"
+		_OS = "linux"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "ConsoleApp"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | bin/Debug/Project2
+		]]
+	end
+
+
+--
+-- Test that the prelink commands takes priority over prebuild commands for implicit dependencies.
+--
+
+	function suite.buildaction_PrelinkTakesPriorityOverPrebuild_GCC()
+		toolset "gcc"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cpp.buildFiles(cfg)
+	
+		test.capture [[
+build obj/Debug/MyProject/main.o: cxx_gcc main.cpp | obj/Debug/Project2/Project2.prelinkevents
+		]]
+	end
+
+
+--
+-- Test that the link depends on the events of the dependent project, not the main build step, when both are present.
+--
+
+	function suite.buildaction_LinkDependsOnEvents_GCC()
+		toolset "gcc"
+		_OS = "linux"
+
+		project "MyProject"
+			language "C++"
+			files { "main.cpp" }
+			dependson { "Project2" }
+
+		project "Project2"
+			kind "Utility"
+			files { "src/dummy.cpp" }
+			prebuildmessage "Generating code..."
+			prebuildcommands { "echo Prebuilding..." }
+			prelinkmessage "Generating code..."
+			prelinkcommands { "echo Prelinking..." }
+			postbuildmessage "Generating code..."
+			postbuildcommands { "echo Postbuilding..." }
+		project "*"
+
+		local cfg = prepare()
+		cfg._dependsOnTargets = cpp.buildDependsOnTarget(cfg)
+		cfg._objectFiles = { "obj/Debug/MyProject/main.o" }
+		cpp.linkTarget(cfg)
+	
+		test.capture [[
+build bin/Debug/MyProject: link_gcc obj/Debug/MyProject/main.o | obj/Debug/Project2/Project2.postbuild
+  ldflags = $ldflags_MyProject_Debug
+		]]
+	end
