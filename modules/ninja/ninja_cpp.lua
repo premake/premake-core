@@ -853,7 +853,8 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 				table.insert(extraFlags, "/Yu" .. cfg.pchheader)
 				local pchPath = m.getPchPath(cfg)
 				if pchPath then
-					table.insert(extraFlags, "/Fp" .. pchPath)
+					local wksRelPchPath = path.getrelative(cfg.workspace.location, path.join(cfg.project.location, pchPath))
+					table.insert(extraFlags, "/Fp" .. wksRelPchPath)
 				end
 			else
 				local pch = toolset.getpch(cfg)
