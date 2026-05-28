@@ -18,10 +18,21 @@
 --
 
 	local wks, prj
+	local _originalGetRelative
 
+	-- gcc.getpch() internally calls p.tools.getrelative(), which in production
+	-- gets overridden by ninja.getrelative (inside the onProject callback in _preload.lua)
+	-- to return workspace-relative paths. ninja_cpp.lua correctly assumes getpch
+	-- returns workspace-relative paths. But the test suite also needs to activate that override.
 	function suite.setup()
 		p.action.set("ninja")
 		wks, prj = test.createWorkspace()
+		_originalGetRelative = p.tools.getrelative
+		p.tools.getrelative = p.modules.ninja.getrelative
+	end
+
+	function suite.teardown()
+		p.tools.getrelative = _originalGetRelative
 	end
 
 	local function prepare()
@@ -423,11 +434,129 @@ build obj/Debug/main.obj: cxx_msc main.cpp | obj/Debug/stdafx.pch
 		language "C++"
 		pchheader "stdafx.h"
 		files { "stdafx.h", "main.cpp" }
-		
+
 		local cfg = prepare()
 		local pchFile = cpp.buildPch(cfg)
-		
+
 		-- MSVC requires pchsource, so this should return nil
 		test.isnil(pchFile)
+	end
+
+
+---
+-- PCH with project in a subdirectory (workspace location != project location)
+--
+-- When a project lives in a subdirectory relative to the workspace, ninja runs
+-- from the workspace root so all paths in the generated .ninja file must be
+-- workspace-relative. The tests below cover three bugs that caused incorrect
+-- paths in this scenario.
+---
+
+
+--
+-- The PCH source path in the build rule must not be doubled when the project
+-- is in a subdirectory. Previously, buildPch incorrectly joined the already
+-- workspace-relative path returned by ninja.getrelative with cfg.project.location,
+-- producing "MyProject/MyProject/pch.h" instead of "MyProject/pch.h".
+--
+-- Setup note: pchheader uses an explicit workspace-relative path to simulate
+-- what gcc.getpch returns when it locates the header in the project basedir.
+--
+
+	function suite.buildPch_sourcePathNotDoubled_inSubdirectory()
+		toolset "gcc"
+		language "C++"
+		location "MyProject"
+		pchheader "MyProject/pch.h"
+		files { "MyProject/pch.h", "MyProject/main.cpp" }
+
+		local cfg = test.getconfig(prj, "Debug")
+		local pchFile = cpp.buildPch(cfg)
+
+		test.isequal("MyProject/obj/Debug/pch.h.gch", pchFile)
+		test.capture [[
+build MyProject/obj/Debug/pch.h.gch | MyProject/obj/Debug/pch.h.gch.d: pch_gcc MyProject/pch.h
+  cflags = $cxxflags_MyProject_Debug
+		]]
+	end
+
+
+--
+-- Source files in a subdirectory project must receive two flags:
+--   -I <pch-header-dir>   so #include "pch.h" resolves from the workspace root
+--   -include <workspace-relative-objdir>/pch.h  (not project-relative)
+--
+-- Previously the -include path used project-relative objdir ("obj/Debug/pch.h")
+-- and the -I flag was absent entirely, causing GCC to fail to find pch.h.
+--
+
+	function suite.buildFile_pchFlags_inSubdirectory()
+		toolset "gcc"
+		language "C++"
+		location "MyProject"
+		pchheader "MyProject/pch.h"
+		files { "MyProject/pch.h", "MyProject/main.cpp" }
+
+		local cfg = test.getconfig(prj, "Debug")
+		local tr = p.project.getsourcetree(cfg.project)
+		local pchFile = "MyProject/obj/Debug/pch.h.gch"
+
+		local mainNode = nil
+		p.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if node.name == "main.cpp" then
+					mainNode = node
+				end
+			end
+		}, false, 1)
+
+		test.isnotnil(mainNode)
+		local filecfg = p.fileconfig.getconfig(mainNode, cfg)
+		local objFile = cpp.objectFile(cfg, mainNode, filecfg)
+
+		cpp.buildFile(cfg, mainNode, filecfg, objFile, pchFile, nil)
+
+		test.capture [[
+build MyProject/obj/Debug/main.o: cxx_gcc MyProject/main.cpp | MyProject/obj/Debug/pch.h.gch
+  cxxflags = $cxxflags_MyProject_Debug -I MyProject -include MyProject/obj/Debug/pch.h
+		]]
+	end
+
+
+--
+-- When the project and workspace are in the same directory (the common case),
+-- no -I flag should be added since pch.h is already findable without it.
+-- This ensures the subdirectory fix does not regress the co-located case.
+--
+
+	function suite.buildFile_noExtraIncludeDir_whenSameDir()
+		toolset "gcc"
+		language "C++"
+		pchheader "pch.h"
+		files { "pch.h", "main.cpp" }
+
+		local cfg = prepare()
+		local tr = p.project.getsourcetree(cfg.project)
+		local pchFile = "obj/Debug/pch.h.gch"
+
+		local mainNode = nil
+		p.tree.traverse(tr, {
+			onleaf = function(node, depth)
+				if node.name == "main.cpp" then
+					mainNode = node
+				end
+			end
+		}, false, 1)
+
+		test.isnotnil(mainNode)
+		local filecfg = p.fileconfig.getconfig(mainNode, cfg)
+		local objFile = cpp.objectFile(cfg, mainNode, filecfg)
+
+		cpp.buildFile(cfg, mainNode, filecfg, objFile, pchFile, nil)
+
+		test.capture [[
+build obj/Debug/main.o: cxx_gcc main.cpp | obj/Debug/pch.h.gch
+  cxxflags = $cxxflags_MyProject_Debug -include obj/Debug/pch.h
+		]]
 	end
 
