@@ -607,8 +607,8 @@ function m.buildPch(cfg)
 		local relPath
 		
 		if pch then
-			local headerPath = path.getabsolute(path.join(cfg.project.location, pch))
-			relPath = path.getrelative(cfg.workspace.location, headerPath)
+			-- pch is workspace-relative because ninja.getrelative is active when this runs
+			relPath = pch
 		else
 			relPath = cfg.pchheader
 		end
@@ -853,13 +853,21 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 				table.insert(extraFlags, "/Yu" .. cfg.pchheader)
 				local pchPath = m.getPchPath(cfg)
 				if pchPath then
-					table.insert(extraFlags, "/Fp" .. pchPath)
+					local wksRelPchPath = path.getrelative(cfg.workspace.location, path.join(cfg.project.location, pchPath))
+					table.insert(extraFlags, "/Fp" .. wksRelPchPath)
 				end
 			else
 				local pch = toolset.getpch(cfg)
 				if pch then
-					local objdir = path.getrelative(cfg.project.location, cfg.objdir)
+					local objdir = path.getrelative(cfg.workspace.location, cfg.objdir)
 					local pchPlaceholder = objdir .. "/" .. path.getname(pch)
+					-- Add the directory containing the PCH header to the search path so
+					-- #include "pch.h" in source files can be resolved when building from
+					-- the workspace root (where the project subdirectory is not in the path).
+					local pchDir = path.getdirectory(pch)
+					if pchDir and pchDir ~= "" and pchDir ~= "." then
+						table.insert(extraFlags, "-I " .. pchDir)
+					end
 					table.insert(extraFlags, "-include " .. pchPlaceholder)
 				end
 			end
