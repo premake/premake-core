@@ -626,6 +626,15 @@
 		os.remove(filepath)
 	end
 
+	function suite.writefile_ifnotequal_ReturnsError_OnInvalidPath()
+		local dir = tmpdir()
+		local ok, err = real_writefile_ifnotequal("Hello, World!", dir)
+		test.isequal(ok, -1) -- cannot write to dir
+		test.isequal("string", type(err))
+		test.isequal(err, "unable to write file to '" .. dir .. "'")
+		os.remove(dir)
+	end
+
 --
 -- os.remove() tests.
 --
