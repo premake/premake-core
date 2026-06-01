@@ -73,3 +73,5 @@ Patch contributors:
     * makefile environment overrides
     * module loading improvements
     * os.outputof() improvements
+  Joshua Kriegshauser / NVIDIA <joshuakr@nvidia.com>
+    * UTF-8 support
