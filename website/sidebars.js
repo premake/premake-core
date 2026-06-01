@@ -133,6 +133,7 @@ module.exports = {
 						'embedandsign',
 						'enable64bitchecks',
 						'enabledefaultcompileitems',
+						'enableimplicitusings',
 						'enablemodules',
 						'enablepch',
 						'enableunitybuild',
