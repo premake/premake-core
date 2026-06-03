@@ -1,7 +1,7 @@
 An extension of [Lua's require() function](http://www.lua.org/pil/8.1.html) which adds support for Premake modules and version checking.
 
 ```lua
-require ("modname", "versions")
+require ("modname", "versions", silent)
 ```
 
 Premake will use its [extended set of module locations](Locating-Scripts.md) when locating the requested module.
@@ -12,10 +12,12 @@ Premake will use its [extended set of module locations](Locating-Scripts.md) whe
 
 `versions` is an optional string of a version requirements. See the examples below for more information on the format of the requirements string. If the requirements are not met, an error will be raised.
 
+`silent` is not set or set to false, the require function will raise an error if the module fails to load or the version does not meet the criteria set by versions. If silent is set to true, then require shall return a tuple of false and the error message.
+
 
 ### Returns ###
 
-The module object.
+The module object on success, `false, error_message` on error when `silent` is set.
 
 
 ### Availability ###
@@ -59,3 +61,4 @@ require("foo", ">=1.1")
 ### See Also ###
 
 * [_PREMAKE_VERSION](globals/premake_PREMAKE_VERSION.md)
+* [requireopt](globals/requireopt.md)
