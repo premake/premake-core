@@ -31,6 +31,7 @@ return {
 	"workspace/test_objdirs.lua",
 
 	-- Project object tests
+	"project/test_basedir.lua",
 	"project/test_config_maps.lua",
 	"project/test_eachconfig.lua",
 	"project/test_getconfig.lua",
