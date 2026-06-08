@@ -28,6 +28,20 @@ newoption {
 	description = "Specify the output file path for compile_commands.json",
 }
 
+newoption {
+	category = "Compilation Database",
+
+	trigger = "implicit-includes",
+	description = "Include implicit include directories in compile_commands.json",
+	
+	allowed = {
+		{ "On" , "Include implicit include directories (default)" },
+		{ "Off", "Exclude implicit include directories" },
+	},
+
+	default = "On",
+}
+
 newaction {
 	trigger = "compilecommands",
 	shortname = "compilecommands",
