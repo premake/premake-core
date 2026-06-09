@@ -437,3 +437,50 @@ end
 		prepare()
 		test.contains({ "-arch arm64" }, clang.getldflags(cfg))
 	end
+
+--
+-- Make sure unicode support is handled properly.
+--
+
+	function suite.cflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-D_UNICODE", "-DUNICODE", "-municode" }, clang.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-D_UNICODE", "-DUNICODE", "-municode" }, clang.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-municode" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-D_UNICODE", "-DUNICODE", "-municode" }, clang.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-D_UNICODE", "-DUNICODE", "-municode" }, clang.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-municode" }, clang.getldflags(cfg))
+	end
+	

@@ -58,6 +58,9 @@
 			x86_64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch x86_64", "-m64") end,
 			AARCH64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch arm64", nil) end,
 		},
+		characterset = {
+			Unicode = function (cfg) return iif(cfg.system == p.WINDOWS, { "-D_UNICODE", "-DUNICODE", "-municode" }, {}) end,
+		},
 		fatalwarnings = {
 			All = "-Werror",
 		},
@@ -563,6 +566,9 @@
 			x86 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch i386", "-m32") end,
 			x86_64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch x86_64", "-m64") end,
 			AARCH64 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch arm64", nil) end,
+		},
+		characterset = {
+			Unicode = function (cfg) return iif(cfg.system == p.WINDOWS, { "-municode" }, {}) end,
 		},
 		linkerfatalwarnings = {
 			All = "-Wl,--fatal-warnings",

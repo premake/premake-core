@@ -44,6 +44,7 @@
 
 	clang.shared = {
 		architecture = gcc.shared.architecture,
+		characterset = gcc.shared.characterset,
 		fatalwarnings = {
 			All = "-Werror"
 		},
@@ -264,6 +265,7 @@
 			WASM32 = "-m32",
 			WASM64 = "-m64",
 		}),
+		characterset = gcc.ldflags.characterset,
 		linkerfatalwarnings = {
 			All = "-Wl,--fatal-warnings",
 		},

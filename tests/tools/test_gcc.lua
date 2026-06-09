@@ -1549,3 +1549,49 @@ end
 	
 		test.contains({ "-Wl,-rpath,'/usr/local/lib/mylibs'" }, gcc.getrunpathdirs(cfg, paths))
 	end
+
+--
+-- Make sure unicode support is handled properly.
+--
+
+	function suite.cflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-D_UNICODE", "-DUNICODE", "-municode" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-D_UNICODE", "-DUNICODE", "-municode" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onUnicode_Windows()
+		system "Windows"
+		characterset "Unicode"
+		prepare()
+		test.contains({ "-municode" }, gcc.getldflags(cfg))
+	end
+
+	function suite.cflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-D_UNICODE", "-DUNICODE", "-municode" }, gcc.getcflags(cfg))
+	end
+
+	function suite.cxxflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-D_UNICODE", "-DUNICODE", "-municode" }, gcc.getcxxflags(cfg))
+	end
+
+	function suite.ldflags_onUnicode_NonWindows()
+		system "Linux"
+		characterset "Unicode"
+		prepare()
+		test.excludes({ "-municode" }, gcc.getldflags(cfg))
+	end
