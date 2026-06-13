@@ -101,6 +101,9 @@ jobs:
             msystem: mingw32
           - platform: x64
             msystem: mingw64
+        exclude:
+          - msystem: mingw32
+            depsrc: system
     timeout-minutes: 15
     defaults:
       run:
