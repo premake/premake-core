@@ -122,7 +122,12 @@ function m.getflags(cfg, toolset, fcfg, tool)
 		buildoptions = table.join(buildoptions, fcfg.buildoptions)
 	end
 
-	local implicitincludedirs = getstructuredimplicitincludedirs(toolset, fcfg or cfg, tool)
+	local implicitincludedirs = {}
+
+	if _OPTIONS["implicit-includes"] == "On" then
+		implicitincludedirs = getstructuredimplicitincludedirs(toolset, cfg, tool)
+	end
+
 	local explicitincludedirs = toolset.getstructuredincludedirs(cfg, includedirs, externalincludedirs, frameworkdirs, includedirsafter)
 	local allincludedirs = table.join(explicitincludedirs, implicitincludedirs)
 	local allincludedirflags = table.flatten(table.translate(allincludedirs, function(kv)

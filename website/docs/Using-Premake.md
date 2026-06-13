@@ -96,5 +96,7 @@ To specify a platform and a configuration:
 premake5 compilecommands --cc-config=Release --cc-platform=x64
 ```
 
+Additionally, `compilecommands` will attempt to determine the implicit include directories for your target toolset. To disable this behavior, use `--implicit-includes=Off`.
+
 [1]: http://www.cygwin.com/
 [2]: http://www.mingw.org/
