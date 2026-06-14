@@ -14,6 +14,12 @@ SET "ConfigArg="
 
 IF NOT "%PLATFORM%" == "" (
 	SET "PlatformArg=PLATFORM=%PLATFORM%"
+) ELSE (
+	IF "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
+		SET "PlatformArg=PLATFORM=x64"
+	) ELSE (
+		SET "PlatformArg=PLATFORM=Win32"
+	)
 )
 
 IF NOT "%CONFIG%" == "" (
