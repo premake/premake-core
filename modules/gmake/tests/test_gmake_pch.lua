@@ -26,7 +26,7 @@
 
 	local function prepareVars()
 		local cfg = test.getconfig(prj, "Debug")
-		gmake.cpp.pch(cfg)
+		gmake.cpp.pch(cfg, p.tools.gcc)
 	end
 
 	local function prepareRules()

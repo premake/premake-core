@@ -830,3 +830,20 @@
 	function gcc.gettooloutputext(tool)
 		return iif(tool == "rc", ".res", ".o")
 	end
+
+	function gcc.gettoolflags(cfg, tool, input, output, depfile)
+		if tool == "rc" then
+			return string.format('%s -O coff -o %s', input, output)
+		end
+		return string.format('-o %s -MF %s -c %s', output, depfile, input)
+	end
+
+	function gcc.getlinkcommand(cfg, linker, output, objects, resources, ldflags, libs)
+		if cfg.kind == p.STATICLIB then
+			if cfg.architecture == p.UNIVERSAL then
+				return string.format('libtool -o %s %s', output, objects)
+			end
+			return string.format('%s -rcs %s %s', linker, output, objects)
+		end
+		return string.format('%s -o %s %s %s %s %s', linker, output, objects, resources, ldflags, libs)
+	end

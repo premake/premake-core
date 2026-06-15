@@ -269,7 +269,7 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:arch=" }
+		filter { "system:windows", "options:not arch" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"
@@ -290,7 +290,7 @@
 		filter { "system:windows", "action:vs*" }
 			characterset "Unicode"
 
-		filter { "system:windows", "action:not vs*" } -- TODO: mingw doesn't support `characterset "Unicode"`
+		filter { "system:windows", "action:not vs*", "toolset:not msc" } -- TODO: mingw doesn't support `characterset "Unicode"`
 			defines { "UNICODE", "_UNICODE" }
 			buildoptions { "-municode" }
 			linkoptions { "-municode" }
@@ -368,6 +368,9 @@
 			links		{ "crypt32", "bcrypt" }
 
 		filter { "system:windows", "toolset:clang", "action:not vs*" }
+			links		{ "crypt32", "bcrypt" }
+
+		filter { "system:windows", "toolset:msc", "action:gmake" }
 			links		{ "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"

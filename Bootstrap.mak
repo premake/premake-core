@@ -64,7 +64,8 @@ HOST_PLATFORM= none
 .PHONY: default none clean nix-clean windows-clean \
 	mingw-clean mingw macosx macosx-clean osx-clean osx \
 	linux-clean linux bsd-clean bsd solaris-clean solaris \
-	haiku-clean haiku windows-base windows windows-msbuild
+	haiku-clean haiku windows-base windows windows-msbuild \
+	windows-gmake-clean windows-gmake
 
 default: $(HOST_PLATFORM)
 
@@ -172,6 +173,16 @@ windows: windows-base
 
 windows-msbuild: windows-base
 	msbuild /p:Configuration=$(CONFIG) /p:Platform=$(PLATFORM:x86=win32) .\build\bootstrap\Premake5.$(SLN_EXT)
+
+windows-gmake-clean: windows-clean
+
+# NOTE: this Windows target assumes cmd is the shell. Use 'make -f Bootstrap.mak windows-gmake SHELL=cmd.exe'
+windows-gmake: windows-gmake-clean
+	if not exist build\bootstrap (mkdir build\bootstrap)
+	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /DLUA_STATICLIB /DUNICODE /D_UNICODE /I"$(LUA_DIR)" /I"$(LUASHIM_DIR)" user32.lib ole32.lib advapi32.lib $(SRC)
+	.\build\bootstrap\premake_bootstrap.exe embed
+	.\build\bootstrap\premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=msc $(PREMAKE_OPTS) gmake
+	$(MAKE) -C build/bootstrap -j$(NUMBER_OF_PROCESSORS) config=$(CONFIG)_$(PLATFORM:x86=win32)
 
 cosmo-clean: nix-clean
 

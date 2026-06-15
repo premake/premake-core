@@ -58,6 +58,9 @@ IF "%vsversion%" == "vs2010" (
 ) ELSE IF "%vsversion%" == "vs18" (
 	CALL :VsWhereVisualBootstrap "vs2026" "18.0" "19.0"
 
+) ELSE IF "%vsversion%" == "gmake" (
+	CALL :VsWhereVisualBootstrap "gmake" "15.0" "99.0" %PREMAKE_OPTS%
+
 ) ELSE (
 	ECHO Unrecognized Visual Studio version %vsversion%
 	EXIT /B 2
@@ -117,11 +120,11 @@ SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVe
 
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
 	IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
-		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg%  %PREMAKE_OPTS% -f Bootstrap.mak windows
+		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && CALL :Build
 		EXIT /B %ERRORLEVEL%
 	) ELSE (
 		IF EXIST "%%i\VC\Auxiliary\Build\vcvars32.bat" (
-			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% %PREMAKE_OPTS% -f Bootstrap.mak windows
+			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && CALL :Build
 			EXIT /B %ERRORLEVEL%
 		)
 	)
@@ -131,6 +134,19 @@ ECHO Could not find vcvars64.bat or vcvars32.bat to setup Visual Studio environm
 EXIT /B 2
 
 REM :VsWhereVisualBootstrap
+
+REM ===========================================================================
+
+:Build
+
+IF "%PremakeVsVersion%" == "gmake" (
+	make -f Bootstrap.mak windows-gmake SHELL=cmd.exe %PlatformArg% %ConfigArg% %PREMAKE_OPTS%
+) ELSE (
+	nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% %PREMAKE_OPTS% -f Bootstrap.mak windows
+)
+EXIT /B %ERRORLEVEL%
+
+REM :Build
 
 REM ===========================================================================
 

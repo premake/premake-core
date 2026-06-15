@@ -82,7 +82,7 @@ build obj/Debug/special.o: cxx_gcc special.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/special.obj: cxx_msc special.cpp
-  cxxflags = /MD /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE"
+  cxxflags = /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE"
 		]]
 	end
 
@@ -260,7 +260,7 @@ build obj/Debug/special.o: cxx_gcc special.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/special.obj: cxx_msc special.cpp
-  cxxflags = /MD /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE" /Iinclude /Ispecial/include /O2
+  cxxflags = /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE" /Iinclude /Ispecial/include /O2
 		]]
 	end
 

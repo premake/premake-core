@@ -853,13 +853,13 @@ end
 	function suite.mixedToolFlags_onCFlags()
 		fatalwarnings "All"
 		prepare()
-		test.isequal({ "/WX", "/MD" }, msc.getcflags(cfg))
+		test.isequal({ "/WX" }, msc.getcflags(cfg))
 	end
 
 	function suite.mixedToolFlags_onCxxFlags()
 		fatalwarnings "All"
 		prepare()
-		test.isequal({ "/WX", "/MD", "/EHsc" }, msc.getcxxflags(cfg))
+		test.isequal({ "/WX", "/EHsc" }, msc.getcxxflags(cfg))
 	end
 
 
