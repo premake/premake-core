@@ -112,10 +112,10 @@ $(OBJDIR)/test.o: src/test.c
 
 $(OBJDIR)/hello.obj: src/hello.cpp
 	@echo "$(notdir $<)"
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) /nologo /Fo"$@" /c /Tp"$<"
 $(OBJDIR)/test.obj: src/test.c
 	@echo "$(notdir $<)"
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) /nologo /Fo"$@" /c /Tc"$<"
 
 ]]
 	end

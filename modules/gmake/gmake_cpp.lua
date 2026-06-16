@@ -60,19 +60,19 @@
 			fileExtension { ".cc", ".cpp", ".cxx", ".mm" }
 			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('cxx', cfg)}" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CXX) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) %{premake.modules.gmake.cpp.toolFlags(cfg, "cxx")}'}
 
 		rule 'cc'
 			fileExtension {".c", ".s", ".m"}
 			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('cc', cfg)}" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"'}
+			buildcommands {'$(CC) %{premake.modules.gmake.cpp.fileFlags(cfg, file)} $(FORCE_INCLUDE) %{premake.modules.gmake.cpp.toolFlags(cfg, "cc")}'}
 
 		rule 'resource'
 			fileExtension ".rc"
 			buildoutputs  { "$(OBJDIR)/%{file.objname}%{premake.modules.gmake.cpp.gettooloutputext('rc', cfg)}" }
 			buildmessage  '$(notdir $<)'
-			buildcommands {'$(RESCOMP) $< -O coff -o "$@" $(ALL_RESFLAGS)'}
+			buildcommands {'$(RESCOMP) $(ALL_RESFLAGS) %{premake.modules.gmake.cpp.toolFlags(cfg, "rc")}'}
 
 		global(nil)
 	end
@@ -84,6 +84,19 @@
 		end
 
 		return iif(tool == "rc", ".res", ".o")
+	end
+
+	function cpp.toolFlags(cfg, tool)
+		local toolset = gmake.getToolSet(cfg)
+		if toolset.gettoolflags ~= nil then
+			return toolset.gettoolflags(cfg, tool, '"$<"', '"$@"', '"$(@:%.o=%.d)"')
+		end
+
+		if tool == "rc" then
+			return '"$<" -O coff -o "$@"'
+		else
+			return '-o "$@" -MF "$(@:%.o=%.d)" -c "$<"'
+		end
 	end
 
 	function cpp.createRuleTable(prj)
@@ -376,7 +389,8 @@
 
 
 	function cpp.pch(cfg, toolset)
-		local pch = p.tools.gcc.getpch(cfg)
+		local getpch = toolset.getpch or p.tools.gcc.getpch
+		local pch = getpch(cfg)
 		-- If there is no header, or if PCH has been disabled, I can early out
 		if pch == nil then
 			return
@@ -448,23 +462,32 @@
 
 
 	function cpp.linkCmd(cfg, toolset)
+		if cfg.kind == p.UTILITY then
+			-- Empty LINKCMD for Utility (only custom build rules)
+			p.outln('LINKCMD =')
+			return
+		end
+
+		local linker = iif(cfg.kind == p.STATICLIB, "$(AR)", iif(p.languages.isc(cfg.language), "$(CC)", "$(CXX)"))
+
+		if toolset.getlinkcommand ~= nil then
+			p.outln('LINKCMD = ' .. toolset.getlinkcommand(cfg, linker, '"$@"', '$(OBJECTS)', '$(RESOURCES)', '$(ALL_LDFLAGS)', '$(LIBS)'))
+			return
+		end
+
+		-- Fallback to previous version
 		if cfg.kind == p.STATICLIB then
 			if cfg.architecture == p.UNIVERSAL then
 				p.outln('LINKCMD = libtool -o "$@" $(OBJECTS)')
 			else
-				p.outln('LINKCMD = $(AR) -rcs "$@" $(OBJECTS)')
+				p.outln('LINKCMD = ' .. linker .. ' -rcs "$@" $(OBJECTS)')
 			end
-		elseif cfg.kind == p.UTILITY then
-			-- Empty LINKCMD for Utility (only custom build rules)
-			p.outln('LINKCMD =')
 		else
 			-- this was $(TARGET) $(LDFLAGS) $(OBJECTS)
 			--   but had trouble linking to certain static libs; $(OBJECTS) moved up
 			-- $(LDFLAGS) moved to end (http://sourceforge.net/p/premake/patches/107/)
 			-- $(LIBS) moved to end (http://sourceforge.net/p/premake/bugs/279/)
-
-			local cc = iif(p.languages.isc(cfg.language), "CC", "CXX")
-			p.outln('LINKCMD = $(' .. cc .. ') -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)')
+			p.outln('LINKCMD = ' .. linker .. ' -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)')
 		end
 	end
 
@@ -563,7 +586,9 @@
 		local fcfg = fileconfig.getconfig(file, cfg)
 		local flags = {}
 
-		if cfg.pchheader and cfg.enablepch ~= p.OFF and (not fcfg or fcfg.enablepch ~= p.OFF) then
+		local toolset = gmake.getToolSet(cfg)
+		local getpch = toolset.getpch or p.tools.gcc.getpch
+		if getpch(cfg) and cfg.pchheader and cfg.enablepch ~= p.OFF and (not fcfg or fcfg.enablepch ~= p.OFF) then
 			table.insert(flags, "-include $(PCH_PLACEHOLDER)")
 		end
 
@@ -790,10 +815,38 @@
 ---------------------------------------------------------------------------
 
 
+	-- Returns true if the configuration's toolset produces GNU make dependency files
+	function cpp.usesDependencyFiles(cfg)
+		return gmake.getToolSet(cfg) ~= p.tools.msc
+	end
+
 	function cpp.dependencies(prj)
-		-- include the dependencies, built by GCC (with the -MD flag)
-		_p('-include $(OBJECTS:%%.o=%%.d)')
-		_p('ifneq (,$(PCH))')
-			_p('  -include $(PCH_PLACEHOLDER).d')
-		_p('endif')
+		local function emitInclude()
+			_p('-include $(OBJECTS:%%.o=%%.d)')
+			_p('ifneq (,$(PCH))')
+				_p('  -include $(PCH_PLACEHOLDER).d')
+			_p('endif')
+		end
+
+		local depConfigs = {}
+		local total = 0
+		for cfg in project.eachconfig(prj) do
+			total = total + 1
+			if cpp.usesDependencyFiles(cfg) then
+				table.insert(depConfigs, cfg.shortname)
+			end
+		end
+
+		if #depConfigs == 0 then
+			-- No configuration produces dependency files, emit nothing.
+			return
+		elseif #depConfigs == total then
+			-- Every configuration produces dependency files, no guard needed.
+			emitInclude()
+		else
+			-- Mixed toolsets, so only include for the configs that produce dependency files.
+			_x('ifneq (,$(filter $(config),%s))', table.concat(depConfigs, ' '))
+			emitInclude()
+			_p('endif')
+		end
 	end

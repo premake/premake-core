@@ -66,8 +66,7 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD
-cxxflags_MyProject_Debug = /MD /EHsc
+cxxflags_MyProject_Debug = /EHsc
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -134,8 +133,8 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /D"DEBUG" /D"PLATFORM_WINDOWS"
-cxxflags_MyProject_Debug = /MD /EHsc /D"DEBUG" /D"PLATFORM_WINDOWS"
+cflags_MyProject_Debug = /D"DEBUG" /D"PLATFORM_WINDOWS"
+cxxflags_MyProject_Debug = /EHsc /D"DEBUG" /D"PLATFORM_WINDOWS"
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -178,8 +177,8 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /D"HELLO=\"HELLO WORLD\""
-cxxflags_MyProject_Debug = /MD /EHsc /D"HELLO=\"HELLO WORLD\""
+cflags_MyProject_Debug = /D"HELLO=\"HELLO WORLD\""
+cxxflags_MyProject_Debug = /EHsc /D"HELLO=\"HELLO WORLD\""
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -200,8 +199,8 @@ target_MyProject_Debug = MyProject.exe
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /D"VALUE=with_paren()"
-cxxflags_MyProject_Debug = /MD /EHsc /D"VALUE=with_paren()"
+cflags_MyProject_Debug = /D"VALUE=with_paren()"
+cxxflags_MyProject_Debug = /EHsc /D"VALUE=with_paren()"
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -248,8 +247,8 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /Iinclude /Iexternal
-cxxflags_MyProject_Debug = /MD /EHsc /Iinclude /Iexternal
+cflags_MyProject_Debug = /Iinclude /Iexternal
+cxxflags_MyProject_Debug = /EHsc /Iinclude /Iexternal
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -316,8 +315,7 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD
-cxxflags_MyProject_Debug = /MD /EHsc
+cxxflags_MyProject_Debug = /EHsc
 ldflags_MyProject_Debug = /NOLOGO /LIBPATH:"lib" /LIBPATH:"external/lib"
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -404,8 +402,7 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD
-cxxflags_MyProject_Debug = /MD /EHsc
+cxxflags_MyProject_Debug = /EHsc
 ldflags_MyProject_Debug = /NOLOGO
 links_MyProject_Debug = User32.lib Gdi32.lib
 objdir_MyProject_Debug = obj/Debug
@@ -474,8 +471,8 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /W4 /WX
-cxxflags_MyProject_Debug = /MD /EHsc /W4 /WX
+cflags_MyProject_Debug = /W4 /WX
+cxxflags_MyProject_Debug = /EHsc /W4 /WX
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
@@ -544,8 +541,8 @@ target_MyProject_Debug = MyProject
 		cpp.configurationVariables(cfg)
 
 		test.capture [[
-cflags_MyProject_Debug = /MD /U"NDEBUG" /U"OLD_PLATFORM"
-cxxflags_MyProject_Debug = /MD /EHsc /U"NDEBUG" /U"OLD_PLATFORM"
+cflags_MyProject_Debug = /U"NDEBUG" /U"OLD_PLATFORM"
+cxxflags_MyProject_Debug = /EHsc /U"NDEBUG" /U"OLD_PLATFORM"
 ldflags_MyProject_Debug = /NOLOGO
 objdir_MyProject_Debug = obj/Debug
 targetdir_MyProject_Debug = bin/Debug
