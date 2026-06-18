@@ -208,6 +208,10 @@ rule rc_gcc
 		local cfg = prepare()
 		cpp.linkrule(cfg)
 		test.capture [[
+rule ar_msc
+  command = lib $in /nologo -OUT:$out
+  description = Archiving static library $out
+
 rule link_msc
   command = cl $in $links /link $ldflags /nologo /out:$out
   description = Linking target $out
@@ -227,6 +231,10 @@ rule link_msc
 		local cfg = prepare()
 		cpp.linkrule(cfg)
 		test.capture [[
+rule ar_gcc
+  command = ar -rcs $out $in
+  description = Archiving static library $out
+
 rule link_gcc
   command = g++ -o $out $in $links $ldflags
   description = Linking target $out
@@ -246,6 +254,10 @@ rule link_gcc
 		local cfg = prepare()
 		cpp.linkrule(cfg)
 		test.capture [[
+rule ar_gcc
+  command = ar -rcs $out $in
+  description = Archiving static library $out
+
 rule link_gcc
   command = gcc -o $out $in $links $ldflags
   description = Linking target $out
@@ -266,49 +278,16 @@ rule link_gcc
 		local cfg = prepare()
 		cpp.linkrule(cfg)
 		test.capture [[
+rule ar_gcc
+  command = ar -rcs $out $in
+  description = Archiving static library $out
+
 rule link_gcc
   command = g++ -o $out $in $links $ldflags
   description = Linking target $out
 
 		]]
 	end
-
-
---
--- Check the archive rule for a static library with MSVC.
---
-
-	function suite.linkrule_onMSVCStaticLib()
-		toolset "msc"
-		kind "StaticLib"
-		local cfg = prepare()
-		cpp.linkrule(cfg)
-		test.capture [[
-rule ar_msc
-  command = lib $in /nologo -OUT:$out
-  description = Archiving static library $out
-
-		]]
-	end
-
-
---
--- Check the archive rule for a static library with GCC.
---
-
-	function suite.linkrule_onGCCStaticLib()
-		toolset "gcc"
-		kind "StaticLib"
-		local cfg = prepare()
-		cpp.linkrule(cfg)
-		test.capture [[
-rule ar_gcc
-  command = ar -rcs $out $in
-  description = Archiving static library $out
-
-		]]
-	end
-
 
 ---
 -- Precompiled header rules

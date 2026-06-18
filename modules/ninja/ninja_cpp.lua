@@ -116,38 +116,34 @@ function m.linkrule(cfg, toolset)
 	toolset = toolset or ninja.gettoolset(cfg)
 
 	if toolset == p.tools.msc then
-		if cfg.kind == p.STATICLIB then
-			local arname = toolset.gettoolname(cfg, "ar")
-			_p("rule ar_%s", cfg.toolset)
-			_p("  command = %s $in /nologo -OUT:$out", arname)
-			_p("  description = Archiving static library $out")
-			_p("")
-		else
-			local ldname = toolset.gettoolname(cfg, iif(cfg.language == "C", "cc", "cxx"))
-			_p("rule link_%s", cfg.toolset)
-			_p("  command = %s $in $links /link $ldflags /nologo /out:$out", ldname)
-			_p("  description = Linking target $out")
-			_p("")
-		end
-	else
-		if cfg.kind == p.STATICLIB then
-			local arname = toolset.gettoolname(cfg, "ar")
-			_p("rule ar_%s", cfg.toolset)
-			_p("  command = %s -rcs $out $in", arname)
-			_p("  description = Archiving static library $out")
-			_p("")
-		else
-			local ldname = toolset.gettoolname(cfg, iif(cfg.language == "C", "cc", "cxx"))
-			local commands = string.format("command = %s -o $out $in $links $ldflags", ldname);
-			
-			commands = commands:gsub("(.-)%s*$", "%1")
-			commands = commands:gsub("%s+", " ")
+		local arname = toolset.gettoolname(cfg, "ar")
+		_p("rule ar_%s", cfg.toolset)
+		_p("  command = %s $in /nologo -OUT:$out", arname)
+		_p("  description = Archiving static library $out")
+		_p("")
 
-			_p("rule link_%s", cfg.toolset)
-			_p("  %s", commands)
-			_p("  description = Linking target $out")
-			_p("")
-		end
+		local ldname = toolset.gettoolname(cfg, iif(cfg.language == "C", "cc", "cxx"))
+		_p("rule link_%s", cfg.toolset)
+		_p("  command = %s $in $links /link $ldflags /nologo /out:$out", ldname)
+		_p("  description = Linking target $out")
+		_p("")
+	else
+		local arname = toolset.gettoolname(cfg, "ar")
+		_p("rule ar_%s", cfg.toolset)
+		_p("  command = %s -rcs $out $in", arname)
+		_p("  description = Archiving static library $out")
+		_p("")
+
+		local ldname = toolset.gettoolname(cfg, iif(cfg.language == "C", "cc", "cxx"))
+		local commands = string.format("command = %s -o $out $in $links $ldflags", ldname);
+		
+		commands = commands:gsub("(.-)%s*$", "%1")
+		commands = commands:gsub("%s+", " ")
+
+		_p("rule link_%s", cfg.toolset)
+		_p("  %s", commands)
+		_p("  description = Linking target $out")
+		_p("")
 	end
 end
 
