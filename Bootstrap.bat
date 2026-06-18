@@ -61,6 +61,9 @@ IF "%vsversion%" == "vs2010" (
 ) ELSE IF "%vsversion%" == "gmake" (
 	CALL :VsWhereVisualBootstrap "gmake" "15.0" "99.0" %PREMAKE_OPTS%
 
+) ELSE IF "%vsversion%" == "ninja" (
+	CALL :VsWhereVisualBootstrap "ninja" "15.0" "99.0" %PREMAKE_OPTS%
+
 ) ELSE (
 	ECHO Unrecognized Visual Studio version %vsversion%
 	EXIT /B 2
@@ -141,6 +144,8 @@ REM ===========================================================================
 
 IF "%PremakeVsVersion%" == "gmake" (
 	make -f Bootstrap.mak windows-gmake SHELL=cmd.exe %PlatformArg% %ConfigArg% %PREMAKE_OPTS%
+) ELSE IF "%PremakeVsVersion%" == "ninja" (
+	nmake -f Bootstrap.mak windows-ninja %PlatformArg% %ConfigArg% %PREMAKE_OPTS%
 ) ELSE (
 	nmake MSDEV="%PremakeVsVersion%" %PlatformArg% %ConfigArg% %PREMAKE_OPTS% -f Bootstrap.mak windows
 )
