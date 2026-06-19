@@ -51,10 +51,17 @@ SLN_EXT = sln
 SLN_EXT = slnx
 !endif
 
+# ninja config targets use the declared casing (Release/Debug).
+NINJA_CONFIG_TMP = $(CONFIG:release=Release)
+NINJA_CONFIG = $(NINJA_CONFIG_TMP:debug=Debug)
+
 !else
 else
 
 # make
+
+# ninja config targets use the declared casing (Release/Debug).
+NINJA_CONFIG := $(subst debug,Debug,$(subst release,Release,$(CONFIG)))
 
 endif
 !endif : # !endif has to be last to work in make
@@ -65,7 +72,8 @@ HOST_PLATFORM= none
 	mingw-clean mingw macosx macosx-clean osx-clean osx \
 	linux-clean linux bsd-clean bsd solaris-clean solaris \
 	haiku-clean haiku windows-base windows windows-msbuild \
-	windows-gmake-clean windows-gmake
+	windows-gmake-clean windows-gmake \
+	linux-ninja osx-ninja macosx-ninja windows-ninja windows-ninja-clean
 
 default: $(HOST_PLATFORM)
 
@@ -134,6 +142,22 @@ linux: linux-clean
 	./build/bootstrap/premake_bootstrap --to=build/bootstrap $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)
 
+linux-ninja: linux-clean
+	mkdir -p build/bootstrap
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_STATICLIB -DLUA_USE_POSIX -DLUA_USE_DLOPEN -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" $(SRC) -lm -ldl -lrt -luuid
+	./build/bootstrap/premake_bootstrap embed
+	./build/bootstrap/premake_bootstrap --to=build/bootstrap $(PREMAKE_OPTS) ninja
+	ninja -C build/bootstrap $(NINJA_CONFIG)
+
+macosx-ninja: osx-ninja
+
+osx-ninja: osx-clean
+	mkdir -p build/bootstrap
+	$(CC) -o build/bootstrap/premake_bootstrap -DPREMAKE_NO_BUILTIN_SCRIPTS -DLUA_STATICLIB -DLUA_USE_MACOSX -I"$(LUA_DIR)" -I"$(LUASHIM_DIR)" -framework CoreServices -framework Foundation -framework Security -lreadline $(SRC)
+	./build/bootstrap/premake_bootstrap embed
+	./build/bootstrap/premake_bootstrap --arch=$(PLATFORM) --to=build/bootstrap $(PREMAKE_OPTS) ninja
+	ninja -C build/bootstrap $(NINJA_CONFIG)
+
 bsd-clean: nix-clean
 
 bsd: bsd-clean
@@ -183,6 +207,16 @@ windows-gmake: windows-gmake-clean
 	.\build\bootstrap\premake_bootstrap.exe embed
 	.\build\bootstrap\premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=msc $(PREMAKE_OPTS) gmake
 	$(MAKE) -C build/bootstrap -j$(NUMBER_OF_PROCESSORS) config=$(CONFIG)_$(PLATFORM:x86=win32)
+
+windows-ninja-clean: windows-clean
+
+# NOTE: this Windows target assumes cmd is the shell. Use 'nmake -f Bootstrap.mak windows-ninja'
+windows-ninja: windows-ninja-clean
+	if not exist build\bootstrap (mkdir build\bootstrap)
+	cl /Fo.\build\bootstrap\ /Fe.\build\bootstrap\premake_bootstrap.exe /DPREMAKE_NO_BUILTIN_SCRIPTS /DLUA_STATICLIB /DUNICODE /D_UNICODE /I"$(LUA_DIR)" /I"$(LUASHIM_DIR)" user32.lib ole32.lib advapi32.lib $(SRC)
+	.\build\bootstrap\premake_bootstrap.exe embed
+	.\build\bootstrap\premake_bootstrap --arch=$(PLATFORM) --os=windows --to=build/bootstrap --cc=msc $(PREMAKE_OPTS) ninja
+	ninja -C build/bootstrap $(NINJA_CONFIG)_$(PLATFORM:x86=Win32)
 
 cosmo-clean: nix-clean
 

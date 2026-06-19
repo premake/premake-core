@@ -269,7 +269,7 @@
 		filter { "system:windows", "options:arch=x86_64 or arch=x64" }
 			platforms { "x64" }
 
-		filter { "system:windows", "options:not arch" }
+		filter { "system:windows", "options:not arch=*" }
 			platforms { "x86", "x64" }
 
 		filter "configurations:Debug"
@@ -367,10 +367,7 @@
 		filter { "system:windows", "toolset:not msc" }
 			links		{ "crypt32", "bcrypt" }
 
-		filter { "system:windows", "toolset:clang", "action:not vs*" }
-			links		{ "crypt32", "bcrypt" }
-
-		filter { "system:windows", "toolset:msc", "action:gmake" }
+		filter { "system:windows", "toolset:clang or msc", "action:not vs*" }
 			links		{ "crypt32", "bcrypt" }
 
 		filter "system:linux or bsd or hurd"

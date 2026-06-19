@@ -4,10 +4,12 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 cd "$DIR"
 
 COSMO_FLAG=""
+NINJA_FLAG=""
 for arg in "$@"; do
   if [ "$arg" = "-cosmo" ]; then
     COSMO_FLAG="cosmo"
-    break
+  elif [ "$arg" = "-ninja" ]; then
+    NINJA_FLAG="-ninja"
   fi
 done
 
@@ -43,11 +45,11 @@ fi
 case "${SYSTEM}" in
    Linux)
      NPROC=$(nproc --all)
-     make -f Bootstrap.mak ${COSMO_FLAG:-linux} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
+     make -f Bootstrap.mak ${COSMO_FLAG:-linux$NINJA_FLAG} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
      ;;
    Darwin)
      NPROC=$(sysctl -n hw.ncpu)
-     make -f Bootstrap.mak ${COSMO_FLAG:-osx} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
+     make -f Bootstrap.mak ${COSMO_FLAG:-osx$NINJA_FLAG} $PLATFORM_ARG $CONFIG_ARG "$PREMAKE_OPTS_ARG" -j$NPROC
      ;;
    FreeBSD|OpenBSD|NetBSD|DragonFly)
      NPROC=$(sysctl -n hw.ncpu)
