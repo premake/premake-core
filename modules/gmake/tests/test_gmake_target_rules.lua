@@ -43,6 +43,25 @@ all: $(TARGET)
 
 
 --
+-- Directory creation should tolerate a parallel build where another project
+-- creates the same directory first.
+--
+
+	function suite.mkdirRules_onWindows()
+		gmake.mkdirRules("$(TARGETDIR)")
+		test.capture [[
+$(TARGETDIR):
+	@echo Creating $(TARGETDIR)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(TARGETDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(TARGETDIR)) 2>nul || if exist $(subst /,\\,$(TARGETDIR))\\NUL (exit /b 0) else (exit /b 1)
+endif
+		]]
+	end
+
+
+--
 -- Check rules for an OS X Cocoa application.
 --
 
