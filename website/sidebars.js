@@ -116,6 +116,7 @@ module.exports = {
 						'debugremotehost',
 						'debugsearchpaths',
 						'debugstartupcommands',
+						'defaultconfiguration',
 						'defaultplatform',
 						'defines',
 						'dependson',

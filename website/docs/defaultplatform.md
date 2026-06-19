@@ -4,11 +4,11 @@ Specifies the default build platform for a workspace.
 defaultplatform ("platform_name")
 ```
 
-If `platform_name` has not been defined using [`platforms`](platforms.md) the default platform will not change from the generic one i.e. the first one passed to [`platforms`](platforms.md).
+If a default platform is not specified through this API, the first platform in alphabetical order from `platforms` will be used as the default.
 
 ### Parameters ###
 
-`platform_name` - Is the name of the platform you want to use as default.
+`platform_name` - The name of the platform to use as default.
 
 ### Applies To ###
 
@@ -45,4 +45,5 @@ workspace "MyWorkspace"
 ```
 ### See Also ###
 
+* [defaultconfiguration](defaultconfiguration.md)
 * [platforms](platforms.md)

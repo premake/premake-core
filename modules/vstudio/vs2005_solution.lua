@@ -283,6 +283,7 @@
 
 		local descriptors = {}
 		local sorted = {}
+		local defaultCfg = p.config.getdefault(wks)
 
 		for cfg in p.workspace.eachconfig(wks) do
 
@@ -300,30 +301,24 @@
 		end
 
 		-- Sort the solution configurations to match Visual Studio's preferred
-		-- order, which appears to be a simple alpha sort on the descriptors.
+		-- order, while keeping the selected default first.
 
 		table.sort(sorted, function(cfg0, cfg1)
+			if cfg0 == defaultCfg then
+				return cfg1 ~= defaultCfg
+			elseif cfg1 == defaultCfg then
+				return false
+			end
+
 			return descriptors[cfg0]:lower() < descriptors[cfg1]:lower()
 		end)
 
 		-- Now I can output the sorted list of solution configuration descriptors
 
 		-- Visual Studio assumes the first configurations as the defaults.
-		if wks.defaultplatform then
-			p.push('GlobalSection(SolutionConfigurationPlatforms) = preSolution')
-			table.foreachi(sorted, function (cfg)
-				if cfg.platform == wks.defaultplatform then
-					p.w('%s = %s', descriptors[cfg], descriptors[cfg])
-				end
-			end)
-			p.pop("EndGlobalSection")
-		end
-
 		p.push('GlobalSection(SolutionConfigurationPlatforms) = preSolution')
 		table.foreachi(sorted, function (cfg)
-			if not wks.defaultplatform or cfg.platform ~= wks.defaultplatform then
-				p.w('%s = %s', descriptors[cfg], descriptors[cfg])
-			end
+			p.w('%s = %s', descriptors[cfg], descriptors[cfg])
 		end)
 		p.pop("EndGlobalSection")
 

@@ -191,7 +191,7 @@
 --
 -- TODO: Switch to these new APIs once they've had a chance to land everywhere
 --
---    defaultConfiguration "Release"
+--    defaultconfiguration "Release"
 --    symbols "On"
 --
 

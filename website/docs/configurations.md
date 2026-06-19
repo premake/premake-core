@@ -40,3 +40,4 @@ configurations { "Debug", "Release", "DebugDLL", "ReleaseDLL" }
 
 * [Configurations and Platforms](Configurations-and-Platforms.md)
 * [platforms](platforms.md)
+* [defaultconfiguration](defaultconfiguration.md)

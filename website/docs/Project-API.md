@@ -52,6 +52,7 @@
 | [debugremotehost](debugremotehost.md)                     | Target for remote debugging |
 | [debugsearchpaths](debugsearchpaths.md)                   | Search paths for source code while debugging |
 | [debugstartupcommands](debugstartupcommands.md)           | Debugger commands to execute on debugger startup |
+| [defaultconfiguration](defaultconfiguration.md)           |  |
 | [defaultplatform](defaultplatform.md)                     |  |
 | [defines](defines.md)                                     |  |
 | [dependson](dependson.md)                                 |  |
