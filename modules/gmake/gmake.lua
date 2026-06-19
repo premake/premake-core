@@ -125,7 +125,7 @@
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) mkdir -p %s', dirname)
 		_p('else')
-		_p('\t$(SILENT) if not exist $(subst /,\\\\,%s) mkdir $(subst /,\\\\,%s)', dirname, dirname)
+		_p('\t$(SILENT) mkdir $(subst /,\\\\,%s) 2>nul || if exist $(subst /,\\\\,%s)\\\\NUL (exit /b 0) else (exit /b 1)', dirname, dirname)
 		_p('endif')
 	end
 
