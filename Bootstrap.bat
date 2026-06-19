@@ -124,11 +124,11 @@ SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVe
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
 	IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
 		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && CALL :Build
-		EXIT /B %ERRORLEVEL%
+		EXIT /B !ERRORLEVEL!
 	) ELSE (
 		IF EXIST "%%i\VC\Auxiliary\Build\vcvars32.bat" (
 			CALL "%%i\VC\Auxiliary\Build\vcvars32.bat" && CALL :Build
-			EXIT /B %ERRORLEVEL%
+			EXIT /B !ERRORLEVEL!
 		)
 	)
 )
@@ -167,7 +167,7 @@ IF EXIST %VsWherePath% (
 
 		CALL %SelfPath% vs%%i
 
-		EXIT /B %ERRORLEVEL%
+		EXIT /B !ERRORLEVEL!
 	)
 
 )
@@ -197,7 +197,7 @@ SET PremakeVsVersion=%PremakeVsVersion:;=&REM.%
 
 IF NOT "%PremakeVsVersion%" == "" (
 	CALL %SelfPath% %PremakeVsVersion%
-	EXIT /B %ERRORLEVEL%
+	EXIT /B !ERRORLEVEL!
 )
 
 ECHO Could not find a Visual Studio installation
