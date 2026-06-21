@@ -53,7 +53,24 @@ endif
 GENERATED_DATA_FILES += $(GENERATED_PSA_DATA_FILES)
 
 GENERATED_FILES = $(GENERATED_DATA_FILES)
-GENERATED_FILES += src/test_keys.h src/test_certs.h
+GENERATED_FILES += include/test/test_keys.h include/test/test_certs.h
+GENERATED_FILES += include/test/psa_test_wrappers.h src/psa_test_wrappers.c
+
+# Generated files needed to (fully) run ssl-opt.sh
+.PHONY: ssl-opt
+
+opt-testcases/handshake-generated.sh: ../framework/scripts/mbedtls_framework/tls_test_case.py
+opt-testcases/handshake-generated.sh: ../scripts/generate_tls_handshake_tests.py
+	echo "  Gen   $@"
+	$(PYTHON) ../scripts/generate_tls_handshake_tests.py -o $@
+GENERATED_FILES += opt-testcases/handshake-generated.sh
+ssl-opt: opt-testcases/handshake-generated.sh
+
+opt-testcases/tls13-compat.sh: ../framework/scripts/generate_tls13_compat_tests.py
+	echo "  Gen   $@"
+	$(PYTHON) ../framework/scripts/generate_tls13_compat_tests.py -o $@
+GENERATED_FILES += opt-testcases/tls13-compat.sh
+ssl-opt: opt-testcases/tls13-compat.sh
 
 .PHONY: generated_files
 generated_files: $(GENERATED_FILES)
@@ -111,6 +128,7 @@ generated_psa_test_data: ../framework/scripts/mbedtls_framework/crypto_knowledge
 generated_psa_test_data: ../framework/scripts/mbedtls_framework/macro_collector.py
 generated_psa_test_data: ../framework/scripts/mbedtls_framework/psa_information.py
 generated_psa_test_data: ../framework/scripts/mbedtls_framework/psa_storage.py
+generated_psa_test_data: ../framework/scripts/mbedtls_framework/psa_test_case.py
 generated_psa_test_data: ../framework/scripts/mbedtls_framework/test_case.py
 generated_psa_test_data: ../framework/scripts/mbedtls_framework/test_data_generation.py
 ## The generated file only depends on the options that are present in
@@ -147,11 +165,17 @@ all: $(BINARIES)
 
 mbedtls_test: $(MBEDTLS_TEST_OBJS)
 
-src/test_certs.h: ../framework/scripts/generate_test_cert_macros.py \
+include/test/psa_test_wrappers.h src/psa_test_wrappers.c: ../framework/scripts/generate_psa_wrappers.py
+	echo "  Gen   $@"
+	cd .. && $(PYTHON) framework/scripts/generate_psa_wrappers.py
+
+include/test/test_certs.h: ../framework/scripts/generate_test_cert_macros.py \
 				  $($(PYTHON) ../framework/scripts/generate_test_cert_macros.py --list-dependencies)
+	echo "  Gen   $@"
 	$(PYTHON) ../framework/scripts/generate_test_cert_macros.py --output $@
 
-src/test_keys.h: ../framework/scripts/generate_test_keys.py
+include/test/test_keys.h: ../framework/scripts/generate_test_keys.py
+	echo "  Gen   $@"
 	$(PYTHON) ../framework/scripts/generate_test_keys.py --output $@
 
 TEST_OBJS_DEPS = $(wildcard include/test/*.h include/test/*/*.h)
@@ -159,16 +183,22 @@ ifdef RECORD_PSA_STATUS_COVERAGE_LOG
 # Explicitly depend on this header because on a clean copy of the source tree,
 # it doesn't exist yet and must be generated as part of the build, and
 # therefore the wildcard enumeration above doesn't include it.
-TEST_OBJS_DEPS += include/test/instrument_record_status.h
+TEST_OBJS_DEPS += ../framework/tests/include/test/instrument_record_status.h
 endif
-TEST_OBJS_DEPS += src/test_certs.h src/test_keys.h
+TEST_OBJS_DEPS += include/test/psa_test_wrappers.h
+TEST_OBJS_DEPS += include/test/test_certs.h include/test/test_keys.h
 
-# Rule to compile common test C files in src folder
-src/%.o : src/%.c $(TEST_OBJS_DEPS)
+# Rule to compile common test C files in framework
+../framework/tests/src/%.o : ../framework/tests/src/%.c $(TEST_OBJS_DEPS)
 	echo "  CC    $<"
 	$(CC) $(LOCAL_CFLAGS) $(CFLAGS) -o $@ -c $<
 
-src/drivers/%.o : src/drivers/%.c
+../framework/tests/src/drivers/%.o : ../framework/tests/src/drivers/%.c
+	echo "  CC    $<"
+	$(CC) $(LOCAL_CFLAGS) $(CFLAGS) -o $@ -c $<
+
+# Rule to compile common test C files in src folder
+src/%.o : src/%.c $(TEST_OBJS_DEPS)
 	echo "  CC    $<"
 	$(CC) $(LOCAL_CFLAGS) $(CFLAGS) -o $@ -c $<
 
@@ -212,9 +242,10 @@ $(BINARIES): %$(EXEXT): %.c $(MBEDLIBS) $(TEST_OBJS_DEPS) $(MBEDTLS_TEST_OBJS)
 clean:
 ifndef WINDOWS
 	rm -rf $(BINARIES) *.c *.datax
-	rm -f src/*.o src/drivers/*.o src/test_helpers/*.o src/libmbed*
-	rm -f include/test/instrument_record_status.h
-	rm -f include/alt-extra/*/*_alt.h
+	rm -f src/*.o src/test_helpers/*.o src/libmbed*
+	rm -f ../framework/tests/src/*.o ../framework/tests/src/drivers/*.o
+	rm -f ../framework/tests/include/test/instrument_record_status.h
+	rm -f ../framework/tests/include/alt-extra/*/*_alt.h
 	rm -rf libtestdriver1
 	rm -f ../library/libtestdriver1.a
 else
@@ -222,10 +253,11 @@ else
 	if exist *.exe del /Q /F *.exe
 	if exist *.datax del /Q /F *.datax
 	if exist src/*.o del /Q /F src/*.o
-	if exist src/drivers/*.o del /Q /F src/drivers/*.o
 	if exist src/test_helpers/*.o del /Q /F src/test_helpers/*.o
 	if exist src/libmbed* del /Q /F src/libmbed*
-	if exist include/test/instrument_record_status.h del /Q /F include/test/instrument_record_status.h
+	if exist ../framework/tests/src/*.o del /Q /F ../framework/tests/src/*.o
+	if exist ../framework/tests/src/drivers/*.o del /Q /F ../framework/tests/src/drivers/*.o
+	if exist ../framework/tests/include/test/instrument_record_status.h del /Q /F ../framework/tests/include/test/instrument_record_status.h
 endif
 
 # Test suites caught by SKIP_TEST_SUITES are built but not executed.
@@ -235,7 +267,7 @@ check: $(BINARIES)
 test: check
 
 # Generate variants of some headers for testing
-include/alt-extra/%_alt.h: ../include/%.h
+../framework/tests/include/alt-extra/%_alt.h: ../include/%.h
 	perl -p -e 's/^(# *(define|ifndef) +\w+_)H\b/$${1}ALT_H/' $< >$@
 
 # Generate test library
@@ -263,16 +295,16 @@ libtestdriver1.a:
 	touch ./libtestdriver1/3rdparty/Makefile.inc
 
 	# Set the test driver base (minimal) configuration.
-	cp ./include/test/drivers/config_test_driver.h ./libtestdriver1/include/mbedtls/mbedtls_config.h
+	cp configs/config_test_driver.h ./libtestdriver1/include/mbedtls/mbedtls_config.h
 
 	# Set the PSA cryptography configuration for the test library.
 	# It is set from the copied include/psa/crypto_config.h of the Mbed TLS
         # library the test library is intended to be linked with extended by
-        # ./include/test/drivers/crypto_config_test_driver_extension.h to
-        # mirror the PSA_ACCEL_* macros.
+        # configs/crypto_config_test_driver_extension.h to mirror the PSA_ACCEL_*
+        # macros.
 	mv ./libtestdriver1/include/psa/crypto_config.h ./libtestdriver1/include/psa/crypto_config.h.bak
 	head -n -1 ./libtestdriver1/include/psa/crypto_config.h.bak > ./libtestdriver1/include/psa/crypto_config.h
-	cat ./include/test/drivers/crypto_config_test_driver_extension.h >> ./libtestdriver1/include/psa/crypto_config.h
+	cat configs/crypto_config_test_driver_extension.h >> ./libtestdriver1/include/psa/crypto_config.h
 	echo "#endif /* PSA_CRYPTO_CONFIG_H */" >> ./libtestdriver1/include/psa/crypto_config.h
 
 	# Prefix MBEDTLS_* PSA_* symbols with LIBTESTDRIVER1_ as well as
@@ -285,7 +317,7 @@ libtestdriver1.a:
 	cp ./libtestdriver1/library/libmbedcrypto.a ../library/libtestdriver1.a
 
 ifdef RECORD_PSA_STATUS_COVERAGE_LOG
-include/test/instrument_record_status.h: ../include/psa/crypto.h Makefile
+../framework/tests/include/test/instrument_record_status.h: ../include/psa/crypto.h Makefile
 	echo "  Gen  $@"
 	sed <../include/psa/crypto.h >$@ -n 's/^psa_status_t \([A-Za-z0-9_]*\)(.*/#define \1(...) RECORD_STATUS("\1", \1(__VA_ARGS__))/p'
 endif

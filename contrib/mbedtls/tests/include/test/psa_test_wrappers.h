@@ -681,6 +681,21 @@ psa_status_t mbedtls_test_wrap_psa_purge_key(
 #define psa_purge_key(arg0_key) \
     mbedtls_test_wrap_psa_purge_key(arg0_key)
 
+psa_status_t mbedtls_test_wrap_psa_random_deplete(void);
+#define psa_random_deplete() \
+    mbedtls_test_wrap_psa_random_deplete()
+
+psa_status_t mbedtls_test_wrap_psa_random_reseed(
+    const uint8_t *arg0_perso,
+    size_t arg1_perso_size);
+#define psa_random_reseed(arg0_perso, arg1_perso_size) \
+    mbedtls_test_wrap_psa_random_reseed(arg0_perso, arg1_perso_size)
+
+psa_status_t mbedtls_test_wrap_psa_random_set_prediction_resistance(
+    unsigned arg0_enabled);
+#define psa_random_set_prediction_resistance(arg0_enabled) \
+    mbedtls_test_wrap_psa_random_set_prediction_resistance(arg0_enabled)
+
 psa_status_t mbedtls_test_wrap_psa_raw_key_agreement(
     psa_algorithm_t arg0_alg,
     mbedtls_svc_key_id_t arg1_private_key,

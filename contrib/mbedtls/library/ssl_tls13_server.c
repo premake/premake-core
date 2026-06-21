@@ -92,7 +92,7 @@ static void ssl_tls13_select_ciphersuite(
         return;
     }
 
-    MBEDTLS_SSL_DEBUG_MSG(2, ("No matched ciphersuite, psk_ciphersuite_id=%x, psk_hash_alg=%lx",
+    MBEDTLS_SSL_DEBUG_MSG(1, ("No matched ciphersuite, psk_ciphersuite_id=%x, psk_hash_alg=%lx",
                               (unsigned) psk_ciphersuite_id,
                               (unsigned long) psk_hash_alg));
 }
@@ -1380,6 +1380,7 @@ static int ssl_tls13_parse_client_hello(mbedtls_ssl_context *ssl,
     }
 
     if (ret == 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, ("no supported_versions extension"));
         return SSL_CLIENT_HELLO_TLS1_2;
     }
 
@@ -1401,6 +1402,7 @@ static int ssl_tls13_parse_client_hello(mbedtls_ssl_context *ssl,
          * the TLS version to negotiate.
          */
         if (MBEDTLS_SSL_VERSION_TLS1_2 == ret) {
+            MBEDTLS_SSL_DEBUG_MSG(2, ("supported_versions without 1.3"));
             return SSL_CLIENT_HELLO_TLS1_2;
         }
     }
@@ -1774,6 +1776,11 @@ static int ssl_tls13_parse_client_hello(mbedtls_ssl_context *ssl,
         return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
     }
 
+    if (handshake->key_exchange_mode !=
+        MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK) {
+        hrr_required = (no_usable_share_for_key_agreement != 0);
+    }
+
 #if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_PSK_ENABLED)
     if (handshake->key_exchange_mode &
         MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ALL) {
@@ -1784,16 +1791,11 @@ static int ssl_tls13_parse_client_hello(mbedtls_ssl_context *ssl,
                                   ((unsigned) psk.ciphersuite_info->id),
                                   psk.ciphersuite_info->name));
 
-        if (psk.type == MBEDTLS_SSL_TLS1_3_PSK_RESUMPTION) {
+        if (psk.type == MBEDTLS_SSL_TLS1_3_PSK_RESUMPTION && (!hrr_required)) {
             handshake->resume = 1;
         }
     }
 #endif
-
-    if (handshake->key_exchange_mode !=
-        MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK) {
-        hrr_required = (no_usable_share_for_key_agreement != 0);
-    }
 
     mbedtls_ssl_optimize_checksum(ssl, handshake->ciphersuite_info);
 
@@ -1967,6 +1969,9 @@ static int ssl_tls13_process_client_hello(mbedtls_ssl_context *ssl)
 
     /*
      * Version 1.2 of the protocol has to be used for the handshake.
+     * If we have sent an HRR, then the second ClientHello is inconsistent
+     * with the first one and we abort the handshake with an `illegal_parameter`
+     * fatal alert.
      * If TLS 1.2 is not supported, abort the handshake. Otherwise, set the
      * ssl->keep_current_message flag for the ClientHello to be kept and parsed
      * as a TLS 1.2 ClientHello. We also change ssl->tls_version to
@@ -1974,7 +1979,12 @@ static int ssl_tls13_process_client_hello(mbedtls_ssl_context *ssl)
      * will dispatch to the TLS 1.2 state machine.
      */
     if (SSL_CLIENT_HELLO_TLS1_2 == parse_client_hello_ret) {
-        /* Check if server supports TLS 1.2 */
+        if (ssl->handshake->hello_retry_request_flag) {
+            MBEDTLS_SSL_DEBUG_MSG(1, ("Non compliant 2nd ClientHello, TLS 1.2 version"));
+            MBEDTLS_SSL_PEND_FATAL_ALERT(MBEDTLS_SSL_ALERT_MSG_ILLEGAL_PARAMETER,
+                                         MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER);
+            return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
+        }
         if (!mbedtls_ssl_conf_is_tls12_enabled(ssl->conf)) {
             MBEDTLS_SSL_DEBUG_MSG(
                 1, ("TLS 1.2 not supported."));
@@ -1985,6 +1995,7 @@ static int ssl_tls13_process_client_hello(mbedtls_ssl_context *ssl)
         }
         ssl->keep_current_message = 1;
         ssl->tls_version = MBEDTLS_SSL_VERSION_TLS1_2;
+        MBEDTLS_SSL_DEBUG_MSG(1, ("non-1.3 ClientHello left for later processing"));
         return 0;
     }
 
@@ -2634,6 +2645,9 @@ static int ssl_tls13_write_encrypted_extensions(mbedtls_ssl_context *ssl)
 #if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED)
     if (mbedtls_ssl_tls13_key_exchange_mode_with_psk(ssl)) {
         mbedtls_ssl_handshake_set_state(ssl, MBEDTLS_SSL_SERVER_FINISHED);
+
+        /* Since we're not using a certificate, set verify_result to success */
+        ssl->session_negotiate->verify_result = 0;
     } else {
         mbedtls_ssl_handshake_set_state(ssl, MBEDTLS_SSL_CERTIFICATE_REQUEST);
     }

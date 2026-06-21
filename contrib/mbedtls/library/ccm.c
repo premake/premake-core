@@ -170,12 +170,14 @@ static int ccm_calculate_first_block_if_ready(mbedtls_ccm_context *ctx)
     }
 
     /* CCM expects non-empty tag.
-     * CCM* allows empty tag. For CCM* without tag, ignore plaintext length.
+     * CCM* allows empty tag. For CCM* without tag, the tag calculation is skipped.
      */
     if (ctx->tag_len == 0) {
         if (ctx->mode == MBEDTLS_CCM_STAR_ENCRYPT || ctx->mode == MBEDTLS_CCM_STAR_DECRYPT) {
             ctx->plaintext_len = 0;
+            return 0;
         } else {
+            ctx->state |= CCM_STATE__ERROR;
             return MBEDTLS_ERR_CCM_BAD_INPUT;
         }
     }
@@ -479,11 +481,23 @@ int mbedtls_ccm_finish(mbedtls_ccm_context *ctx,
         return MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     }
 
+    if (!(ctx->state & CCM_STATE__STARTED)) {
+        return MBEDTLS_ERR_CCM_BAD_INPUT;
+    }
+
+    if (!(ctx->state & CCM_STATE__LENGTHS_SET)) {
+        return MBEDTLS_ERR_CCM_BAD_INPUT;
+    }
+
     if (ctx->add_len > 0 && !(ctx->state & CCM_STATE__AUTH_DATA_FINISHED)) {
         return MBEDTLS_ERR_CCM_BAD_INPUT;
     }
 
     if (ctx->plaintext_len > 0 && ctx->processed != ctx->plaintext_len) {
+        return MBEDTLS_ERR_CCM_BAD_INPUT;
+    }
+
+    if (tag_len != ctx->tag_len) {
         return MBEDTLS_ERR_CCM_BAD_INPUT;
     }
 

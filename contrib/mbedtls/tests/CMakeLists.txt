@@ -124,6 +124,24 @@ if(GEN_FILES)
             # change too often in ways that don't affect the result
             # ((un)commenting some options).
     )
+
+    add_custom_command(
+        OUTPUT
+            ${CMAKE_CURRENT_SOURCE_DIR}/opt-testcases/handshake-generated.sh
+        WORKING_DIRECTORY
+            ${CMAKE_CURRENT_SOURCE_DIR}/..
+        COMMAND
+            "${MBEDTLS_PYTHON_EXECUTABLE}"
+            "${PROJECT_SOURCE_DIR}/scripts/generate_tls_handshake_tests.py"
+        DEPENDS
+            ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/tls_test_case.py
+            ${PROJECT_SOURCE_DIR}/scripts/generate_tls_handshake_tests.py
+    )
+    add_custom_target(handshake-generated.sh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/opt-testcases/handshake-generated.sh)
+    set_target_properties(handshake-generated.sh PROPERTIES EXCLUDE_FROM_ALL NO)
+    add_dependencies(${ssl_opt_target} handshake-generated.sh)
+
     add_custom_command(
         OUTPUT
             ${ecp_generated_data_files}
@@ -156,12 +174,29 @@ if(GEN_FILES)
             ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/macro_collector.py
             ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/psa_information.py
             ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/psa_storage.py
+            ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/psa_test_case.py
             ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/test_case.py
             ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/mbedtls_framework/test_data_generation.py
             ${CMAKE_CURRENT_SOURCE_DIR}/../include/psa/crypto_config.h
             ${CMAKE_CURRENT_SOURCE_DIR}/../include/psa/crypto_values.h
             ${CMAKE_CURRENT_SOURCE_DIR}/../include/psa/crypto_extra.h
     )
+
+    add_custom_command(
+        OUTPUT
+            ${CMAKE_CURRENT_SOURCE_DIR}/opt-testcases/tls13-compat.sh
+        WORKING_DIRECTORY
+            ${CMAKE_CURRENT_SOURCE_DIR}/..
+        COMMAND
+            "${MBEDTLS_PYTHON_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/generate_tls13_compat_tests.py"
+        DEPENDS
+            ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/generate_tls13_compat_tests.py
+    )
+    add_custom_target(tls13-compat.sh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/opt-testcases/tls13-compat.sh)
+    set_target_properties(tls13-compat.sh PROPERTIES EXCLUDE_FROM_ALL NO)
+    add_dependencies(${ssl_opt_target} tls13-compat.sh)
 
 else()
     foreach(file ${all_generated_data_files})
@@ -301,7 +336,9 @@ function(add_test_suite suite_name)
     # files are automatically included because the library targets declare
     # them as PUBLIC.
     target_include_directories(test_suite_${data_name}
+        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../framework/tests/include
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../library)
     # Request C11, which is needed for memory poisoning tests
     set_target_properties(test_suite_${data_name} PROPERTIES C_STANDARD 11)

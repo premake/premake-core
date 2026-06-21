@@ -71,6 +71,39 @@
     defined(MBEDTLS_KEY_EXCHANGE_RSA_ENABLED)
 #define MBEDTLS_CAN_HANDLE_RSA_TEST_KEY
 #endif
+
+#if defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED) && \
+    defined(MBEDTLS_ECP_HAVE_SECP384R1) && \
+    defined(MBEDTLS_MD_CAN_SHA384)
+#define MBEDTLS_CAN_HANDLE_ECDSA_TEST_KEY
+#endif
+
+#if defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED) && \
+    defined(MBEDTLS_ECP_HAVE_SECP256R1) && \
+    defined(MBEDTLS_MD_CAN_SHA256)
+#define MBEDTLS_CAN_HANDLE_ECDSA_CLIENT_TEST_KEY
+#endif
+
+#if defined(MBEDTLS_ECP_HAVE_CURVE25519)  || \
+    defined(MBEDTLS_ECP_HAVE_SECP256R1)   || \
+    defined(MBEDTLS_ECP_HAVE_SECP384R1)   || \
+    defined(MBEDTLS_ECP_HAVE_CURVE448)    || \
+    defined(MBEDTLS_ECP_HAVE_SECP521R1)   || \
+    defined(MBEDTLS_ECP_HAVE_BP256R1)     || \
+    defined(MBEDTLS_ECP_HAVE_BP384R1)     || \
+    defined(MBEDTLS_ECP_HAVE_BP512R1)
+#define MBEDTLS_TEST_HAS_DEFAULT_EC_GROUP
+#endif
+
+/*
+ * To use the test keys we need PSA_WANT_ALG_SHA_256. Some test cases need an additional hash that
+ * is configured by default (see mbedtls_ssl_config_defaults()), but it doesn't matter which one.
+ */
+#if defined(MBEDTLS_MD_CAN_SHA512)   || \
+    defined(MBEDTLS_MD_CAN_SHA384)
+#define MBEDTLS_TEST_HAS_ADDITIONAL_HASH
+#endif
+
 enum {
 #define MBEDTLS_SSL_TLS1_3_LABEL(name, string)          \
     tls13_label_ ## name,
@@ -471,6 +504,18 @@ void mbedtls_test_ssl_endpoint_free(
  * /p second_ssl is used as second endpoint and their sockets have to be
  * connected before calling this function.
  *
+ * For example, to perform a full handshake:
+ * ```
+ * mbedtls_test_move_handshake_to_state(
+ *                       &server.ssl, &client.ssl,
+ *                       MBEDTLS_SSL_HANDSHAKE_OVER);
+ * mbedtls_test_move_handshake_to_state(
+ *                       &client.ssl, &server.ssl,
+ *                       MBEDTLS_SSL_HANDSHAKE_OVER);
+ * ```
+ * Note that you need both calls to reach the handshake-over state on
+ * both sides.
+ *
  * \retval  0 on success, otherwise error code.
  */
 int mbedtls_test_move_handshake_to_state(mbedtls_ssl_context *ssl,
@@ -583,6 +628,14 @@ int mbedtls_test_ssl_exchange_data(
     int msg_len_1, const int expected_fragments_1,
     mbedtls_ssl_context *ssl_2,
     int msg_len_2, const int expected_fragments_2);
+
+#if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
+int mbedtls_test_ssl_do_handshake_with_endpoints(
+    mbedtls_test_ssl_endpoint *server_ep,
+    mbedtls_test_ssl_endpoint *client_ep,
+    mbedtls_test_handshake_test_options *options,
+    mbedtls_ssl_protocol_version proto);
+#endif /* defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED) */
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
 void mbedtls_test_ssl_perform_handshake(
