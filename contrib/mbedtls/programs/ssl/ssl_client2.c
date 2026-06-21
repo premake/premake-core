@@ -68,6 +68,7 @@ int main(void)
 #define DFL_MAX_VERSION         -1
 #define DFL_SHA1                -1
 #define DFL_AUTH_MODE           -1
+#define DFL_SET_HOSTNAME        1
 #define DFL_MFL_CODE            MBEDTLS_SSL_MAX_FRAG_LEN_NONE
 #define DFL_TRUNC_HMAC          -1
 #define DFL_RECSPLIT            -1
@@ -76,13 +77,14 @@ int main(void)
 #define DFL_RECO_SERVER_NAME    NULL
 #define DFL_RECO_DELAY          0
 #define DFL_RECO_MODE           1
+#define DFL_RENEGO_DELAY        -2
 #define DFL_CID_ENABLED         0
 #define DFL_CID_VALUE           ""
 #define DFL_CID_ENABLED_RENEGO  -1
 #define DFL_CID_VALUE_RENEGO    NULL
 #define DFL_RECONNECT_HARD      0
 #define DFL_TICKETS             MBEDTLS_SSL_SESSION_TICKETS_ENABLED
-#define DFL_NEW_SESSION_TICKETS MBEDTLS_SSL_TLS1_3_SIGNAL_NEW_SESSION_TICKETS_ENABLED
+#define DFL_NEW_SESSION_TICKETS -1
 #define DFL_ALPN_STRING         NULL
 #define DFL_GROUPS              NULL
 #define DFL_SIG_ALGS            NULL
@@ -103,13 +105,15 @@ int main(void)
 #define DFL_NSS_KEYLOG          0
 #define DFL_NSS_KEYLOG_FILE     NULL
 #define DFL_SKIP_CLOSE_NOTIFY   0
+#define DFL_EXP_LABEL           NULL
+#define DFL_EXP_LEN             20
 #define DFL_QUERY_CONFIG_MODE   0
 #define DFL_USE_SRTP            0
 #define DFL_SRTP_FORCE_PROFILE  0
 #define DFL_SRTP_MKI            ""
 #define DFL_KEY_OPAQUE_ALG      "none"
 
-#define GET_REQUEST "GET %s HTTP/1.0\r\nExtra-header: "
+#define GET_REQUEST "GET %s HTTP/1.0\r\nHost: %s\r\nExtra-header: "
 #define GET_REQUEST_END "\r\n\r\n"
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
@@ -200,7 +204,7 @@ int main(void)
 #if defined(MBEDTLS_SSL_SESSION_TICKETS)
 #define USAGE_TICKETS                                       \
     "    tickets=%%d              default: 1 (enabled)\n"    \
-    "    new_session_tickets=%%d  default: 1 (enabled)\n"
+    "    new_session_tickets=%%d  default: (library default: disabled)\n"
 #else
 #define USAGE_TICKETS ""
 #endif /* MBEDTLS_SSL_SESSION_TICKETS */
@@ -308,7 +312,8 @@ int main(void)
 #if defined(MBEDTLS_SSL_RENEGOTIATION)
 #define USAGE_RENEGO \
     "    renegotiation=%%d    default: 0 (disabled)\n"      \
-    "    renegotiate=%%d      default: 0 (disabled)\n"
+    "    renegotiate=%%d      default: 0 (disabled)\n"      \
+    "    renego_delay=%%d     default: -2 (library default)\n"
 #else
 #define USAGE_RENEGO ""
 #endif
@@ -372,6 +377,16 @@ int main(void)
 #define USAGE_TLS1_3_KEY_EXCHANGE_MODES ""
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
 
+#if defined(MBEDTLS_SSL_KEYING_MATERIAL_EXPORT)
+#define USAGE_EXPORT \
+    "    exp_label=%%s       Label to input into TLS-Exporter\n" \
+    "                         default: None (don't try to export a key)\n" \
+    "    exp_len=%%d         Length of key to extract from TLS-Exporter \n" \
+    "                         default: 20\n"
+#else
+#define USAGE_EXPORT ""
+#endif /* defined(MBEDTLS_SSL_KEYING_MATERIAL_EXPORT) */
+
 /* USAGE is arbitrarily split to stay under the portable string literal
  * length limit: 4095 bytes in C99. */
 #define USAGE1 \
@@ -405,6 +420,9 @@ int main(void)
 #define USAGE2 \
     "    auth_mode=%%s        default: (library default: none)\n" \
     "                        options: none, optional, required\n" \
+    "    set_hostname=%%s     call mbedtls_ssl_set_hostname()?" \
+    "                        options: no, server_name, NULL\n" \
+    "                        default: server_name (but ignored if certs disabled)\n"  \
     USAGE_IO                                                \
     USAGE_KEY_OPAQUE                                        \
     USAGE_CA_CALLBACK                                       \
@@ -459,6 +477,7 @@ int main(void)
     "                                otherwise. The expansion of the macro\n" \
     "                                is printed if it is defined\n"           \
     USAGE_SERIALIZATION                                                       \
+    USAGE_EXPORT                                                              \
     "\n"
 
 /*
@@ -507,6 +526,8 @@ struct options {
     int max_version;            /* maximum protocol version accepted        */
     int allow_sha1;             /* flag for SHA-1 support                   */
     int auth_mode;              /* verify mode for connection               */
+    int set_hostname;           /* call mbedtls_ssl_set_hostname()?         */
+                                /* 0=no, 1=yes, -1=NULL */
     unsigned char mfl_code;     /* code for maximum fragment length         */
     int trunc_hmac;             /* negotiate truncated hmac or not          */
     int recsplit;               /* enable record splitting?                 */
@@ -545,6 +566,8 @@ struct options {
                                  * after renegotiation                      */
     int reproducible;           /* make communication reproducible          */
     int skip_close_notify;      /* skip sending the close_notify alert      */
+    const char *exp_label;      /* label to input into mbedtls_ssl_export_keying_material() */
+    int exp_len;                /* Length of key to export using mbedtls_ssl_export_keying_material() */
 #if defined(MBEDTLS_SSL_EARLY_DATA)
     int early_data;             /* early data enablement flag               */
 #endif
@@ -727,7 +750,7 @@ static int build_http_request(unsigned char *buf, size_t buf_size, size_t *reque
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     size_t len, tail_len, request_size;
 
-    ret = mbedtls_snprintf((char *) buf, buf_size, GET_REQUEST, opt.request_page);
+    ret = mbedtls_snprintf((char *) buf, buf_size, GET_REQUEST, opt.request_page, opt.server_name);
     if (ret < 0) {
         return ret;
     }
@@ -957,11 +980,13 @@ int main(int argc, char *argv[])
     opt.renegotiation       = DFL_RENEGOTIATION;
     opt.allow_legacy        = DFL_ALLOW_LEGACY;
     opt.renegotiate         = DFL_RENEGOTIATE;
+    opt.renego_delay        = DFL_RENEGO_DELAY;
     opt.exchanges           = DFL_EXCHANGES;
     opt.min_version         = DFL_MIN_VERSION;
     opt.max_version         = DFL_MAX_VERSION;
     opt.allow_sha1          = DFL_SHA1;
     opt.auth_mode           = DFL_AUTH_MODE;
+    opt.set_hostname        = DFL_SET_HOSTNAME;
     opt.mfl_code            = DFL_MFL_CODE;
     opt.trunc_hmac          = DFL_TRUNC_HMAC;
     opt.recsplit            = DFL_RECSPLIT;
@@ -994,6 +1019,8 @@ int main(int argc, char *argv[])
     opt.nss_keylog          = DFL_NSS_KEYLOG;
     opt.nss_keylog_file     = DFL_NSS_KEYLOG_FILE;
     opt.skip_close_notify   = DFL_SKIP_CLOSE_NOTIFY;
+    opt.exp_label           = DFL_EXP_LABEL;
+    opt.exp_len             = DFL_EXP_LEN;
     opt.query_config_mode   = DFL_QUERY_CONFIG_MODE;
     opt.use_srtp            = DFL_USE_SRTP;
     opt.force_srtp_profile  = DFL_SRTP_FORCE_PROFILE;
@@ -1193,6 +1220,8 @@ usage:
                     break;
                 default: goto usage;
             }
+        } else if (strcmp(p, "renego_delay") == 0) {
+            opt.renego_delay = (atoi(q));
         } else if (strcmp(p, "renegotiate") == 0) {
             opt.renegotiate = atoi(q);
             if (opt.renegotiate < 0 || opt.renegotiate > 1) {
@@ -1359,6 +1388,16 @@ usage:
             } else {
                 goto usage;
             }
+        } else if (strcmp(p, "set_hostname") == 0) {
+            if (strcmp(q, "no") == 0) {
+                opt.set_hostname = 0;
+            } else if (strcmp(q, "server_name") == 0) {
+                opt.set_hostname = 1;
+            } else if (strcmp(q, "NULL") == 0) {
+                opt.set_hostname = -1;
+            } else {
+                goto usage;
+            }
         } else if (strcmp(p, "max_frag_len") == 0) {
             if (strcmp(q, "512") == 0) {
                 opt.mfl_code = MBEDTLS_SSL_MAX_FRAG_LEN_512;
@@ -1438,6 +1477,10 @@ usage:
             if (opt.skip_close_notify < 0 || opt.skip_close_notify > 1) {
                 goto usage;
             }
+        } else if (strcmp(p, "exp_label") == 0) {
+            opt.exp_label = q;
+        } else if (strcmp(p, "exp_len") == 0) {
+            opt.exp_len = atoi(q);
         } else if (strcmp(p, "use_srtp") == 0) {
             opt.use_srtp = atoi(q);
         } else if (strcmp(p, "srtp_force_profile") == 0) {
@@ -1946,8 +1989,10 @@ usage:
 #if defined(MBEDTLS_SSL_SESSION_TICKETS)
     mbedtls_ssl_conf_session_tickets(&conf, opt.tickets);
 #if defined(MBEDTLS_SSL_PROTO_TLS1_3)
-    mbedtls_ssl_conf_tls13_enable_signal_new_session_tickets(
-        &conf, opt.new_session_tickets);
+    if (opt.new_session_tickets != DFL_NEW_SESSION_TICKETS) {
+        mbedtls_ssl_conf_tls13_enable_signal_new_session_tickets(
+            &conf, opt.new_session_tickets);
+    }
 #endif /* MBEDTLS_SSL_PROTO_TLS1_3 */
 #endif /* MBEDTLS_SSL_SESSION_TICKETS */
 
@@ -1964,6 +2009,9 @@ usage:
     }
 #if defined(MBEDTLS_SSL_RENEGOTIATION)
     mbedtls_ssl_conf_renegotiation(&conf, opt.renegotiation);
+    if (opt.renego_delay != DFL_RENEGO_DELAY) {
+        mbedtls_ssl_conf_renegotiation_enforced(&conf, opt.renego_delay);
+    }
 #endif
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
@@ -2071,10 +2119,24 @@ usage:
 #endif /* MBEDTLS_SSL_DTLS_SRTP */
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
-    if ((ret = mbedtls_ssl_set_hostname(&ssl, opt.server_name)) != 0) {
-        mbedtls_printf(" failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n",
-                       ret);
-        goto exit;
+    switch (opt.set_hostname) {
+        case -1:
+            if ((ret = mbedtls_ssl_set_hostname(&ssl, NULL)) != 0) {
+                mbedtls_printf(" failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n",
+                               ret);
+                goto exit;
+            }
+            break;
+        case 0:
+            /* Skip the call */
+            break;
+        default:
+            if ((ret = mbedtls_ssl_set_hostname(&ssl, opt.server_name)) != 0) {
+                mbedtls_printf(" failed\n  ! mbedtls_ssl_set_hostname returned %d\n\n",
+                               ret);
+                goto exit;
+            }
+            break;
     }
 #endif
 
@@ -2508,6 +2570,8 @@ usage:
         }
         mbedtls_printf(" ok\n");
     }
+
+
 #endif /* MBEDTLS_SSL_RENEGOTIATION */
 
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
@@ -2516,6 +2580,33 @@ usage:
         goto exit;
     }
 #endif /* MBEDTLS_SSL_DTLS_CONNECTION_ID */
+
+#if defined(MBEDTLS_SSL_KEYING_MATERIAL_EXPORT)
+    if (opt.exp_label != NULL && opt.exp_len > 0) {
+        unsigned char *exported_key = mbedtls_calloc((size_t) opt.exp_len, sizeof(unsigned char));
+        if (exported_key == NULL) {
+            mbedtls_printf("Could not allocate %d bytes\n", opt.exp_len);
+            ret = 3;
+            goto exit;
+        }
+        ret = mbedtls_ssl_export_keying_material(&ssl, exported_key, (size_t) opt.exp_len,
+                                                 opt.exp_label, strlen(opt.exp_label),
+                                                 NULL, 0, 0);
+        if (ret != 0) {
+            mbedtls_free(exported_key);
+            goto exit;
+        }
+        mbedtls_printf("Exporting key of length %d with label \"%s\": 0x",
+                       opt.exp_len,
+                       opt.exp_label);
+        for (i = 0; i < opt.exp_len; i++) {
+            mbedtls_printf("%02X", exported_key[i]);
+        }
+        mbedtls_printf("\n\n");
+        fflush(stdout);
+        mbedtls_free(exported_key);
+    }
+#endif /* defined(MBEDTLS_SSL_KEYING_MATERIAL_EXPORT) */
 
     /*
      * 6. Write the GET request

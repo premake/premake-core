@@ -287,21 +287,24 @@ void x509_csr_check_opaque(char *key_file, int md_type, int key_usage,
                            int cert_type)
 {
     mbedtls_pk_context key;
+    mbedtls_pk_init(&key);
+
     mbedtls_svc_key_id_t key_id = MBEDTLS_SVC_KEY_ID_INIT;
     psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
+
     mbedtls_x509write_csr req;
+    mbedtls_x509write_csr_init(&req);
+
     unsigned char buf[4096];
     int ret;
     size_t pem_len = 0;
     const char *subject_name = "C=NL,O=PolarSSL,CN=PolarSSL Server 1";
     mbedtls_test_rnd_pseudo_info rnd_info;
 
-    mbedtls_x509write_csr_init(&req);
     MD_OR_USE_PSA_INIT();
 
     memset(&rnd_info, 0x2a, sizeof(mbedtls_test_rnd_pseudo_info));
 
-    mbedtls_pk_init(&key);
     TEST_ASSERT(mbedtls_pk_parse_keyfile(&key, key_file, NULL,
                                          mbedtls_test_rnd_std_rand, NULL) == 0);
 
@@ -727,6 +730,11 @@ void mbedtls_x509_string_to_names(char *name, char *parsed_name,
     }
     TEST_LE_S(1, ret);
     TEST_ASSERT(strcmp((char *) out, parsed_name) == 0);
+
+    /* Check that calling a 2nd time with the same param (now non-NULL)
+     * returns an error as expected. */
+    ret = mbedtls_x509_string_to_names(&names, name);
+    TEST_EQUAL(ret, MBEDTLS_ERR_X509_BAD_INPUT_DATA);
 
 exit:
     mbedtls_asn1_free_named_data_list(&names);

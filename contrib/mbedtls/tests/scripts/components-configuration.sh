@@ -129,21 +129,6 @@ component_test_full_cmake_gcc_asan_new_bignum () {
     tests/context-info.sh
 }
 
-component_test_ref_configs () {
-    msg "test/build: ref-configs (ASan build)" # ~ 6 min 20s
-    # test-ref-configs works by overwriting mbedtls_config.h; this makes cmake
-    # want to re-generate generated files that depend on it, quite correctly.
-    # However this doesn't work as the generation script expects a specific
-    # format for mbedtls_config.h, which the other files don't follow. Also,
-    # cmake can't know this, but re-generation is actually not necessary as
-    # the generated files only depend on the list of available options, not
-    # whether they're on or off. So, disable cmake's (over-sensitive here)
-    # dependency resolution for generated files and just rely on them being
-    # present (thanks to pre_generate_files) by turning GEN_FILES off.
-    CC=$ASAN_CC cmake -D GEN_FILES=Off -D CMAKE_BUILD_TYPE:String=Asan .
-    tests/scripts/test-ref-configs.pl
-}
-
 component_test_full_cmake_clang () {
     msg "build: cmake, full config, clang" # ~ 50s
     scripts/config.py full
@@ -163,7 +148,7 @@ component_test_full_cmake_clang () {
     tests/scripts/run_demos.py
 
     msg "test: psa_constant_names (full config, clang)" # ~ 1s
-    tests/scripts/test_psa_constant_names.py
+    $FRAMEWORK/scripts/test_psa_constant_names.py
 
     msg "test: ssl-opt.sh default, ECJPAKE, SSL async (full config)" # ~ 1s
     tests/ssl-opt.sh -f 'Default\|ECJPAKE\|SSL async private'
@@ -190,6 +175,9 @@ component_test_full_no_deprecated () {
 
     msg "test: ensure that X509 has no direct dependency on BIGNUM_C"
     not grep mbedtls_mpi library/libmbedx509.a
+
+    msg "test: ssl-opt.sh authentication, full_no_deprecated config" # ~ 10s
+    tests/ssl-opt.sh -f 'Default\|Authentication'
 }
 
 component_test_full_no_deprecated_deprecated_warning () {
@@ -234,7 +222,7 @@ component_test_full_deprecated_warning () {
 component_build_baremetal () {
   msg "build: make, baremetal config"
   scripts/config.py baremetal
-  make CFLAGS="-O1 -Werror -I$PWD/tests/include/baremetal-override/"
+  make CFLAGS="-O1 -Werror -I$PWD/framework/tests/include/baremetal-override/ -DMBEDTLS_TEST_PLATFORM_IS_NOT_UNIXLIKE"
 }
 
 support_build_baremetal () {
@@ -287,11 +275,11 @@ component_build_tfm () {
     cp configs/config-tfm.h "$CONFIG_H"
 
     msg "build: TF-M config, clang, armv7-m thumb2"
-    make lib CC="clang" CFLAGS="--target=arm-linux-gnueabihf -march=armv7-m -mthumb -Os -std=c99 -Werror -Wall -Wextra -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wvla -Wformat=2 -Wno-format-nonliteral -Wshadow -Wasm-operand-widths -Wunused -I../tests/include/spe"
+    make lib CC="clang" CFLAGS="--target=arm-linux-gnueabihf -march=armv7-m -mthumb -Os -std=c99 -Werror -Wall -Wextra -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wvla -Wformat=2 -Wno-format-nonliteral -Wshadow -Wasm-operand-widths -Wunused -I../framework/tests/include/spe"
 
     msg "build: TF-M config, gcc native build"
     make clean
-    make lib CC="gcc" CFLAGS="-Os -std=c99 -Werror -Wall -Wextra -Wwrite-strings -Wpointer-arith -Wshadow -Wvla -Wformat=2 -Wno-format-nonliteral -Wshadow -Wformat-signedness -Wlogical-op -I../tests/include/spe"
+    make lib CC="gcc" CFLAGS="-Os -std=c99 -Werror -Wall -Wextra -Wwrite-strings -Wpointer-arith -Wshadow -Wvla -Wformat=2 -Wno-format-nonliteral -Wshadow -Wformat-signedness -Wlogical-op -I../framework/tests/include/spe"
 }
 
 component_test_no_platform () {

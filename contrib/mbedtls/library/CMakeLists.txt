@@ -76,6 +76,7 @@ set(src_crypto
     psa_crypto_mac.c
     psa_crypto_pake.c
     psa_crypto_rsa.c
+    psa_crypto_random.c
     psa_crypto_se.c
     psa_crypto_slot_management.c
     psa_crypto_storage.c
@@ -166,11 +167,11 @@ if(GEN_FILES)
             ${CMAKE_CURRENT_BINARY_DIR}/ssl_debug_helpers_generated.c
         COMMAND
             ${MBEDTLS_PYTHON_EXECUTABLE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_ssl_debug_helpers.py
+                ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/generate_ssl_debug_helpers.py
                 --mbedtls-root ${CMAKE_CURRENT_SOURCE_DIR}/..
                 ${CMAKE_CURRENT_BINARY_DIR}
         DEPENDS
-            ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/generate_ssl_debug_helpers.py
+            ${CMAKE_CURRENT_SOURCE_DIR}/../framework/scripts/generate_ssl_debug_helpers.py
             ${error_headers}
     )
 
@@ -188,12 +189,18 @@ if(GEN_FILES)
             ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/data_files/driver_templates/psa_crypto_driver_wrappers_no_static.c.jinja
     )
 
+    add_custom_target(${MBEDTLS_TARGET_PREFIX}mbedcrypto_generated_files_target
+        DEPENDS
+            ${CMAKE_CURRENT_BINARY_DIR}/error.c
+            ${CMAKE_CURRENT_BINARY_DIR}/version_features.c
+            ${CMAKE_CURRENT_BINARY_DIR}/psa_crypto_driver_wrappers.h
+            ${CMAKE_CURRENT_BINARY_DIR}/psa_crypto_driver_wrappers_no_static.c
+    )
 
-else()
-    link_to_source(error.c)
-    link_to_source(version_features.c)
-    link_to_source(ssl_debug_helpers_generated.c)
-    link_to_source(psa_crypto_driver_wrappers_no_static.c)
+    add_custom_target(${MBEDTLS_TARGET_PREFIX}mbedtls_generated_files_target
+        DEPENDS
+            ${CMAKE_CURRENT_BINARY_DIR}/ssl_debug_helpers_generated.c
+    )
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC)
@@ -295,12 +302,19 @@ if(USE_STATIC_MBEDTLS_LIBRARY)
     add_library(${mbedtls_static_target} STATIC ${src_tls})
     set_target_properties(${mbedtls_static_target} PROPERTIES OUTPUT_NAME mbedtls)
     target_link_libraries(${mbedtls_static_target} PUBLIC ${libs} ${mbedx509_static_target})
+
+    if(GEN_FILES)
+        add_dependencies(${mbedcrypto_static_target}
+            ${MBEDTLS_TARGET_PREFIX}mbedcrypto_generated_files_target)
+        add_dependencies(${mbedtls_static_target}
+            ${MBEDTLS_TARGET_PREFIX}mbedtls_generated_files_target)
+    endif()
 endif(USE_STATIC_MBEDTLS_LIBRARY)
 
 if(USE_SHARED_MBEDTLS_LIBRARY)
     set(CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_BINARY_DIR})
     add_library(${mbedcrypto_target} SHARED ${src_crypto})
-    set_target_properties(${mbedcrypto_target} PROPERTIES VERSION 3.6.2 SOVERSION 16)
+    set_target_properties(${mbedcrypto_target} PROPERTIES VERSION 3.6.6 SOVERSION 16)
     target_link_libraries(${mbedcrypto_target} PUBLIC ${libs})
 
     if(TARGET ${everest_target})
@@ -312,12 +326,19 @@ if(USE_SHARED_MBEDTLS_LIBRARY)
     endif()
 
     add_library(${mbedx509_target} SHARED ${src_x509})
-    set_target_properties(${mbedx509_target} PROPERTIES VERSION 3.6.2 SOVERSION 7)
+    set_target_properties(${mbedx509_target} PROPERTIES VERSION 3.6.6 SOVERSION 7)
     target_link_libraries(${mbedx509_target} PUBLIC ${libs} ${mbedcrypto_target})
 
     add_library(${mbedtls_target} SHARED ${src_tls})
-    set_target_properties(${mbedtls_target} PROPERTIES VERSION 3.6.2 SOVERSION 21)
+    set_target_properties(${mbedtls_target} PROPERTIES VERSION 3.6.6 SOVERSION 21)
     target_link_libraries(${mbedtls_target} PUBLIC ${libs} ${mbedx509_target})
+
+    if(GEN_FILES)
+        add_dependencies(${mbedcrypto_target}
+            ${MBEDTLS_TARGET_PREFIX}mbedcrypto_generated_files_target)
+        add_dependencies(${mbedtls_target}
+            ${MBEDTLS_TARGET_PREFIX}mbedtls_generated_files_target)
+    endif()
 endif(USE_SHARED_MBEDTLS_LIBRARY)
 
 foreach(target IN LISTS target_libraries)
@@ -329,7 +350,7 @@ foreach(target IN LISTS target_libraries)
     # of /library (which currently means: under /3rdparty).
     target_include_directories(${target}
         PUBLIC $<BUILD_INTERFACE:${MBEDTLS_DIR}/include/>
-               $<INSTALL_INTERFACE:include/>
+               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         PRIVATE ${MBEDTLS_DIR}/library/
                 # Needed to include psa_crypto_driver_wrappers.h
                 ${CMAKE_CURRENT_BINARY_DIR})

@@ -11342,6 +11342,993 @@ mpi_core_exp_mod:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85
 Core modular exponentiation (Mongtomery form only) #1001 14c15c910b11ad28cc21ce88d0060cc54278c2614e1bcb383bb4a570294c4ea3738d243a6e58d5ca49c7b59b995253fd6c79a3de69f85e3131f3b9238224b122c3e4a892d9196ada4fcfa583e1df8af9b474c7e89286a1754abcb06ae8abb93f01d89a024cdce7a6d7288ff68c320f89f1347e0cdd905ecfd160c5d0ef412ed6 ^ f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad mod 53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1
 mpi_core_exp_mod:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"11e771804f5bbeaf6757295df0df2654be9fec35ce77f7fd6d950d43a114849955262289e72b322f5c95540557690d6586885a720ccefc8daa39eb543eb211b14f0abfcc10c0361f8f8b9218dc9324e0e1e6eccbd8d0e1abd807195b65cd7b419db603332980141f6e050f72ded2bc5dd01b466d4c49ba910e7d7b2d71fa666b":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"357199f9b213ce7ebf7d90f3aa8f1bd4bb4deefdb15214167d4f6793a73293741e5120c4b984f54047dd34d95c6842afb869064705008b5ae460b3e8a1f5ab643f0dac8f3f0611d1938875944f80f83e09a2ab207040ca825385044843c858c6b1e83f78ca59ccaf405dcd33d1958879c79eafe672d8b167428d9f71a669e71d"
 
+GCD-modinv, A = 0, N = 1
+mpi_core_gcd_modinv_odd:"0":"1":"1":""
+
+GCD-modinv, A = 1, N = 1
+mpi_core_gcd_modinv_odd:"1":"1":"1":""
+
+GCD-modinv, A = 0, N = 3
+mpi_core_gcd_modinv_odd:"0":"3":"3":""
+
+GCD-modinv, A = 1, N = 3
+mpi_core_gcd_modinv_odd:"1":"3":"1":"1"
+
+GCD-modinv, A = 2, N = 3
+mpi_core_gcd_modinv_odd:"2":"3":"1":"2"
+
+GCD-modinv, A = 3, N = 3
+mpi_core_gcd_modinv_odd:"3":"3":"3":""
+
+GCD-modinv, A = 0, N = 5
+mpi_core_gcd_modinv_odd:"0":"5":"5":""
+
+GCD-modinv, A = 1, N = 5
+mpi_core_gcd_modinv_odd:"1":"5":"1":"1"
+
+GCD-modinv, A = 2, N = 5
+mpi_core_gcd_modinv_odd:"2":"5":"1":"3"
+
+GCD-modinv, A = 3, N = 5
+mpi_core_gcd_modinv_odd:"3":"5":"1":"2"
+
+GCD-modinv, A = 4, N = 5
+mpi_core_gcd_modinv_odd:"4":"5":"1":"4"
+
+GCD-modinv, A = 5, N = 5
+mpi_core_gcd_modinv_odd:"5":"5":"5":""
+
+GCD-modinv, A = 0, N = 7
+mpi_core_gcd_modinv_odd:"0":"7":"7":""
+
+GCD-modinv, A = 1, N = 7
+mpi_core_gcd_modinv_odd:"1":"7":"1":"1"
+
+GCD-modinv, A = 2, N = 7
+mpi_core_gcd_modinv_odd:"2":"7":"1":"4"
+
+GCD-modinv, A = 3, N = 7
+mpi_core_gcd_modinv_odd:"3":"7":"1":"5"
+
+GCD-modinv, A = 4, N = 7
+mpi_core_gcd_modinv_odd:"4":"7":"1":"2"
+
+GCD-modinv, A = 5, N = 7
+mpi_core_gcd_modinv_odd:"5":"7":"1":"3"
+
+GCD-modinv, A = 6, N = 7
+mpi_core_gcd_modinv_odd:"6":"7":"1":"6"
+
+GCD-modinv, A = 7, N = 7
+mpi_core_gcd_modinv_odd:"7":"7":"7":""
+
+GCD-modinv, A = 0, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"0":"ffffffffffffffff":"ffffffffffffffff":""
+
+GCD-modinv, A = 1, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"1":"ffffffffffffffff":"1":"1"
+
+GCD-modinv, A = 2, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"2":"ffffffffffffffff":"1":"8000000000000000"
+
+GCD-modinv, A = 3, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"3":"ffffffffffffffff":"3":""
+
+GCD-modinv, A = 4, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"4":"ffffffffffffffff":"1":"4000000000000000"
+
+GCD-modinv, A = 5, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"5":"ffffffffffffffff":"5":""
+
+GCD-modinv, A = 6, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"6":"ffffffffffffffff":"3":""
+
+GCD-modinv, A = 7, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"7":"ffffffffffffffff":"1":"db6db6db6db6db6d"
+
+GCD-modinv, A = 2^64 - 1, N = 2^64 - 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"ffffffffffffffff":"ffffffffffffffff":""
+
+GCD-modinv, A = 0, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"0":"10000000000000001":"10000000000000001":""
+
+GCD-modinv, A = 1, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"1":"10000000000000001":"1":"1"
+
+GCD-modinv, A = 2, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"2":"10000000000000001":"1":"8000000000000001"
+
+GCD-modinv, A = 3, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"3":"10000000000000001":"1":"5555555555555556"
+
+GCD-modinv, A = 4, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"4":"10000000000000001":"1":"c000000000000001"
+
+GCD-modinv, A = 5, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"5":"10000000000000001":"1":"6666666666666667"
+
+GCD-modinv, A = 6, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"6":"10000000000000001":"1":"2aaaaaaaaaaaaaab"
+
+GCD-modinv, A = 7, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"7":"10000000000000001":"1":"4924924924924925"
+
+GCD-modinv, A = 2^64 - 1, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"10000000000000001":"1":"8000000000000000"
+
+GCD-modinv, A = 2^64, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"10000000000000000":"10000000000000001":"1":"10000000000000000"
+
+GCD-modinv, A = 2^64 + 1, N = 2^64 + 1
+mpi_core_gcd_modinv_odd:"10000000000000001":"10000000000000001":"10000000000000001":""
+
+GCD-modinv, A = 0, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"0":"ffffffffffffffffffffffffffffffff":"ffffffffffffffffffffffffffffffff":""
+
+GCD-modinv, A = 1, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"1":"ffffffffffffffffffffffffffffffff":"1":"1"
+
+GCD-modinv, A = 2, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"2":"ffffffffffffffffffffffffffffffff":"1":"80000000000000000000000000000000"
+
+GCD-modinv, A = 3, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"3":"ffffffffffffffffffffffffffffffff":"3":""
+
+GCD-modinv, A = 4, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"4":"ffffffffffffffffffffffffffffffff":"1":"40000000000000000000000000000000"
+
+GCD-modinv, A = 5, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"5":"ffffffffffffffffffffffffffffffff":"5":""
+
+GCD-modinv, A = 6, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"6":"ffffffffffffffffffffffffffffffff":"3":""
+
+GCD-modinv, A = 7, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"7":"ffffffffffffffffffffffffffffffff":"1":"49249249249249249249249249249249"
+
+GCD-modinv, A = 2^64 - 1, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"ffffffffffffffffffffffffffffffff":"ffffffffffffffff":""
+
+GCD-modinv, A = 2^64, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"10000000000000000":"ffffffffffffffffffffffffffffffff":"1":"10000000000000000"
+
+GCD-modinv, A = 2^64 + 1, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"10000000000000001":"ffffffffffffffffffffffffffffffff":"10000000000000001":""
+
+GCD-modinv, A = 2^128 - 1, N = 2^128 - 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"ffffffffffffffffffffffffffffffff":"ffffffffffffffffffffffffffffffff":""
+
+GCD-modinv, A = 0, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"0":"100000000000000000000000000000001":"100000000000000000000000000000001":""
+
+GCD-modinv, A = 1, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"1":"100000000000000000000000000000001":"1":"1"
+
+GCD-modinv, A = 2, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"2":"100000000000000000000000000000001":"1":"80000000000000000000000000000001"
+
+GCD-modinv, A = 3, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"3":"100000000000000000000000000000001":"1":"55555555555555555555555555555556"
+
+GCD-modinv, A = 4, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"4":"100000000000000000000000000000001":"1":"c0000000000000000000000000000001"
+
+GCD-modinv, A = 5, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"5":"100000000000000000000000000000001":"1":"66666666666666666666666666666667"
+
+GCD-modinv, A = 6, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"6":"100000000000000000000000000000001":"1":"2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+
+GCD-modinv, A = 7, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"7":"100000000000000000000000000000001":"1":"92492492492492492492492492492493"
+
+GCD-modinv, A = 2^64 - 1, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"100000000000000000000000000000001":"1":"7fffffffffffffff8000000000000000"
+
+GCD-modinv, A = 2^64, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"10000000000000000":"100000000000000000000000000000001":"1":"ffffffffffffffff0000000000000001"
+
+GCD-modinv, A = 2^64 + 1, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"10000000000000001":"100000000000000000000000000000001":"1":"7fffffffffffffff8000000000000001"
+
+GCD-modinv, A = 2^128 - 1, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"100000000000000000000000000000001":"1":"80000000000000000000000000000000"
+
+GCD-modinv, A = 2^128, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"100000000000000000000000000000001":"1":"100000000000000000000000000000000"
+
+GCD-modinv, A = 2^128 + 1, N = 2^128 + 1
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"100000000000000000000000000000001":"100000000000000000000000000000001":""
+
+GCD-modinv, A = 0, N = prime192[1]
+mpi_core_gcd_modinv_odd:"0":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":""
+
+GCD-modinv, A = 1, N = prime192[1]
+mpi_core_gcd_modinv_odd:"1":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"1"
+
+GCD-modinv, A = 2, N = prime192[1]
+mpi_core_gcd_modinv_odd:"2":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"68e093d333bc3381c1828001c75d779072d1f16e1bc7dbae"
+
+GCD-modinv, A = 3, N = prime192[1]
+mpi_core_gcd_modinv_odd:"3":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"45eb0d3777d2cd012bac555684e8fa604c8bf64967da9274"
+
+GCD-modinv, A = 4, N = prime192[1]
+mpi_core_gcd_modinv_odd:"4":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"347049e999de19c0e0c14000e3aebbc83968f8b70de3edd7"
+
+GCD-modinv, A = 5, N = prime192[1]
+mpi_core_gcd_modinv_odd:"5":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"29f36e547b18149a4d6766671c8bc96cfaba6092718324ac"
+
+GCD-modinv, A = 6, N = prime192[1]
+mpi_core_gcd_modinv_odd:"6":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"22f5869bbbe9668095d62aab42747d302645fb24b3ed493a"
+
+GCD-modinv, A = 7, N = prime192[1]
+mpi_core_gcd_modinv_odd:"7":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"95d31c5249e84994cb4cb6ddf83c61a9c899a20b031d82f8"
+
+GCD-modinv, A = 2^64 - 1, N = prime192[1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"cda419bc9242704587c3fac9f8634efe7509c47b74f546e"
+
+GCD-modinv, A = 2^64, N = prime192[1]
+mpi_core_gcd_modinv_odd:"10000000000000000":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"7469374ce074d3bb50275cec6ca2ffa0dc688630fa4c106e"
+
+GCD-modinv, A = 2^64 + 1, N = prime192[1]
+mpi_core_gcd_modinv_odd:"10000000000000001":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"314ff4e7e292a8d0abe00bb47c0145356ebe579a95e5a8d4"
+
+GCD-modinv, A = 2^128 - 1, N = prime192[1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"bf864e005ac1261d595319ffa07d66fe21ed0532c8448d28"
+
+GCD-modinv, A = 2^128, N = prime192[1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"8f10c2c4881dc01446c597e12b0f54be01141e8b5a1ffa9d"
+
+GCD-modinv, A = 2^128 + 1, N = prime192[1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"49ccc70f63e4f9ab7a981566e7a6c16b9888b86122d8acfa"
+
+GCD-modinv, A = prime192[1], N = prime192[1]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":""
+
+GCD-modinv, A = rand192[2.1], N = prime192[1]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"84337a5bd50c1c84a2aa7b68b354b719144b0dbedd6f4135"
+
+GCD-modinv, A = rand192[2.2], N = prime192[1]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"9c52f58a6cfb556c6e8207073df44c2a1957d815cfe70977"
+
+GCD-modinv, A = rand192[2.3], N = prime192[1]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"b027048459e50c7570e5cbdcec2cee9db3a85759b744d307"
+
+GCD-modinv, A = rand192[2.9], N = prime192[1]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"1":"625f3804e9131990978928e34847b1a33dd267f75385ef0e"
+
+GCD-modinv, A = 0, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"0":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":""
+
+GCD-modinv, A = 1, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"1":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"1"
+
+GCD-modinv, A = 2, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"2":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"13aa1bb799b349a8544878005561866b15875d44a53579309"
+
+GCD-modinv, A = 3, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"3":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"3":""
+
+GCD-modinv, A = 4, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"4":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"1d7f2993668cee7c7e6cb400801249a0a04b0be6f7d035c8d"
+
+GCD-modinv, A = 5, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"5":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"fbb495fae2907b9dd06c666aab46b88de05e436ea912dc07"
+
+GCD-modinv, A = 6, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"6":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"3":""
+
+GCD-modinv, A = 7, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"7":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"1679443f8b160b0984e51b6e186f750caae3d84e73aad3a53"
+
+GCD-modinv, A = 2^64 - 1, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"3":""
+
+GCD-modinv, A = 2^64, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"10000000000000000":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"217eb8699af65a1c256315cf38a18dde2a7b04be9696b7f24"
+
+GCD-modinv, A = 2^64 + 1, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"10000000000000001":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"103111c8e4a0b0fd42ee50bb80abc345654623a76cd75602f"
+
+GCD-modinv, A = 2^128 - 1, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"3":""
+
+GCD-modinv, A = 2^128, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"232931211570e8e1b4ccf97e8488532ffcc5be443c93f6953"
+
+GCD-modinv, A = 2^128 + 1, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"11b8deeb5cb5d60aefd9d156a7661b08c7e2c9b3d5a686455"
+
+GCD-modinv, A = prime192[1], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":""
+
+GCD-modinv, A = prime192[1] * 2, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":""
+
+GCD-modinv, A = prime192[1] * 3, N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":""
+
+GCD-modinv, A = rand192[2.1], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"155f4a2023c84838825af7b6c420fa639f9eef09b14fef890"
+
+GCD-modinv, A = rand192[2.2], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"9c52f58a6cfb556c6e8207073df44c2a1957d815cfe70977"
+
+GCD-modinv, A = rand192[2.3], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"b027048459e50c7570e5cbdcec2cee9db3a85759b744d307"
+
+GCD-modinv, A = rand192[2.4], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"1":"1c79e1d39e4952e04a5bc402024071837f95d9e5875a6747b"
+
+GCD-modinv, A = rand192[2.9], N = prime192[1] * 3
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"3":""
+
+GCD-modinv, A = 0, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"0":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":""
+
+GCD-modinv, A = 1, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"1":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"1"
+
+GCD-modinv, A = 2, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"2":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"bb90ce9873d134fecadd7e47952693dee7a5dccfa5f54ba"
+
+GCD-modinv, A = 3, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"3":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"7d0b3465a28b78a9dc93a9850e19b7e9efc3e88a6ea387c"
+
+GCD-modinv, A = 4, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"4":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"5dc8674c39e89a7f656ebf23ca9349ef73d2ee67d2faa5d"
+
+GCD-modinv, A = 5, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"5":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"5":""
+
+GCD-modinv, A = 6, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"6":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"3e859a32d145bc54ee49d4c2870cdbf4f7e1f4453751c3e"
+
+GCD-modinv, A = 7, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"7":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"35971674b3605848cc3f48a6bce67364422f63a90ad85ec"
+
+GCD-modinv, A = 2^64 - 1, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"5":""
+
+GCD-modinv, A = 2^64, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"10000000000000000":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"8709cd54272e61fbe950040cc2eb26e756173829d7ffe67"
+
+GCD-modinv, A = 2^64 + 1, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"10000000000000001":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"531e5ca084d3e6693a2eaf00b636b47a70122529ba1266e"
+
+GCD-modinv, A = 2^128 - 1, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"5":""
+
+GCD-modinv, A = 2^128, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"16c60467a9cb18fd132848c4caa869fbfb4652b1d64f4ac8"
+
+GCD-modinv, A = 2^128 + 1, N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"1":"c2cf8da6993f4bedfe0c2495b7e73ad1db4ac7804b852fa"
+
+GCD-modinv, A = rand192[2.1], N = rand192[2.1]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":""
+
+GCD-modinv, A = 0, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"0":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":""
+
+GCD-modinv, A = 1, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"1":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"1"
+
+GCD-modinv, A = 2, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"2":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"678c117fde3443bc15a488226af1a0922e37219b8add15ef"
+
+GCD-modinv, A = 3, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"3":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"45080baa9422d7d2b9185ac19ca115b6c97a1667b1e8b94a"
+
+GCD-modinv, A = 4, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"4":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"9b521a3fcd4e659a2076cc33a06a70db4552b269504ba0e6"
+
+GCD-modinv, A = 5, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"5":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"7c41ae99710b847b4d2bd68fb3885a4904422854403c80b8"
+
+GCD-modinv, A = 6, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"6":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"228405d54a116be95c8c2d60ce508adb64bd0b33d8f45ca5"
+
+GCD-modinv, A = 7, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"7":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"b1826724585998b0251a0df1dbe75c684f39f0785bc42599"
+
+GCD-modinv, A = 2^64 - 1, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"165fbde3178cee520583fb99dfb11da4583ad3337eed0d80"
+
+GCD-modinv, A = 2^64, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"10000000000000000":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"500c8149670dc3a13ac9c942ee1120d52d90bd4fe812b9e4"
+
+GCD-modinv, A = 2^64 + 1, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"10000000000000001":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"2a00bb564389d64242cfde17af818ca986c94dbb8a98b60d"
+
+GCD-modinv, A = 2^128 - 1, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"5dbb92c64835cfc3f6fe96e38309690f96efe457850741a8"
+
+GCD-modinv, A = 2^128, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"1583af3289002f763685a5b538213fba8813a85c7c13f32"
+
+GCD-modinv, A = 2^128 + 1, N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"1e92f517c7b73cd5cc159fa9bf8984776a899c4d78009c2"
+
+GCD-modinv, A = rand192[2.1], N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"b":""
+
+GCD-modinv, A = rand192[2.2], N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":""
+
+GCD-modinv, A = rand192[2.3], N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"1":"5cc3d311a7d6cb50c5a2a2a90ed08fd5422d509b4455ee7f"
+
+GCD-modinv, A = rand192[2.9], N = rand192[2.2]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"b":""
+
+GCD-modinv, A = 0, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"0":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":""
+
+GCD-modinv, A = 1, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"1":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"1"
+
+GCD-modinv, A = 2, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"2":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"1b29fc6ecd8f94172033e1ac277103fc6d4a71f455b9b9c8"
+
+GCD-modinv, A = 3, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"3":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2437fb3e676a1ac980452ce589ec055091b897f0724cf7b5"
+
+GCD-modinv, A = 4, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"4":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"d94fe3766c7ca0b9019f0d613b881fe36a538fa2adcdce4"
+
+GCD-modinv, A = 5, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"5":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2b7660b148e5b9be99ec9c46a5819ffa48771cba22c2c2d9"
+
+GCD-modinv, A = 6, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"6":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2d45fa0e0144a17be056781eec6706a4b626bdec8ee035a2"
+
+GCD-modinv, A = 7, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"7":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"26ce440c011641459bb7d4accaa173689c213513e82de4d4"
+
+GCD-modinv, A = 2^64 - 1, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2b203990e6fde7cde664f13d907fd8a4c34ab8cbb4f78727"
+
+GCD-modinv, A = 2^64, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"10000000000000000":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2120581ea9b95767ca53bb873eaf454e164cbcea837eaab"
+
+GCD-modinv, A = 2^64 + 1, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"10000000000000001":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"e20b14463fd7418b5a0ea4892161cdc2a10c43d49f463e6"
+
+GCD-modinv, A = 2^128 - 1, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"29a9c0950f0fcdf1b895e526a6a5e1e0b9e76c3b8b3b4b68"
+
+GCD-modinv, A = 2^128, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"1d90732feda6a3c5677e3c2f86d6fe1f419ebd30b9573e9c"
+
+GCD-modinv, A = 2^128 + 1, N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"2430ae8b3ca6bf3d35a597ddb102000e4893ebaf3adc2c63"
+
+GCD-modinv, A = rand192[2.1], N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"27d44624513e54f9f0200cb52ca2a642fcf0c546d3a78165"
+
+GCD-modinv, A = rand192[2.3], N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":""
+
+GCD-modinv, A = rand192[2.9], N = rand192[2.3]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"1":"1f14746d4d713fc28ea1b577904d443fcb60b53d8e248fb2"
+
+GCD-modinv, A = 0, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"0":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":""
+
+GCD-modinv, A = 1, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"1":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"1"
+
+GCD-modinv, A = 2, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"2":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"7ff6c91a9445e3c0d733133aca64e4a80492f23a4dabade9"
+
+GCD-modinv, A = 3, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"3":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"554f30bc62d942808f77622731989870030ca17c33c7c946"
+
+GCD-modinv, A = 4, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"4":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"bff22da7de68d5a142cc9cd82f9756fc06dc6b57748184dd"
+
+GCD-modinv, A = 5, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"5":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"ccbe0e90ed3c9f9af1eb51f7aa3b07733a84b6c3af791641"
+
+GCD-modinv, A = 6, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"6":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"2aa7985e316ca14047bbb11398cc4c38018650be19e3e4a3"
+
+GCD-modinv, A = 7, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"7":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"491f4e5854ba39007af89d462a82cbcdb9788a6a7586ac85"
+
+GCD-modinv, A = 2^64 - 1, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"b0bba9271ad94be5c7bf490d92215450b7df795661d7f7c0"
+
+GCD-modinv, A = 2^64, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"10000000000000000":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"404151f21000736e2e88d2afc8873564d05b0ebf4a2caa2c"
+
+GCD-modinv, A = 2^64 + 1, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"10000000000000001":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"644f0bb5b0dd9a9fb86ac91820557cb42f787c003cdc0215"
+
+GCD-modinv, A = 2^128 - 1, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"a62d17d34943bc63dedd5335834ad07648c670e56029a8be"
+
+GCD-modinv, A = 2^128, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"ceea0a37271eee58f338e8b91128637d2d7e9948f1704874"
+
+GCD-modinv, A = 2^128 + 1, N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"6426bfb8e2f0166470f2d193ffa1db5d34a287dbc7441782"
+
+GCD-modinv, A = prime192[1], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"d3deeadf41c733ba0a85091f54863ffe28aaa43b2fa23915"
+
+GCD-modinv, A = rand192[2.1], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"b":""
+
+GCD-modinv, A = rand192[2.2], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"b":""
+
+GCD-modinv, A = rand192[2.3], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"1":"67b69c600b7a49e8923acb9c85b23f564cf10614a1756590"
+
+GCD-modinv, A = rand192[2.4], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":""
+
+GCD-modinv, A = rand192[2.9], N = rand192[2.4]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"b":""
+
+GCD-modinv, A = 0, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"0":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":""
+
+GCD-modinv, A = 1, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"1":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"1"
+
+GCD-modinv, A = 2, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"2":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"150df4e6c34bdde871290719f226282ab638e25330a45438"
+
+GCD-modinv, A = 3, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"3":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"3":""
+
+GCD-modinv, A = 4, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"4":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"a86fa7361a5eef43894838cf91314155b1c712998522a1c"
+
+GCD-modinv, A = 5, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"5":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"5":""
+
+GCD-modinv, A = 6, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"6":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"3":""
+
+GCD-modinv, A = 7, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"7":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"7":""
+
+GCD-modinv, A = 2^64 - 1, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"ff":""
+
+GCD-modinv, A = 2^64, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"10000000000000000":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"1149983586ed2be8e91651bccd08e3238d6c463f7ee187fd"
+
+GCD-modinv, A = 2^64 + 1, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"10000000000000001":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"416742a8126a89f0ce28a80f8da33531d1314663fb48f55"
+
+GCD-modinv, A = 2^128 - 1, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"ff":""
+
+GCD-modinv, A = 2^128, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"ff6761de416aefad351718f8d879666e7aac1458966e917"
+
+GCD-modinv, A = 2^128 + 1, N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"1":"18468780830377019d3f2a2f1b30cc51d03bd8b660955198"
+
+GCD-modinv, A = rand192[2.1], N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"37":""
+
+GCD-modinv, A = rand192[2.9], N = rand192[2.9]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":""
+
+GCD-modinv, A = 0, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"0":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":""
+
+GCD-modinv, A = 1, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"1":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"1"
+
+GCD-modinv, A = 2, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"2":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"649dd3f63a6cb7a08dd0045edbc731ff88ddaefa3528f0b5964e8ab7c7270c55faf0296580fa3e868c92d3bfb04c8abbf0947db7a979a513ca852ca5d56e9ec02bd5f5911679e654b16d8b55fbcf956d2de94d597a89225f94af7fcfb555d098177e224d8945f3af7565025e1e0d0aae88e8a745f195164143d9ccb67b56a912"
+
+GCD-modinv, A = 3, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"3":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"4313e2a426f32515b3e002e9e7da215505e91f5178c5f5ce64345c7a84c4b2e3fca01b9900a6d459b30c8d2a75885c7d4b0da9251ba66e0d31ae1dc3e39f14801d394e60b9a6998dcb9e5ce3fd350e48c9463390fc5b6c3fb874ffdfce3935baba5416de5b83f7ca4e4356e9695e071f05f06f83f663642b829133245239c60c"
+
+GCD-modinv, A = 4, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"4":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"324ee9fb1d365bd046e8022f6de398ffc46ed77d1a94785acb27455be393862afd7814b2c07d1f43464969dfd826455df84a3edbd4bcd289e5429652eab74f6015eafac88b3cf32a58b6c5aafde7cab696f4a6acbd44912fca57bfe7daaae84c0bbf1126c4a2f9d7bab2812f0f068557447453a2f8ca8b20a1ece65b3dab5489"
+
+GCD-modinv, A = 5, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"5":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"283f2195b0f849736becce8c57e94733038bdf974876c6af08ec377cb60f9e88cac676f566ca7f69050787e64685044b2d08324976fd753b1dcedea8bbc5d919ab22623a08fd8f5513c56aef31863bc545908556fdd074263b796653155586a33c98da856a1bfb12fbc200f2726b9ddf69f6a94f2d6ed5b3b4bd8515caef76d4"
+
+GCD-modinv, A = 6, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"6":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"2189f1521379928ad9f00174f3ed10aa82f48fa8bc62fae7321a2e3d42625971fe500dcc80536a2cd98646953ac42e3ea586d4928dd3370698d70ee1f1cf8a400e9ca7305cd34cc6e5cf2e71fe9a872464a319c87e2db61fdc3a7fefe71c9add5d2a0b6f2dc1fbe52721ab74b4af038f82f837c1fb31b215c1489992291ce306"
+
+GCD-modinv, A = 7, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"7":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"8fbce5a8e5bfe1c0ca96e1ac1565b523e8181e8a02ccc595b2270f4faeca119f667ba8da25f7c7095b1ae55afbdb0f55a0d4214f8464a2ae8f07645a9e9e075bac563a3cfb89922fd8e5a27ad571b0e51d04255b4156311ad4686d71de7a97b4b3d8c34a31d1a543cc4727f42aee0f427a70eef6348bd6a660edffe01de983d0"
+
+GCD-modinv, A = 2^64 - 1, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"8a298a90608f99b21226024111084ba7fea6fb6be2b8e064ad39da31ce98bb6e571e0b5d2570bb24e01551a2f9a718f18fbcb7dc48029fd7574cfb9260d2e1aeab63f07f641580a01a5476622d2b54db4396ec138c9c4a71ada18607e4582be4c08da6393552059db9f915dd4ce9223afe98ef98edef51dba5149031b6f0f476"
+
+GCD-modinv, A = 2^64, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"10000000000000000":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"13e335e8ffc3f37cfde3a748d09f69da7cf9b698ff217a65d3f51ec13004e38c8481261bc6f91bdd5222a18051c8734afe7eee1ffa0323c267139d4017a7c657447ae90a8c5d8043090e7c8dd1a9412529aac754e0cbcfc46771aade31da7cc22e83f46c0316c41bc6b870cbf93bf617cdbd64d04f12f4ac80322503dd9a9b14"
+
+GCD-modinv, A = 2^64 + 1, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"10000000000000001":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"5a6ef438de3b0baf8198959dd11b7b426654d65c8b7e4e9acd51248a87a1871670b3ecbd205098db1f31ae74db7e0e167fa270f5bfca5eba2d32c6f3713874954bf85ad92c95e7febc01fa240346382109fa998a31da3395b89beaa7a71eaa58f7363404063bdba93317f2f5585188103bc713a5b3c87ffe5a80d97eb038bbb9"
+
+GCD-modinv, A = 2^128 - 1, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"7c7b1f21fb96fea1d616bab07bbd9a325506c181e0c6399a8642e58b6aa2a681ee2538b5838a4fab6d04a556bf61102978a1a12aed95c5a25f9246f54d3bd54cdb8bc0643239b2a56096c97510c223ca4ab7769e27ea2dcd8f324d7fd3f2915dfc29db6820d108a9b8d593d21858d7c3ea51953f8ea87f2fe923a80ffeb2c570"
+
+GCD-modinv, A = 2^128, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"6e0b2b0ef9afaa5a7bb3aea18095a58bb66b4da7cddbd99a0f8cf2735f4736f78899897374c9fecd51fc65bdd54c029875aef7abf20fc2a90d41800069ae8408e17eb1a860307fd580f8349c0388e05b344f94245ef5ddc68b2b0ca1dde6f44ec04ea7d782ce86171c96c485594d7fea252438df82d50cd2afc4b108c02f559c"
+
+GCD-modinv, A = 2^128 + 1, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"88dc04f1ead28d542e04f55df42d5e6df62adac5f69467cd953e11bca7573ae4c962a029369507b0b0a53c97be8d9581eed5376ad86205948572cfb514260078dd392c49c2cd30173ff2dfe5a56e60ea244debb1ec74271378c4af5d9341a5fa84daa7c6ef57f144800a019b948c485e5620ebf7247433cdafc72092ad46d936"
+
+GCD-modinv, A = prime192[1], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"4cab457ef40c12bfc0b93f2d688cb61f00e2ae7ace333cd293d2f202d7aa651ed2446b2b1ee8864b20049e51925d326d3696ff8bd33538858fb6c8a64de10a0c1b94c7b9cc7c4351e49ae273b5691ee419dacbcca76180e7f1be5ae9fed80dbf41e187ab40c659c0e1d89b2aa4d3b220a4c43225fe254a9229da9b089b4f0f75"
+
+GCD-modinv, A = prime192[1] * 2, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"8af376b5b472c1006e2ca3f5900d8d0f094f06379c428f1ee03803b932fc3ee564125efb106e81ac1c9522e8797b23f28bdffd7d93144156926090f8fc5f23c639a0596dfcb807fda3bafc8fd68424df3ad6b33fce39e2d38d8ead44b4c1d777b86ee62329a9208fe6514ff37076e3bedb4ac058f0a7bb8a58c71a3ac8fe30cc"
+
+GCD-modinv, A = prime192[1] * 3, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"198e6c7fa6aeb0ea9593150f22d9920a55a0e4d39a111446314650ab9d38cc5f9b6c23b90a4d82190aac34c5db7466246787aa83f111bd81da9242e219f5ae04093197e8997ec11b4c33a0d13c785fa15df3994437cb2af7fb3f73a354f2af3fc0a0828e6aecc895a09d890e36f13b6036ec10b754b718db6348de5833c50527"
+
+GCD-modinv, A = rand192[2.1], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"6a69240378c8e19fe83045bb42006f4c636250fc31b11c8a4325a5d0f300692f7d8d364c488064ac501fbd615d08ea56f529908ea701f4c54c14188142a8f3e0f4a6e6df3c05616ee7be65ab0578d1cfc134c5466c7171ec84f3ce627333f8c3ad00e7ccdc7cab63a6d691bdef9386f2ab1f5a4c8ce94a1f9879f95fec564b3f"
+
+GCD-modinv, A = rand192[2.2], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"75ca961bfd1d565a37fb2828f6884d6d8d519834d9770da9d8d2311126de51386ae85ff268da8e84447d6aaf91581c468d159ccac3f1deebaf4f1b098e5642e9f6f2454a30046594ee3d8cc03aadec2703f166000d904b1595b339f7e132225665774dddd24d73a789f60bfbcef306f9c7add41d3b60b2a99bbc923984fa7092"
+
+GCD-modinv, A = rand192[2.3], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"411051de6fe70fd9aea76eff4e5a00311884d698495743d2c6ab051ec4b37f7a6c7761d4ced106241d1b46a1cc7e86c29263c23d9ef5cde1d758a04a3bca0542a936f79b39f0a1904bf5fbf57d54bfa4cab423bfebabec3755d901acaad940e4aba184a7d338f74dc7c0047b4feb43c2e2871dd624292844f40ee3205d947ed5"
+
+GCD-modinv, A = rand192[2.4], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"32ee46a903d2f5f270d2c4d60596683ca629caf7df38b8d2179f1e90e95dd4c98ffc062eb39a0fb4ad7575f0939237be7d21fff22bc770ff1158b7d7369bb8311571dc430f94d9cef30739bf7482360e6768bdefd98a1f7304b5b333e136c44a5f230f88dfd3b79b1c80ec05933308cc41cf260ce0c9cee5aa053c7e5712da04"
+
+GCD-modinv, A = rand192[2.9], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"9fdf836f2ed6a4fd98815fc7df7d392e77002bdaa395283cf54dbbb1ac88e2c3db2c81306a8f6b0495c196281f4664c533fea8aad094c33ddaf15fe28f98483c336d452eb5b9a74b6bd0414e3aa60410a68749ce5ef593025428394f9cc984cdf900ae79c256cee30db9aacd80b83fe54eb4cb2971a5e217a23fc6592b54503f"
+
+GCD-modinv, A = prime1024[3], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":""
+
+GCD-modinv, A = rand1024[4.1], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"9674bede084691df42953cfede313fc2d93a1daccc1244ea64dd19902f46abd53880670e3eb966b2d4ba55e967e8d2785a2592e5574fbf006a1799c3d397b38a1d7e92daacb2b4013cef3b6789e212862a292c203ecd5941aeeaf8457ad71c071e64464fbaf4da10efb862904aea185047bcecb84ef69ae6c11f9ccc7aef580e"
+
+GCD-modinv, A = rand1024[4.3], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"14c15c910b11ad28cc21ce88d0060cc54278c2614e1bcb383bb4a570294c4ea3738d243a6e58d5ca49c7b59b995253fd6c79a3de69f85e3131f3b9238224b122c3e4a892d9196ada4fcfa583e1df8af9b474c7e89286a1754abcb06ae8abb93f01d89a024cdce7a6d7288ff68c320f89f1347e0cdd905ecfd160c5d0ef412ed6":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"a2c3792cec142b9e28a3fdaa356f16ae16639b0d9293ce9e5f7ccde66ac8983c29dd191e5293a184db0112039caa4fe805c42c97c0d97d7bd5b6288d9065eb2c4f1fd557c35acc5020e29619864f9d16375b7507c6edffa647fb2e88a22198d207f11ff9b1c6bba7a9bd96054561d781fcacb76cd982dd0f8f0b89deaf4dad75"
+
+GCD-modinv, A = rand1024[4.4], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"32decd6b8efbc170a26a25c852175b7a96b98b5fbf37a2be6f98bca35b17b9662f0733c846bbe9e870ef55b1a1f65507a2909cb633e238b4e9dd38b869ace91311021c9e32111ac1ac7cc4a4ff4dab102522d53857c49391b36cc9aa78a330a1a5e333cb88dcf94384d4cd1f47ca7883ff5a52f1a05885ac7671863c0bdbc23a":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"5e9c1ed3f9813790a165700917b2a2863aeece1e6f8da8eae412199ec397c4f5dc1f4b0d4d1d7f7836488974b70e98a90e1271275a1c111d4e01ba96ca3ad35fd5b7e6b475d9e7339dfa393b268f87a10a576c0d1a8691256c36f0f4aa93d4c8671e0bb3b50d55ec9b0bc233ee260934171981be51f8fa644858c109ce5feb4a"
+
+GCD-modinv, A = rand1024[4.5], N = prime1024[3]
+mpi_core_gcd_modinv_odd:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"2a5d07b592fd94c4d654638d8d707c9d233a69b7514657f1d10aa8ce8c205f9cd395fdefa3c6dc98e80fabc58b03cffa8ba4ffa1f983ecc15790c9bae722a5af2643de76f6db291e04e6ef31379b714f8b34d8d8ebdf7994936b0fe6554915e5a6999d0761620a566f92a796b65c6ba8294e9cba4f2b618d799f91896d8b568b"
+
+GCD-modinv, A = rand1024[4.5] * 2, N = prime1024[3]
+mpi_core_gcd_modinv_odd:"a77c8e43eb73c3eb59b58c2b7841ec4c92457399e8d35df1edcfa0f1cab70bba2a4be6c765037110b6d3b84615eb590e0d256a68eb0481be94f4060a5ae67b9bde815e5ca9819cd03e89d7a2798ebe7db9650bf13b19e9a92a162dff87c358768e11b312752e60016a9446041f8b6087adc94a2a33b39398a5a646efcf026382":"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"1":"79cc57d103eb8202f8fa3625a27f704e1a7ae3d5ddcc1cae7ed3df1f0d373c2464bb285d52ddacd3009aa9a275ce72b93666fd88a63b9b74764d918348fff197bef7e4cc91e77ae3b3e102ee979d4e14f383b9c5f078df29de6507c2dffa5b8aeacaf0d139f6f8daad2e5629793b40829d8ff5a3192ac70800a9957b321c5457"
+
+GCD-modinv, A = 0, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"0":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":""
+
+GCD-modinv, A = 1, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"1":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"1"
+
+GCD-modinv, A = 2, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"2":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"3482934f6b78584f8b2e4671b717925a18006f00d976a0769d6ee659619df0563ceb3c9a36a563d2e1c8159c4b1ee37429a7a2b9c68247607884ce361f0d92c7eb92229667538ffa50a43b5757f8d04c652ccb33367559b02895e89888391188b8867a993d621ad3d4be321b2b20954dc50d5e68d348b63a6d27cfe1e36d2ec"
+
+GCD-modinv, A = 3, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"3":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"46036f148f4b206a0ee85decf41f6dcd7555e9567748d5f37c93ddcc8227eb1da68efb7848dc85192d0ac77b0ed3d9f0378a2e4d08adb480a0b112f2d412190a8f6d8373346f6aa316304f1f1ff66b1086e66444489c77958b728b760af6c20ba0b34e21a72d791a70fd98243980c7125c11d3366f0b9da33c35152d2f3c3e5"
+
+GCD-modinv, A = 4, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"4":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"1a4149a7b5bc2c27c5972338db8bc92d0c0037806cbb503b4eb7732cb0cef82b1e759e4d1b52b1e970e40ace258f71ba14d3d15ce34123b03c42671b0f86c963f5c9114b33a9c7fd28521dababfc6826329665999b3aacd8144af44c441c88c45c433d4c9eb10d69ea5f190d95904aa6e286af3469a45b1d3693e7f0f1b6976"
+
+GCD-modinv, A = 5, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"5":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"150107b95e3023530478e8fa493ca0f0d66692cd23c90cfc3ef928f08d7260227ec47ea415dbc1878d833bd81e0c5afb43dca77d829a82f36368527c0c6bd44ff7d40dd5c2ee39975374e48956638684f5451e147c2ef0acdd08c370367d3a36b035caa3b2273dee5518e0d7aad9d5524ed225c387b6af4a920fecc0c15edf8"
+
+GCD-modinv, A = 6, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"6":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"57844ad9b31de88492a2756831274940d2ab63ac151b0b705bb8d53fa2b1e5e51032ba565b13a65f784d7959d288d06c456cb9e04ad921a0c8dd57af89169f4d3348e450018b454bdbbc62e6e7f405d4a89ffd555ac3957aee4f2e538db4728e88e021aa10f8d7610d3cfe2d47e0f8d6f31648040ace850c0b425a787b0b4de"
+
+GCD-modinv, A = 7, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"7":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"7":""
+
+GCD-modinv, A = 2^64 - 1, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"11":""
+
+GCD-modinv, A = 2^64, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"10000000000000000":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"3924a54aba583f8d30120a33fbbe6038423021807de34898e3f10f32d766a003792f73ebb285b7e6280b5664db83daab3c54a140549e52ad517ee2e964b3a2a6e9e65932e14cc0f333ac1c8e80aacddd93729c7d9dfdc741dd36ee8ed40c050a2f6aff3ee8a079fb4279a07788ee4e79a24f060e2c2d274efa73d6ca5dcaef1"
+
+GCD-modinv, A = 2^64 + 1, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"10000000000000001":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"6062960fa8cf99c6f96026d3c1aaaecb0a6dcc90109d20139401751a02b5c65c276e3838d7bf1404fb35bf35c9c58f9b3ae5cd42e8c4bd00a7589be9b0393e215afc5bceddf26ebcc38067e27a7788a9ece995ca9184c3289b885642711fdfe7d9fe68bdd45eafe1cefda8f1b60ae41ded42784e809978647f401d54322e754"
+
+GCD-modinv, A = 2^128 - 1, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"11":""
+
+GCD-modinv, A = 2^128, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"6182e86d6341fdc9a2fe15246531578578258ae0109d82651fdfb8c8fc938826b966e2da94ebf56f40aab1453b24bcb07b5fc623f20c521e99522f3d48478319327d9578a68283dfca41061817023146170216d6d7b83776cb2c22bdd5f072624ee833e8e847624e277e15b2aa2c476028679130db1589c7ffcea32ac8a8a6b"
+
+GCD-modinv, A = 2^128 + 1, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"5c9283100fa641e0909d87a55f742994e97e86367c057c610dc599a4410e9d2bc95d4ff251767979f768857f5c6c1d737c738e0de42efae1c7c5d2708df3aa80479faa771ae2caee20b11a4e5f2558fff9ce89098618b20dd69b826492f6ef2e06703cdbc6feb1558522be6391b5dd138e7c17dce3e7c54d321156a7a742511"
+
+GCD-modinv, A = prime192[1], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"639ec24b879f24f4d669933d10b43359fbbe777e93ba00d01c8f44d434c380a0f4a821591eb5e550829bf67dc336d0a63403c6197ef68103e8fb20656c9b45ad16835b49f5e8afc354db52d12f531d457dd98a774957c0750390a05de621a097c55f581ad0165ac0d8456efcf0fc5aa87893b5c3d63e4825347a5ceec6528f1"
+
+GCD-modinv, A = prime192[1] * 2, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"6651f4752f47eac9f66310103f71ac0715dfaac02353a0deabb688c37bffb0a6b73f4d46c600567b231610db2cba4bc743a985c685fd87e26d025e68d55b359e76d3d03b6247e7dbfb11e4bfefa25eef2419906edb2139eaaa5e38c77b49e1d49b3626a6a56d483440e0e999a39ec2a20157394abe67da4d0764fe594696764"
+
+GCD-modinv, A = prime192[1] * 3, N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"67385a8311d58211010b8f014f0629961e956680a886d638db6e4a133e6915fdf81c5beb531926deade96efa4fe61f7cf38b7055885534d743af7314a2f0859996eea1e131124fe432796aba2fbcca27b0d9926c0bb9b7bc8ca2c0eaad01f7938d286b7fec8a420563bf67cddf2a3a9fd99865226120605a4db334277157c35"
+
+GCD-modinv, A = rand192[2.1], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"3a2d27918ed0eb7734d085f62c0df584c4cbb3819e9a37f174803efcb91f9ebd7c5b9cbf7d2136e12f24de1453fc70428d6ea33173139ef3207e5b83df6a6ce0acadef92479a54a9f0ca5d557c6955bf86a947db1ee56afc88ba53b7ab544d5823ae54d91b737a79edcea1de658dbf970f6579128e05aee19c07e58d8e915e8"
+
+GCD-modinv, A = rand192[2.2], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"3365d3177893d67f9d4c4fb1cc1d331147d341cb42054d46b5e03c3fe4382cbf71faea7c6fba7d1e6a3c79c6658fd316ef6b3da7e09746650865b9ebc3281f0f944262d8cee058c395903e8db665244750b78a9066bc32ac24abf8e31dce8064fe240bfda9e6829e21af498715410452a8bd8f5be4fce9bd938cbabe6dc9c43"
+
+GCD-modinv, A = rand192[2.3], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"63e9d2a280a66e3b825469940825cb04316a1bbb4cb28d4e087c1fb6a0f81c46cd15532ef53bd64ee23e2c2026dcc36520730bcbe82c0db2ec17e48bc8ea999a8b1dba8d66ba988d45b0a9e2b793d051686a42233331fc4c2283d4316eabcc0b19e11f04deb2b6b82eb43b34d767eb699ad585f380a652e13470ce7961284fd"
+
+GCD-modinv, A = rand192[2.4], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"1":"2db3d577ec52fec20d697993937b7e003b1fa6f20bbb78a8a30b39dc551a4c729d40e08c3cc2ec48e60cab3d36bffcd6d0ed4086e848cbe1022a801415c39361e89993164110b8d8baa4caa0892d05a0ec6a008a478f01cdc1c774aff60f9754040ee49cca199b597bcb54c7726396bb4d4d0d6177538db298aba46e8ebebbc"
+
+GCD-modinv, A = rand192[2.9], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"77":""
+
+GCD-modinv, A = rand1024[4.1], N = rand1024[4.1]
+mpi_core_gcd_modinv_odd:"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":""
+
+GCD-modinv, A = 0, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"0":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":""
+
+GCD-modinv, A = 1, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"1":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"1"
+
+GCD-modinv, A = 2, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"2":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"78e7ecc90b6fb24323d6f6133c9e87229fa8412496c1d4119fdb169640c317e4b1a7c037d5fa503e2b3001124d8c8dfa6c220dab0b1995652faa93b9f0a580c86c9c9b70ed651e037aff8601ddaeb9c2ef046550d040bc882512f23327a929d01518c3c298c27f93a2c8a16f66751322a1500201e7406258520215d9ea1a0d57"
+
+GCD-modinv, A = 3, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"3":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"a1353bb6b9ea43042fc94819a628b42e2a35ac30c90270177fcec8c856597530ecdfaaf51d4dc052e440016dbcbb67f8902d678eb97771dc3f8e1a4d40dcabb5e626249691dc2804a3ff5d57d23e4d03e95b31c115aba60adc1942eedf8c37c01c2105037658aa1a2e60d73f3346c42e2c6aad57df0083206d581d228d7811c9"
+
+GCD-modinv, A = 4, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"4":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"b55be32d91278b64b5c2711cdaedcab3ef7c61b6e222be1a6fc8a1e16124a3d70a7ba053c0f7785d40c8019b7452d4f7a233148090a66017c77fdd96e8f8412ca2eae9296417ad05387f4902cc8616a4668697f938611acc379c6b4cbb7dbeb81fa525a3e523bf5d742cf22719af9cb3f1f80302dae093847b0320c6df271402"
+
+GCD-modinv, A = 5, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"5":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"60b98a3a6f8c8e9c1cabf80f63b205b54c869a83abce43414caf4545009c131d5aec99c644c84031bc266741d7a3a4c85681a488d5ae111dbfbba9618d5133d38a16e2c0bdea7e692f32d19b17befb0258d0510d7366fd39b7425b5c1fba87d9aa7a36354701ffa94f06e78c51f742821aa6680185cd1b79db34de47ee7b3ddf"
+
+GCD-modinv, A = 6, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"6":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"c9828aa46864d3c53bbb9a200fb2e139b4c3173cfb430c1d5fc27afa6befd27d281795b264a130679d5001c92bea41f6b438c17267d54e534f71a0e09113d6a35fafadbc36533205ccff34adc6cde044e3b1fe315b168f8d931f93aa976f45b02329464453eed4a0b9f90d0f00187539b78558add6c0a3e888ae246b30d6163b"
+
+GCD-modinv, A = 7, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"7":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = 2^64 - 1, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"56c17de0c7e29c183e64105fd465230431b0ba13ff23e6f9f622b4e4435fdf62e3a124920bbcb831319285186be814689d7fa45a91c286730e132013afacaceaf6f04a15b92bf5fbf8bcd641a168d61f6f16710fcb93b8c3f6d2b63f6706f98b75ea79fb74f4a98c2067caac2048fa78b901373ba35cd2367d5d8430d198cfa8"
+
+GCD-modinv, A = 2^64, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"10000000000000000":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"b4c16fe37037d20261f46683d0204bc5ee36983c030866e518a259eb58790da1d7c850cbff6cc0620cbd050f1f8e62158dd9c5f68768927e6db9f32ff0fd22eb023d26429a6b6dbfc3f6431dcb20c3d0c083611b48102c84a0f304aa340b5887fe4be46870ba49773743d52da801013728b414a3429d0e27a4205059606be2b4"
+
+GCD-modinv, A = 2^64 + 1, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"10000000000000001":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"950e368c032f3cab212b06b20a97df4df5423fc8ca06a0cc78fcce3ecefdd333e341a78dd8e4ac46e5a28e9a30e1d6b45f4219195c44e1db809dbb41c38065b68a78d15f0b2983f694aa6e9b4eb7fbb89cfd4042ebebe95a2ed39794873611f827b61627d79f4724ed0e6bfa94ec1aa59f68602198b322d064dec23b17ffeef1"
+
+GCD-modinv, A = 2^128 - 1, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"59c190736dc961f9b2737aea218528fdbddf7e4a315077285e6e09e8faf41dfc31d77eb9ef6656335127fc516b0facd48b40d34ba5d867b0f6654622e6bba462a2d857cc446657062d08b9d5070726f65810fdb74014a43d0912818897919d99bc32f5ac676d30c73c7550c82c23830c2e1c6d8eec953a0b5e4176d4c6e67db2"
+
+GCD-modinv, A = 2^128, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"12357d1b0700e115025254949f04a07845b7de73bc4c8187ffe51945b5ce1b7a31e4bd47de47dbd8b7f9c1887c8460228403afba283dcd83065913d73e05efe6bb04b1cc35833eb0b1b2a2a0dce09d2000a2f67c10ece27ae25e402b9d9b4af5b65b81a0f7d7d5960b03ef8050cbe2b0de6814dfb08842cc1c1380b33fbc6c7f"
+
+GCD-modinv, A = 2^128 + 1, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"34bce97c4edb09996cf9fee5bfa8a579ce0f0413da19b04b6de54af5f63d3d197f43f8d4712bb17c55ad2d71e127a7a764fdf1126683d6a65b1cd234fde318dbdc33bca343e24d67527e8f86f7887e6b960dfc4cdd015433816e7484f06311a64e46e2d2318442307858926b50ed7e19cdb8165f553f066e4c8467084ff88ead"
+
+GCD-modinv, A = prime192[1], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"a124a0ce262cf5686c215f6f3309c79adc73956da78f3212fdd16a8d4e8a1ada0e0a9b0388004a34618c1a59e41153dee9a011ca3e6848695a414f1d4e5446a4110140cc2eedd4c282c574661a15f5da4b9d539918f0dd8b3c238a5028287429618c7d50942d89547e014faa97c9803a8aa811b0d81de049bb59eaf8241b4c06"
+
+GCD-modinv, A = prime192[1] * 2, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"5092506713167ab43610afb79984e3cd6e39cab6d3c799097ee8b546a7450d6d07054d81c400251a30c60d2cf208a9ef74d008e51f342434ad20a78ea72a23520880a0661776ea614162ba330d0afaed25cea9cc8c786ec59e11c52814143a14b0c63ea84a16c4aa3f00a7d54be4c01d455408d86c0ef024ddacf57c120da603"
+
+GCD-modinv, A = prime192[1] * 3, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"86517e201459734f91451931e4179ca009415d3cf1b0f36769d7dd3df0056e367b1e092666a6f8e592a4097f7fb8cff140a164601c33d1113ddcd23065351811a368d28f5892b043284180234726787563375f68e87b7233d76dcf9227d397edd93f56f1ec90d8294130db832191377fef18073c378a36fe1fca078ea81a7791"
+
+GCD-modinv, A = rand192[2.1], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"6592634ba91ea6d729ac3bdfdb2d5753ad8493b5c609f3784cc28e62b927abaa7defeb456df4757d54a1df173c927de9030f9465a7b484a767bf71f16d0109ee30bf19fda443be854c2e18059b5852cc01985dfa8471c146532cba87811b7af4c0cee8ddae2a3096a905c061a55225f06c86660658f732ae51e5fb7dbebde995"
+
+GCD-modinv, A = rand192[2.2], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"6a2df5f3d9f9b9a83761b5a31ef09e159d76c3e2431fb6a387144be5b0496c00f1f5d70a573f994c9cd6cba63994f868b7e38426369a1db1ea7bb694d47baec6ae927651c7b9491b707ff9bd5ebfa4a546e3cc70ba53ca7ff6720a4cb57c56efb8af20ed1c4a083da7f478f74ec0584380128a6fc8415acf1f38811f1167479d"
+
+GCD-modinv, A = rand192[2.3], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"518e1182619b6f2294ff534e86cb0a6e46da9f0fedbf133048f830c434f9ca5ee13a05264ab15d132710ce46fe40dbcaee30bd0c9626fb9507e44c86a81f0abc735c2ad0dc17589bef22551a99a7bc9ac25d462db88fd0030d50bcdf27cb87511d135c91c962676bea9537e44536991f2f294930b7e6c201e353876f9cb3c0de"
+
+GCD-modinv, A = rand192[2.4], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"a94e9514db7b72a50782e1046abcd03a7d021280d91060961e1fc0abc3bdb452733b9834702db36553a0f7db084dffa6140cc36f8a6b855e27ba7314f8ae1f91c21e0a98ffa7faab0951707e194010e4d726e2df75120d14a731c8d843d812690f5542f9b39f0107505d4d235a32f4b3e0308e94bfc7eb936ca3a581bcef82fa"
+
+GCD-modinv, A = rand192[2.9], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = prime1024[3], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"ae3c816db5f2f0c1966526d6fc24af844ae13b52b354addf97bf07ce9c0a69b8f91fce5153357bb646938f3917eb2b5a8747c429224e4b7357a695587ead52194945fc5468fd99e9eb850b3997c6fca93b5db087325145298513feff7ab3e086b34d62fd1a929f3a1f99947f68dd6298e4470fba4dc7e1332b0a89bd32db1c34"
+
+GCD-modinv, A = rand1024[4.1], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = rand1024[4.2], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":""
+
+GCD-modinv, A = rand1024[4.3], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"14c15c910b11ad28cc21ce88d0060cc54278c2614e1bcb383bb4a570294c4ea3738d243a6e58d5ca49c7b59b995253fd6c79a3de69f85e3131f3b9238224b122c3e4a892d9196ada4fcfa583e1df8af9b474c7e89286a1754abcb06ae8abb93f01d89a024cdce7a6d7288ff68c320f89f1347e0cdd905ecfd160c5d0ef412ed6":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = rand1024[4.4], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"32decd6b8efbc170a26a25c852175b7a96b98b5fbf37a2be6f98bca35b17b9662f0733c846bbe9e870ef55b1a1f65507a2909cb633e238b4e9dd38b869ace91311021c9e32111ac1ac7cc4a4ff4dab102522d53857c49391b36cc9aa78a330a1a5e333cb88dcf94384d4cd1f47ca7883ff5a52f1a05885ac7671863c0bdbc23a":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"1":"b7f8263f1ca6fdd9347e04fb944d1daacdbda25cd7fae6bf1283a293ecab2d4dddda59a0178016835e4f4fe298f9818efa3774ba4a075408c8747a883948318057a44395bb05c5b914e8c17836da290133fee6c19262c6217777ed3c48cf319a5a6b97800cbbfd5f44c60b9397b445163886447efd52006cd5fe0bbdfd4b5c32"
+
+GCD-modinv, A = rand1024[4.5], N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = rand1024[4.5] * 2, N = rand1024[4.2]
+mpi_core_gcd_modinv_odd:"a77c8e43eb73c3eb59b58c2b7841ec4c92457399e8d35df1edcfa0f1cab70bba2a4be6c765037110b6d3b84615eb590e0d256a68eb0481be94f4060a5ae67b9bde815e5ca9819cd03e89d7a2798ebe7db9650bf13b19e9a92a162dff87c358768e11b312752e60016a9446041f8b6087adc94a2a33b39398a5a646efcf026382":"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"7":""
+
+GCD-modinv, A = 0, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"0":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":""
+
+GCD-modinv, A = 1, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"1":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"1"
+
+GCD-modinv, A = 2, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"2":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"29df2390fadcf0fad66d630ade107b1324915ce67a34d77c7b73e83c72adc2ee8a92f9b1d940dc442db4ee11857ad64383495a9a3ac1206fa53d018296b99ee6f7a057972a6067340fa275e89e63af9f6e5942fc4ec67a6a4a858b7fe1f0d61da3846cc49d4b98005aa5118107e2d821eb72528a8cece4e6296991bbf3c098e1"
+
+GCD-modinv, A = 3, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"3":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"3":""
+
+GCD-modinv, A = 4, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"4":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"3eceb559784b697841a414904d18b89cb6da0b59b74f433ab92ddc5aac04a465cfdc768ac5e14a66448f651a4838416544ee07e75821b0a777db8243e2166e5a73708362bf909ace1773b0dced95876f2585e47a7629b79f6fc8513fd2e9412c7546a326ebf1640087f79a418bd44432e12b7bcfd36357593e1e5a99eda0e551"
+
+GCD-modinv, A = 5, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"5":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"5":""
+
+GCD-modinv, A = 6, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"6":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"3":""
+
+GCD-modinv, A = 7, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"7":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"7":""
+
+GCD-modinv, A = 2^64 - 1, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"f":""
+
+GCD-modinv, A = 2^64, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"10000000000000000":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"2abd3f1aaa4e57e968acadedf4ddcf9ff30bf8a223dbf3261e045a26346753975be0dad28d7b9bb7455b83921093394a63639aa2813a174f9ad6fcef47ed2cfc395dad6877248d5d533423d18c7f001243081ad0519f165570b03ccc91fadca02ffcfd55c73dad9c788d55df0286a99bc05744198dbc28c6d899e50b50f69ea4"
+
+GCD-modinv, A = 2^64 + 1, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"10000000000000001":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"3796b236c1130304d81ee30497ad50e66fe0911aa728ac0e731e9103257d7c50fe15ea05628161717eddd0aeae76a9ca7726e70a977eba931aaf861be267ae2bd1a378f496f5c25875f8ab31f8de8e785a1091944779c8bbea2670168d212c224b93551451211e44a867d871a7876380e37e6c59e61f396bd0612469d8db81e6"
+
+GCD-modinv, A = 2^128 - 1, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"f":""
+
+GCD-modinv, A = 2^128, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"15cdfa122e579deba894ebffca0dc09b0b16b7078b89931359002ff104260db61909dc2def7763d93cce88a1163aafae29e2663a748b98980b5f9857757b194dcfb1f70b6ed73082d4c21d5e1bf0cc7cff6fe670007f5897d7adbadb721215483c5cd373838640988df2c3bbea98a52c1136b15630945f3c4a9e004f194acfc3"
+
+GCD-modinv, A = 2^128 + 1, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"3caff235ae64bba0907ce88da6058e162fe9ee07b932af57e6f07b3013bd441e4e8d667e1a4718ffdb6d07586442e76a5ad92b58d2b262ccbfbd2ecd5fe175bb72368e090b247ada1649351e451dbc6a86a374a1b201d4675bcb1d87c80024ca8f31b27af407b0aac9299d89d83baf1ebdd2e62604eef33c87adab090f742ba1"
+
+GCD-modinv, A = prime192[1], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"12fb3cb53ee08a31b5dda3ba69ddcfac986f56aa59d06525cde0dfe20c227e7a6e31aa05b5554206d0a1607ca7aa6710ac43dae33185dd27e20c66ddba3941aa60597dab8e473eac7abcbd6978f0b346be48a885f8b73af8a4a6c3fbeed85fcec694f09435e45ebb739c6eef710e6822459a7a3dfa4dab09310b3c07a8806f70"
+
+GCD-modinv, A = prime192[1] * 2, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"97d9e5a9f704518daeed1dd34eee7d64c37ab552ce83292e6f06ff106113f3d3718d502daaaa1036850b03e53d533885621ed7198c2ee93f106336edd1ca0d5302cbed5c7239f563d5e5eb4bc7859a35f245442fc5b9d7c525361fdf76c2fe7634a784a1af22f5db9ce3777b887341122cd3d1efd26d58498859e03d44037b8"
+
+GCD-modinv, A = prime192[1] * 3, N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"3":""
+
+GCD-modinv, A = rand192[2.1], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"37":""
+
+GCD-modinv, A = rand192[2.2], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"b":""
+
+GCD-modinv, A = rand192[2.3], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"2cc051e5bf5b151283fd5f9f68917e09e142050de78993e7c75c67fc61bb7da6d9ad7508cebb550537b550c4e023b787834462e2fa0a78e49fdcb067c47e545a980bc01ce13db6bf204a22f354fd5891e0e909d6ea58d6d6ff702fb4ca69296568b8aa49b710e84c5c4c5d123f8c47a27495c7d53127f2608e9eef2122634b82"
+
+GCD-modinv, A = rand192[2.4], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"b":""
+
+GCD-modinv, A = rand192[2.9], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"483":""
+
+GCD-modinv, A = rand1024[4.1], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"7":""
+
+GCD-modinv, A = rand1024[4.3], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"14c15c910b11ad28cc21ce88d0060cc54278c2614e1bcb383bb4a570294c4ea3738d243a6e58d5ca49c7b59b995253fd6c79a3de69f85e3131f3b9238224b122c3e4a892d9196ada4fcfa583e1df8af9b474c7e89286a1754abcb06ae8abb93f01d89a024cdce7a6d7288ff68c320f89f1347e0cdd905ecfd160c5d0ef412ed6":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"15":""
+
+GCD-modinv, A = rand1024[4.4], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"32decd6b8efbc170a26a25c852175b7a96b98b5fbf37a2be6f98bca35b17b9662f0733c846bbe9e870ef55b1a1f65507a2909cb633e238b4e9dd38b869ace91311021c9e32111ac1ac7cc4a4ff4dab102522d53857c49391b36cc9aa78a330a1a5e333cb88dcf94384d4cd1f47ca7883ff5a52f1a05885ac7671863c0bdbc23a":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"1":"208a986abef26ce5cf6118b02a77fa83b4458a62a642361f35cdd5bc18299f6b1f735a02bd2a96d91897adcb77a411e3f76cf0f1997744ccae5d249e9ba070328b79fd8cc13880c858cc96b7ac4f404e74310a04daaba800e97fbfee9495ecde0766f4fb1ff050d2803a9e1928ffa5e33cd0cf0cbba086aa6b23b822f5e1062b"
+
+GCD-modinv, A = rand1024[4.5], N = rand1024[4.5]
+mpi_core_gcd_modinv_odd:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":""
+
+GCD-modinv, A = 0, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"0":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":""
+
+GCD-modinv, A = 1, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"1":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"1"
+
+GCD-modinv, A = 2, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"2":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"7d9d6ab2f096d2f0834829209a3171396db416b36e9e8675725bb8b5580948cb9fb8ed158bc294cc891eca34907082ca89dc0fceb043614eefb70487c42cdcb4e6e106c57f21359c2ee761b9db2b0ede4b0bc8f4ec536f3edf90a27fa5d28258ea8d464dd7e2c8010fef348317a88865c256f79fa6c6aeb27c3cb533db41caa2"
+
+GCD-modinv, A = 3, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"3":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"3":""
+
+GCD-modinv, A = 4, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"4":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"3eceb559784b697841a414904d18b89cb6da0b59b74f433ab92ddc5aac04a465cfdc768ac5e14a66448f651a4838416544ee07e75821b0a777db8243e2166e5a73708362bf909ace1773b0dced95876f2585e47a7629b79f6fc8513fd2e9412c7546a326ebf1640087f79a418bd44432e12b7bcfd36357593e1e5a99eda0e551"
+
+GCD-modinv, A = 5, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"5":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"5":""
+
+GCD-modinv, A = 6, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"6":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"3":""
+
+GCD-modinv, A = 7, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"7":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"7":""
+
+GCD-modinv, A = 2^64 - 1, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"ffffffffffffffff":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"f":""
+
+GCD-modinv, A = 2^64, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"10000000000000000":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"7e7b863ca00839df15877403b0fec5c63c2eb26f1845a21f14ec2a9f19c2d9747106ce363ffd543fa0c55fb51b88e5d169f64fd6f6bc582ee550fff475606aca289e5c96cbe55bc572790fa2c9465f511fbaa0c8ef2c0b2a05bb53cc55dc88db7705d6df01d4dd9d2dd778e1124c59df973be92ea795f2932b6d08833877d065"
+
+GCD-modinv, A = 2^64 + 1, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"10000000000000001":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"3796b236c1130304d81ee30497ad50e66fe0911aa728ac0e731e9103257d7c50fe15ea05628161717eddd0aeae76a9ca7726e70a977eba931aaf861be267ae2bd1a378f496f5c25875f8ab31f8de8e785a1091944779c8bbea2670168d212c224b93551451211e44a867d871a7876380e37e6c59e61f396bd0612469d8db81e6"
+
+GCD-modinv, A = 2^128 - 1, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"ffffffffffffffffffffffffffffffff":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"f":""
+
+GCD-modinv, A = 2^128, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000000":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"15cdfa122e579deba894ebffca0dc09b0b16b7078b89931359002ff104260db61909dc2def7763d93cce88a1163aafae29e2663a748b98980b5f9857757b194dcfb1f70b6ed73082d4c21d5e1bf0cc7cff6fe670007f5897d7adbadb721215483c5cd373838640988df2c3bbea98a52c1136b15630945f3c4a9e004f194acfc3"
+
+GCD-modinv, A = 2^128 + 1, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"100000000000000000000000000000001":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"3caff235ae64bba0907ce88da6058e162fe9ee07b932af57e6f07b3013bd441e4e8d667e1a4718ffdb6d07586442e76a5ad92b58d2b262ccbfbd2ecd5fe175bb72368e090b247ada1649351e451dbc6a86a374a1b201d4675bcb1d87c80024ca8f31b27af407b0aac9299d89d83baf1ebdd2e62604eef33c87adab090f742ba1"
+
+GCD-modinv, A = prime192[1], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"d1c127a667786703830500038ebaef20e5a3e2dc378fb75b":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"66b983d7349a6c2762b869d025fec5d2e19210774e3a141ec4c8b05af17e045783579d6967d6fa8f2c0b3c9fb2a01397b2d69017a7081e072c8669e2e7ac7f784f9a2cd9e3080d149a01a93ab5b812859afb2e7e96442fcd39b1dafbb2ba0c0a0d9dca1d707b8ebc28e691f180d418661c7f1f53142774d583de5f7f9001a131"
+
+GCD-modinv, A = prime192[1] * 2, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"1a3824f4ccef0ce07060a00071d75de41cb47c5b86f1f6eb6":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"b0fa2c9e8ae4090434a45e08ad30d422de7d1eef15bb9084d4c010e2d0c84af76164bbca3fae12141f24688469c08c96634757da83c7705285fa397938031c710eae1d3270a53c267be836573607182118896034377587257c698ffd7f2f885df15c2b5c90208f5f24627d7bd8129498d096874930da691d3e2be4f3a3429b3a"
+
+GCD-modinv, A = prime192[1] * 3, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"2754376f33669350a890f000aac30cd62b0eba894a6af2611":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"3":""
+
+GCD-modinv, A = rand192[2.1], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"177219d30e7a269fd95bafc8f2a4d27bdcf4bb99f4bea973":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"37":""
+
+GCD-modinv, A = rand192[2.2], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"cf1822ffbc6887782b491044d5e341245c6e433715ba2bdd":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"b":""
+
+GCD-modinv, A = rand192[2.3], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"3653f8dd9b1f282e4067c3584ee207f8da94e3e8ab73738f":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"d43ce029aaced8fdddb2ebcae0d36a56738778a7d05cf1d9b52c08ee2c72896103f95bd033bec615ee89090af60f10959069cd4be50efaa334d0b6721f64cff6768d1e798abf538f5ed3fa95ce8c170f9a4e15c82572c08029865db4522c81dbf6ca5d5c2c3f484dc6e0a3165f17a82a225f11ff64db85f934453610f165af04"
+
+GCD-modinv, A = rand192[2.4], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"ffed9235288bc781ae66267594c9c9500925e4749b575bd1":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"b":""
+
+GCD-modinv, A = rand192[2.9], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"2a1be9cd8697bbd0e2520e33e44c50556c71c4a66148a86f":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"483":""
+
+GCD-modinv, A = prime1024[3], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"c93ba7ec74d96f411ba008bdb78e63ff11bb5df46a51e16b2c9d156f8e4e18abf5e052cb01f47d0d1925a77f60991577e128fb6f52f34a27950a594baadd3d8057abeb222cf3cca962db16abf79f2ada5bd29ab2f51244bf295eff9f6aaba1302efc449b128be75eeaca04bc3c1a155d11d14e8be32a2c8287b3996cf6ad5223":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"95db6375f04c9d7844e3dc9a755c358a23c9764d858beedeb0f74ebfffd63ebbe011414a2ba00264050c033500c0369754fd2d86a5e5b514fb9956618866107efce7ec249b291567121509192f009c7ba9021e272dce4e64ef56ee902d4b58d6428538c937cff4eb68062be92aac071282044dfce9936637787da6826d1320d4"
+
+GCD-modinv, A = rand1024[4.1], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"6905269ed6f0b09f165c8ce36e2f24b43000de01b2ed40ed3addccb2c33be0ac79d679346d4ac7a5c3902b38963dc6e8534f45738d048ec0f1099c6c3e1b258fd724452ccea71ff4a14876aeaff1a098ca5996666ceab360512bd13110722311710cf5327ac435a7a97c643656412a9b8a1abcd1a6916c74da4f9fc3c6da5d7":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"7":""
+
+GCD-modinv, A = rand1024[4.2], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"f1cfd99216df648647adec26793d0e453f5082492d83a8233fb62d2c81862fc9634f806fabf4a07c566002249b191bf4d8441b5616332aca5f552773e14b0190d93936e1daca3c06f5ff0c03bb5d7385de08caa1a08179104a25e4664f5253a02a3187853184ff27459142deccea264542a00403ce80c4b0a4042bb3d4341aad":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"7":""
+
+GCD-modinv, A = rand1024[4.3], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"14c15c910b11ad28cc21ce88d0060cc54278c2614e1bcb383bb4a570294c4ea3738d243a6e58d5ca49c7b59b995253fd6c79a3de69f85e3131f3b9238224b122c3e4a892d9196ada4fcfa583e1df8af9b474c7e89286a1754abcb06ae8abb93f01d89a024cdce7a6d7288ff68c320f89f1347e0cdd905ecfd160c5d0ef412ed6":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"15":""
+
+GCD-modinv, A = rand1024[4.4], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"32decd6b8efbc170a26a25c852175b7a96b98b5fbf37a2be6f98bca35b17b9662f0733c846bbe9e870ef55b1a1f65507a2909cb633e238b4e9dd38b869ace91311021c9e32111ac1ac7cc4a4ff4dab102522d53857c49391b36cc9aa78a330a1a5e333cb88dcf94384d4cd1f47ca7883ff5a52f1a05885ac7671863c0bdbc23a":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"1":"7448df8cb4ac4edb7c3bdec5e698f0a9fd68442f9aabe5182cb5a634fd85254834994d666fac4f61740189ee8299be6afdffa6260ef985abf8d727a3c913ae007abaacbb15f94f3078118288e9169f8d50e38ffd78389cd57e8ad6ee587799194e6fce845a8780d33584c11b38c5562713b57421d57a5076bdf6db9add6237ec"
+
+GCD-modinv, A = rand1024[4.5], N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":""
+
+GCD-modinv, A = rand1024[4.5] * 2, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"a77c8e43eb73c3eb59b58c2b7841ec4c92457399e8d35df1edcfa0f1cab70bba2a4be6c765037110b6d3b84615eb590e0d256a68eb0481be94f4060a5ae67b9bde815e5ca9819cd03e89d7a2798ebe7db9650bf13b19e9a92a162dff87c358768e11b312752e60016a9446041f8b6087adc94a2a33b39398a5a646efcf026382":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"53be4721f5b9e1f5acdac615bc20f6264922b9ccf469aef8f6e7d078e55b85dd1525f363b281b8885b69dc230af5ac870692b534758240df4a7a03052d733dcdef40af2e54c0ce681f44ebd13cc75f3edcb285f89d8cf4d4950b16ffc3e1ac3b4708d9893a973000b54a23020fc5b043d6e4a51519d9c9cc52d32377e78131c1":""
+
+GCD-modinv, A = rand1024[4.5] * 3, N = rand1024[4.5] * 3
+mpi_core_gcd_modinv_odd:"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":"fb3ad565e12da5e1069052413462e272db682d66dd3d0ceae4b7716ab01291973f71da2b17852999123d946920e1059513b81f9d6086c29ddf6e090f8859b969cdc20d8afe426b385dcec373b6561dbc961791e9d8a6de7dbf2144ff4ba504b1d51a8c9bafc590021fde69062f5110cb84adef3f4d8d5d64f8796a67b6839543":""
+
 mbedtls_mpi_core_mla #1 0x0 + 0x0 * 0x0
 mpi_core_mla:"0":"0":"0":"0":"0":"0":"0"
 

@@ -14,15 +14,14 @@
 
 #include "mbedtls/build_info.h"
 
+#include <stdlib.h>
 #if defined(MBEDTLS_PLATFORM_C)
 #include "mbedtls/platform.h"
 #else
 #include <stdio.h>
-#include <stdlib.h>
 #if defined(MBEDTLS_HAVE_TIME)
 #include <time.h>
 #define mbedtls_time            time
-#define mbedtls_time_t          time_t
 #endif
 #define mbedtls_printf          printf
 #define mbedtls_calloc          calloc
@@ -50,6 +49,11 @@ int main(void)
 /* For select() */
 #if (defined(_WIN32) || defined(_WIN32_WCE)) && !defined(EFIX64) && \
     !defined(EFI32)
+
+#if defined(_MSC_VER)
+#pragma warning(disable : 5105) // warning inside winbase.h in C11 mode
+#endif
+
 #include <winsock2.h>
 #include <windows.h>
 #if defined(_MSC_VER)
@@ -937,8 +941,6 @@ accept:
         }
 
     }
-
-    exit_code = MBEDTLS_EXIT_SUCCESS;
 
 exit:
 

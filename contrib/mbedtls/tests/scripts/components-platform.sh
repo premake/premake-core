@@ -149,49 +149,53 @@ component_build_aes_armce () {
     scripts/config.py set MBEDTLS_AES_USE_HARDWARE_ONLY
 
     msg "MBEDTLS_AES_USE_HARDWARE_ONLY, clang, aarch64"
-    make -B library/aesce.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
+    msg "clang, test aarch64 crypto instructions built"
+    grep -E 'aes[a-z]+\s*[qv]' library/aesce.s
 
     msg "MBEDTLS_AES_USE_HARDWARE_ONLY, clang, arm"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
+    msg "clang, test A32 crypto instructions built"
+    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
 
     msg "MBEDTLS_AES_USE_HARDWARE_ONLY, clang, thumb"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
-
-    scripts/config.py unset MBEDTLS_AES_USE_HARDWARE_ONLY
-
-    msg "no MBEDTLS_AES_USE_HARDWARE_ONLY, clang, aarch64"
-    make -B library/aesce.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
-
-    msg "no MBEDTLS_AES_USE_HARDWARE_ONLY, clang, arm"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
-
-    msg "no MBEDTLS_AES_USE_HARDWARE_ONLY, clang, thumb"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
-
-    # test for presence of AES instructions
-    scripts/config.py set MBEDTLS_AES_USE_HARDWARE_ONLY
-    msg "clang, test A32 crypto instructions built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -S"
-    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.o
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
     msg "clang, test T32 crypto instructions built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb -S"
-    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.o
-    msg "clang, test aarch64 crypto instructions built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a -S"
-    grep -E 'aes[a-z]+\s*[qv]' library/aesce.o
+    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
 
-    # test for absence of AES instructions
     scripts/config.py unset MBEDTLS_AES_USE_HARDWARE_ONLY
+
+    msg "MBEDTLS_AES_USE_both, clang, aarch64"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
+    msg "clang, test aarch64 crypto instructions built"
+    grep -E 'aes[a-z]+\s*[qv]' library/aesce.s
+
+    msg "MBEDTLS_AES_USE_both, clang, arm"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
+    msg "clang, test A32 crypto instructions built"
+    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
+
+    msg "MBEDTLS_AES_USE_both, clang, thumb"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
+    msg "clang, test T32 crypto instructions built"
+    grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
+
     scripts/config.py unset MBEDTLS_AESCE_C
-    msg "clang, test A32 crypto instructions not built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -S"
-    not grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.o
-    msg "clang, test T32 crypto instructions not built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb -S"
-    not grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.o
+
+    msg "no MBEDTLS_AESCE_C, clang, aarch64"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a"
     msg "clang, test aarch64 crypto instructions not built"
-    make -B library/aesce.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a -S"
-    not grep -E 'aes[a-z]+\s*[qv]' library/aesce.o
+    not grep -E 'aes[a-z]+\s*[qv]' library/aesce.s
+
+    msg "no MBEDTLS_AESCE_C, clang, arm"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72 -marm"
+    msg "clang, test A32 crypto instructions not built"
+    not grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
+
+    msg "no MBEDTLS_AESCE_C, clang, thumb"
+    make -B library/aesce.o library/aesce.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32 -mthumb"
+    msg "clang, test T32 crypto instructions not built"
+    not grep -E 'aes[0-9a-z]+.[0-9]\s*[qv]' library/aesce.s
 }
 
 support_build_sha_armce () {
@@ -202,67 +206,59 @@ support_build_sha_armce () {
 component_build_sha_armce () {
     scripts/config.py unset MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT
 
-
     # Test variations of SHA256 Armv8 crypto extensions
     scripts/config.py set MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY
         msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY clang, aarch64"
-        make -B library/sha256.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
+        msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY clang, test aarch64 crypto instructions built"
+        grep -E 'sha256[a-z0-9]+\s+[qv]' library/sha256.s
+
         msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY clang, arm"
-        make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm"
+        msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY clang, test A32 crypto instructions built"
+        grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.s
     scripts/config.py unset MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY
 
 
     # test the deprecated form of the config option
     scripts/config.py set MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY
         msg "MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY clang, thumb"
-        make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
+        msg "MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY clang, test T32 crypto instructions built"
+        grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.s
     scripts/config.py unset MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY
 
     scripts/config.py set MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT
         msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT clang, aarch64"
-        make -B library/sha256.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a+crypto"
+        msg "MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT clang, test aarch64 crypto instructions built"
+        grep -E 'sha256[a-z0-9]+\s+[qv]' library/sha256.s
     scripts/config.py unset MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT
 
 
     # test the deprecated form of the config option
     scripts/config.py set MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT
         msg "MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT clang, arm"
-        make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -std=c99"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -std=c99"
+
         msg "MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT clang, thumb"
-        make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
+        make -B library/sha256.o library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb"
+        msg "MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT clang, test T32 crypto instructions built"
+        grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.s
     scripts/config.py unset MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT
-
-
-    # examine the disassembly for presence of SHA instructions
-    for opt in MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_ONLY MBEDTLS_SHA256_USE_ARMV8_A_CRYPTO_IF_PRESENT; do
-        scripts/config.py set ${opt}
-            msg "${opt} clang, test A32 crypto instructions built"
-            make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -S"
-            grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.o
-
-            msg "${opt} clang, test T32 crypto instructions built"
-            make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb -S"
-            grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.o
-
-            msg "${opt} clang, test aarch64 crypto instructions built"
-            make -B library/sha256.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a -S"
-            grep -E 'sha256[a-z0-9]+\s+[qv]' library/sha256.o
-        scripts/config.py unset ${opt}
-    done
-
 
     # examine the disassembly for absence of SHA instructions
     msg "clang, test A32 crypto instructions not built"
-    make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72+crypto -marm -S"
-    not grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.o
+    make -B library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a72 -marm"
+    not grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.s
 
     msg "clang, test T32 crypto instructions not built"
-    make -B library/sha256.o CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32+crypto -mthumb -S"
-    not grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.o
+    make -B library/sha256.s CC=clang CFLAGS="--target=arm-linux-gnueabihf -mcpu=cortex-a32 -mthumb"
+    not grep -E 'sha256[a-z0-9]+.32\s+[qv]' library/sha256.s
 
     msg "clang, test aarch64 crypto instructions not built"
-    make -B library/sha256.o CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a -S"
-    not grep -E 'sha256[a-z0-9]+\s+[qv]' library/sha256.o
+    make -B library/sha256.s CC=clang CFLAGS="--target=aarch64-linux-gnu -march=armv8-a"
+    not grep -E 'sha256[a-z0-9]+\s+[qv]' library/sha256.s
 }
 
 component_test_m32_no_asm () {
@@ -343,6 +339,118 @@ support_test_mx32 () {
         amd64|x86_64) true;;
         *) false;;
     esac
+}
+
+component_test_arm_linux_gnueabi_gcc_arm5vte () {
+    # Mimic Debian armel port
+    msg "test: ${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc -march=arm5vte, default config" # ~4m
+    make CC="${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc" AR="${ARM_LINUX_GNUEABI_GCC_PREFIX}ar" CFLAGS='-Werror -Wall -Wextra -march=armv5te -O1'
+
+    msg "test: main suites make, default config (out-of-box)" # ~7m 40s
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~0s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_arm_linux_gnueabi_gcc_arm5vte () {
+    can_run_arm_linux_gnueabi
+}
+
+# The hard float ABI is not implemented for Thumb 1, so use gnueabi
+# Some Thumb 1 asm is sensitive to optimisation level, so test both -O0 and -Os
+component_test_arm_linux_gnueabi_gcc_thumb_1_opt_0 () {
+    msg "test: ${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc -O0, thumb 1, default config" # ~2m 10s
+    make CC="${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc" CFLAGS='-std=c99 -Werror -Wextra -O0 -mcpu=arm1136j-s -mthumb'
+
+    msg "test: main suites make, default config (out-of-box)" # ~36m
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~10s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_arm_linux_gnueabi_gcc_thumb_1_opt_0 () {
+    can_run_arm_linux_gnueabi
+}
+
+component_test_arm_linux_gnueabi_gcc_thumb_1_opt_s () {
+    msg "test: ${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc -Os, thumb 1, default config" # ~3m 10s
+    make CC="${ARM_LINUX_GNUEABI_GCC_PREFIX}gcc" CFLAGS='-std=c99 -Werror -Wextra -Os -mcpu=arm1136j-s -mthumb'
+
+    msg "test: main suites make, default config (out-of-box)" # ~21m 10s
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~2s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_arm_linux_gnueabi_gcc_thumb_1_opt_s () {
+    can_run_arm_linux_gnueabi
+}
+
+component_test_arm_linux_gnueabihf_gcc_armv7 () {
+    msg "test: ${ARM_LINUX_GNUEABIHF_GCC_PREFIX}gcc -O2, A32, default config" # ~4m 30s
+    make CC="${ARM_LINUX_GNUEABIHF_GCC_PREFIX}gcc" CFLAGS='-std=c99 -Werror -Wextra -O2 -march=armv7-a -marm'
+
+    msg "test: main suites make, default config (out-of-box)" # ~3m 30s
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~0s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_arm_linux_gnueabihf_gcc_armv7 () {
+    can_run_arm_linux_gnueabihf
+}
+
+component_test_arm_linux_gnueabihf_gcc_thumb_2 () {
+    msg "test: ${ARM_LINUX_GNUEABIHF_GCC_PREFIX}gcc -Os, thumb 2, default config" # ~4m
+    make CC="${ARM_LINUX_GNUEABIHF_GCC_PREFIX}gcc" CFLAGS='-std=c99 -Werror -Wextra -Os -march=armv7-a -mthumb'
+
+    msg "test: main suites make, default config (out-of-box)" # ~3m 40s
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~0s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_arm_linux_gnueabihf_gcc_thumb_2 () {
+    can_run_arm_linux_gnueabihf
+}
+
+component_test_aarch64_linux_gnu_gcc () {
+    msg "test: ${AARCH64_LINUX_GNU_GCC_PREFIX}gcc -O2, default config" # ~3m 50s
+    make CC="${AARCH64_LINUX_GNU_GCC_PREFIX}gcc" CFLAGS='-std=c99 -Werror -Wextra -O2'
+
+    msg "test: main suites make, default config (out-of-box)" # ~1m 50s
+    make test
+
+    msg "selftest: make, default config (out-of-box)" # ~0s
+    programs/test/selftest
+
+    msg "program demos: make, default config (out-of-box)" # ~0s
+    tests/scripts/run_demos.py
+}
+
+support_test_aarch64_linux_gnu_gcc () {
+    # Minimum version of GCC for MBEDTLS_AESCE_C is 6.0
+    [ "$(gcc_version "${AARCH64_LINUX_GNU_GCC_PREFIX}gcc")" -ge 6 ] && can_run_aarch64_linux_gnu
 }
 
 component_build_arm_none_eabi_gcc () {
@@ -435,8 +543,9 @@ component_build_arm_clang_thumb () {
 }
 
 component_build_armcc () {
-    msg "build: ARM Compiler 5"
+    # Common configuration for all the builds below
     scripts/config.py baremetal
+
     # armc[56] don't support SHA-512 intrinsics
     scripts/config.py unset MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT
 
@@ -453,46 +562,40 @@ component_build_armcc () {
 
     scripts/config.py set MBEDTLS_HAVE_ASM
 
-    make CC="$ARMC5_CC" AR="$ARMC5_AR" WARNING_CFLAGS='--strict --c99' lib
-
-    msg "size: ARM Compiler 5"
-    "$ARMC5_FROMELF" -z library/*.o
-
     # Compile mostly with -O1 since some Arm inline assembly is disabled for -O0.
 
     # ARM Compiler 6 - Target ARMv7-A
-    armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-a"
+    helper_armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-a"
 
     # ARM Compiler 6 - Target ARMv7-M
-    armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-m"
+    helper_armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-m"
 
     # ARM Compiler 6 - Target ARMv7-M+DSP
-    armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-m+dsp"
+    helper_armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv7-m+dsp"
 
     # ARM Compiler 6 - Target ARMv8-A - AArch32
-    armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv8.2-a"
+    helper_armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv8.2-a"
 
     # ARM Compiler 6 - Target ARMv8-M
-    armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv8-m.main"
+    helper_armc6_build_test "-O1 --target=arm-arm-none-eabi -march=armv8-m.main"
 
     # ARM Compiler 6 - Target Cortex-M0 - no optimisation
-    armc6_build_test "-O0 --target=arm-arm-none-eabi -mcpu=cortex-m0"
+    helper_armc6_build_test "-O0 --target=arm-arm-none-eabi -mcpu=cortex-m0"
 
     # ARM Compiler 6 - Target Cortex-M0
-    armc6_build_test "-Os --target=arm-arm-none-eabi -mcpu=cortex-m0"
+    helper_armc6_build_test "-Os --target=arm-arm-none-eabi -mcpu=cortex-m0"
 
     # ARM Compiler 6 - Target ARMv8.2-A - AArch64
     #
     # Re-enable MBEDTLS_AESCE_C as this should be supported by the version of armclang
     # that we have in our CI
     scripts/config.py set MBEDTLS_AESCE_C
-    armc6_build_test "-O1 --target=aarch64-arm-none-eabi -march=armv8.2-a+crypto"
+    helper_armc6_build_test "-O1 --target=aarch64-arm-none-eabi -march=armv8.2-a+crypto"
 }
 
 support_build_armcc () {
-    armc5_cc="$ARMC5_BIN_DIR/armcc"
     armc6_cc="$ARMC6_BIN_DIR/armclang"
-    (check_tools "$armc5_cc" "$armc6_cc" > /dev/null 2>&1)
+    (check_tools "$armc6_cc" > /dev/null 2>&1)
 }
 
 # For timebeing, no VIA Padlock platform available.

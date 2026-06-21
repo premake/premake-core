@@ -3,6 +3,8 @@ Mbed TLS sample programs
 
 This subdirectory mostly contains sample programs that illustrate specific features of the library, as well as a few test and support programs.
 
+We try to ensure that the sample programs are good examples of how to use Mbed TLS but we make no hard guarantees about their security. They should not be used in production unless they have been separately tested and thoroughly audited for security. Note that this means vulnerabilities in the sample programs are out of the scope of our usual security process and will be fixed in public.
+
 ## Symmetric cryptography (AES) examples
 
 * [`aes/crypt_and_hash.c`](aes/crypt_and_hash.c): file encryption and authentication, demonstrating the generic cipher interface and the generic hash interface.
@@ -53,7 +55,7 @@ This subdirectory mostly contains sample programs that illustrate specific featu
 
 ## Random number generator (RNG) examples
 
-* [`random/gen_entropy.c`](random/gen_entropy.c): shows how to use the default entropy sources to generate random data.  
+* [`random/gen_entropy.c`](random/gen_entropy.c): shows how to use the default entropy sources to generate random data.
   Note: most applications should only use the entropy generator to seed a cryptographic pseudorandom generator, as illustrated by `random/gen_random_ctr_drbg.c`.
 
 * [`random/gen_random_ctr_drbg.c`](random/gen_random_ctr_drbg.c): shows how to use the default entropy sources to seed a pseudorandom generator, and how to use the resulting random generator to generate random data.
@@ -96,7 +98,7 @@ In addition to providing options for testing client-side features, the `ssl_clie
 
 * [`test/udp_proxy.c`](test/udp_proxy.c): a UDP proxy that can inject certain failures (delay, duplicate, drop). Useful for testing DTLS.
 
-* [`test/zeroize.c`](test/zeroize.c): a test program for `mbedtls_platform_zeroize`, used by [`tests/scripts/test_zeroize.gdb`](tests/scripts/test_zeroize.gdb).
+* [`test/zeroize.c`](../framework/tests/programs/zeroize.c): a test program for `mbedtls_platform_zeroize`, used by [`test_zeroize.gdb`](../framework/tests/programs/test_zeroize.gdb).
 
 ## Development utilities
 

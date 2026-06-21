@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
  */
 
+#if !defined(__USE_MINGW_ANSI_STDIO)
+#define __USE_MINGW_ANSI_STDIO 1
+#endif
+
 #include <mbedtls/build_info.h>
 
 #if defined(MBEDTLS_PSA_CRYPTO_C) && defined(MBEDTLS_TEST_HOOKS) && \
@@ -1191,6 +1195,36 @@ psa_status_t mbedtls_test_wrap_psa_purge_key(
     mbedtls_svc_key_id_t arg0_key)
 {
     psa_status_t status = (psa_purge_key)(arg0_key);
+    return status;
+}
+
+/* Wrapper for psa_random_deplete */
+psa_status_t mbedtls_test_wrap_psa_random_deplete(void)
+{
+    psa_status_t status = (psa_random_deplete)();
+    return status;
+}
+
+/* Wrapper for psa_random_reseed */
+psa_status_t mbedtls_test_wrap_psa_random_reseed(
+    const uint8_t *arg0_perso,
+    size_t arg1_perso_size)
+{
+#if !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS)
+    MBEDTLS_TEST_MEMORY_POISON(arg0_perso, arg1_perso_size);
+#endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
+    psa_status_t status = (psa_random_reseed)(arg0_perso, arg1_perso_size);
+#if !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS)
+    MBEDTLS_TEST_MEMORY_UNPOISON(arg0_perso, arg1_perso_size);
+#endif /* !defined(MBEDTLS_PSA_ASSUME_EXCLUSIVE_BUFFERS) */
+    return status;
+}
+
+/* Wrapper for psa_random_set_prediction_resistance */
+psa_status_t mbedtls_test_wrap_psa_random_set_prediction_resistance(
+    unsigned arg0_enabled)
+{
+    psa_status_t status = (psa_random_set_prediction_resistance)(arg0_enabled);
     return status;
 }
 
