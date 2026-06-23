@@ -260,7 +260,7 @@
 		filter { "system:windows", "options:arch=ARM" }
 			platforms { "ARM" }
 
-		filter { "system:windows", "options:arch=AARCH64" }
+		filter { "system:windows", "options:arch=AARCH64 or arch=ARM64" }
 			platforms { "ARM64" }
 
 		filter { "system:windows", "options:arch=x86 or arch=Win32" }

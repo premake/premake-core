@@ -12,15 +12,17 @@ REM ===========================================================================
 SET "PlatformArg="
 SET "ConfigArg="
 
-IF NOT "%PLATFORM%" == "" (
-	SET "PlatformArg=PLATFORM=%PLATFORM%"
-) ELSE (
+IF "%PLATFORM%" == "" (
 	IF "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
-		SET "PlatformArg=PLATFORM=x64"
+		SET "PLATFORM=x64"
+	) ELSE IF "%PROCESSOR_ARCHITECTURE%" == "ARM64" (
+		SET "PLATFORM=ARM64"
 	) ELSE (
-		SET "PlatformArg=PLATFORM=Win32"
+		SET "PLATFORM=Win32"
 	)
 )
+
+SET "PlatformArg=PLATFORM=%PLATFORM%"
 
 IF NOT "%CONFIG%" == "" (
 	SET "ConfigArg=CONFIG=%CONFIG%"
@@ -122,6 +124,12 @@ IF NOT EXIST %VsWherePath% (
 SET VsWhereCmdLine="!VsWherePath! -nologo -latest -version [%VsVersionMin%,%VsVersionMax%) -property installationPath"
 
 FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
+	IF /I "%PLATFORM%" == "ARM64" (
+		IF EXIST "%%i\VC\Auxiliary\Build\vcvarsarm64.bat" (
+			CALL "%%i\VC\Auxiliary\Build\vcvarsarm64.bat" && CALL :Build
+			EXIT /B !ERRORLEVEL!
+		)
+	)
 	IF EXIST "%%i\VC\Auxiliary\Build\vcvars64.bat" (
 		CALL "%%i\VC\Auxiliary\Build\vcvars64.bat" && CALL :Build
 		EXIT /B !ERRORLEVEL!
@@ -133,7 +141,7 @@ FOR /F "usebackq delims=" %%i in (`!VsWhereCmdLine!`) DO (
 	)
 )
 
-ECHO Could not find vcvars64.bat or vcvars32.bat to setup Visual Studio environment
+ECHO Could not find a suitable vcvars batch file to setup Visual Studio environment
 EXIT /B 2
 
 REM :VsWhereVisualBootstrap

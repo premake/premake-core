@@ -4,13 +4,18 @@ on: [push, pull_request]
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         config: [debug, release]
-        platform: [x64]
+        platform: [x64, ARM64]
         depsrc: [none, contrib, system]
         cc: [gcc, clang]
+        include:
+          - platform: x64
+            os: ubuntu-latest
+          - platform: ARM64
+            os: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
     - name: Checkout
@@ -59,13 +64,20 @@ jobs:
         name: premake-macosx-${{ matrix.platform }}
         path: bin/${{ matrix.config }}/
   windows:
-    runs-on: windows-2022
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         config: [debug, release]
-        platform: [Win32, x64]
+        platform: [Win32, x64, ARM64]
         msdev: [vs2022]
         cc: [msc, clang]
+        include:
+          - platform: Win32
+            os: windows-2022
+          - platform: x64
+            os: windows-2022
+          - platform: ARM64
+            os: windows-11-arm
     timeout-minutes: 15
     steps:
     - name: Checkout
