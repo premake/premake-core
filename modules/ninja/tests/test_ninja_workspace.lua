@@ -242,6 +242,109 @@ default TestProject_Debug
 
 
 --
+-- Check default target respects defaultconfiguration.
+--
+
+	function suite.defaultTarget_onDefaultConfiguration()
+		p.action.set("ninja")
+		local wks2 = workspace "TestWorkspace6"
+		configurations { "Debug", "Release" }
+		defaultconfiguration "Release"
+
+		project "TestProject"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+
+		wks2 = test.getWorkspace(wks2)
+		wks_module.defaultTarget(wks2)
+
+		test.capture [[
+
+# Default build target
+default TestProject_Release
+		]]
+	end
+
+
+--
+-- Check default target respects defaultconfiguration and defaultplatform together.
+--
+
+	function suite.defaultTarget_onDefaultConfigurationAndDefaultPlatform()
+		p.action.set("ninja")
+		local wks2 = workspace "TestWorkspace5"
+		configurations { "Debug", "Release" }
+		platforms { "x86", "x64" }
+		defaultconfiguration "Release"
+		defaultplatform "x64"
+
+		project "TestProject"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+
+		wks2 = test.getWorkspace(wks2)
+		wks_module.defaultTarget(wks2)
+
+		test.capture [[
+
+# Default build target
+default TestProject_Release_x64
+		]]
+	end
+
+
+--
+-- Check default target with invalid defaultconfiguration falls back.
+--
+
+	function suite.defaultTarget_onInvalidConfiguration()
+		p.action.set("ninja")
+		local wks2 = workspace "TestWorkspace8"
+		configurations { "Debug", "Release" }
+		defaultconfiguration "NonExistent"
+
+		project "TestProject"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+
+		wks2 = test.getWorkspace(wks2)
+		wks_module.defaultTarget(wks2)
+
+		test.capture [[
+
+# Default build target
+default TestProject_Debug
+		]]
+	end
+
+
+--
+-- Check default target with invalid defaultplatform falls back.
+--
+
+	function suite.defaultTarget_onInvalidPlatform()
+		p.action.set("ninja")
+		local wks2 = workspace "TestWorkspace9"
+		configurations { "Debug", "Release" }
+		platforms { "x86", "x64" }
+		defaultplatform "ARM"
+
+		project "TestProject"
+		kind "ConsoleApp"
+		files { "main.cpp" }
+
+		wks2 = test.getWorkspace(wks2)
+		wks_module.defaultTarget(wks2)
+
+		test.capture [[
+
+# Default build target
+default TestProject_Debug_x64
+		]]
+	end
+
+
+--
 -- Check default target with platforms but no default platform uses first platform.
 --
 

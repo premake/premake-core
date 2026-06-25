@@ -74,9 +74,11 @@ newaction {
 
 			-- Configuration is set in the following order of precedence
 			-- 1. Command line option
-			-- 2. First build configuration of the workspace
-			-- 3. Empty string
-			local buildcfg = _OPTIONS["cc-config"] or wks.configurations[1] or ""
+			-- 2. Workspace default configuration
+			-- 3. First build configuration of the workspace
+			-- 4. Empty string
+			local defaultCfg = wks.defaultconfiguration and p.config.getdefault(wks)
+			local buildcfg = _OPTIONS["cc-config"] or (defaultCfg and defaultCfg.buildcfg) or wks.configurations[1] or ""
 
 			local compile_commands = p.modules.compilecommands.generate(wks, platform, buildcfg)
 			all_commands = table.join(all_commands, compile_commands)

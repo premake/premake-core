@@ -4870,6 +4870,100 @@
 	end
 
 
+	function suite.XCBuildConfigurationList_OnDefaultConfiguration()
+		defaultconfiguration "Release"
+		prepare()
+		xcode.XCBuildConfigurationList(tr)
+		test.capture [[
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+				]]
+	end
+
+
+	function suite.XCBuildConfigurationList_OnDefaultConfigurationAndPlatform()
+		workspace("MyWorkspace")
+		platforms { "x86", "x64" }
+		defaultconfiguration "Release"
+		defaultplatform "x64"
+		prepare()
+		xcode.XCBuildConfigurationList(tr)
+		test.capture [[
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+				]]
+	end
+
+
+	function suite.XCBuildConfigurationList_OnInvalidConfiguration()
+		defaultconfiguration "NonExistent"
+		prepare()
+		xcode.XCBuildConfigurationList(tr)
+		test.capture [[
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				347EC2AEE119A7C9E4B36F9E /* Debug */,
+				C315A3A02B9FEA659E8A89BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A852E9BD08CE874C2F8CA435 /* Build configuration list for PBXNativeTarget "MyProject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0141F3FC0D9EB3163D17DF0F /* Debug */,
+				049C55E5E2D9CA8D4990DE13 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+				]]
+	end
+
+
 	function suite.XCBuildConfigurationList_OnMultiplePlatforms()
 		workspace("MyWorkspace")
 		platforms { "Universal32", "Universal64" }

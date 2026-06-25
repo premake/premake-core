@@ -62,18 +62,7 @@ function m.defaultTarget(wks)
 	end
 	
 	-- Determine the default configuration to build
-	local defaultCfg = nil
-	for cfg in p.workspace.eachconfig(wks) do
-		-- If a default platform is specified, find the first config with that platform
-		if wks.defaultplatform and cfg.platform == wks.defaultplatform then
-			defaultCfg = cfg
-			break
-		end
-		-- Otherwise, fall back to the first configuration
-		if not defaultCfg then
-			defaultCfg = cfg
-		end
-	end
+	local defaultCfg = p.config.getdefault(wks)
 	
 	-- Build the list of default targets based on the selected projects and configuration
 	if defaultCfg then

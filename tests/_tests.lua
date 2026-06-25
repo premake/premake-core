@@ -5,6 +5,7 @@ return {
 	"test_string.lua",
 	"base/test_aliasing.lua",
 	"base/test_binmodules.lua",
+	"base/test_config_getdefault.lua",
 	"base/test_configset.lua",
 	"base/test_context.lua",
 	"base/test_criteria.lua",

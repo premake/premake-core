@@ -192,6 +192,70 @@
 
 
 ---
+-- Return the default configuration for a workspace or project.
+--
+-- @param target
+--    The workspace or project object to query.
+-- @return
+--    The selected configuration, or nil if none are available.
+---
+
+	function config.getdefault(target)
+		local eachconfig = iif(target.project, project.eachconfig, p.workspace.eachconfig)
+		local defaultConfiguration = target.defaultconfiguration
+		local defaultPlatform = target.defaultplatform
+		local defaultConfigurationLower = type(defaultConfiguration) == "string" and defaultConfiguration:lower()
+		local defaultPlatformLower = type(defaultPlatform) == "string" and defaultPlatform:lower()
+		local configs = {}
+		local first
+		local bestConfiguration
+		local bestPlatform
+		local foundDefaultConfiguration = false
+		local foundDefaultPlatform = false
+
+		for cfg in eachconfig(target) do
+			table.insert(configs, cfg)
+		end
+
+		-- Match workspace configuration ordering regardless of target type.
+		table.sort(configs, function(a, b) return a.name < b.name end)
+
+		for _, cfg in ipairs(configs) do
+			first = first or cfg
+
+			local matchesConfiguration = defaultConfigurationLower and cfg.buildcfg and cfg.buildcfg:lower() == defaultConfigurationLower
+			local matchesPlatform = defaultPlatformLower and cfg.platform and cfg.platform:lower() == defaultPlatformLower
+
+			if matchesConfiguration then
+				foundDefaultConfiguration = true
+			end
+
+			if matchesPlatform then
+				foundDefaultPlatform = true
+			end
+
+			if matchesConfiguration and matchesPlatform then
+				return cfg
+			elseif not bestConfiguration and matchesConfiguration then
+				bestConfiguration = cfg
+			elseif not bestPlatform and matchesPlatform then
+				bestPlatform = cfg
+			end
+		end
+
+		if type(defaultConfiguration) == "string" and not foundDefaultConfiguration then
+			p.warnOnce("defaultconfiguration:" .. tostring(target) .. ":" .. defaultConfigurationLower, "defaultconfiguration '%s' does not match any configuration in '%s'", defaultConfiguration, target.name)
+		end
+
+		if type(defaultPlatform) == "string" and not foundDefaultPlatform then
+			p.warnOnce("defaultplatform:" .. tostring(target) .. ":" .. defaultPlatformLower, "defaultplatform '%s' does not match any platform in '%s'", defaultPlatform, target.name)
+		end
+
+		return bestConfiguration or bestPlatform or first
+	end
+
+
+---
 -- Retrieve linking information for a specific configuration. That is,
 -- the path information that is required to link against the library
 -- built by this configuration.

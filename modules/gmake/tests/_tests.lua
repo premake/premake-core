@@ -3,6 +3,7 @@ require ("gmake")
 return {
 	"test_gmake_buildcmds.lua",
 	"test_gmake_clang.lua",
+	"test_gmake_default_config.lua",
 	"test_gmake_file_rules.lua",
 	"test_gmake_flags.lua",
 	"test_gmake_includes.lua",

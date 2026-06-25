@@ -1726,8 +1726,8 @@
 
 
 	function xcode.XCBuildConfigurationList(tr)
-		local wks = tr.project.workspace
-		local defaultCfgName = xcode.stringifySetting(tr.configs[1].buildcfg)
+		local defaultCfg = p.config.getdefault(tr.project)
+		local defaultCfgName = xcode.stringifySetting(defaultCfg.buildcfg)
 		local settings = {}
 
 		for _, target in ipairs(tr.products.children) do
