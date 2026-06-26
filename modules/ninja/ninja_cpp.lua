@@ -995,7 +995,7 @@ function m.checkCustomRuleFile(cfg, node, filecfg, outputTracking)
 	
 	local commands = {}
 	if buildcommands then
-		local translatedCommands = os.translateCommandsAndPaths(buildcommands, cfg.project.basedir, cfg.project.location)
+		local translatedCommands = os.translateCommandsAndPaths(buildcommands, cfg.workspace.basedir, cfg.workspace.location)
 		for _, cmd in ipairs(translatedCommands) do
 			table.insert(commands, cmd)
 		end
@@ -1099,7 +1099,7 @@ function m.buildCustomFile(cfg, node, filecfg, outputTracking)
 		end
 	end
 	
-	local commands = os.translateCommandsAndPaths(filecfg.buildcommands, cfg.project.basedir, cfg.project.location)
+	local commands = os.translateCommandsAndPaths(filecfg.buildcommands, cfg.workspace.basedir, cfg.workspace.location)
 	local cmdStr = buildCommandString(commands, nil, nil)
 	
 	_p("build %s: custom %s%s", table.concat(outputs, " "), relPath, deps)
@@ -1252,7 +1252,7 @@ function m.buildPreBuildEvents(cfg)
 		_p("build %s: prebuild%s", prebuildTarget, implicitDeps)
 		_p("  prebuildcommands = %s", cmdstr)
 	else
-		local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.project.basedir, cfg.project.location)
+		local commands = os.translateCommandsAndPaths(cfg.prebuildcommands, cfg.workspace.basedir, cfg.workspace.location)
 		local cmdstr = buildCommandString(commands, cfg.prebuildmessage, prebuildTarget)
 		_p("build %s: prebuild%s", prebuildTarget, implicitDeps)
 		_p("  prebuildcommands = %s", cmdstr)
@@ -1282,7 +1282,7 @@ function m.buildPreLinkEvents(cfg, objectFiles)
 		_p("build %s: prelink%s", prelinkTarget, objDeps)
 		_p("  prelinkcommands = %s", cmdstr)
 	else
-		local commands = os.translateCommandsAndPaths(cfg.prelinkcommands, cfg.project.basedir, cfg.project.location)
+		local commands = os.translateCommandsAndPaths(cfg.prelinkcommands, cfg.workspace.basedir, cfg.workspace.location)
 		local cmdstr = buildCommandString(commands, cfg.prelinkmessage, prelinkTarget)
 
 		_p("build %s: prelink%s", prelinkTarget, objDeps)
@@ -1307,7 +1307,7 @@ function m.buildPostBuildEvents(cfg, targetPath)
 		_p("build %s: postbuild | %s", postbuildPhony, targetPath)
 		_p("  postbuildcommands = %s", cmdstr) 
 	else
-		local commands = os.translateCommandsAndPaths(cfg.postbuildcommands, cfg.project.basedir, cfg.project.location)
+		local commands = os.translateCommandsAndPaths(cfg.postbuildcommands, cfg.workspace.basedir, cfg.workspace.location)
 		local cmdstr = buildCommandString(commands, cfg.postbuildmessage, postbuildPhony)
 		_p("build %s: postbuild | %s", postbuildPhony, targetPath)
 		_p("  postbuildcommands = %s", cmdstr)
