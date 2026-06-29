@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install booststrap's dependencies
       run: |
         sudo apt-get update 
@@ -50,7 +50,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build
       run: PLATFORM=${{ matrix.platform }} CONFIG=${{ matrix.config }} ./Bootstrap.sh
     - name: Test
@@ -81,7 +81,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build
       shell: cmd
       env:
@@ -122,7 +122,7 @@ jobs:
         shell: msys2 {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: 'Setup MSYS2'
       uses: msys2/setup-msys2@v2
       with:
@@ -162,7 +162,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install GNU make
       run: choco install make --no-progress -y
       shell: cmd
@@ -183,7 +183,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install Ninja
       run: choco install ninja --no-progress -y
       shell: cmd
@@ -204,7 +204,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -222,7 +222,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install Ninja
       run: brew install ninja
     - name: Build with ninja
@@ -238,7 +238,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - uses: tritao/setup-cosmopolitan@v1.3
       with:
         version: '3.9.2'
@@ -267,9 +267,9 @@ jobs:
         shell: freebsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Start FreeBSD VM
-      uses: vmactions/freebsd-vm@v1.4.6
+      uses: vmactions/freebsd-vm@v1.5.0
       with:
         usesh: true
         sync: sshfs
@@ -306,9 +306,9 @@ jobs:
         shell: openbsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Start OpenBSD VM
-      uses: vmactions/openbsd-vm@v1.4.3
+      uses: vmactions/openbsd-vm@v1.4.4
       with:
         usesh: true
         sync: sshfs
@@ -345,7 +345,7 @@ jobs:
         shell: netbsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build on NetBSD VM
       uses: vmactions/netbsd-vm@v1.4.0
       with:
@@ -378,7 +378,7 @@ jobs:
         shell: dragonflybsd {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build on DragonflyBSD VM
       uses: vmactions/dragonflybsd-vm@v1.3.0
       with:
@@ -409,7 +409,7 @@ jobs:
         shell: solaris {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build on Solaris VM
       uses: vmactions/solaris-vm@v1.3.7
       with:
@@ -441,7 +441,7 @@ jobs:
         shell: omnios {0}
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Build on OmniOS VM
       uses: vmactions/omnios-vm@v1.3.3
       with:
