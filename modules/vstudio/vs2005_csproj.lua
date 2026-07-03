@@ -54,6 +54,7 @@
 				dotnetbase.csversion,
 				dotnetbase.projectConfigurations,
 				dotnetbase.netcore.enableDefaultCompileItems,
+				dotnetbase.netcore.enableImplicitUsings,
 				dotnetbase.netcore.dotnetsdk
 			}
 		else

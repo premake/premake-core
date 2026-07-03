@@ -817,6 +817,17 @@
 		_p(2,'<EnableDefaultCompileItems>%s</EnableDefaultCompileItems>', iif(cfg.enableDefaultCompileItems, "true", "false"))
 	end
 
+	function dotnetbase.netcore.enableImplicitUsings(cfg)
+		local types = {
+			Off = "false",
+			On = "true"
+		}
+
+		if _ACTION >= "vs2022" and dotnetbase.isNewFormatProject(cfg) and types[cfg.enableimplicitusings] then
+			_p(2,'<ImplicitUsings>%s</ImplicitUsings>', types[cfg.enableimplicitusings])
+		end
+	end
+
 	function dotnetbase.netcore.useWpf(cfg)
 		if cfg.wpf == p.ON then
 			_p(2,'<UseWpf>true</UseWpf>')

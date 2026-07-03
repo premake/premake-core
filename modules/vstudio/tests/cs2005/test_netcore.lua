@@ -138,6 +138,40 @@ function suite.allowUnsafeProperty_core()
     ]]
 end
 
+function suite.implicitUsings_on()
+    p.action.set("vs2022")
+    dotnetframework "net10.0"
+    enableimplicitusings "On"
+    prepareProjectProperties()
+    test.capture [[
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<TargetFramework>net10.0</TargetFramework>
+		<Configurations>Debug;Release;Distribution</Configurations>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
+    ]]
+end
+
+function suite.implicitUsings_off()
+    p.action.set("vs2022")
+    dotnetframework "net10.0"
+    enableimplicitusings "Off"
+    prepareProjectProperties()
+    test.capture [[
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<TargetFramework>net10.0</TargetFramework>
+		<Configurations>Debug;Release;Distribution</Configurations>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<ImplicitUsings>false</ImplicitUsings>
+	</PropertyGroup>
+    ]]
+end
+
 function suite.project_element_configurations()
 	p.action.set("vs2022")
 	dotnetframework "net8.0"
