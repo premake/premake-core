@@ -77,7 +77,7 @@
 		configuration { "solaris" }
 			links       { "m", "socket", "nsl" }
 
-		configuration "aix"
+		configuration "aix or cygwin"
 			defines     { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 			links       { "m" }
 
