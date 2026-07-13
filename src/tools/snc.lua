@@ -110,6 +110,7 @@
 	snc.getstructuredincludedirs = gcc.getstructuredincludedirs
 	snc.getstructuredimplicitincludedirs = gcc.getstructuredimplicitincludedirs
 	snc.getrunpathdirs = gcc.getrunpathdirs
+	snc.getSections = gcc.getSections
 	snc.getLibraryDirectories = gcc.getLibraryDirectories
 	snc.getlinks = gcc.getlinks
 

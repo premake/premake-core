@@ -314,6 +314,10 @@
 		return {}
 	end
 
+	function msc.getSections()
+		return {}
+	end
+
 --
 -- Decorate include file search paths for the MSVC command line.
 --

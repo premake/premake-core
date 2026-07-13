@@ -242,6 +242,7 @@
 	clang.getstructuredimplicitincludedirs = gcc.getstructuredimplicitincludedirs
 
 	clang.getrunpathdirs = gcc.getrunpathdirs
+	clang.getSections = gcc.getSections
 
 --
 -- get the right output flag.
