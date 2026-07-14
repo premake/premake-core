@@ -96,6 +96,7 @@
 | [includedirs](includedirs.md)                             |  |
 | [includedirsafter](includedirsafter.md)                   |  |
 | [includeexternal](globals/includeexternal.md)             |  |
+| [infoplist](infoplist.md)                                   | Sets the Apple ap bundle infos.                  |
 | [inlining](inlining.md)                                   | Tells the compiler when it should inline functions |
 | [intrinsics](intrinsics.md)                               |  |
 | [kind](kind.md)                                           |  |

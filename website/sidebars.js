@@ -176,6 +176,7 @@ module.exports = {
 						'includedirsafter',
 						'incrementallink',
 						'inheritdependencies',
+						'infoplist',
 						'inlinesvisibility',
 						'inlining',
 						'intrinsics',
