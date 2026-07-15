@@ -1551,6 +1551,37 @@ end
 	end
 
 --
+-- Check Info.plist embedding on Apple platforms.
+--
+	function suite.onMacOSXInfoPlist()
+		system "MacOSX"
+		infoplist "./MyInfo.plist"
+
+		prepare()
+	
+		local actual = gcc.getSections(cfg)
+		local expected = "-Wl,-sectcreate,__TEXT,__info_plist,MyInfo.plist"
+		test.contains({expected}, actual)
+		--test.contains ("", "")
+		--test.contains ("", "")
+	end
+
+	function suite.notOnMacOSXInfoPlist()
+		system "Linux"
+		infoplist "./MyInfo.plist"
+
+		prepare()
+
+		local actual = gcc.getSections(cfg)
+		local notExpected = "-Wl,-sectcreate,__TEXT,__info_plist,MyInfo.plist"
+		test.excludes({notExpected}, actual)
+		--test.contains ("", "")
+		--test.contains ("", "")
+	end
+
+
+
+--
 -- Make sure unicode support is handled properly.
 --
 

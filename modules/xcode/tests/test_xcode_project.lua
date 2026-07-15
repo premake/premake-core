@@ -2130,6 +2130,28 @@
 				]]
 	end
 
+	function suite.XCBuildConfigurationTarget_infoplist()
+		files { "./a/b/c/MyProject-Info.plist" }
+		infoplist "./a/b/c/Override.plist"
+		prepare()
+		xcode.XCBuildConfiguration_Target(tr, tr.products.children[1], tr.configs[1])
+		test.capture [[
+		0141F3FC0D9EB3163D17DF0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INFOPLIST_FILE = a/b/c/Override.plist;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = MyProject;
+			};
+			name = Debug;
+		};
+				]]
+	end
+
 
 	function suite.XCBuildConfigurationTarget_OnSymbols()
 		symbols "On"
