@@ -18,7 +18,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0 beta 8 or later for Apple platform applications.
+Premake 5.0 or later for Apple platform applications.
 
 ### Examples ###
 
@@ -27,7 +27,7 @@ This project defines a default Info.plist and a different one for the Debug conf
 ```lua
 project "MyProject"
 
-	infoplist "Default.plist"
+  infoplist "Default.plist"
 
   filter { "configurations:Debug" }
     infoplist "DebugInfo.plist"
