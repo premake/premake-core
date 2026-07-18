@@ -1562,8 +1562,6 @@ end
 		local actual = gcc.getSections(cfg)
 		local expected = "-Wl,-sectcreate,__TEXT,__info_plist,MyInfo.plist"
 		test.contains({expected}, actual)
-		--test.contains ("", "")
-		--test.contains ("", "")
 	end
 
 	function suite.notOnMacOSXInfoPlist()
