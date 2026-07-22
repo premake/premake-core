@@ -15,5 +15,6 @@ return {
 	"test_gmake_perfile_flags.lua",
 	"test_gmake_target_rules.lua",
 	"test_gmake_tools.lua",
+	"test_gmake_customrules.lua",
 	"test_gmake_wks.lua"
 }

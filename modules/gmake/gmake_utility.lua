@@ -114,7 +114,7 @@
 				table.insert(cfg._gmake.fileRules, file)
 
 				for _, output in ipairs(buildoutputs) do
-					utility.addGeneratedFile(cfg, node, output)
+					utility.addGeneratedFile(cfg, node, output, nil)
 				end
 			end
 		else
@@ -123,7 +123,7 @@
 	end
 
 
-	function utility.addGeneratedFile(cfg, source, filename)
+	function utility.addGeneratedFile(cfg, source, filename, generatingRule)
 		-- mark that we have generated files.
 		cfg.project.hasGeneratedFiles = true
 
@@ -139,6 +139,11 @@
 		-- always overwrite the dependency information.
 		node.dependsOn = source
 		node.generated = true
+
+		-- if the generating node exists then use it
+		if generatingRule then
+            node.generatedByRule = generatingRule
+        end
 
 		-- add to config if not already added.
 		if not fileconfig.getconfig(node, cfg) then
@@ -161,7 +166,7 @@
 	function utility.addRuleFile(cfg, node)
 		local rules = cfg.project._gmake.rules
 		local rule = rules[path.getextension(node.abspath):lower()]
-		if rule then
+		if rule and node.generatedByRule ~= rule then
 
 			local filecfg = fileconfig.getconfig(node, cfg)
 			local environ = table.shallowcopy(filecfg.environ)
@@ -190,7 +195,7 @@
 				table.insert(cfg._gmake.fileRules, file)
 
 				for _, output in ipairs(buildoutputs) do
-					utility.addGeneratedFile(cfg, node, output)
+					utility.addGeneratedFile(cfg, node, output, rule)
 				end
 			end
 		end
