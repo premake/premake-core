@@ -2877,7 +2877,8 @@
 
 		-- Keep the RemoteIntRelDir in sync with IntDir
 		if cfg.system == p.LINUX then
-			m.element("RemoteIntRelDir", nil, "%s\\", remoteobjdir)
+			remoteobjdir = string.gsub(remoteobjdir, "\\", "/")
+			m.element("RemoteIntRelDir", nil, "%s/", remoteobjdir)
 		end
 	end
 
@@ -3143,7 +3144,8 @@
 
 		-- Keep the RemoteOutRelDir in sync with OutDir or we won't be able to find the executable in the remote machine
 		if cfg.system == p.LINUX then
-			m.element("RemoteOutRelDir", nil, "%s\\", remoteoutdir)
+			remoteoutdir = string.gsub(remoteoutdir, "\\", "/")
+			m.element("RemoteOutRelDir", nil, "%s/", remoteoutdir)
 		end
 
 	end
