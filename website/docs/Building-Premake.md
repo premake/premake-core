@@ -86,6 +86,31 @@ bin/release/premake5 embed
 make config=release   # or via Visual Studio, etc.
 ```
 
+## External Dependencies ##
+
+Premake relies on external dependencies. These are bundled in the `contrib` directory. The following table describes if the dependency is required, optional, or if it can be brought in from the system.
+
+| Name | Version | License | Required | Can Use System Install | Source Flag |
+|------|---------|---------|----------|----------------------|-----------|
+| Lua | 5.3.5 | MIT | Yes | Yes | `--lua-src=<contrib/system>` |
+| libzip | 0.11.2 | 3-Clause BSD | No | Yes | `--zlib-src=<contrib/system/none>` |
+| zlib | 1.3.2 | Zlib license | No | Yes | `--zlib-src=<contrib/system/none>` |
+| curl | 8.11 | curl license | No | Yes | `--curl-src=<contrib/system/none>` |
+| mbedtls | 3.6.2 | Apache 2.0 | No | Yes | `--curl-src=<contrib/system/none>` |
+| luasocket | 3.0-rc1 | MIT | No | No | `--no-luasocket` |
+
+Additionally, all of these can be set in a single flag via `--lib-src=<contrib/system/none>`.
+
+* `contrib` - Use the included sources in `contrib/`
+* `system` - Use the system installed version
+* `none` - Do not link against the library (required for luasocket)
+
+:::info
+
+The Premake Lua distribution is modified to add proper UTF-8 support. If you need UTF-8 support, you must build against Premake's Lua distribution or provide your own with UTF-8 support that is 5.3.5 compatible.
+
+:::
+
 ## Stuck? ##
 
 Give us a shout [in our Discussions area on GitHub](https://github.com/premake/premake-core/discussions) and we'll be glad to help you out.
