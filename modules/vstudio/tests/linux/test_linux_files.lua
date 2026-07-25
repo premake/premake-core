@@ -70,9 +70,9 @@ local vc2010 = p.vstudio.vc2010
 		test.capture [[
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 	<OutDir>$(ProjectDir)bin\Debug\</OutDir>
-	<RemoteOutRelDir>$(RemoteProjectRelDir)bin\Debug\</RemoteOutRelDir>
+	<RemoteOutRelDir>$(RemoteProjectRelDir)bin/Debug/</RemoteOutRelDir>
 	<IntDir>$(ProjectDir)obj\Debug\</IntDir>
-	<RemoteIntRelDir>$(RemoteProjectRelDir)obj\Debug\</RemoteIntRelDir>
+	<RemoteIntRelDir>$(RemoteProjectRelDir)obj/Debug/</RemoteIntRelDir>
 	<TargetName>MyProject</TargetName>
 	<TargetExt>
 	</TargetExt>
