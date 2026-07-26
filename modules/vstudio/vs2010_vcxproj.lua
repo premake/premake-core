@@ -2865,12 +2865,21 @@
 
 	function m.intDir(cfg)
 		local objdir = vstudio.path(cfg, cfg.objdir)
+		local localobjdir = objdir
+		local remoteobjdir  = objdir
 
 		if not path.isabsolute(objdir) then
-			objdir = "$(ProjectDir)" .. objdir
+			localobjdir = "$(ProjectDir)" .. objdir
+			remoteobjdir = "$(RemoteProjectRelDir)" .. objdir
 		end
 
-		m.element("IntDir", nil, "%s\\", objdir)
+		m.element("IntDir", nil, "%s\\", localobjdir)
+
+		-- Keep the RemoteIntRelDir in sync with IntDir
+		if cfg.system == p.LINUX then
+			remoteobjdir = path.translate(remoteobjdir, "/")
+			m.element("RemoteIntRelDir", nil, "%s/", remoteobjdir)
+		end
 	end
 
 
@@ -3123,12 +3132,21 @@
 
 	function m.outDir(cfg)
 		local outdir = vstudio.path(cfg, cfg.buildtarget.directory)
+		local localoutdir = outdir
+		local remoteoutdir = outdir
 
 		if not path.isabsolute(outdir) then
-			outdir = "$(ProjectDir)" .. outdir
+			localoutdir = "$(ProjectDir)" .. outdir
+			remoteoutdir = "$(RemoteProjectRelDir)" .. outdir
 		end
 
-		m.element("OutDir", nil, "%s\\", outdir)
+		m.element("OutDir", nil, "%s\\", localoutdir)
+
+		-- Keep the RemoteOutRelDir in sync with OutDir or we won't be able to find the executable in the remote machine
+		if cfg.system == p.LINUX then
+			remoteoutdir = path.translate(remoteoutdir, "/")
+			m.element("RemoteOutRelDir", nil, "%s/", remoteoutdir)
+		end
 
 	end
 
