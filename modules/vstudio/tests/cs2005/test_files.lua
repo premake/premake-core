@@ -270,6 +270,17 @@
 		]]
 	end
 
+	function suite.fallbackUserAction()
+		files { "Hello.custom" }
+		filter "files:Hello.custom"
+		buildaction "CustomAction"
+		prepare()
+		test.capture [[
+		<CustomAction Include="Hello.custom" />
+		]]
+	end
+
+
 
 --
 -- Files that exist outside the project folder should be added as
