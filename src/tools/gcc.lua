@@ -535,7 +535,7 @@
 --
 -- get the link-time file embedding flags
 --
-	function gcc.getSections(cfg)
+	function gcc.getsections(cfg)
 		local result = {}
 		if table.contains(os.getSystemTags(cfg.system), "darwin") then
 			if cfg.infoplist then

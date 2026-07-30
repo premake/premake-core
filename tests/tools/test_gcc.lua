@@ -1559,7 +1559,7 @@ end
 
 		prepare()
 	
-		local actual = gcc.getSections(cfg)
+		local actual = gcc.getsections(cfg)
 		local expected = "-Wl,-sectcreate,__TEXT,__info_plist,MyInfo.plist"
 		test.contains({expected}, actual)
 	end
@@ -1570,7 +1570,7 @@ end
 
 		prepare()
 
-		local actual = gcc.getSections(cfg)
+		local actual = gcc.getsections(cfg)
 		local notExpected = "-Wl,-sectcreate,__TEXT,__info_plist,MyInfo.plist"
 		test.excludes({notExpected}, actual)
 		--test.contains ("", "")

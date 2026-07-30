@@ -529,7 +529,7 @@ function m.getLdFlags(cfg, toolset)
 	local libdirs = toolset.getLibraryDirectories(cfg)
 	flags = table.join(flags, libdirs)
 
-	local sections = toolset.getSections(cfg)
+	local sections = toolset.getsections(cfg)
 	flags = table.join(flags, sections)
 
 	if toolset.getrunpathdirs then

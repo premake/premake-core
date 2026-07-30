@@ -314,7 +314,7 @@
 		return {}
 	end
 
-	function msc.getSections()
+	function msc.getsections()
 		return {}
 	end
 
