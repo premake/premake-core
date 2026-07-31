@@ -580,6 +580,9 @@
 	function os.remove(f)
 		-- in case of string, just match files
 		if type(f) == "string" then
+			if os.islink(f) then
+				return builtin_remove(f)
+			end
 			local p = os.matchfiles(f)
 			for _, v in pairs(p) do
 				local ok, err, code = builtin_remove(v)
