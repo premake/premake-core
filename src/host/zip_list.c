@@ -23,7 +23,7 @@ int zip_list(lua_State* L)
     {
         const char* full_name = zip_get_name(z_archive, i, 0);
         lua_pushstring(L, full_name);
-        lua_rawseti(L, -2, i);
+        lua_rawseti(L, -2, i + 1);
     }
     zip_close(z_archive);
     lua_pushnil(L);
