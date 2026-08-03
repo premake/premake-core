@@ -377,6 +377,7 @@
 				m.extensionsToDeleteOnClean,
 				m.executablePath,
 				m.allModulesPublic,
+				m.publicModuleDirectories,
 				m.clangtidy,
 				m.runcodeanalysis
 			}
@@ -2095,6 +2096,14 @@
 		if _ACTION >= "vs2019" then
 			if cfg.allmodulespublic ~= nil then
 				m.element("AllProjectBMIsArePublic", nil, iif(cfg.allmodulespublic, "true", "false"))
+			end
+		end
+	end
+
+	function m.publicModuleDirectories(cfg)
+		if _ACTION >= "vs2019" then
+			if cfg.publicmoduledirectories ~= nil and #cfg.publicmoduledirectories > 0 then
+				m.element("PublicModuleDirectories", nil,"%s;$(PublicModuleDirectories)", table.concat(cfg.publicmoduledirectories, ";"))
 			end
 		end
 	end
