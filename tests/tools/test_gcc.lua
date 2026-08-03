@@ -232,6 +232,12 @@
 		test.contains({ "-mavx2" }, gcc.getcflags(cfg))
 	end
 
+	function suite.cflags_onAVX512()
+		vectorextensions "AVX512"
+		prepare()
+		test.contains({ "-mavx512f" }, gcc.getcflags(cfg))
+	end
+
 	function suite.cflags_onMOVBE()
 		isaextensions "MOVBE"
 		prepare()

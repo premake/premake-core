@@ -162,6 +162,12 @@ end
 		test.excludes("-fopenmp", clang.getcflags(cfg))
 	end
 
+	function suite.cflags_onAVX512()
+		vectorextensions "AVX512"
+		prepare()
+		test.contains({ "-mavx512f" }, clang.getcflags(cfg))
+	end
+
 	function suite.cxxflags_onOpenmpOn()
 		openmp "On"
 		prepare()
@@ -483,4 +489,3 @@ end
 		prepare()
 		test.excludes({ "-municode" }, clang.getldflags(cfg))
 	end
-	

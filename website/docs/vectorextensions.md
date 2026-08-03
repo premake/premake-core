@@ -15,6 +15,7 @@ If no value is set for a configuration, the toolset's default vector extension s
 | Default     | Use the toolset's default vector extension settings.   |
 | AVX         | Use Advanced Vector Extensions.                        |
 | AVX2        | Use Advanced Vector Extensions 2.                      |
+| AVX512      | Use Advanced Vector Extensions 512.                    |
 | IA32        | Use Intel Architecture 32-bit                          |
 | SSE         | Use the basic SSE instruction set.                     |
 | SSE2        | Use the SSE2 instruction set.                          |
@@ -25,6 +26,9 @@ If no value is set for a configuration, the toolset's default vector extension s
 | ALTIVEC     | Use Altivec (ISA 2.02) instruction set.                |
 | NEON        | Use the NEON instruction set (Android only)            |
 | MXU         | Use the XBurst SIMD instructions (Android only)        |
+
+Note:
+- AVX512 enables all instructions with the `msc` toolset (`/arch:AVX512`), but only enables foundational (`-mavx512f`) instructions in the `gcc` and `clang` toolset.
 
 ### Applies To ###
 

@@ -960,6 +960,7 @@
 			"Default",
 			"AVX",
 			"AVX2",
+			"AVX512",
 			"IA32",
 			"SSE",
 			"SSE2",

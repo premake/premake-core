@@ -111,6 +111,7 @@
 		vectorextensions = {
 			AVX = "/arch:AVX",
 			AVX2 = "/arch:AVX2",
+			AVX512 = "/arch:AVX512",
 			SSE = "/arch:SSE",
 			SSE2 = "/arch:SSE2",
 			SSE3 = "/arch:SSE2",

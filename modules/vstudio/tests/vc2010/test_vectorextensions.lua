@@ -91,3 +91,19 @@
 		prepare()
 		test.isemptycapture()
 	end
+
+	function suite.instructionSet_onAVX512()
+		p.action.set("vs2017")
+		vectorextensions "AVX512"
+		prepare()
+		test.capture [[
+<EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+		]]
+	end
+
+	function suite.instructionSet_onAVX512_onVS2015()
+		p.action.set("vs2015")
+		vectorextensions "AVX512"
+		prepare()
+		test.isemptycapture()
+	end
