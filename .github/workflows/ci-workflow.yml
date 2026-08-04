@@ -347,7 +347,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v7
     - name: Build on NetBSD VM
-      uses: vmactions/netbsd-vm@v1.4.4
+      uses: vmactions/netbsd-vm@v1.4.5
       with:
         usesh: true
         prepare: |
