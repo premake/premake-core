@@ -199,7 +199,7 @@
 				table.insert(cfg._gmake.fileRules, file)
 
 				for _, output in ipairs(buildoutputs) do
-					cpp.addGeneratedFile(cfg, node, output)
+					cpp.addGeneratedFile(cfg, node, output, nil)
 				end
 			end
 		elseif filecfg.buildaction == "Copy" then
@@ -212,7 +212,7 @@
 				buildinputs = {'$(TARGETDIR)'}
 			}
 			table.insert(cfg._gmake.fileRules, file)
-			cpp.addGeneratedFile(cfg, node, output)
+			cpp.addGeneratedFile(cfg, node, output, nil)
 		else
 			cpp.addRuleFile(cfg, node)
 		end
@@ -233,7 +233,7 @@
 		return fileext;
 	end
 
-	function cpp.addGeneratedFile(cfg, source, filename)
+	function cpp.addGeneratedFile(cfg, source, filename, generatingRule)
 		-- mark that we have generated files.
 		cfg.project.hasGeneratedFiles = true
 
@@ -249,6 +249,11 @@
 		-- always overwrite the dependency information.
 		node.dependsOn = source
 		node.generated = true
+
+		-- if the generating node exists then use it
+		if generatingRule then
+            node.generatedByRule = generatingRule
+        end
 
 		-- add to config if not already added.
 		if not fileconfig.getconfig(node, cfg) then
@@ -284,7 +289,7 @@
 		local rules = cfg.project._gmake.rules
 		local fileext = cpp.determineFiletype(cfg, node)
 		local rule = rules[fileext]
-		if rule then
+		if rule and node.generatedByRule ~= rule then
 
 			local filecfg = fileconfig.getconfig(node, cfg)
 			local environ = table.shallowcopy(filecfg.environ)
@@ -313,7 +318,7 @@
 				table.insert(cfg._gmake.fileRules, file)
 
 				for _, output in ipairs(buildoutputs) do
-					cpp.addGeneratedFile(cfg, node, output)
+					cpp.addGeneratedFile(cfg, node, output, rule)
 				end
 			end
 		end
