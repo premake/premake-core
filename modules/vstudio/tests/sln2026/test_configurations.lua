@@ -15,6 +15,12 @@ function suite.setup()
 end
 
 
+local function prepare(wks)
+	wks = test.getWorkspace(wks)
+	sln2026.configurations(wks)
+end
+
+
 function suite.solution_header()
 	sln2026.solution()
 
@@ -27,7 +33,7 @@ end
 function suite.default_configurations()
 	local wks = workspace "MyWorkspace"
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -41,7 +47,7 @@ function suite.multiple_configurations()
 
 	configurations { "Debug", "Release" }
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -56,7 +62,7 @@ end
 function suite.default_platforms()
 	local wks = workspace "MyWorkspace"
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -71,7 +77,7 @@ function suite.multiple_platforms()
 	configurations { "Debug" }
 	platforms { "x86", "x64" }
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -89,7 +95,7 @@ function suite.default_configuration()
 	configurations { "Debug", "Release" }
 	defaultconfiguration "Release"
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -108,7 +114,7 @@ function suite.default_platform()
 	platforms { "x86", "x64" }
 	defaultplatform "x64"
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>
@@ -128,7 +134,7 @@ function suite.default_configuration_and_platform()
 	defaultconfiguration "Release"
 	defaultplatform "x86"
 
-	sln2026.configurations(wks)
+	prepare(wks)
 
 	test.capture [[
 <Configurations>

@@ -62,8 +62,6 @@ end
 function m.configurations(wks)
 	p.push('<Configurations>')
 
-	wks = p.oven.bakeWorkspace(wks)
-
 	local cfgs = {}
 	local platforms = {}
 	local defaultCfg = p.config.getdefault(wks)
