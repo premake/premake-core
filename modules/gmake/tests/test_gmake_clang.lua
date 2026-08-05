@@ -18,6 +18,9 @@
 	function suite.setup()
 		wks = test.createWorkspace()
 		toolset "clang"
+	end
+
+	local function prepare()
 		prj = p.workspace.getproject(wks, 1)
 	end
 
@@ -27,6 +30,7 @@
 --
 
 	function suite.usesCorrectCompilers()
+		prepare()
 		gmake.cpp.outputConfigurationSection(prj)
 		test.capture [[
 # Configurations
@@ -44,3 +48,24 @@ endif
 ]]
 	end
 
+	function suite.usesSystemArchiverForVersionedClangOnMacOSWithLinkTimeOptimization()
+		system "MacOSX"
+		toolset "clang-16"
+		linktimeoptimization "On"
+		prepare()
+		gmake.cpp.outputConfigurationSection(prj)
+		test.capture [[
+# Configurations
+# #############################################
+
+ifeq ($(origin CC), default)
+  CC = clang-16
+endif
+ifeq ($(origin CXX), default)
+  CXX = clang++-16
+endif
+ifeq ($(origin AR), default)
+  AR = ar
+endif
+]]
+	end
