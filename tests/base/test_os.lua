@@ -184,18 +184,27 @@
 --
 
 	function suite.mkdir_ReturnsTrue_OnExistingDirectoryLink()
-		test.istrue(os.linkdir("folder/subfolder", "folder/subfolder2"))
-		test.istrue(os.mkdir("folder/subfolder2"))
-		test.istrue(os.islink("folder/subfolder2"))
-		test.istrue(os.isdir("folder/subfolder2"))
-		test.istrue(os.rmdir("folder/subfolder2"))
+		-- BSD CI mounts the workspace through SSHFS, so keep topology tests on local storage.
+		local root = os.tmpname()
+		os.remove(root)
+		local target = path.join(root, "subfolder")
+		local link = path.join(root, "subfolder2")
+
+		test.istrue(os.mkdir(target))
+		test.istrue(os.linkdir(target, link))
+		test.istrue(os.mkdir(link))
+		test.istrue(os.islink(link))
+		test.istrue(os.isdir(link))
+		test.istrue(os.rmdir(link))
+		test.istrue(os.rmdir(target))
+		test.istrue(os.rmdir(root))
 	end
 
 	function suite.mkdir_ReturnsError_OnExistingFile()
+		test.istrue(os.isfile("folder/ok.lua"))
 		local ok, err = os.mkdir("folder/ok.lua")
 		test.isnil(ok)
 		test.isequal("string", type(err))
-		test.istrue(os.isfile("folder/ok.lua"))
 	end
 
 --
