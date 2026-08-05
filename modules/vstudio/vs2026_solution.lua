@@ -62,8 +62,13 @@ end
 function m.configurations(wks)
 	p.push('<Configurations>')
 
+	wks = p.oven.bakeWorkspace(wks)
+
 	local cfgs = {}
 	local platforms = {}
+	local defaultCfg = p.config.getdefault(wks)
+	local defaultBuildcfg = defaultCfg and defaultCfg.buildcfg
+	local defaultPlatform = defaultCfg and vstudio.solutionPlatform(defaultCfg)
 
 	for cfg in p.workspace.eachconfig(wks) do
 		local platform = vstudio.solutionPlatform(cfg)
@@ -74,8 +79,25 @@ function m.configurations(wks)
 	cfgs = table.unique(cfgs)
 	platforms = table.unique(platforms)
 
-	table.sort(cfgs, function(a, b) return a:lower() < b:lower() end)
-	table.sort(platforms, function(a, b) return a:lower() < b:lower() end)
+	table.sort(cfgs, function(a, b)
+		if a == defaultBuildcfg then
+			return b ~= defaultBuildcfg
+		elseif b == defaultBuildcfg then
+			return false
+		end
+
+		return a:lower() < b:lower()
+	end)
+
+	table.sort(platforms, function(a, b)
+		if a == defaultPlatform then
+			return b ~= defaultPlatform
+		elseif b == defaultPlatform then
+			return false
+		end
+
+		return a:lower() < b:lower()
+	end)
 
 	for _, buildcfg in ipairs(cfgs) do
 		p.push('<BuildType Name="%s" />', buildcfg)

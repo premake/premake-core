@@ -36,6 +36,10 @@ workspace "MyWorkspace"
   defaultplatform "x64"
 ```
 
+### Remarks ###
+
+When generating Visual Studio solutions (`.sln` or `.slnx`), Premake writes the selected build configuration and platform first. Neither Microsoft solution format provides fields that explicitly identify the default configuration or platform, so this is a best-effort hint based on entry ordering. Microsoft tools or other consumers may apply their own defaults instead; for example, MSBuild prefers `Debug` when that configuration exists.
+
 ### See Also ###
 
 * [configurations](configurations.md)

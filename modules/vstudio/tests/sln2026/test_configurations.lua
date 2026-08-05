@@ -1,12 +1,12 @@
 --
--- tests/actions/vstudio/sln2026/test_dependencies.lua
+-- tests/actions/vstudio/sln2026/test_configurations.lua
 -- Validate generation of Visual Studio 2026+ solution project dependencies.
 -- Author Nick Clark
 -- Copyright (c) 2025 Jess Perkins and the Premake project
 --
 
 local p = premake
-local suite = test.declare("vstudio_sln2026_dependencies")
+local suite = test.declare("vstudio_sln2026_configurations")
 local sln2026 = p.vstudio.sln2026
 
 
@@ -75,6 +75,64 @@ function suite.multiple_platforms()
 
 	test.capture [[
 <Configurations>
+	<BuildType Name="Debug" />
+	<Platform Name="x64" />
+	<Platform Name="Win32" />
+</Configurations>
+	]]
+end
+
+
+function suite.default_configuration()
+	local wks = workspace "MyWorkspace"
+
+	configurations { "Debug", "Release" }
+	defaultconfiguration "Release"
+
+	sln2026.configurations(wks)
+
+	test.capture [[
+<Configurations>
+	<BuildType Name="Release" />
+	<BuildType Name="Debug" />
+	<Platform Name="Win32" />
+</Configurations>
+	]]
+end
+
+
+function suite.default_platform()
+	local wks = workspace "MyWorkspace"
+
+	configurations { "Debug" }
+	platforms { "x86", "x64" }
+	defaultplatform "x64"
+
+	sln2026.configurations(wks)
+
+	test.capture [[
+<Configurations>
+	<BuildType Name="Debug" />
+	<Platform Name="x64" />
+	<Platform Name="Win32" />
+</Configurations>
+	]]
+end
+
+
+function suite.default_configuration_and_platform()
+	local wks = workspace "MyWorkspace"
+
+	configurations { "Debug", "Release" }
+	platforms { "x86", "x64" }
+	defaultconfiguration "Release"
+	defaultplatform "x86"
+
+	sln2026.configurations(wks)
+
+	test.capture [[
+<Configurations>
+	<BuildType Name="Release" />
 	<BuildType Name="Debug" />
 	<Platform Name="Win32" />
 	<Platform Name="x64" />
