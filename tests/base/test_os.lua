@@ -179,6 +179,24 @@
 		test.isfalse(os.islink("folder/ok2.lua"))
 	end
 
+--
+-- os.mkdir() tests
+--
+
+	function suite.mkdir_ReturnsTrue_OnExistingDirectoryLink()
+		test.istrue(os.linkdir("folder/subfolder", "folder/subfolder2"))
+		test.istrue(os.mkdir("folder/subfolder2"))
+		test.istrue(os.islink("folder/subfolder2"))
+		test.istrue(os.isdir("folder/subfolder2"))
+		test.istrue(os.rmdir("folder/subfolder2"))
+	end
+
+	function suite.mkdir_ReturnsError_OnExistingFile()
+		local ok, err = os.mkdir("folder/ok.lua")
+		test.isnil(ok)
+		test.isequal("string", type(err))
+		test.istrue(os.isfile("folder/ok.lua"))
+	end
 
 --
 -- os.matchdirs() tests

@@ -24,25 +24,13 @@ int os_isdir(lua_State* L)
 	}
 
 #if PLATFORM_WINDOWS
-	struct _stat buf;
 	const wchar_t *wpath = luaL_checkconvertstring(L, 1);
-	if (_wstat(wpath, &buf) == 0)
-	{
-		int isdir = (buf.st_mode & S_IFDIR) != 0;
-		lua_pushboolean(L, isdir);
-	}
+	DWORD attributes = GetFileAttributesW(wpath);
+	lua_pushboolean(L, attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
 #else
 	struct stat buf;
-	if (stat(path, &buf) == 0)
-	{
-		int isdir = (buf.st_mode & S_IFDIR) != 0;
-		lua_pushboolean(L, isdir);
-	}
+	lua_pushboolean(L, stat(path, &buf) == 0 && S_ISDIR(buf.st_mode));
 #endif
-	else
-	{
-		lua_pushboolean(L, 0);
-	}
 
 	return 1;
 }
