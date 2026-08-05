@@ -20,6 +20,9 @@
 	function suite.setup()
 		wks = test.createWorkspace()
 		toolset "clang"
+	end
+
+	local function prepare()
 		prj = p.workspace.getproject(wks, 1)
 	end
 
@@ -29,6 +32,7 @@
 --
 
 	function suite.usesCorrectCompilers()
+		prepare()
 		make.cppConfigs(prj)
 		test.capture [[
 ifeq ($(config),debug)
@@ -45,7 +49,9 @@ ifeq ($(config),debug)
 	end
 
 	function suite.usesCorrectCompilersAndLinkTimeOptimizationViaAPI()
+		system "Linux"
 		linktimeoptimization "On"
+		prepare()
 		make.cppConfigs(prj)
 		test.capture [[
 ifeq ($(config),debug)
@@ -62,7 +68,9 @@ ifeq ($(config),debug)
 	end
 
 	function suite.usesCorrectCompilersAndFastLinkTimeOptimizationViaAPI()
+		system "Linux"
 		linktimeoptimization "Fast"
+		prepare()
 		make.cppConfigs(prj)
 		test.capture [[
 ifeq ($(config),debug)

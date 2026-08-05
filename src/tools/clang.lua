@@ -391,6 +391,10 @@
 
 	function clang.gettoolname(cfg, tool)
 		local toolset, version = p.tools.canonical(cfg.toolset or p.CLANG)
+		-- Apple toolchains expose their LTO-capable archiver as "ar", without Clang-style version suffixes, nor "llvm-ar".
+		if tool == "ar" and (cfg.system == p.MACOSX or cfg.system == p.IOS or cfg.system == p.TVOS) then
+			return "ar"
+		end
 		local value = clang.tools[tool]
 		if type(value) == "function" then
 			value = value(cfg)

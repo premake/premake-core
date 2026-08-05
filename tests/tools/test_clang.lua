@@ -57,6 +57,24 @@
 		test.isequal("windres", clang.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_onMacOSWithLinkTimeOptimization()
+		system "MacOSX"
+		linktimeoptimization "On"
+		prepare()
+		test.isequal("ar", clang.gettoolname(cfg, "ar"))
+	end
+
+	function suite.tools_forVersion_onMacOSWithLinkTimeOptimization()
+		system "MacOSX"
+		toolset "clang-16"
+		linktimeoptimization "On"
+		prepare()
+		test.isequal("clang-16", clang.gettoolname(cfg, "cc"))
+		test.isequal("clang++-16", clang.gettoolname(cfg, "cxx"))
+		test.isequal("ar", clang.gettoolname(cfg, "ar"))
+		test.isequal("windres-16", clang.gettoolname(cfg, "rc"))
+	end
+
 	function suite.tools_forVersion()
 		toolset "clang-16"
 		prepare()
