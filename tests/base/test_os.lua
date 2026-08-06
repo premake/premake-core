@@ -179,6 +179,33 @@
 		test.isfalse(os.islink("folder/ok2.lua"))
 	end
 
+--
+-- os.mkdir() tests
+--
+
+	function suite.mkdir_ReturnsTrue_OnExistingDirectoryLink()
+		-- BSD CI mounts the workspace through SSHFS, so keep topology tests on local storage.
+		local root = os.tmpname()
+		os.remove(root)
+		local target = path.join(root, "subfolder")
+		local link = path.join(root, "subfolder2")
+
+		test.istrue(os.mkdir(target))
+		test.istrue(os.linkdir(target, link))
+		test.istrue(os.mkdir(link))
+		test.istrue(os.islink(link))
+		test.istrue(os.isdir(link))
+		test.istrue(os.rmdir(link))
+		test.istrue(os.rmdir(target))
+		test.istrue(os.rmdir(root))
+	end
+
+	function suite.mkdir_ReturnsError_OnExistingFile()
+		test.istrue(os.isfile("folder/ok.lua"))
+		local ok, err = os.mkdir("folder/ok.lua")
+		test.isnil(ok)
+		test.isequal("string", type(err))
+	end
 
 --
 -- os.matchdirs() tests
