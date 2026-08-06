@@ -99,6 +99,7 @@
 		vectorextensions = {
 			AVX = "-mavx",
 			AVX2 = "-mavx2",
+			AVX512 = "-mavx512f",
 			SSE = "-msse",
 			SSE2 = "-msse2",
 			SSE3 = "-msse3",

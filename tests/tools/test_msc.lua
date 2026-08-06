@@ -571,6 +571,12 @@ end
 		test.contains("/arch:AVX2", msc.getcflags(cfg))
 	end
 
+	function suite.cflags_onAVX512()
+		vectorextensions "AVX512"
+		prepare()
+		test.contains("/arch:AVX512", msc.getcflags(cfg))
+	end
+
 
 --
 -- Check the defines and undefines.
