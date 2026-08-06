@@ -31,7 +31,12 @@
 		if p.project.isdotnet(prj) then
 			local cfg = p.project.getfirstconfig(prj)
 			local action = p.action.current()
-			local framework = cfg.dotnetframework or action.vstudio.targetFramework
+			local framework = nil
+			if #cfg.dotnetframework > 0 then
+				framework = cfg.dotnetframework[#cfg.dotnetframework]
+			else
+				framework = action.vstudio.targetFramework
+			end
 			return dn2005.formatNuGetFrameworkVersion(framework)
 		else
 			return "native"

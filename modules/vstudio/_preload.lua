@@ -136,6 +136,7 @@
 		name = "dotnetframework",
 		scope = "config",
 		kind = "string",
+		list = true,
 	}
 	p.api.alias("dotnetframework", "framework") -- for backward compatibility
 

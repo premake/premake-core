@@ -114,16 +114,30 @@
 
 	function m.targetFramework(prj)
 		local action = p.action.current()
-		local tools = string.format(' ToolsVersion="%s"', action.vstudio.toolsVersion)
 
-		local framework = prj.dotnetframework or action.vstudio.targetFramework or "4.0"
-		if framework and dotnetbase.isNewFormatProject(prj) then
-			p.w('<TargetFramework>%s</TargetFramework>', framework)
+		local frameworks = nil
+		if #prj.dotnetframework > 0 then
+			frameworks = prj.dotnetframework
 		else
-			p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
+			targetFramework = action.vstudio.targetFramework or "4.0"
+			frameworks = { [1] = targetFramework }
+
+		end
+
+		if frameworks ~= nil then
+			if dotnetbase.isNewFormatProject(prj) then
+				if #frameworks > 1 then
+					p.w('<TargetFrameworks>%s</TargetFrameworks>', table.concat(frameworks, ";"))
+				else
+					p.w('<TargetFramework>%s</TargetFramework>', frameworks[1])
+				end
+			else
+				if #frameworks >= 1 then
+					p.w('<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', frameworks[#frameworks])
+				end
+			end
 		end
 	end
-
 
 
 --

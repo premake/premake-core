@@ -454,7 +454,12 @@
 				local packageAPIInfo = vstudio.nuget2010.packageAPIInfo(prj, package)
 
 				local action = p.action.current()
-				local targetFramework = cfg.dotnetframework or action.vstudio.targetFramework
+				local targetFramework = nil
+				if #cfg.dotnetframework > 0 then
+					targetFramework = cfg.dotnetframework[#cfg.dotnetframework]
+				else
+					targetFramework = action.vstudio.targetFramework
+				end
 
 				local targetVersion = dotnetbase.makeVersionComparable(targetFramework)
 
@@ -754,7 +759,14 @@
 
 	function dotnetbase.targetFrameworkVersion(cfg)
 		local action = p.action.current()
-		local framework = cfg.dotnetframework or action.vstudio.targetFramework
+
+		local framework = nil
+		if #cfg.dotnetframework > 0 then
+			framework = cfg.dotnetframework[#cfg.dotnetframework]
+		else
+			framework = action.vstudio.targetFramework
+		end
+
 		if framework and not dotnetbase.isNewFormatProject(cfg) then
 			_p(2,'<TargetFrameworkVersion>v%s</TargetFrameworkVersion>', framework)
 		end
@@ -793,13 +805,11 @@
 	end
 
 	function dotnetbase.isNewFormatProject(cfg)
-		local framework = cfg.dotnetframework
-		if not framework then
-			return false
-		end
-
-		if framework:find('^net') ~= nil then
-			return true
+		local frameworks = cfg.dotnetframework
+		for _, currFramework in ipairs(frameworks) do
+			if currFramework:find('^net') ~= nil then
+				return true
+			end
 		end
 
 		return false
@@ -807,9 +817,26 @@
 
 	function dotnetbase.netcore.targetFramework(cfg)
 		local action = p.action.current()
-		local framework = cfg.dotnetframework or action.vstudio.targetFramework
-		if framework and dotnetbase.isNewFormatProject(cfg) then
-			_p(2,'<TargetFramework>%s</TargetFramework>', framework)
+
+		local frameworks = nil
+		if #cfg.dotnetframework > 0 then
+			frameworks = cfg.dotnetframework
+		else
+			targetFramework = action.vstudio.targetFramework
+			if targetFramework ~= nil then
+				frameworks = { [1] = targetFramework }
+			end
+
+		end
+
+		if frameworks ~= nil then
+			if dotnetbase.isNewFormatProject(cfg) then
+				if #frameworks > 1 then
+					_p(2, '<TargetFrameworks>%s</TargetFrameworks>', table.concat(frameworks, ";"))
+				else
+					_p(2, '<TargetFramework>%s</TargetFramework>', frameworks[1])
+				end
+			end
 		end
 	end
 
