@@ -273,8 +273,12 @@
 		kind = {
 			SharedLib = function(cfg)
 				local r = { clang.getsharedlibarg(cfg) }
-				if cfg.system == "windows" and cfg.useimportlib ~= p.OFF then
-					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
+				if cfg.system == "windows" then
+					if cfg.useimportlib ~= p.OFF then
+						table.insert(r, '-Xlinker /IMPLIB:"' .. cfg.linktarget.relpath .. '"')
+					else
+						table.insert(r, '-Xlinker /NOIMPLIB')
+					end
 				elseif cfg.system == p.LINUX then
 					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
 				elseif table.contains(os.getSystemTags(cfg.system), "darwin") then

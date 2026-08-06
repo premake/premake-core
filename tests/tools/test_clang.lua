@@ -474,6 +474,21 @@ end
 		test.contains({ "-D_UNICODE", "-DUNICODE", "-municode" }, clang.getcxxflags(cfg))
 	end
 
+	function suite.ldflags_onWindowsSharedLib()
+		system "Windows"
+		kind "SharedLib"
+		prepare()
+		test.contains({ "-shared", '-Xlinker /IMPLIB:"bin/Debug/MyProject.lib"' }, clang.getldflags(cfg))
+	end
+
+	function suite.ldflags_onWindowsSharedLibWithoutImportLib()
+		system "Windows"
+		kind "SharedLib"
+		useimportlib "Off"
+		prepare()
+		test.contains({ "-shared", "-Xlinker /NOIMPLIB" }, clang.getldflags(cfg))
+	end
+
 	function suite.ldflags_onUnicode_Windows()
 		system "Windows"
 		characterset "Unicode"
@@ -501,4 +516,3 @@ end
 		prepare()
 		test.excludes({ "-municode" }, clang.getldflags(cfg))
 	end
-	
