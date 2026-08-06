@@ -456,7 +456,7 @@
 
 
 	function cpp.ldFlags(cfg, toolset)
-		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), toolset.getldflags(cfg), cfg.linkoptions)
+		local flags = table.join(toolset.getLibraryDirectories(cfg), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), toolset.getsections(cfg), toolset.getldflags(cfg), cfg.linkoptions)
 		p.outln('ALL_LDFLAGS += $(LDFLAGS)' .. gmake.list(flags))
 	end
 

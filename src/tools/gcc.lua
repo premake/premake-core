@@ -533,6 +533,19 @@
 	end
 
 --
+-- get the link-time file embedding flags
+--
+	function gcc.getsections(cfg)
+		local result = {}
+		if table.contains(os.getSystemTags(cfg.system), "darwin") then
+			if cfg.infoplist then
+				local relative = p.tools.getrelative(cfg.project, cfg.infoplist)
+				table.insert(result, "-Wl,-sectcreate,__TEXT,__info_plist," .. p.quoted(relative))
+			end
+		end
+		return result
+	end
+--
 -- get the right output flag.
 --
 	function gcc.getsharedlibarg(cfg)

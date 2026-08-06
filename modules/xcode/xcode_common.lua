@@ -1359,6 +1359,10 @@
 			end
 		end
 
+		if cfg.infoplist then
+			settings["INFOPLIST_FILE"] = p.tools.getrelative(cfg.project, cfg.infoplist)
+		end
+
 		--ms not by default ...add it manually if you need it
 		--settings['COMBINE_HIDPI_IMAGES'] = 'YES'
 

@@ -528,7 +528,10 @@ function m.getLdFlags(cfg, toolset)
 	
 	local libdirs = toolset.getLibraryDirectories(cfg)
 	flags = table.join(flags, libdirs)
-	
+
+	local sections = toolset.getsections(cfg)
+	flags = table.join(flags, sections)
+
 	if toolset.getrunpathdirs then
 		local runpathdirs = table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))
 		local rpaths = toolset.getrunpathdirs(cfg, runpathdirs)

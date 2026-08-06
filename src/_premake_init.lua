@@ -409,6 +409,13 @@
 	}
 
 	api.register {
+		name = "infoplist",
+		scope = "config",
+		kind = "path",
+		tokens = true,
+	}
+
+	api.register {
 		name = "bindirs",
 		scope = "config",
 		kind = "list:directory",

@@ -235,7 +235,7 @@
 		end
 
 		local toolset = m.getcompiler(cfg)
-		local flags   = table.join(toolset.getldflags(cfg), toolset.getincludedirs(cfg, {}, nil, cfg.frameworkdirs), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), cfg.linkoptions, toolset.getlinks(cfg))
+		local flags   = table.join(toolset.getldflags(cfg), toolset.getincludedirs(cfg, {}, nil, cfg.frameworkdirs), toolset.getrunpathdirs(cfg, table.join(cfg.runpathdirs, config.getsiblingtargetdirs(cfg))), toolset.getsections(cfg), cfg.linkoptions, toolset.getlinks(cfg))
 
 		_x(3, '<Linker Options="%s" Required="yes">', table.concat(flags, ";"))
 
