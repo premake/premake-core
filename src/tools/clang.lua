@@ -79,6 +79,41 @@
 		useshortenums = gcc.shared.useshortenums,
 	}
 
+	clang.shared.runtime = {
+		_ = function(cfg)
+			if not cfg.runtime and (not cfg.staticruntime or cfg.staticruntime == "Default") then
+				return nil
+			end
+
+			local runtime = cfg.runtime or iif(config.isDebugBuild(cfg), "Debug", "Release")
+			return clang.shared.runtime[runtime](cfg)
+		end,
+
+		Debug = function(cfg)
+			if cfg.system ~= premake.WINDOWS then
+				return nil
+			end
+
+			if cfg.staticruntime == "On" then
+				return "-fms-runtime-lib=static_dbg"
+			end
+
+			return "-fms-runtime-lib=dll_dbg"
+		end,
+
+		Release = function(cfg)
+			if cfg.system ~= premake.WINDOWS then
+				return nil
+			end
+
+			if cfg.staticruntime == "On" then
+				return "-fms-runtime-lib=static"
+			end
+
+			return "-fms-runtime-lib=dll"
+		end,
+	}
+
 	clang.cflags = table.merge(gcc.cflags, {
 	})
 
@@ -301,6 +336,42 @@
 		system = {
 			wii = "$(MACHDEP)",
 		}
+	}
+
+	-- Clang on windows will link against the static runtime by default, so we need to explicitly tell it not to.
+	clang.ldflags.runtime = {
+		_ = function(cfg)
+			if not cfg.runtime and (not cfg.staticruntime or cfg.staticruntime == "Default") then
+				return nil
+			end
+
+			local runtime = cfg.runtime or iif(config.isDebugBuild(cfg), "Debug", "Release")
+			return clang.ldflags.runtime[runtime](cfg)
+		end,
+
+		Debug = function(cfg)
+			if cfg.system ~= premake.WINDOWS then
+				return nil
+			end
+
+			if cfg.staticruntime == "On" then
+				return "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=static_dbg"
+			end
+
+			return "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=dll_dbg"
+		end,
+
+		Release = function(cfg)
+			if cfg.system ~= premake.WINDOWS then
+				return nil
+			end
+
+			if cfg.staticruntime == "On" then
+				return "-fms-runtime-lib=static"
+			end
+
+			return "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=dll"
+		end,
 	}
 
 	clang.wholearchive = gcc.wholearchive

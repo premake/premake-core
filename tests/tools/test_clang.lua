@@ -489,6 +489,81 @@ end
 		test.contains({ "-shared", "-Xlinker /NOIMPLIB" }, clang.getldflags(cfg))
 	end
 
+
+--
+-- Check handling of Run-Time Library flags.
+--
+
+	function suite.cflags_onWindowsStaticRuntime()
+		system "Windows"
+		staticruntime "On"
+		symbols "On"
+		prepare()
+		test.contains({ "-fms-runtime-lib=static_dbg" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onWindowsDynamicRuntime()
+		system "Windows"
+		staticruntime "Off"
+		runtime "Debug"
+		prepare()
+		test.contains({ "-fms-runtime-lib=dll_dbg" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onWindowsStaticRuntimeRelease()
+		system "Windows"
+		staticruntime "On"
+		runtime "Release"
+		prepare()
+		test.contains({ "-fms-runtime-lib=static" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onWindowsDynamicRuntimeRelease()
+		system "Windows"
+		staticruntime "Off"
+		runtime "Release"
+		prepare()
+		test.contains({ "-fms-runtime-lib=dll" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_onWindowsStaticRuntime()
+		system "Windows"
+		staticruntime "On"
+		symbols "On"
+		prepare()
+		test.contains({ "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=static_dbg" }, clang.getldflags(cfg))
+	end
+
+	function suite.ldflags_onWindowsDynamicRuntime()
+		system "Windows"
+		staticruntime "Off"
+		runtime "Debug"
+		prepare()
+		test.contains({ "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=dll_dbg" }, clang.getldflags(cfg))
+	end
+
+	function suite.ldflags_onWindowsDynamicRuntimeRelease()
+		system "Windows"
+		staticruntime "Off"
+		runtime "Release"
+		prepare()
+		test.contains({ "-Xlinker /NODEFAULTLIB:libcmt -fms-runtime-lib=dll" }, clang.getldflags(cfg))
+	end
+
+	function suite.cflags_onNonWindowsRuntime()
+		system "Linux"
+		staticruntime "On"
+		prepare()
+		test.excludes({ "-fms-runtime-lib=static_dbg" }, clang.getcflags(cfg))
+	end
+
+	function suite.ldflags_onNonWindowsRuntime()
+		system "Linux"
+		staticruntime "On"
+		prepare()
+		test.excludes({ "-fms-runtime-lib=static_dbg" }, clang.getldflags(cfg))
+	end
+
 	function suite.ldflags_onUnicode_Windows()
 		system "Windows"
 		characterset "Unicode"
