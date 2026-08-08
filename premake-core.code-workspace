@@ -1,0 +1,118 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": ".",
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"build": true,
+			"bin": true,
+			"MyLocation": true,
+		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "bootstrap",
+				"type": "shell",
+				"windows": {
+					"command": "Bootstrap.bat",
+				},
+				"linux": {
+					"command": "make",
+					"args": [
+						"-f",
+						"Bootstrap.mak",
+						"linux",
+						"PLATFORM=x64",
+						"CONFIG=release",
+					]
+				},
+				"osx": {
+					"command": "make",
+					"args": [
+						"-f",
+						"Bootstrap.mak",
+						"macosx",
+						"PLATFORM=x64",
+						"CONFIG=release",
+					]
+				},
+				"group": {
+					"kind": "build",
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "open",
+				"type": "shell",
+				"windows": {
+					"command": "C:/Program Files (x86)/Common Files/Microsoft Shared/MSEnv/VSLauncher.exe",
+					"args": [
+						"build/bootstrap/Premake5.sln",
+					]
+				},
+				"problemMatcher": []
+			}
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "test",
+				"type": "lua-local",
+				"request": "launch",
+				"cwd": "${workspaceFolder}",
+				"program": {
+					"command": "bin/release/premake5",
+				},
+				"args": [
+					"test",
+				]
+			},
+			{
+				"name": "test-all",
+				"type": "lua-local",
+				"request": "launch",
+				"cwd": "${workspaceFolder}",
+				"program": {
+					"command": "bin/release/premake5",
+				},
+				"args": [
+					"test",
+					"--test-all",
+				]
+			},
+			{
+				"name": "test-only",
+				"type": "lua-local",
+				"request": "launch",
+				"cwd": "${workspaceFolder}",
+				"program": {
+					"command": "bin/release/premake5",
+				},
+				"args": [
+					"test",
+					"--test-only=${input:test_suite_name}",
+				]
+			}
+		],
+		"inputs": [
+			{
+				"type": "promptString",
+				"id": "test_suite_name",
+				"description": "test suite name",
+			}
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"tomblind.local-lua-debugger-vscode",
+			"editorconfig.editorconfig",
+		]
+	},
+}
