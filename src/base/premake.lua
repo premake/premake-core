@@ -168,6 +168,7 @@
 			error(err, 0)
 		end
 
+		local fileexists = os.isfile(fn)
 		local f, err = os.writefile_ifnotequal(output, fn);
 
 		if (f == 0) then
@@ -175,7 +176,11 @@
 		elseif (f < 0) then
 			error(err, 0)
 		elseif (f > 0) then
-			printf("Generated %s...", path.getrelative(os.getcwd(), fn))
+			if fileexists then
+				printf("Generated %s... [Updated]", path.getrelative(_WORKING_DIR, fn))
+			else
+				printf("Generated %s... [New]", path.getrelative(_WORKING_DIR, fn))
+			end
 			return true -- file modified
 		end
 	end
