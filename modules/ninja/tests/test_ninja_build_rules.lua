@@ -114,6 +114,25 @@ rule cxx_msc
 		]]
 	end
 
+	function suite.buildFile_generateAssembly_onMSVC()
+		toolset "msc"
+		language "C++"
+		files { "main.cpp" }
+		buildoptions { "/projectFlag" }
+		generateassembly "Verbose"
+		filter "files:main.cpp"
+		generateassembly "On"
+		local cfg = prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		local objFile = cpp.objectFile(cfg, node, filecfg)
+		cpp.buildFile(cfg, node, filecfg, objFile, nil, nil)
+		test.capture [[
+build obj/Debug/main.obj | obj/Debug/main.asm: cxx_msc main.cpp
+  cxxflags = $cxxflags_MyProject_Debug /FA /Faobj/Debug/main.asm
+		]]
+	end
+
 
 --
 -- Check the C++ compile rule for GCC.

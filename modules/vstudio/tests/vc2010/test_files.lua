@@ -480,6 +480,62 @@
 		]]
 	end
 
+	function suite.assemblyOutput_onSourceNameCollision()
+		toolset "msc"
+		files { "hello.cpp", "greetings/hello.cpp" }
+		filter "files:**.cpp"
+		generateassembly "On"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="greetings\hello.cpp">
+		<AssemblerListingLocation>$(IntDir)\hello.asm</AssemblerListingLocation>
+		<AssemblerOutput>AssemblyCode</AssemblerOutput>
+	</ClCompile>
+	<ClCompile Include="hello.cpp">
+		<ObjectFileName>$(IntDir)\hello1.obj</ObjectFileName>
+		<AssemblerListingLocation>$(IntDir)\hello1.asm</AssemblerListingLocation>
+		<AssemblerOutput>AssemblyCode</AssemblerOutput>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+	function suite.assemblyOutput_onConfigAndFileOverride()
+		toolset "msc"
+		files { "hello.cpp", "main.cpp" }
+		generateassembly "On"
+		filter "files:main.cpp"
+		generateassembly "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<AssemblerListingLocation>$(IntDir)\hello.asm</AssemblerListingLocation>
+	</ClCompile>
+	<ClCompile Include="main.cpp">
+		<AssemblerOutput>NoListing</AssemblerOutput>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+	function suite.assemblyOutputVerbose_onClangToolset()
+		toolset "clang"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+		generateassembly "Verbose"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="main.cpp">
+		<AssemblerListingLocation>$(IntDir)\main.asm</AssemblerListingLocation>
+		<AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
 
 	function suite.uniqueObjectNames_onBaseNameCollision1()
 		files { "a/hello.cpp", "b/hello.cpp", "c/hello1.cpp" }

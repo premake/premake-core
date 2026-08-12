@@ -72,6 +72,7 @@ return {
 	"tools/test_clang.lua",
 	"tools/test_msc.lua",
 	"tools/test_enablepch.lua",
+	"tools/test_generateassembly.lua",
 	"tools/test_incrementallink.lua",
 	"tools/test_manifest.lua",
 	"tools/test_minimalrebuild.lua",

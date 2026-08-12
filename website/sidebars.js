@@ -163,6 +163,7 @@ module.exports = {
 						'frameworkdirs',
 						'functionlevellinking',
 						'gccprefix',
+						'generateassembly',
 						'group',
 						'icon',
 						'ignoredefaultlibraries',

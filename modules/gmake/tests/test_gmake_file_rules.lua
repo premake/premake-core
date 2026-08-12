@@ -120,6 +120,26 @@ $(OBJDIR)/test.obj: src/test.c
 ]]
 	end
 
+	function suite.assemblyOutput_onConfigAndFile()
+		toolset "msc"
+		files { "src/hello.cpp", "src/test.cpp" }
+		generateassembly "On"
+		filter "files:src/hello.cpp"
+		generateassembly "Verbose"
+		prepare()
+		test.capture [[
+# File Rules
+# #############################################
+
+$(OBJDIR)/hello.obj: src/hello.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) /FAs /Fa"$(@:%.obj=%.asm)" $(FORCE_INCLUDE) /nologo /Fo"$@" /c /Tp"$<"
+$(OBJDIR)/test.obj: src/test.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) /FA /Fa"$(@:%.obj=%.asm)" $(FORCE_INCLUDE) /nologo /Fo"$@" /c /Tp"$<"
+
+]]
+	end
 
 --
 -- Two files with the same base name should have different object files.
@@ -472,4 +492,3 @@ endif
 endif
 ]]
 	end
-

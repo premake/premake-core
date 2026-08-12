@@ -612,6 +612,7 @@
 			m.enableModules,
 			m.buildStlModules,
 			m.useDynamicDebugging,
+			m.assemblerOutput,
 		}
 
 		if cfg.kind == p.STATICLIB then
@@ -1122,6 +1123,7 @@
 		return {
 			m.excludedFromBuild,
 			m.objectFileName,
+			m.assemblerListingLocation,
 			m.clCompilePreprocessorDefinitions,
 			m.clCompileUndefinePreprocessorDefinitions,
 			m.languageStandard,
@@ -1135,6 +1137,7 @@
 			m.disableSpecificWarnings,
 			m.treatSpecificWarningsAsErrors,
 			m.basicRuntimeChecks,
+			m.assemblerOutput,
 			m.exceptionHandling,
 			m.compileAsManaged,
 			m.compileAs,
@@ -2196,6 +2199,40 @@
 		end
 	end
 
+	local function supportsAssemblerOutput(cfg)
+		cfg = cfg.config or cfg
+		if not cfg.toolset or cfg.system == p.LINUX or cfg.system == p.ANDROID then
+			return false
+		end
+		local toolset = p.tools.canonical(cfg.toolset)
+		return toolset == p.tools.msc or toolset == p.tools.clang
+	end
+
+	local assemblerOutputs = {
+		On = "AssemblyCode",
+		Verbose = "AssemblyAndSourceCode",
+	}
+
+	function m.assemblerOutput(cfg, condition)
+		if not supportsAssemblerOutput(cfg) then
+			return
+		end
+
+		local value = assemblerOutputs[cfg.generateassembly]
+		if not value and cfg.config and cfg.generateassembly and assemblerOutputs[cfg.config.generateassembly] then
+			value = "NoListing"
+		end
+		if value then
+			m.element("AssemblerOutput", condition, value)
+		end
+	end
+
+	function m.assemblerListingLocation(fcfg, condition)
+		local value = fcfg.generateassembly or fcfg.config.generateassembly
+		if supportsAssemblerOutput(fcfg) and assemblerOutputs[value] then
+			m.element("AssemblerListingLocation", condition, "$(IntDir)\\%s.asm", fcfg.objname)
+		end
+	end
 
 	function m.additionalLinkOptions(cfg)
 

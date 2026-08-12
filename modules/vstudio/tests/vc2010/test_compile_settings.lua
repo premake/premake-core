@@ -42,6 +42,16 @@
 		]]
 	end
 
+	function suite.assemblerOutput_onConfig()
+		toolset "msc"
+		generateassembly "On"
+		local cfg = test.getconfig(prj, "Debug")
+		vc2010.assemblerOutput(cfg)
+		test.capture [[
+<AssemblerOutput>AssemblyCode</AssemblerOutput>
+		]]
+	end
+
 
 ---
 -- Test precompiled header handling; the header should be treated as

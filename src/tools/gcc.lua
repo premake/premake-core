@@ -52,6 +52,17 @@
 --
 -- Returns list of C compiler flags for a configuration.
 --
+	gcc.generateassembly = {
+		generateassembly = {
+			On = "-save-temps=obj",
+			Verbose = { "-save-temps=obj", "-fverbose-asm" },
+		},
+	}
+
+	function gcc.getassemblyflags(cfg)
+		return config.mapFlags(cfg, gcc.generateassembly)
+	end
+
 	gcc.shared = {
 		architecture = {
 			x86 = function (cfg) return iif(cfg.system == p.MACOSX, "-arch i386", "-m32") end,

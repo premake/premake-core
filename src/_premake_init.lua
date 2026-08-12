@@ -1268,6 +1268,18 @@
 	}
 
 	api.register {
+		name = "generateassembly",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Verbose",
+			"Off",
+		},
+	}
+
+	api.register {
 		name = "nodefaultlib",
 		scope = "config",
 		kind = "string",

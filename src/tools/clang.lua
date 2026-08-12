@@ -42,6 +42,8 @@
 --    An array of C compiler flags.
 --
 
+	clang.getassemblyflags = gcc.getassemblyflags
+
 	clang.shared = {
 		architecture = gcc.shared.architecture,
 		characterset = gcc.shared.characterset,

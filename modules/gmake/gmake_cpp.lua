@@ -609,6 +609,11 @@
 			end
 		end
 
+		if fcfg and toolset.getassemblyflags then
+			local assemblyCfg = fcfg.generateassembly and fcfg or cfg
+			table.insertflat(flags, toolset.getassemblyflags(assemblyCfg, '"$(@:%.obj=%.asm)"'))
+		end
+
 		return table.concat(flags, ' ')
 	end
 

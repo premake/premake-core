@@ -50,6 +50,21 @@
 		return flag
 	end
 
+	msc.generateassembly = {
+		generateassembly = {
+			On = "/FA",
+			Verbose = "/FAs",
+		},
+	}
+
+	function msc.getassemblyflags(cfg, assemblyOutput)
+		local flags = config.mapFlags(cfg, msc.generateassembly)
+		if assemblyOutput and #flags > 0 then
+			table.insert(flags, "/Fa" .. assemblyOutput)
+		end
+		return flags
+	end
+
 	msc.shared = {
 		clr = {
 			On = "/clr",
@@ -541,6 +556,12 @@
 
 	function msc.gettooloutputext(tool)
 		return iif(tool == "rc", ".res", ".obj")
+	end
+
+	function msc.getassemblyoutput(cfg, objectOutput)
+		if #msc.getassemblyflags(cfg) > 0 then
+			return path.replaceextension(objectOutput, ".asm")
+		end
 	end
 
 	function msc.gettoolflags(cfg, tool, input, output, depfile)

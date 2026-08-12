@@ -776,7 +776,15 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 	local flags = ""
 	local extraFlags = {}
 	local toolset = ninja.gettoolset(cfg)
+	local assemblyFile
 	local hasPerFileConfig = m.hasPerFileConfiguration(cfg, filecfg)
+	if toolset.getassemblyflags then
+		local assemblyCfg = filecfg.generateassembly and filecfg or cfg
+		if toolset.getassemblyoutput then
+			assemblyFile = toolset.getassemblyoutput(assemblyCfg, objFile)
+		end
+		table.insertflat(extraFlags, toolset.getassemblyflags(assemblyCfg, assemblyFile and p.quoted(assemblyFile)))
+	end
 	
 	if filecfg and filecfg.compileas and filecfg.compileas ~= "Default" then
 		if p.languages.isc(filecfg.compileas) then
@@ -845,7 +853,11 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 			implicitDeps = implicitDeps .. " " .. table.concat(cfg._dependsOnTargets, " ")
 		end
 		
-		_p("build %s: %s_%s %s%s", objFile, rule, cfg.toolset, relPath, implicitDeps)
+		local implicitOutput = ""
+		if assemblyFile then
+			implicitOutput = " | " .. assemblyFile
+		end
+		_p("build %s%s: %s_%s %s%s", objFile, implicitOutput, rule, cfg.toolset, relPath, implicitDeps)
 		
 		if usePch then
 			if toolset == p.tools.msc then
