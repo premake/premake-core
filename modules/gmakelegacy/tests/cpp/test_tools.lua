@@ -18,6 +18,7 @@
 	local cfg
 
 	function suite.setup()
+		system "Linux"
 		local wks, prj = test.createWorkspace()
 		cfg = test.getconfig(prj, "Debug")
 	end

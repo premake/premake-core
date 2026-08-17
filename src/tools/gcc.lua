@@ -826,7 +826,8 @@
 	gcc.tools = {
 		cc = "gcc",
 		cxx = "g++",
-		ar = "ar",
+		-- Apple's ar does not support the GCC LTO object format and is not part of the GNU toolchain.
+		ar = function(cfg) return iif(cfg.system == p.MACOSX, "gcc-ar", "ar") end,
 		rc = "windres"
 	}
 
@@ -837,7 +838,12 @@
 		else
 			version = ""
 		end
-		return (cfg.gccprefix or "") .. gcc.tools[tool] .. version
+
+		local value = gcc.tools[tool]
+		if type(value) == "function" then
+			value = value(cfg)
+		end
+		return (cfg.gccprefix or "") .. value .. version
 	end
 
 	function gcc.gettooloutputext(tool)

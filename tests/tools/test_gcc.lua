@@ -47,6 +47,12 @@
 		test.isequal("windres", gcc.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_onMacOS()
+		system "MacOSX"
+		prepare()
+		test.isequal("gcc-ar", gcc.gettoolname(cfg, "ar"))
+	end
+
 	function suite.tools_withPrefix()
 		gccprefix "test-prefix-"
 		prepare()
@@ -63,6 +69,13 @@
 		test.isequal("g++-16", gcc.gettoolname(cfg, "cxx"))
 		test.isequal("ar-16", gcc.gettoolname(cfg, "ar"))
 		test.isequal("windres-16", gcc.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_forVersion_onMacOS()
+		system "MacOSX"
+		toolset "gcc-16"
+		prepare()
+		test.isequal("gcc-ar-16", gcc.gettoolname(cfg, "ar"))
 	end
 
 --

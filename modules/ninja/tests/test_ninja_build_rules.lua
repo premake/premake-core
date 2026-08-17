@@ -20,6 +20,7 @@
 
 	function suite.setup()
 		p.action.set("ninja")
+		system "Linux"
 		wks, prj = test.createWorkspace()
 	end
 
