@@ -27,7 +27,8 @@ module.exports = {
 				'Usages-and-Uses',
 				'Command-Line-Arguments',
 				'Using-Modules',
-				'Topics'
+				'Topics',
+				'Language-Support'
 			]
 		},
 		{
