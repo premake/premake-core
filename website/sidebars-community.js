@@ -4,6 +4,5 @@ module.exports = {
 		'showcase',
 		'extensions',
 		'modules',
-		'languagesupport'
 	]
 };
