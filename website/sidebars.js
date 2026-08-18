@@ -28,7 +28,6 @@ module.exports = {
 				'Command-Line-Arguments',
 				'Using-Modules',
 				'Topics',
-				'Language-Support'
 			]
 		},
 		{
