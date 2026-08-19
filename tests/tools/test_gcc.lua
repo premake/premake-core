@@ -1054,25 +1054,25 @@ end
 	function suite.cflags_onLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
 		prepare()
-		test.contains("-flto", gcc.getcflags(cfg))
+		test.contains("-flto=auto", gcc.getcflags(cfg))
 	end
 
 	function suite.cflags_onFastLinkTimeOptimizationViaAPI()
 		linktimeoptimization "Fast"
 		prepare()
-		test.contains("-flto", gcc.getcflags(cfg))
+		test.contains("-flto=auto", gcc.getcflags(cfg))
 	end
 
 	function suite.ldflags_onLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
 		prepare()
-		test.contains("-flto", gcc.getldflags(cfg))
+		test.contains("-flto=auto", gcc.getldflags(cfg))
 	end
 
 	function suite.ldflags_onFastLinkTimeOptimizationViaAPI()
 		linktimeoptimization "Fast"
 		prepare()
-		test.contains("-flto", gcc.getldflags(cfg))
+		test.contains("-flto=auto", gcc.getldflags(cfg))
 	end
 
 

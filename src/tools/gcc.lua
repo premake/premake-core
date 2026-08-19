@@ -73,8 +73,8 @@
 			Strict = "-ffloat-store",
 		},
 		linktimeoptimization = {
-			On = "-flto",
-			Fast = "-flto",
+			On = "-flto=auto",
+			Fast = "-flto=auto",
 		},
 		strictaliasing = {
 			Off = "-fno-strict-aliasing",
