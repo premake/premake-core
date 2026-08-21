@@ -19,7 +19,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0-beta3 or later for Visual Studio 2022 and later.
+Premake 5.0.0-beta3 or later for Visual Studio 2022 and later, or Ninja with the MSVC toolset.
 
 ### See Also ###
 

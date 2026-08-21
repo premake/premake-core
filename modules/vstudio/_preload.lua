@@ -491,16 +491,6 @@
 	}
 
 	p.api.register {
-		name = "buildstlmodules",
-		scope = { "config" },
-		kind = "string",
-		allowed = {
-			"On",
-			"Off"
-		}
-	}
-
-	p.api.register {
 		name = "clangtidy",
 		scope = "config",
 		kind = "boolean"

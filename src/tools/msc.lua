@@ -57,6 +57,15 @@
 		},
 	}
 
+	msc.cppmodules = {
+		bmiExtension = "ifc",
+		stl = "\"%VCToolsInstallDir%\\modules\\std.ixx\"",
+		bmiCompileFlags = "/nologo /c /interface",
+		bmiOutputFlag = "/ifcOutput ",
+		bmiReferenceFlag = "/reference ",
+		objOutputFlag = "/Fo",
+	}
+
 	function msc.getassemblyflags(cfg, assemblyOutput)
 		local flags = config.mapFlags(cfg, msc.generateassembly)
 		if assemblyOutput and #flags > 0 then

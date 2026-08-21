@@ -115,6 +115,95 @@ rule cxx_msc
 		]]
 	end
 
+	function suite.cxxstdlibrule_onMSVC()
+		system "Windows"
+		toolset "msc"
+		language "C++"
+		local cfg = prepare()
+		cpp.cxxstdlibrule(cfg)
+		test.capture [[
+rule cxxstdlib_msc
+  command = $shell cl /nologo /c /interface /ifcOutput $bmi $cxxflags $stl /Fo$obj
+  description = Building C++ standard library module $bmi
+
+		]]
+	end
+
+	function suite.buildstlmodule_onMSVC()
+		system "Windows"
+		toolset "msc"
+		language "C++"
+		buildstlmodules "On"
+		local cfg = prepare()
+		local moduleFile, objFile = cpp.buildstlmodule(cfg)
+		test.capture [[
+build obj/Debug/std.ifc obj/Debug/std.obj: cxxstdlib_msc
+  cxxflags = $cxxflags_MyProject_Debug
+  bmi = obj/Debug/std.ifc
+  obj = obj/Debug/std.obj
+  stl = "%VCToolsInstallDir%\modules\std.ixx"
+  shell = cmd /c
+		]]
+		test.isequal("obj/Debug/std.ifc", moduleFile)
+		test.isequal("obj/Debug/std.obj", objFile)
+	end
+
+	function suite.buildstlmodule_ignoredForUnsupportedToolset()
+		toolset "clang"
+		language "C++"
+		buildstlmodules "On"
+		local cfg = prepare()
+		test.isnil(cpp.buildstlmodule(cfg))
+		test.capture ""
+	end
+
+	function suite.buildstlmodule_ignoredForC()
+		system "Windows"
+		toolset "msc"
+		language "C"
+		buildstlmodules "On"
+		local cfg = prepare()
+		test.isnil(cpp.buildstlmodule(cfg))
+		test.capture ""
+	end
+
+	function suite.buildFile_linksStlModule_onMSVC()
+		system "Windows"
+		toolset "msc"
+		language "C++"
+		files { "main.cpp" }
+		local cfg = prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		local objFile = cpp.objectFile(cfg, node, filecfg)
+		cpp.buildFile(cfg, node, filecfg, objFile, nil, nil, "obj/Debug/std.ifc")
+		test.capture [[
+build obj/Debug/main.obj: cxx_msc main.cpp | obj/Debug/std.ifc
+  cxxflags = $cxxflags_MyProject_Debug /reference std=obj/Debug/std.ifc
+		]]
+	end
+
+	function suite.buildFiles_withStlModule()
+		system "Windows"
+		toolset "msc"
+		language "C++"
+		files { "main.cpp" }
+		buildstlmodules "On"
+		local cfg = prepare()
+		cpp.buildFiles(cfg)
+		test.capture [[
+build obj/Debug/std.ifc obj/Debug/std.obj: cxxstdlib_msc
+  cxxflags = $cxxflags_MyProject_Debug
+  bmi = obj/Debug/std.ifc
+  obj = obj/Debug/std.obj
+  stl = "%VCToolsInstallDir%\modules\std.ixx"
+  shell = cmd /c
+build obj/Debug/main.obj: cxx_msc main.cpp | obj/Debug/std.ifc
+  cxxflags = $cxxflags_MyProject_Debug /reference std=obj/Debug/std.ifc
+		]]
+		test.isequal({ "obj/Debug/std.obj", "obj/Debug/main.obj" }, cfg._objectFiles)
+	end
+
 	function suite.buildFile_generateAssembly_onMSVC()
 		toolset "msc"
 		language "C++"

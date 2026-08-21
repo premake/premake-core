@@ -45,6 +45,7 @@ function m.rules(prj)
 			m.cxxrule(cfg, toolset)
 			m.resourcerule(cfg, toolset)
 			m.linkrule(cfg, toolset)
+			m.cxxstdlibrule(cfg, toolset)
 			m.pchrule(cfg, toolset)
 			m.copyrule(cfg, toolset)
 			m.prebuildcommandrule(cfg, toolset)
@@ -56,6 +57,21 @@ function m.rules(prj)
 			rulesDone[toolsetKey] = true
 		end
 	end
+end
+
+function m.cxxstdlibrule(cfg, toolset)
+	toolset = toolset or ninja.gettoolset(cfg)
+	if not toolset.cppmodules then
+		return
+	end
+
+	local cppmodules = toolset.cppmodules
+	local cxxname = toolset.gettoolname(cfg, "cxx")
+	_p("rule cxxstdlib_%s", cfg.toolset)
+	_p("  command = $shell %s %s %s$bmi $cxxflags $stl %s$obj",
+		cxxname, cppmodules.bmiCompileFlags, cppmodules.bmiOutputFlag, cppmodules.objOutputFlag)
+	_p("  description = Building C++ standard library module $bmi")
+	_p("")
 end
 
 function m.ccrule(cfg, toolset)
@@ -634,6 +650,7 @@ function m.buildFiles(cfg)
 	local objList = {}
 	local copyList = {}
 	local pchFile = m.buildPch(cfg)
+	local stlModule, stlModuleObj = m.buildstlmodule(cfg)
 	
 	local prebuildTarget = m.buildPreBuildEvents(cfg)
 	cfg._hasPrebuild = (prebuildTarget ~= nil)
@@ -642,6 +659,10 @@ function m.buildFiles(cfg)
 		cfg.project._ninja_output_tracking = {}
 	end
 	local outputTracking = cfg.project._ninja_output_tracking
+
+	if stlModuleObj then
+		table.insert(objList, stlModuleObj)
+	end
 	
 	if not cfg._customRuleOutputs then
 		cfg._customRuleOutputs = {}
@@ -722,7 +743,7 @@ function m.buildFiles(cfg)
 							local objFile = m.objectFile(cfg, node, filecfg)
 							if objFile then
 								table.insert(objList, objFile)
-								m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
+								m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget, stlModule)
 							end
 						end
 					end
@@ -740,6 +761,49 @@ function m.buildFiles(cfg)
 	
 	cfg._objectFiles = objList
 	cfg._copyFiles = copyList
+end
+
+function m.buildstlmodule(cfg)
+	local toolset = ninja.gettoolset(cfg)
+	if not toolset.cppmodules or cfg.buildstlmodules ~= p.ON or not p.languages.iscpp(cfg.language) then
+		return nil
+	end
+
+	local cppmodules = toolset.cppmodules
+	if cppmodules.supported and not cppmodules.supported(cfg) then
+		return nil
+	end
+
+	local objdir = path.getrelative(cfg.workspace.location, cfg.objdir)
+	local moduleFile = path.join(objdir, "std." .. cppmodules.bmiExtension)
+	local objFile
+	if cppmodules.objOutputFlag then
+		objFile = path.join(objdir, "std") .. toolset.gettooloutputext("cc")
+	end
+	local stl = cppmodules.stl
+	if type(stl) == "function" then
+		stl = stl(cfg)
+	end
+	local shell = iif(cfg.system == p.WINDOWS, "cmd /c", "")
+	local outputs = { moduleFile }
+	if objFile then
+		table.insert(outputs, objFile)
+	end
+
+	_p("build %s: cxxstdlib_%s", table.concat(outputs, " "), cfg.toolset)
+	_p("  cxxflags = $cxxflags_%s", ninja.key(cfg))
+	_p("  bmi = %s", moduleFile)
+	if objFile then
+		_p("  obj = %s", objFile)
+	end
+	if stl then
+		_p("  stl = %s", stl)
+	end
+	if shell ~= "" then
+		_p("  shell = %s", shell)
+	end
+
+	return moduleFile, objFile
 end
 
 function m.objectFile(cfg, node, filecfg)
@@ -770,7 +834,7 @@ function m.objectFile(cfg, node, filecfg)
 	return nil
 end
 
-function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
+function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget, stlModule)
 	local ext = path.getextension(node.abspath):lower()
 	local rule = nil
 	local flags = ""
@@ -851,6 +915,18 @@ function m.buildFile(cfg, node, filecfg, objFile, pchFile, prebuildTarget)
 				implicitDeps = " |"
 			end
 			implicitDeps = implicitDeps .. " " .. table.concat(cfg._dependsOnTargets, " ")
+		end
+
+		if stlModule and rule == "cxx" then
+			if implicitDeps == "" then
+				implicitDeps = " |"
+			end
+			implicitDeps = implicitDeps .. " " .. stlModule
+			local cppmodules = toolset.cppmodules
+			if cppmodules.bmiReferenceFlag then
+				local referenceFlag = cppmodules.bmiReferenceFlag .. "std=" .. p.quoted(stlModule)
+				table.insert(extraFlags, referenceFlag)
+			end
 		end
 		
 		local implicitOutput = ""

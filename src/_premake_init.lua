@@ -94,6 +94,16 @@
 	}
 
 	api.register {
+		name = "buildstlmodules",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"On",
+			"Off",
+		},
+	}
+
+	api.register {
 		name = "buildinputs",
 		scope = "config",
 		kind = "list:file",
