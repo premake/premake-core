@@ -14,4 +14,4 @@ These IDE extensions are available from other developers; follow the links for m
 
 ## Language Support
 
-- [premake-language-support](https://github.com/lolrobbe2/premake-lls-addon), [lls-addon](https://luarocks.org/modules/lolrobbe2/premake-language-support) for sumneko lua.
+- [premake-language-support](https://luarocks.org/modules/lolrobbe2/premake-language-support), lls-addon for sumneko lua.
