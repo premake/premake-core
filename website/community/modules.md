@@ -43,3 +43,7 @@ These add-on modules are available from other developers; follow the links for m
 * [CUDA](https://github.com/theComputeKid/premake5-cuda) : Enables CUDA development in Visual Studio using the native CUDA Toolkit integration and with nvcc on Linux
 * [Qt](https://github.com/dcourtois/premake-qt) : [Qt](https://www.qt.io) support
 * [WIX](https://github.com/mikisch81/premake-wix) : Premake extension to support [WIX](http://wixtoolset.org/) project files on Visual Studio
+
+## Library Collection
+
+* [Premake Registry (unofficial)](https://premake-registry-ywxg.onrender.com/): online website registry containing libs+modules
