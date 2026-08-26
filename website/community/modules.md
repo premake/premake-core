@@ -46,4 +46,4 @@ These add-on modules are available from other developers; follow the links for m
 
 ## Library Collection
 
-* [Premake Registry (unofficial)](https://premake-registry-ywxg.onrender.com/) : Online website registry containing libraries and modules with ready made premake scripts
+* [Premake Registry (unofficial)](https://premake-registry-ywxg.onrender.com/) : Online website registry containing libraries and modules with ready made Premake scripts
