@@ -32,7 +32,7 @@
 	function suite.usesCorrectCompilers()
 		prepare()
 		gmake.cpp.outputConfigurationSection(prj)
-		test.capture [[
+		test.capture(string.format([[
 # Configurations
 # #############################################
 
@@ -43,9 +43,9 @@ ifeq ($(origin CXX), default)
   CXX = clang++
 endif
 ifeq ($(origin AR), default)
-  AR = ar
+  AR = %s
 endif
-]]
+]], os.istarget("windows") and "llvm-ar" or "ar"))
 	end
 
 	function suite.usesSystemArchiverForVersionedClangOnMacOSWithLinkTimeOptimization()

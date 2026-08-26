@@ -34,7 +34,7 @@
 	function suite.usesCorrectCompilers()
 		prepare()
 		make.cppConfigs(prj)
-		test.capture [[
+		test.capture(string.format([[
 ifeq ($(config),debug)
   ifeq ($(origin CC), default)
     CC = clang
@@ -43,10 +43,11 @@ ifeq ($(config),debug)
     CXX = clang++
   endif
   ifeq ($(origin AR), default)
-    AR = ar
+    AR = %s
   endif
-		]]
+		]], os.istarget("windows") and "llvm-ar" or "ar"))
 	end
+
 
 	function suite.usesCorrectCompilersAndLinkTimeOptimizationViaAPI()
 		system "Linux"
@@ -85,4 +86,3 @@ ifeq ($(config),debug)
   endif
 		]]
 	end
-

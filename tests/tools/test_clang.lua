@@ -39,6 +39,12 @@
 		test.isequal("windres", clang.gettoolname(cfg, "rc"))
 	end
 
+	function suite.tools_onWindows()
+		system "Windows"
+		prepare()
+		test.isequal("llvm-ar", clang.gettoolname(cfg, "ar"))
+	end
+
 	function suite.tools_onLinkTimeOptimizationViaAPI()
 		linktimeoptimization "On"
 		prepare()
@@ -82,6 +88,13 @@
 		test.isequal("clang++-16", clang.gettoolname(cfg, "cxx"))
 		test.isequal("ar-16", clang.gettoolname(cfg, "ar"))
 		test.isequal("windres-16", clang.gettoolname(cfg, "rc"))
+	end
+
+	function suite.tools_forVersion_onWindows()
+		system "Windows"
+		toolset "clang-16"
+		prepare()
+		test.isequal("llvm-ar-16", clang.gettoolname(cfg, "ar"))
 	end
 
 	function suite.tools_forVersion_onLinkTimeOptimizationViaAPI()
