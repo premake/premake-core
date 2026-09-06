@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://premake.github.io/" target="blank"><img src="https://premake.github.io/img/premake-logo.png" height="200" width="200" alt="Premake" /></a>
+  <a href="https://premake.github.io/" target="_blank"><img src="https://premake.github.io/img/premake-logo.png" height="200" width="200" alt="Premake" /></a>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
     <a href="https://github.com/premake/premake-core/graphs/contributors" target="_blank">
         <img src="https://img.shields.io/github/contributors/premake/premake-core?label=code+contributors" alt="Contributors" />
     </a>
-    <a href="https://opencollective.com/premake" _target="blank">
+    <a href="https://opencollective.com/premake" target="_blank">
         <img src="https://opencollective.com/premake/all/badge.svg?label=financial+contributors" alt="Contributors" />
     </a>
     <a href="https://twitter.com/premakeapp" target="_blank">

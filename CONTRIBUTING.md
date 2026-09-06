@@ -42,7 +42,7 @@ You've created a new fix or feature for Premake. Awesome!
 
 3. Submit a pull request; see [Writing a Good Pull Request](#writing-a-good-pull-request)
 
-4. Give us a moment. Premake is maintained volunteers on their free time, so we might not be able to respond right away. We're working on improving our turnaround time with resources like this guide and [our OpenCollective][collective].
+4. Give us a moment. Premake is maintained by volunteers in their free time, so we might not be able to respond right away. We're working on improving our turnaround time with resources like this guide and [our OpenCollective][collective].
 
 If you're not sure what any of that means, check out [Getting Started with GitHub](gh-start) and [Thinkful's GitHub Pull Request Tutorial](thinkful) for a complete walkthrough of the process. Gain a life skill!
 

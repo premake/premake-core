@@ -100,7 +100,7 @@ static const char* os_hostarch_detect(void)
 	return PLATFORM_ARCHITECTURE;
 }
 
-#else // All other POSIX platforms (Linux, BSD, Haiku, Solaris, AIX, …)
+#else // All other POSIX platforms (Linux, BSD, Haiku, Solaris, AIX, ...)
 
 static const char* os_hostarch_detect(void)
 {
