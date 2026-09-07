@@ -428,3 +428,64 @@
 		test.isequal(expected, args)
 	end
 
+
+--
+-- Check that compilecommands.getflags passes project-level proxy configuration to toolset.getdefines.
+--
+
+	function suite.getflags_passes_proxy_to_getdefines()
+		local cfg = prepare()
+		local passedConfig = nil
+		local mockToolset = {
+			gettoolname = function() return "cxx" end,
+			getstructuredimplicitincludedirs = function() return {} end,
+			getcxxflags = function() return {} end,
+			getstructuredincludedirs = function() return {} end,
+			getdefines = function(defines, c)
+				passedConfig = c
+				return {}
+			end,
+			getundefines = function() return {} end,
+			getforceincludes = function() return {} end,
+		}
+
+		compilecommands.getflags(cfg, mockToolset, nil, "cxx")
+		test.istrue(cfg == passedConfig)
+	end
+
+
+--
+-- Check that compilecommands.getflags passes file-level proxy configuration to toolset.getdefines.
+--
+
+	function suite.getflags_passes_file_proxy_to_getdefines()
+		files { "special.cpp" }
+		filter "files:special.cpp"
+			characterset "MBCS"
+		filter {}
+
+		local cfg = prepare()
+		local tr = p.project.getsourcetree(prj)
+		local node = tr.children[1]
+		local fcfg = p.fileconfig.getconfig(node, cfg)
+
+		local passedConfig = nil
+		local mockToolset = {
+			gettoolname = function() return "cxx" end,
+			getstructuredimplicitincludedirs = function() return {} end,
+			getcxxflags = function() return {} end,
+			getstructuredincludedirs = function() return {} end,
+			getdefines = function(defines, c)
+				passedConfig = c
+				return {}
+			end,
+			getundefines = function() return {} end,
+			getforceincludes = function() return {} end,
+		}
+
+		compilecommands.getflags(cfg, mockToolset, fcfg, "cxx")
+		test.isnotnil(passedConfig)
+		test.isequal("MBCS", passedConfig.characterset)
+	end
+
+

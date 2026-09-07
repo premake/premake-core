@@ -82,7 +82,7 @@ build obj/Debug/special.o: cxx_gcc special.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/special.obj: cxx_msc special.cpp
-  cxxflags = /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE"
+  cxxflags = /EHsc /D_UNICODE /DUNICODE /D"MAIN_DEFINE" /D"SPECIAL_DEFINE"
 		]]
 	end
 
@@ -260,7 +260,7 @@ build obj/Debug/special.o: cxx_gcc special.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/special.obj: cxx_msc special.cpp
-  cxxflags = /EHsc /D"MAIN_DEFINE" /D"SPECIAL_DEFINE" /Iinclude /Ispecial/include /O2
+  cxxflags = /EHsc /D_UNICODE /DUNICODE /D"MAIN_DEFINE" /D"SPECIAL_DEFINE" /Iinclude /Ispecial/include /O2
 		]]
 	end
 
@@ -344,7 +344,7 @@ build obj/Debug/simd.o: cxx_gcc simd.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/simd.obj: cxx_msc simd.cpp
-  cxxflags = /arch:AVX2 /EHsc
+  cxxflags = /arch:AVX2 /EHsc /D_UNICODE /DUNICODE
 		]]
 	end
 
@@ -371,7 +371,7 @@ build obj/Debug/simd.obj: cxx_msc simd.cpp
 build obj/Debug/main.obj: cc_msc main.c
   cflags = $cflags_MyProject_Debug
 build obj/Debug/simd.obj: cc_msc simd.c
-  cflags = /arch:AVX2 /wd4716
+  cflags = /arch:AVX2 /D_UNICODE /DUNICODE /wd4716
 		]]
 	end
 
@@ -450,7 +450,7 @@ build obj/Debug/simd.o: cxx_gcc simd.cpp
 build obj/Debug/main.obj: cxx_msc main.cpp
   cxxflags = $cxxflags_MyProject_Debug
 build obj/Debug/simd.obj: cxx_msc simd.cpp
-  cxxflags = /arch:AVX2 /EHsc
+  cxxflags = /arch:AVX2 /EHsc /D_UNICODE /DUNICODE
 		]]
 	end
 
@@ -657,3 +657,29 @@ build obj/Debug/special.o: cxx_gcc special.cpp
   cxxflags = -Werror=return-type -Werror=uninitialized
 		]]
 	end
+
+
+--
+-- Check that per-file characterset override generates inline flags with MSVC.
+--
+
+	function suite.perfile_characterset_override_MSVC()
+		toolset "msc"
+		_OS = "Windows"
+		files { "main.cpp", "special.cpp" }
+		
+		filter "files:special.cpp"
+			characterset "MBCS"
+		filter {}
+		
+		local cfg = prepare()
+		cpp.buildFiles(cfg)
+		
+		test.capture [[
+build obj/Debug/main.obj: cxx_msc main.cpp
+  cxxflags = $cxxflags_MyProject_Debug
+build obj/Debug/special.obj: cxx_msc special.cpp
+  cxxflags = /EHsc /D_MBCS
+		]]
+	end
+
