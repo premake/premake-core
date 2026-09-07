@@ -16,7 +16,7 @@ Project configurations. [Not all exporters currently support](Feature-Matrix.md)
 
 ### Examples ###
 
-Add two files from to the current project, from the same directory that contains the script.
+Add two files to the current project, from the same directory that contains the script.
 
 ```lua
 files { "hello.cpp", "goodbye.cpp" }
