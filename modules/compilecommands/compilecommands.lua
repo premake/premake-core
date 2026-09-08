@@ -135,7 +135,7 @@ function m.getflags(cfg, toolset, fcfg, tool)
 
 	-- Compile flags and join together
 	flags = table.join(flags,
-						toolset.getdefines(defines),
+						toolset.getdefines(defines, proxy),
 						toolset.getundefines(undefines),
 						allincludedirflags,
 						toolset.getforceincludes({ project = cfg.project, forceincludes = forceincludes }),
