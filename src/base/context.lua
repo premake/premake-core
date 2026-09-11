@@ -44,12 +44,12 @@
 		ctx.terms = {}
 
 		-- This base directory is used when expanding path tokens encountered
-		-- in non-path value; such values will be made relative to this value
+		-- in non-path values; such values will be made relative to this value
 		-- so the resulting projects will only contain relative paths. It is
 		-- expected that the creator of the context will set this value using
-		-- the setbasedir() function.
+		-- the basedir() function.
 
-		ctx._basedir = os.getcwd()
+		ctx._basedir = cfgset.basedir or os.getcwd()
 
 		-- when a missing field is requested, fetch it from my config
 		-- set, and then cache the value for future lookups
