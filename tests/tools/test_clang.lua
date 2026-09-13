@@ -366,6 +366,22 @@ end
 	end
 
 --
+-- Check handling of external warnings.
+--
+
+	function suite.cflags_onNoExternalWarnings()
+		externalwarnings "Off"
+		prepare()
+		test.excludes({ "-Wsystem-headers" }, clang.getcflags(cfg))
+	end
+
+	function suite.cflags_onHighExternalWarnings()
+		externalwarnings "High"
+		prepare()
+		test.contains({ "-Wsystem-headers" }, clang.getcflags(cfg))
+	end
+
+--
 -- Test profiling flag
 --
 
