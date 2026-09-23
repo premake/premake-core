@@ -195,6 +195,8 @@ module.exports = {
 						'linkgroups',
 						'linkoptions',
 						'links',
+						'linksectiondata',
+						'linksectionfunction',
 						'linktimeoptimization',
 						'locale',
 						'location',
