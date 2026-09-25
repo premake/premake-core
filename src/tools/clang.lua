@@ -73,7 +73,6 @@
 		}),
 		structmemberalign = gcc.shared.structmemberalign,
 		visibility = gcc.shared.visibility,
-		inlinesvisibility = gcc.shared.inlinesvisibility,
 		linktimeoptimization = {
 			On = "-flto",
 			Fast = "-flto=thin",

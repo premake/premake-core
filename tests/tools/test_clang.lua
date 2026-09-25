@@ -626,3 +626,10 @@ end
 		prepare()
 		test.excludes({ "-municode" }, clang.getldflags(cfg))
 	end
+
+	function suite.inlinesVisibilityHidden_onlyInCxxFlags()
+		inlinesvisibility "Hidden"
+		prepare()
+		test.excludes({ "-fvisibility-inlines-hidden" }, clang.getcflags(cfg))
+		test.contains({ "-fvisibility-inlines-hidden" }, clang.getcxxflags(cfg))
+	end

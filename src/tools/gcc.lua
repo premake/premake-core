@@ -185,9 +185,6 @@
 			Internal = "-fvisibility=internal",
 			Protected = "-fvisibility=protected",
 		},
-		inlinesvisibility = {
-			Hidden = "-fvisibility-inlines-hidden"
-		},
 		profile = {
 			On = "-pg",
 		},
@@ -297,6 +294,9 @@
 		},
 		rtti = {
 			Off = "-fno-rtti"
+		},
+		inlinesvisibility = {
+			Hidden = "-fvisibility-inlines-hidden"
 		}
 	}
 

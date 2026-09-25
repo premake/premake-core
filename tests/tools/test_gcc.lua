@@ -1477,7 +1477,7 @@ end
 	function suite.cxxflags_onInlinesVisibilityHidden()
 		inlinesvisibility "Hidden"
 		prepare()
-		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
+		test.excludes({ "-fvisibility-inlines-hidden" }, gcc.getcflags(cfg))
 		test.contains({ "-fvisibility-inlines-hidden" }, gcc.getcxxflags(cfg))
 	end
 
