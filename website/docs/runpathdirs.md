@@ -1,4 +1,4 @@
-Specifies the runtime search paths used by the runtime shared library dynamic loader. OSX and Linux-specific.
+Specifies the runtime search paths used by the runtime shared library dynamic loader. OSX, Linux and BSD-specific.
 
 ```lua
 runpathdirs { "paths" }
