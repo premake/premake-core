@@ -511,7 +511,8 @@
 		mode = iif (mode == nil, "linker", mode)
 
 		if not (table.contains(os.getSystemTags(cfg.system), "darwin")
-				or (cfg.system == p.LINUX)) then
+				or (cfg.system == p.LINUX)
+				or table.contains(os.getSystemTags(cfg.system), "bsd")) then
 			return result
 		end
 
@@ -528,7 +529,7 @@
 			else
 				if table.contains(os.getSystemTags(cfg.system), "darwin") then
 					rpath = "@loader_path/" .. rpath
-				elseif (cfg.system == p.LINUX) then
+				else
 					rpath = iif(rpath == ".", "", "/" .. rpath)
 					rpath = "$$ORIGIN" .. rpath
 				end
@@ -539,6 +540,10 @@
 
 				table.insert(result, rpath)
 			end
+		end
+
+		if mode == "linker" and #result > 0 and table.contains(os.getSystemTags(cfg.system), "bsd") then
+			table.insert(result, "-Wl,-z,origin") -- DragonFly and OpenBSD up to 7.9 only expand $ORIGIN if DF_ORIGIN is set.
 		end
 
 		return result
@@ -604,7 +609,7 @@
 				local r = { gcc.getsharedlibarg(cfg) }
 				if cfg.system == p.WINDOWS and cfg.useimportlib ~= p.OFF then
 					table.insert(r, '-Wl,--out-implib="' .. cfg.linktarget.relpath .. '"')
-				elseif cfg.system == p.LINUX then
+				elseif cfg.system == p.LINUX or table.contains(os.getSystemTags(cfg.system), "bsd") then
 					table.insert(r, '-Wl,-soname=' .. p.quoted(cfg.linktarget.name))
 				elseif table.contains(os.getSystemTags(cfg.system), "darwin") then
 					table.insert(r, '-Wl,-install_name,' .. p.quoted('@rpath/' .. cfg.linktarget.name))

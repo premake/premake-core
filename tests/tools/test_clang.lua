@@ -524,6 +524,13 @@ end
 		test.contains({ "-shared", "-Xlinker /NOIMPLIB" }, clang.getldflags(cfg))
 	end
 
+	function suite.ldflags_onBSDSharedLib()
+		system "bsd"
+		kind "SharedLib"
+		prepare()
+		test.contains({ "-shared", "-Wl,-soname=libMyProject.so" }, clang.getldflags(cfg))
+	end
+
 
 --
 -- Check handling of Run-Time Library flags.
