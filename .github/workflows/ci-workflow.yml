@@ -81,15 +81,15 @@ jobs:
       matrix:
         config: [debug, release]
         platform: [Win32, x64, ARM64]
-        msdev: [vs2022]
+        msdev: [vs2026]
         cc: [msc, clang]
         include:
           - platform: Win32
-            os: windows-2022
+            os: windows-2025-vs2026
           - platform: x64
-            os: windows-2022
+            os: windows-2025-vs2026
           - platform: ARM64
-            os: windows-11-arm
+            os: windows-11-vs2026-arm
     timeout-minutes: 15
     steps:
     - name: Checkout

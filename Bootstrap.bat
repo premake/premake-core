@@ -57,6 +57,9 @@ IF "%vsversion%" == "vs2010" (
 ) ELSE IF "%vsversion%" == "vs2022" (
 	CALL :VsWhereVisualBootstrap "%vsversion%" "17.0" "18.0" %PREMAKE_OPTS%
 
+) ELSE IF "%vsversion%" == "vs2026" (
+	CALL :VsWhereVisualBootstrap "%vsversion%" "18.0" "19.0" %PREMAKE_OPTS%
+
 ) ELSE IF "%vsversion%" == "vs18" (
 	CALL :VsWhereVisualBootstrap "vs2026" "18.0" "19.0"
 
