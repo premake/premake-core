@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 #ifndef PREMAKE_VERSION
-# define PREMAKE_VERSION "5.0.0"
+# define PREMAKE_VERSION "5.0.1-dev"
 #endif
 
 #define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2026 Jess Perkins and the Premake Project"

@@ -49,7 +49,7 @@ Since 5.0-beta8:
 * PR #2688  Smart Emission of `.exp` file outputs in Ninja Rules (@nickclark2016)
 * PR #2689  Ninja fix broken build dependencies (@nickclark2016)
 * PR #2691  Fix build deps for all build steps (@nickclark2016)
-* PR #2892  Fix: GCC ninja module pchheader generation (@ngorden)
+* PR #2692  Fix: GCC ninja module pchheader generation (@ngorden)
 * PR #2694  Fix return value of os.writefile_ifnotequal() (@jkriegshauser)
 * PR #2695  Contributing update (@jkriegshauser)
 * PR #2696  missed test for os.writefile_ifnotequal (@jkriegshauser)
