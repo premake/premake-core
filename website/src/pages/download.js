@@ -6,7 +6,7 @@ import { Column, Container, Row } from '../components/Grid';
 import Sponsors from '../components/Sponsors';
 
 
-const LATEST_VERSION = '5.0.0-beta8';
+const LATEST_VERSION = '5.0.0';
 
 
 const DownloadLink = ({ arch }) => {

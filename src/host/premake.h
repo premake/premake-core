@@ -1,7 +1,7 @@
 /**
  * \file   premake.h
  * \brief  Program-wide constants and definitions.
- * \author Copyright (c) 2002-2024 Jess Perkins and the Premake project
+ * \author Copyright (c) 2002-2026 Jess Perkins and the Premake project
  */
 
 #define lua_c
@@ -19,10 +19,10 @@
 #include <stdlib.h>
 
 #ifndef PREMAKE_VERSION
-# define PREMAKE_VERSION "5.0.0-dev"
+# define PREMAKE_VERSION "5.0.0"
 #endif
 
-#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2025 Jess Perkins and the Premake Project"
+#define PREMAKE_COPYRIGHT      "Copyright (C) 2002-2026 Jess Perkins and the Premake Project"
 #define PREMAKE_PROJECT_URL    "https://github.com/premake/premake-core/wiki"
 
 #if defined(__linux__)
