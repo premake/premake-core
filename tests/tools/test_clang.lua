@@ -233,6 +233,12 @@ end
 		test.contains("-fuse-ld=lld", clang.getldflags(cfg))
 	end
 
+	function suite.ldflags_linker_mold()
+		linker "Mold"
+		prepare()
+		test.contains("-fuse-ld=mold", clang.getldflags(cfg))
+	end
+
 --
 -- Check handling of link time optimization flag.
 --

@@ -568,7 +568,11 @@
 		kind = "string",
 		allowed = {
 			"Default",
+			"BFD",
+			"Gold",
 			"LLD",
+			"Mold",
+			"Wild",
 		}
 	}
 
