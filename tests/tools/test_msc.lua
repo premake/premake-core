@@ -258,6 +258,32 @@
 
 
 --
+-- Check handling of sanitize.
+--
+
+	function suite.sharedflags_onSanitizeAddress()
+		sanitize { "Address" }
+		prepare()
+		test.contains("/fsanitize=address", msc.getcflags(cfg))
+		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
+	end
+
+	function suite.sharedflags_onSanitizeFuzzer()
+		sanitize { "Fuzzer" }
+		prepare()
+		test.contains("/fsanitize=fuzzer", msc.getcflags(cfg))
+		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
+	end
+
+	function suite.sharedflags_onSanitizeAddressFuzzer()
+		sanitize { "Address", "Fuzzer" }
+		prepare()
+		test.contains({ "/fsanitize=address", "/fsanitize=fuzzer" }, msc.getcflags(cfg))
+		test.contains({ "/fsanitize=address", "/fsanitize=fuzzer" }, msc.getcxxflags(cfg))
+	end
+
+
+--
 -- Check handling of debugging support.
 --
 
@@ -662,25 +688,6 @@ end
 		rtti "Off"
 		prepare()
 		test.contains("/GR-", msc.getcxxflags(cfg))
-	end
-
-	function suite.cxxflags_onSanitizeAddress()
-		sanitize { "Address" }
-		prepare()
-		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
-	end
-
-	function suite.cxxflags_onSanitizeFuzzer()
-		sanitize { "Fuzzer" }
-		prepare()
-		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
-	end
-
-	function suite.cxxflags_onSanitizeAddressFuzzer()
-		sanitize { "Address", "Fuzzer" }
-		prepare()
-		test.contains("/fsanitize=address", msc.getcxxflags(cfg))
-		test.contains("/fsanitize=fuzzer", msc.getcxxflags(cfg))
 	end
 
 --
