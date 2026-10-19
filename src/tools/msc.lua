@@ -190,8 +190,11 @@
 		usestandardpreprocessor = {
 			On = "/Zc:preprocessor",
 			Off = "/Zc:preprocessor-"
+		},
+		sanitize = {
+			Address = "/fsanitize=address",
+			Fuzzer = "/fsanitize=fuzzer"
 		}
-
 	}
 
 	function msc.getsharedflags(cfg)
@@ -243,10 +246,6 @@
 		},
 		rtti = {
 			Off = "/GR-"
-		},
-		sanitize = {
-			Address = "/fsanitize=address",
-			Fuzzer = "/fsanitize=fuzzer",
 		}
 	}
 
