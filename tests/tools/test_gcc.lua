@@ -1072,6 +1072,30 @@ function suite.ldflags_linker_lld()
 	test.contains("-fuse-ld=lld", gcc.getldflags(cfg))
 end
 
+function suite.ldflags_linker_bfd()
+	linker "BFD"
+	prepare()
+	test.contains("-fuse-ld=bfd", gcc.getldflags(cfg))
+end
+
+function suite.ldflags_linker_gold()
+	linker "Gold"
+	prepare()
+	test.contains("-fuse-ld=gold", gcc.getldflags(cfg))
+end
+
+function suite.ldflags_linker_mold()
+	linker "Mold"
+	prepare()
+	test.contains("-fuse-ld=mold", gcc.getldflags(cfg))
+end
+
+function suite.ldflags_linker_wild()
+	linker "Wild"
+	prepare()
+	test.contains("-fuse-ld=wild", gcc.getldflags(cfg))
+end
+
 
 --
 -- Check handling of link time optimization flag.

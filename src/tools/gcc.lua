@@ -622,7 +622,11 @@
 		},
 		linker = {
 			Default = "",
-			LLD = "-fuse-ld=lld"
+			BFD = "-fuse-ld=bfd",
+			Gold = "-fuse-ld=gold",
+			LLD = "-fuse-ld=lld",
+			Mold = "-fuse-ld=mold",
+			Wild = "-fuse-ld=wild"
 		},
 		mapfile = {
 			On = function(cfg)
