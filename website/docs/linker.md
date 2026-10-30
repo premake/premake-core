@@ -25,7 +25,7 @@ Project configurations.
 
 ### Availability ###
 
-Premake 5.0.0-beta3 or later. `BFD`, `Gold`, `Mold` and `Wild` are available in Premake 5.0.1 or later.
+Premake 5.0.0-beta3 or later. `BFD`, `Gold`, `Mold` and `Wild` are available in the latest Premake master.
 
 ### Examples ###
 
@@ -36,7 +36,7 @@ filter { "toolset:clang" }
    linker "LLD"
 ```
 
-Configures GCC to use the `mold` linker.
+Configures GCC to use the Mold linker.
 
 ```lua
 filter { "toolset:gcc" }
