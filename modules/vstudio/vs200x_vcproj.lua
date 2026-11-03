@@ -879,9 +879,9 @@
 
 
 	function m.bufferSecurityCheck(cfg)
-		if cfg.buffersecuritycheck == p.OFF then
+		if cfg.hardenstack == p.OFF then
 			p.w('BufferSecurityCheck="false"')
-		elseif cfg.buffersecuritycheck == p.ON then
+		elseif cfg.hardenstack == p.ON or cfg.hardenstack == "Strong" or cfg.hardenstack == "All" then
 			p.w('BufferSecurityCheck="true"')
 		end
 	end

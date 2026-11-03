@@ -1014,6 +1014,58 @@
 
 
 --
+-- Check handling of per-file stack protection.
+--
+
+	-- File filters enable or disable buffer security checks independently.
+	function suite.perFileHardenStack()
+		files { "hello.cpp", "util.c" }
+		filter "files:hello.cpp"
+			hardenstack "Strong"
+		filter "files:util.c"
+			buffersecuritycheck "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<BufferSecurityCheck>true</BufferSecurityCheck>
+	</ClCompile>
+	<ClCompile Include="util.c">
+		<BufferSecurityCheck>false</BufferSecurityCheck>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+	-- The file override applies only to Release.
+	function suite.perFileHardenStack_perConfiguration()
+		files { "hello.cpp" }
+		filter { "files:hello.cpp", "configurations:Release" }
+			hardenstack "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</BufferSecurityCheck>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+	-- Inherited stack protection needs no file override.
+	function suite.perFileHardenStack_inheritsProjectValueSilently()
+		files { "hello.cpp" }
+		hardenstack "All"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp" />
+</ItemGroup>
+		]]
+	end
+
+
+--
 -- Check handling of files using custom rule definitions.
 --
 

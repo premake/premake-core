@@ -45,6 +45,7 @@
 		]]
 	end
 
+	-- Compiler options include disabled stack protection for C and C++.
 	function suite.OnProjectCfg_Flags()
 		optimize "Debug"
 		exceptionhandling "Off"
@@ -59,11 +60,12 @@
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-Og;-fPIC;-g;-fno-stack-protector;-std=c++11;-fno-exceptions;-fno-rtti;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" C_Options="-Og;-fPIC;-g;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-fno-stack-protector;-Og;-fPIC;-g;-std=c++11;-fno-exceptions;-fno-rtti;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" C_Options="-fno-stack-protector;-Og;-fPIC;-g;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
       </Compiler>
 		]]
 	end
 
+	-- The legacy alias disables stack protection in both compiler option lists.
 	function suite.OnProjectCfg_BufferSecurityCheckAPI()
 		optimize "Debug"
 		exceptionhandling "Off"
@@ -78,7 +80,7 @@
 		prepare()
 		codelite.project.compiler(cfg)
 		test.capture [[
-      <Compiler Options="-Og;-fPIC;-g;-fno-stack-protector;-std=c++11;-fno-exceptions;-fno-rtti;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" C_Options="-Og;-fPIC;-g;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-fno-stack-protector;-Og;-fPIC;-g;-std=c++11;-fno-exceptions;-fno-rtti;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" C_Options="-fno-stack-protector;-Og;-fPIC;-g;-include forced_include1.h;-include forced_include2.h;-opt1;-opt2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
       </Compiler>
 		]]
 	end

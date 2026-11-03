@@ -1203,13 +1203,15 @@
 	}
 
 	api.register {
-		name = "buffersecuritycheck",
+		name = "hardenstack",
 		scope = "config",
 		kind = "string",
 		allowed = {
 			"Default",
 			"On",
-			"Off"
+			"Strong",
+			"All",
+			"Off",
 		}
 	}
 
@@ -1374,6 +1376,7 @@
 	api.alias("buildoutputs", "buildOutputs")
 	api.alias("editandcontinue", "editAndContinue")
 	api.alias("fileextension", "fileExtension")
+	api.alias("hardenstack", "buffersecuritycheck")
 	api.alias("propertydefinition", "propertyDefinition")
 	api.alias("removefiles", "excludes")
 

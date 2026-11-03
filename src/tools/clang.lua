@@ -60,6 +60,7 @@
 		openmp = gcc.shared.openmp,
 		optimize = gcc.shared.optimize,
 		pic = gcc.shared.pic,
+		hardenstack = gcc.shared.hardenstack,
 		vectorextensions = gcc.shared.vectorextensions,
 		isaextensions = gcc.shared.isaextensions,
 		warnings = gcc.shared.warnings,
