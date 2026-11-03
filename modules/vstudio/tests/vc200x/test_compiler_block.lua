@@ -283,6 +283,25 @@
 		]]
 	end
 
+	-- Strong enables buffer security checks.
+	function suite.bufferSecurityFlagSet_onHardenStackStrong()
+		hardenstack "Strong"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCCLCompilerTool"
+	Optimization="0"
+	BasicRuntimeChecks="3"
+	BufferSecurityCheck="true"
+	RuntimeLibrary="2"
+	EnableFunctionLevelLinking="true"
+	UsePrecompiledHeader="0"
+	WarningLevel="3"
+	DebugInformationFormat="0"
+/>
+		]]
+	end
+
 --
 -- Check that the CompileAs value is set correctly for C language projects.
 --

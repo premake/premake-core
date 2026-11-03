@@ -1142,6 +1142,7 @@
 			m.compileAsManaged,
 			m.compileAs,
 			m.runtimeTypeInfo,
+			m.bufferSecurityCheck,
 			m.warningLevelFile,
 			m.compileAsWinRT,
 			m.externalWarningLevelFile,
@@ -3470,12 +3471,12 @@
 		end
 	end
 
-	function m.bufferSecurityCheck(cfg)
+	function m.bufferSecurityCheck(cfg, condition)
 		local tool, toolVersion = p.config.toolset(cfg)
-		if cfg.buffersecuritycheck == p.OFF or (toolVersion and toolVersion:startswith("LLVM-vs")) then
-			m.element("BufferSecurityCheck", nil, "false")
-		elseif cfg.buffersecuritycheck == p.ON then
-			m.element("BufferSecurityCheck", nil, "true")
+		if cfg.hardenstack == p.OFF or (toolVersion and toolVersion:startswith("LLVM-vs")) then
+			m.element("BufferSecurityCheck", condition, "false")
+		elseif cfg.hardenstack == p.ON or cfg.hardenstack == "Strong" or cfg.hardenstack == "All" then
+			m.element("BufferSecurityCheck", condition, "true")
 		end
 	end
 

@@ -74,6 +74,25 @@ PERFILE_FLAGS_2 = $(ALL_CFLAGS) -msse -msse2 -mfpmath=sse,387 -msse3 -mssse3 -ms
 		]]
 	end
 
+	-- File filters select separate C and C++ stack protection flags.
+	function suite.perfile_hardenStack()
+		files { 'a.c', 'b.cpp', 'c.c' }
+
+		filter { 'files:a.c' }
+			hardenstack "Strong"
+		filter { 'files:b.cpp' }
+			buffersecuritycheck "Off"
+
+		prepare()
+		test.capture [[
+# Per File Configurations
+# #############################################
+
+PERFILE_FLAGS_0 = $(ALL_CFLAGS) -fstack-protector-strong
+PERFILE_FLAGS_1 = $(ALL_CXXFLAGS) -fno-stack-protector
+		]]
+	end
+
 	function suite.perfile_cxxApi()
 		files { 'a.cpp', 'b.cpp', 'c.cpp' }
 

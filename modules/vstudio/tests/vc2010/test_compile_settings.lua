@@ -747,6 +747,58 @@
 		]]
 	end
 
+	-- Strong enables buffer security checks.
+	function suite.bufferSecurityCheck_onHardenStackStrong()
+		hardenstack "Strong"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>true</BufferSecurityCheck>
+		]]
+	end
+
+	-- All enables buffer security checks.
+	function suite.bufferSecurityCheck_onHardenStackAll()
+		hardenstack "All"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>true</BufferSecurityCheck>
+		]]
+	end
+
+	-- Off disables buffer security checks.
+	function suite.bufferSecurityCheck_onHardenStackOff()
+		hardenstack "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+	<BufferSecurityCheck>false</BufferSecurityCheck>
+		]]
+	end
+
+	-- Default omits the buffer security setting.
+	function suite.bufferSecurityCheck_onHardenStackDefault()
+		hardenstack "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
 --
 -- On Win32 builds, use the Edit-and-Continue debug information format.
 --

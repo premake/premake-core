@@ -118,6 +118,63 @@
 	end
 
 --
+-- Check stack protection flags for C and C++.
+--
+
+	local function stackflags(flags)
+		local found = {}
+		for _, flag in ipairs(flags) do
+			if flag:find("stack-protector", 1, true) then
+				table.insert(found, flag)
+			end
+		end
+		return found
+	end
+
+	local function checkstack(value, flag)
+		hardenstack(value)
+		prepare()
+		test.isequal({ flag }, stackflags(clang.getcflags(cfg)))
+		test.isequal({ flag }, stackflags(clang.getcxxflags(cfg)))
+	end
+
+	-- Off disables stack protection for C and C++.
+	function suite.stackflags_onHardenStackOff()
+		checkstack("Off", "-fno-stack-protector")
+	end
+
+	-- On selects basic stack protection for C and C++.
+	function suite.stackflags_onHardenStackOn()
+		checkstack("On", "-fstack-protector")
+	end
+
+	-- Strong selects strong stack protection for C and C++.
+	function suite.stackflags_onHardenStackStrong()
+		checkstack("Strong", "-fstack-protector-strong")
+	end
+
+	-- All protects every function in C and C++.
+	function suite.stackflags_onHardenStackAll()
+		checkstack("All", "-fstack-protector-all")
+	end
+
+	-- The legacy alias enables basic stack protection for C and C++.
+	function suite.stackflags_onBufferSecurityCheck()
+		buffersecuritycheck "On"
+		prepare()
+		test.isequal({ "-fstack-protector" }, stackflags(clang.getcflags(cfg)))
+		test.isequal({ "-fstack-protector" }, stackflags(clang.getcxxflags(cfg)))
+	end
+
+	-- Default emits no stack protection flags for C or C++.
+	function suite.stackflags_onHardenStackDefault()
+		hardenstack "Default"
+		prepare()
+		test.isequal({}, stackflags(clang.getcflags(cfg)))
+		test.isequal({}, stackflags(clang.getcxxflags(cfg)))
+	end
+
+--
 -- Check Mac OS X deployment target flags
 --
 
