@@ -703,3 +703,340 @@ end
 		test.excludes({ "-fvisibility-inlines-hidden" }, clang.getcflags(cfg))
 		test.contains({ "-fvisibility-inlines-hidden" }, clang.getcxxflags(cfg))
 	end
+
+
+--
+-- On emits -fPIE for executables in C and C++.
+--
+
+	function suite.cflags_onHardenAslrOn_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "On"
+		prepare()
+		test.contains({ "-fPIE" }, clang.getcflags(cfg))
+		test.contains({ "-fPIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- Off emits -fno-PIE for executables in C and C++.
+--
+
+	function suite.cflags_onHardenAslrOff_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "Off"
+		prepare()
+		test.contains({ "-fno-PIE" }, clang.getcflags(cfg))
+		test.contains({ "-fno-PIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- Default emits no PIE flags for executables in C or C++.
+--
+
+	function suite.cflags_onHardenAslrDefault_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "Default"
+		prepare()
+		test.excludes({ "-fPIE", "-fno-PIE" }, clang.getcflags(cfg))
+		test.excludes({ "-fPIE", "-fno-PIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On emits -fPIC for static libraries.
+--
+
+	function suite.cflags_onHardenAslrOn_staticLib()
+		kind "StaticLib"
+		hardenaslr "On"
+		prepare()
+		test.contains({ "-fPIC" }, clang.getcflags(cfg))
+		test.contains({ "-fPIC" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- Off adds no code model flag for static libraries.
+--
+
+	function suite.cflags_onHardenAslrOff_staticLib()
+		kind "StaticLib"
+		hardenaslr "Off"
+		prepare()
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE" }, clang.getcflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- Off leaves the pic flag alone for static libraries.
+--
+
+	function suite.cflags_onHardenAslrOff_withPicOn_staticLib()
+		kind "StaticLib"
+		hardenaslr "Off"
+		pic "On"
+		prepare()
+		test.contains({ "-fPIC" }, clang.getcflags(cfg))
+		test.contains({ "-fPIC" }, clang.getcxxflags(cfg))
+		test.excludes({ "-fPIE", "-fno-PIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On emits -fPIE and -pie linker flags for executables.
+--
+
+	function suite.ldflags_onHardenAslrOn_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "On"
+		prepare()
+		test.contains({ "-fPIE", "-pie" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- Off emits -fno-PIE and -no-pie linker flags for executables.
+--
+
+	function suite.ldflags_onHardenAslrOff_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "Off"
+		prepare()
+		test.contains({ "-fno-PIE", "-no-pie" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- Default emits no PIE linker flags for executables.
+--
+
+	function suite.ldflags_onHardenAslrDefault_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "Default"
+		prepare()
+		test.excludes({ "-pie", "-no-pie", "-fPIE", "-fno-PIE" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- On links with matching PIE code generation.
+--
+
+	function suite.ldflags_onHardenAslrOn_withPicOn_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "On"
+		pic "On"
+		prepare()
+		test.contains({ "-fPIE", "-pie" }, clang.getldflags(cfg))
+		test.excludes({ "-fPIC" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- Off ignores pic On when linking executables.
+--
+
+	function suite.ldflags_onHardenAslrOff_withPicOn_consoleApp()
+		kind "ConsoleApp"
+		hardenaslr "Off"
+		pic "On"
+		prepare()
+		test.contains({ "-fno-PIE", "-no-pie" }, clang.getldflags(cfg))
+		test.excludes({ "-fPIC" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- On emits no PIE linker flags for static libraries.
+--
+
+	function suite.ldflags_onHardenAslrOn_staticLib()
+		kind "StaticLib"
+		hardenaslr "On"
+		prepare()
+		test.excludes({ "-pie", "-no-pie" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- Shared libraries link as PIC without PIE flags.
+--
+
+	function suite.ldflags_onHardenAslrOn_sharedLib()
+		kind "SharedLib"
+		hardenaslr "On"
+		prepare()
+		test.excludes({ "-pie", "-no-pie" }, clang.getldflags(cfg))
+		test.contains({ "-fPIC", "-shared" }, clang.getldflags(cfg))
+	end
+
+
+--
+-- On ignores an explicit pic Off.
+--
+
+	function suite.cflags_onHardenAslrOn_withPicOff()
+		kind "ConsoleApp"
+		hardenaslr "On"
+		pic "Off"
+		prepare()
+		test.contains({ "-fPIE" }, clang.getcflags(cfg))
+		test.contains({ "-fPIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- Systems without a mapping add no ASLR flags.
+--
+
+	function suite.cflags_onHardenAslrOn_nonLinux()
+		system "MacOSX"
+		kind "ConsoleApp"
+		hardenaslr "On"
+		prepare()
+		for _, getflags in ipairs({ clang.getcflags, clang.getcxxflags, clang.getldflags }) do
+			test.excludes({ "-fPIE", "-fPIC", "-pie" }, getflags(cfg))
+		end
+	end
+
+	local function checkWindowsAslr(projectKind, imageArchitecture, value, flag)
+		system "Windows"
+		architecture(imageArchitecture)
+		toolset "clang"
+		kind(projectKind)
+		hardenaslr(value)
+		prepare()
+		test.contains({ flag }, clang.getldflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE", "-pie", "-no-pie", "-Wl,--dynamicbase" }, clang.getldflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE", "-Xlinker /DYNAMICBASE", "-Xlinker /DYNAMICBASE:NO" }, clang.getcflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE", "-Xlinker /DYNAMICBASE", "-Xlinker /DYNAMICBASE:NO" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On uses the MSVC linker dialect for Windows executables.
+--
+
+	function suite.ldflags_onHardenAslrOn_windowsConsoleApp()
+		checkWindowsAslr("ConsoleApp", "x86", "On", "-Xlinker /DYNAMICBASE")
+	end
+
+
+--
+-- Off uses the MSVC linker dialect for Windows executables.
+--
+
+	function suite.ldflags_onHardenAslrOff_windowsConsoleApp()
+		checkWindowsAslr("ConsoleApp", "x86", "Off", "-Xlinker /DYNAMICBASE:NO")
+	end
+
+
+--
+-- On uses the MSVC linker dialect for Windows DLLs.
+--
+
+	function suite.ldflags_onHardenAslrOn_windowsSharedLib()
+		checkWindowsAslr("SharedLib", "x86_64", "On", "-Xlinker /DYNAMICBASE")
+	end
+
+
+--
+-- Off uses the MSVC linker dialect for Windows DLLs.
+--
+
+	function suite.ldflags_onHardenAslrOff_windowsSharedLib()
+		checkWindowsAslr("SharedLib", "x86_64", "Off", "-Xlinker /DYNAMICBASE:NO")
+	end
+
+	local function checkWindowsAslrOmitted(projectKind, value)
+		system "Windows"
+		toolset "clang"
+		kind(projectKind)
+		hardenaslr(value)
+		prepare()
+		test.excludes({ "-Xlinker /DYNAMICBASE", "-Xlinker /DYNAMICBASE:NO", "-fPIC", "-fPIE", "-fno-PIE", "-pie", "-no-pie" }, clang.getldflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE" }, clang.getcflags(cfg))
+		test.excludes({ "-fPIC", "-fPIE", "-fno-PIE" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On adds no ASLR override for Windows archives.
+--
+
+	function suite.ldflags_onHardenAslrOn_windowsStaticLib()
+		checkWindowsAslrOmitted("StaticLib", "On")
+	end
+
+
+--
+-- Off adds no ASLR override for Windows archives.
+--
+
+	function suite.ldflags_onHardenAslrOff_windowsStaticLib()
+		checkWindowsAslrOmitted("StaticLib", "Off")
+	end
+
+
+--
+-- Default adds no ASLR override for Windows executables.
+--
+
+	function suite.ldflags_onHardenAslrDefault_windowsConsoleApp()
+		checkWindowsAslrOmitted("ConsoleApp", "Default")
+	end
+
+	local function aslrCodeFlags(flags)
+		local selected = {}
+		for _, flag in ipairs(flags) do
+			if flag == "-fPIC" or flag == "-fPIE" or flag == "-fno-PIE" then
+				table.insert(selected, flag)
+			end
+		end
+		return selected
+	end
+
+
+--
+-- ASLR On leaves the pic flag in place after its own.
+--
+
+	function suite.hardenAslr_onKeepsPicFlag()
+		hardenaslr "On"
+		pic "On"
+		prepare()
+		test.isequal({ "-fPIE", "-fPIC" }, aslrCodeFlags(clang.getcflags(cfg)))
+		test.isequal({ "-fPIE", "-fPIC" }, aslrCodeFlags(clang.getcxxflags(cfg)))
+		test.isequal({ "-fPIE" }, aslrCodeFlags(clang.getldflags(cfg)))
+	end
+
+
+--
+-- ASLR Off leaves the pic flag in place after its own.
+--
+
+	function suite.hardenAslr_offKeepsPicFlag()
+		hardenaslr "Off"
+		pic "On"
+		prepare()
+		test.isequal({ "-fno-PIE", "-fPIC" }, aslrCodeFlags(clang.getcflags(cfg)))
+		test.isequal({ "-fno-PIE", "-fPIC" }, aslrCodeFlags(clang.getcxxflags(cfg)))
+		test.isequal({ "-fno-PIE" }, aslrCodeFlags(clang.getldflags(cfg)))
+	end
+
+
+--
+-- ASLR On keeps shared libraries position independent.
+--
+
+	function suite.cflags_onHardenAslrOn_sharedLib()
+		kind "SharedLib"
+		hardenaslr "On"
+		prepare()
+		test.contains({ "-fPIC" }, clang.getcflags(cfg))
+		test.contains({ "-fPIC" }, clang.getcxxflags(cfg))
+		test.excludes({ "-fPIE", "-fno-PIE" }, clang.getcxxflags(cfg))
+	end

@@ -61,6 +61,7 @@
 		optimize = gcc.shared.optimize,
 		pic = gcc.shared.pic,
 		hardenstack = gcc.shared.hardenstack,
+		hardenaslr = gcc.shared.hardenaslr,
 		vectorextensions = gcc.shared.vectorextensions,
 		isaextensions = gcc.shared.isaextensions,
 		warnings = gcc.shared.warnings,
@@ -309,6 +310,19 @@
 			All = "-Wl,--fatal-warnings",
 		},
 		linktimeoptimization = clang.shared.linktimeoptimization,
+		hardenaslr = function(cfg)
+			local prjcfg = config.normalize(cfg)
+			if prjcfg.system == p.WINDOWS then
+				if prjcfg.kind ~= p.STATICLIB then
+					return {
+						On = "-Xlinker /DYNAMICBASE",
+						Off = "-Xlinker /DYNAMICBASE:NO",
+					}
+				end
+				return nil
+			end
+			return gcc.ldflags.hardenaslr(cfg)
+		end,
 		kind = {
 			SharedLib = function(cfg)
 				local r = { clang.getsharedlibarg(cfg) }

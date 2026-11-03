@@ -276,3 +276,174 @@
 	AdditionalDependencies="kernel32.lib"
 		]]
 	end
+
+
+--
+-- On enables RandomizedBaseAddress.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrOn()
+		kind "ConsoleApp"
+		hardenaslr "On"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	RandomizedBaseAddress="2"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- Off disables RandomizedBaseAddress.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrOff()
+		kind "ConsoleApp"
+		hardenaslr "Off"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	RandomizedBaseAddress="1"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- Default emits no RandomizedBaseAddress attribute.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrDefault()
+		kind "ConsoleApp"
+		hardenaslr "Default"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- VS2005 ASLR On preserves user linker options.
+--
+
+	function suite.hardenAslr_onVisualStudio2005_preservesLinkOptions()
+		p.action.set("vs2005")
+		hardenaslr "On"
+		linkoptions { "/OPT:REF" }
+		local cfg = test.getconfig(prj, "Debug")
+		vc200x.VCLinkerTool(cfg)
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="/DYNAMICBASE /OPT:REF"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- VS2005 ASLR Off emits the disabling linker option.
+--
+
+	function suite.hardenAslr_offVisualStudio2005()
+		p.action.set("vs2005")
+		hardenaslr "Off"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="/DYNAMICBASE:NO"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- VS2005 Default adds no ASLR override.
+--
+
+	function suite.hardenAslr_defaultVisualStudio2005()
+		p.action.set("vs2005")
+		hardenaslr "Default"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="2"
+	GenerateDebugInformation="false"
+	SubSystem="1"
+	TargetMachine="1"
+/>
+		]]
+	end
+
+
+--
+-- VS2005 archives omit image ASLR options.
+--
+
+	function suite.hardenAslr_staticLibraryVisualStudio2005()
+		p.action.set("vs2005")
+		kind "StaticLib"
+		hardenaslr "On"
+		prepare()
+		test.capture [[
+<Tool
+	Name="VCLibrarianTool"
+	OutputFile="$(OutDir)\MyProject.lib"
+/>
+		]]
+	end
+
+
+--
+-- Forwarded toolsets emit ASLR only through linker options.
+--
+
+	function suite.hardenAslr_externalToolsetVisualStudio2008()
+		hardenaslr "On"
+		linkoptions { "/OPT:REF" }
+		local cfg = test.getconfig(prj, "Debug")
+		vc200x.VCLinkerTool(cfg, p.tools.msc)
+		test.capture [[
+<Tool
+	Name="VCLinkerTool"
+	AdditionalOptions="/NOLOGO /DYNAMICBASE /OPT:REF"
+	OutputFile="$(OutDir)\MyProject.exe"
+	LinkIncremental="0"
+	ProgramDatabaseFile=""
+/>
+		]]
+	end

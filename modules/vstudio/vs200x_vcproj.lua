@@ -531,6 +531,7 @@
 				m.programDatabaseFile,
 				m.subSystem,
 				m.largeAddressAware,
+				m.randomizedBaseAddress,
 				m.optimizeReferences,
 				m.enableCOMDATFolding,
 				m.entryPointSymbol,
@@ -796,6 +797,8 @@
 		local flags
 		if toolset then
 			flags = table.join(toolset.getldflags(cfg), cfg.linkoptions)
+		elseif _ACTION == "vs2005" and cfg.kind ~= p.STATICLIB then
+			flags = table.join(config.mapFlags(cfg, { hardenaslr = p.tools.msc.linkerFlags.hardenaslr }), cfg.linkoptions)
 		else
 			flags = cfg.linkoptions
 		end
@@ -1035,6 +1038,17 @@
 	function m.largeAddressAware(cfg)
 		if (cfg.largeaddressaware == true) then
 			p.w('LargeAddressAware="2"')
+		end
+	end
+
+
+	function m.randomizedBaseAddress(cfg, toolset)
+		if _ACTION >= "vs2008" and not toolset then
+			if cfg.hardenaslr == p.OFF then
+				p.w('RandomizedBaseAddress="1"')
+			elseif cfg.hardenaslr == p.ON then
+				p.w('RandomizedBaseAddress="2"')
+			end
 		end
 	end
 
