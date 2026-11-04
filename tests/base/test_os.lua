@@ -45,7 +45,7 @@
 	end
 
 	local function get_LD_PATH_variable_name()
-		if os.istarget("windows") then
+		if os.istarget("windows") or os.istarget("cygwin") then
 			return 'PATH'
 		elseif os.istarget("haiku") then
 			return 'LIBRARY_PATH'
@@ -74,6 +74,8 @@
 			-- https://developer.apple.com/documentation/macos-release-notes/macos-big-sur-11_0_1-release-notes
 		elseif os.istarget("windows") then
 			test.istrue(os.findlib("user32"))
+		elseif os.istarget("cygwin") then
+			test.istrue(os.findlib("cygwin1"))
 		elseif os.istarget("haiku") then
 			test.istrue(os.findlib("root"))
 		elseif os.istarget("bsd") and os.getversion().description == "OpenBSD" then

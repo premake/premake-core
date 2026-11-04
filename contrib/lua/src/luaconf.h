@@ -198,6 +198,18 @@
 		LUA_CDIR"..\\lib\\lua\\" LUA_VDIR "\\?.dll;" \
 		LUA_CDIR"loadall.dll;" ".\\?.dll"
 
+#elif defined(__CYGWIN__)		/* }{ */
+
+#define LUA_ROOT	"/usr/"
+#define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
+#define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
+#define LUA_PATH_DEFAULT  \
+		LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
+		LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua;" \
+		"./?.lua;" "./?/init.lua"
+#define LUA_CPATH_DEFAULT \
+		LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll;" "./?.dll"
+
 #else			/* }{ */
 
 #define LUA_ROOT	"/usr/local/"

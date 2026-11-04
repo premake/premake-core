@@ -15,6 +15,7 @@ If no system is specified, Premake will identify and target the current operatin
 | aix | IBM AIX |
 | android | Android Platform |
 | bsd | BSD Variants |
+| cygwin | CYGWIN |
 | emscripten | Emscripten targets |
 | haiku | Haiku OS |
 | hurd | GNU Hurd |

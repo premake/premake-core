@@ -854,6 +854,7 @@
 		allowed = {
 			"aix",
 			"bsd",
+			"cygwin",
 			"emscripten",
 			"haiku",
 			"hurd",
@@ -1476,6 +1477,7 @@
 		allowed = {
 			{ "aix",        "IBM AIX" },
 			{ "bsd",        "OpenBSD, NetBSD, or FreeBSD" },
+			{ "cygwin",     "CYGWIN" },
 			{ "emscripten", "Emscripten" },
 			{ "haiku",      "Haiku" },
 			{ "hurd",       "GNU/Hurd" },
@@ -1595,6 +1597,16 @@
 		targetprefix ""
 		targetbundleextension ".xctest"
 
+	-- CYGWIN specific.
+
+	filter { "system:cygwin", "kind:ConsoleApp or WindowedApp" }
+		targetextension ".exe"
+
+	filter { "system:cygwin", "kind:SharedLib" }
+		targetprefix "cyg"
+		targetextension ".dll"
+		implibextension ".dll.a"
+
 	-- Windows and friends.
 
 	filter { "system:Windows or language:C# or language:F#", "kind:ConsoleApp or WindowedApp" }
@@ -1614,7 +1626,7 @@
 		targetextension ".dll"
 		implibextension ".dll"
 
-	filter { "kind:SharedLib", "system:not Windows" }
+	filter { "kind:SharedLib", "system:not Windows and not cygwin" }
 		pic "On"
 
 	filter { "system:darwin" }
