@@ -336,6 +336,7 @@
 		sanitize = table.merge(gcc.ldflags.sanitize, {
 			Fuzzer = "-fsanitize=fuzzer",
 		}),
+		stl = gcc.ldflags.stl,
 		system = {
 			wii = "$(MACHDEP)",
 		}
