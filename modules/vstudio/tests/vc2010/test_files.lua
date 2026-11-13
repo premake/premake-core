@@ -1066,6 +1066,154 @@
 
 
 --
+-- In a project with C files only the C++ files define the macro.
+--
+
+	function suite.perFileStlTombstones_mixedLanguages()
+		files { "hello.cpp", "util.c" }
+		stltombstones "On"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+	<ClCompile Include="util.c" />
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- A file compiled as C defines no tombstone macro.
+--
+
+	function suite.perFileStlTombstones_compileAsC()
+		files { "hello.cpp", "util.cpp" }
+		stltombstones "On"
+		filter "files:util.cpp"
+			compileas "C"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+	<ClCompile Include="util.cpp">
+		<CompileAs>CompileAsC</CompileAs>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- A C file compiled as C++ defines the tombstone macro.
+--
+
+	function suite.perFileStlTombstones_compileAsCpp()
+		files { "hello.c", "util.c" }
+		stltombstones "On"
+		filter "files:hello.c"
+			compileas "C++"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.c">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		<CompileAs>CompileAsCpp</CompileAs>
+	</ClCompile>
+	<ClCompile Include="util.c" />
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- A file value that differs from the project moves the macro onto each file.
+--
+
+	function suite.perFileStlTombstones_overridesProjectValue()
+		files { "hello.cpp", "util.cpp" }
+		stltombstones "On"
+		filter "files:util.cpp"
+			stltombstones "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+	<ClCompile Include="util.cpp">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- A C file excluded from the build leaves the macro project-wide.
+--
+
+	function suite.perFileStlTombstones_excludedCFile()
+		files { "hello.cpp", "util.c" }
+		stltombstones "On"
+		filter "files:util.c"
+			excludefrombuild "On"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp" />
+	<ClCompile Include="util.c">
+		<ExcludedFromBuild>true</ExcludedFromBuild>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- A C file in a linked SharedItems project moves the macro onto each file.
+--
+
+	function suite.perFileStlTombstones_sharedItemsCFile()
+		files { "hello.cpp" }
+		links { "Shared" }
+		stltombstones "On"
+		project "Shared"
+			kind "SharedItems"
+			files { "util.c" }
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp">
+		<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ClCompile>
+</ItemGroup>
+		]]
+	end
+
+
+--
+-- An Android file defines no tombstone macro.
+--
+
+	function suite.perFileStlTombstones_android()
+		system "android"
+		files { "hello.cpp" }
+		filter "files:hello.cpp"
+			stltombstones "Off"
+		prepare()
+		test.capture [[
+<ItemGroup>
+	<ClCompile Include="hello.cpp" />
+</ItemGroup>
+		]]
+	end
+
+
+--
 -- Check handling of files using custom rule definitions.
 --
 

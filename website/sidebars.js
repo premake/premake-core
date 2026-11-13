@@ -269,6 +269,7 @@ module.exports = {
 						'startproject',
 						'staticruntime',
 						'stl',
+						'stltombstones',
 						'strictaliasing',
 						'stringpooling',
 						'structmemberalign',
