@@ -511,6 +511,159 @@
 		test.isequal({}, stackflags(gcc.getcxxflags(cfg)))
 	end
 
+
+--
+-- Helpers for the standard library selection tests.
+--
+
+	local function stdlibflags(flags)
+		local found = {}
+		for _, flag in ipairs(flags) do
+			if flag:find("-stdlib=", 1, true) then
+				table.insert(found, flag)
+			end
+		end
+		return found
+	end
+
+	local function checkstl(value, flag)
+		stl(value)
+		prepare()
+		test.isequal({ flag }, stdlibflags(gcc.getcxxflags(cfg)))
+		test.isequal({ flag }, stdlibflags(gcc.getldflags(cfg)))
+	end
+
+	local function checkignoredstl(value)
+		stl(value)
+		prepare()
+		test.isequal({}, stdlibflags(gcc.getcxxflags(cfg)))
+		test.isequal({}, stdlibflags(gcc.getldflags(cfg)))
+	end
+
+
+--
+-- gnu selects libstdc++ for C++ compilation and linking.
+--
+
+	function suite.stdlibflags_onStlGnu()
+		checkstl("gnu", "-stdlib=libstdc++")
+	end
+
+
+--
+-- libc++ selects libc++ for C++ compilation and linking.
+--
+
+	function suite.stdlibflags_onStlLibcxx()
+		checkstl("libc++", "-stdlib=libc++")
+	end
+
+
+--
+-- Unset emits no selector flag.
+--
+
+	function suite.stdlibflags_onStlUnset()
+		prepare()
+		test.isequal({}, stdlibflags(gcc.getcxxflags(cfg)))
+		test.isequal({}, stdlibflags(gcc.getldflags(cfg)))
+	end
+
+
+--
+-- C compilation receives no selector flag.
+--
+
+	function suite.stdlibflags_notInCFlags()
+		stl "libc++"
+		prepare()
+		test.isequal({}, stdlibflags(gcc.getcflags(cfg)))
+	end
+
+
+--
+-- C projects link without the selector flag.
+--
+
+	function suite.stdlibflags_notInLdFlagsOnCProject()
+		language "C"
+		stl "libc++"
+		prepare()
+		test.isequal({}, stdlibflags(gcc.getldflags(cfg)))
+	end
+
+
+--
+-- Windows receives the selector flag for C++ compilation and linking.
+--
+
+	function suite.stdlibflags_onWindows()
+		system "Windows"
+		checkstl("libc++", "-stdlib=libc++")
+	end
+
+
+--
+-- Android receives no selector flag.
+--
+
+	function suite.stdlibflags_onAndroid()
+		system "android"
+		checkignoredstl("libc++")
+	end
+
+
+--
+-- macOS receives no selector flag.
+--
+
+	function suite.stdlibflags_onMacOSX()
+		system "macosx"
+		checkignoredstl("libc++")
+	end
+
+
+--
+-- none has no selector flag.
+--
+
+	function suite.stdlibflags_onStlNone()
+		checkignoredstl("none")
+	end
+
+
+--
+-- gabi++ has no selector flag.
+--
+
+	function suite.stdlibflags_onStlGabi()
+		checkignoredstl("gabi++")
+	end
+
+
+--
+-- stlport has no selector flag.
+--
+
+	function suite.stdlibflags_onStlStlport()
+		checkignoredstl("stlport")
+	end
+
+
+--
+-- A file value reads the system from its project.
+--
+
+	function suite.stdlibflags_onFileConfig()
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stl "libc++"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-stdlib=libc++" }, stdlibflags(gcc.getcxxflags(filecfg)))
+	end
+
 	function suite.cxxflags_onSanitizeAddress()
 		sanitize { "Address" }
 		prepare()
