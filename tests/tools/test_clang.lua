@@ -312,6 +312,154 @@
 		checkignoredstl("stlport")
 	end
 
+
+--
+-- On defines the tombstone macro as 1 for C++ only on Windows.
+--
+
+	function suite.cxxflags_onStlTombstonesOn_windows()
+		system "Windows"
+		stltombstones "On"
+		prepare()
+		test.contains({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcxxflags(cfg))
+		test.excludes({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcflags(cfg))
+	end
+
+
+--
+-- Off defines the tombstone macro as 0 for C++ only on Windows.
+--
+
+	function suite.cxxflags_onStlTombstonesOff_windows()
+		system "Windows"
+		stltombstones "Off"
+		prepare()
+		test.contains({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, clang.getcxxflags(cfg))
+		test.excludes({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, clang.getcflags(cfg))
+	end
+
+
+--
+-- Default adds no tombstone macro on Windows.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault_windows()
+		system "Windows"
+		stltombstones "Default"
+		prepare()
+		test.excludes({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1", "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On adds no tombstone macro when stl selects another library.
+--
+
+	function suite.cxxflags_onStlTombstonesOn_windowsLibcxx()
+		system "Windows"
+		stl "libc++"
+		stltombstones "On"
+		prepare()
+		test.excludes({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- On adds no tombstone macro off Windows.
+--
+
+	function suite.cxxflags_onStlTombstonesOn_linux()
+		system "Linux"
+		stltombstones "On"
+		prepare()
+		test.excludes({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcxxflags(cfg))
+	end
+
+
+--
+-- A file value does not undefine the macro when the project defines none.
+--
+
+	function suite.cxxflags_onStlTombstonesOff_fileConfig()
+		system "Windows"
+		stltombstones "Default"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Off"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, clang.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file value undefines the project macro before defining its own.
+--
+
+	function suite.cxxflags_onStlTombstonesOff_fileConfigOverridesProject()
+		system "Windows"
+		stltombstones "On"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Off"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-U_MSVC_STL_DESTRUCTOR_TOMBSTONES", "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, clang.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file Default only undefines the project macro.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault_fileConfigOverridesProject()
+		system "Windows"
+		stltombstones "On"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Default"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, clang.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file value also undefines a project macro defined as 0.
+--
+
+	function suite.cxxflags_onStlTombstonesOn_fileConfigOverridesProject()
+		system "Windows"
+		stltombstones "Off"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "On"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-U_MSVC_STL_DESTRUCTOR_TOMBSTONES", "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file value that matches the project value does not undefine the macro.
+--
+
+	function suite.cxxflags_onStlTombstonesOn_fileConfigMatchesProject()
+		system "Windows"
+		stltombstones "On"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "On"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.isequal({ "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, clang.getcxxflags(filecfg))
+	end
+
 --
 -- Check Mac OS X deployment target flags
 --

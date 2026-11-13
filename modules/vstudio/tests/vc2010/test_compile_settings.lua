@@ -799,6 +799,108 @@
 		]]
 	end
 
+
+--
+-- On defines the tombstone macro as 1.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesOn()
+		stltombstones "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- Off defines the tombstone macro as 0.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesOff()
+		stltombstones "Off"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- Default adds no tombstone macro.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesDefault()
+		stltombstones "Default"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+
+--
+-- A project with C files defines no project-wide tombstone macro.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesWithCFiles()
+		files { "hello.cpp", "util.c" }
+		stltombstones "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<Optimization>Disabled</Optimization>
+</ClCompile>
+		]]
+	end
+
+
+--
+-- C files compiled as C++ keep the project-wide tombstone macro.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesProjectCompileAsCpp()
+		files { "hello.c", "util.c" }
+		compileas "C++"
+		stltombstones "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<PrecompiledHeader>NotUsing</PrecompiledHeader>
+	<WarningLevel>Level3</WarningLevel>
+	<PreprocessorDefinitions>_MSVC_STL_DESTRUCTOR_TOMBSTONES=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		]]
+	end
+
+
+--
+-- A Linux project gets no tombstone macro.
+--
+
+	function suite.preprocessorDefinitions_onStlTombstonesLinux()
+		system "Linux"
+		stltombstones "On"
+		prepare()
+		test.capture [[
+<ClCompile>
+	<Optimization>Disabled</Optimization>
+	<ExceptionHandling>Enabled</ExceptionHandling>
+</ClCompile>
+		]]
+	end
+
 --
 -- On Win32 builds, use the Edit-and-Continue debug information format.
 --

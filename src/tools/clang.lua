@@ -170,6 +170,19 @@
 --
 
 	clang.cxxflags = table.merge(gcc.cxxflags, {
+		stltombstones = function(cfg)
+			local prjcfg, filecfg = config.normalize(cfg)
+			if prjcfg.system == p.WINDOWS and not prjcfg.stl then
+				local inherited = prjcfg.stltombstones
+				local overrides = filecfg and (inherited == p.ON or inherited == p.OFF) and filecfg.stltombstones ~= inherited
+				local undefine = iif(overrides, { "-U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, {})
+				return {
+					Default = undefine,
+					Off = table.join(undefine, "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0"),
+					On = table.join(undefine, "-D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1"),
+				}
+			end
+		end,
 	})
 
 	function clang.getcxxflags(cfg)
