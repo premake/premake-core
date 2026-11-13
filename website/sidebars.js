@@ -166,6 +166,7 @@ module.exports = {
 						'gccprefix',
 						'generateassembly',
 						'group',
+						'hardenaslr',
 						'hardenstack',
 						'icon',
 						'ignoredefaultlibraries',

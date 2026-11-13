@@ -113,6 +113,20 @@
 			Strong = "-fstack-protector-strong",
 			All = "-fstack-protector-all",
 		},
+		hardenaslr = function(cfg)
+			local prjcfg = config.normalize(cfg)
+			if prjcfg.system ~= p.LINUX then
+				return nil
+			end
+			if prjcfg.kind == p.CONSOLEAPP or prjcfg.kind == p.WINDOWEDAPP then
+				return {
+					On = "-fPIE",
+					Off = "-fno-PIE",
+				}
+			elseif prjcfg.kind == p.SHAREDLIB or prjcfg.kind == p.STATICLIB then
+				return { On = "-fPIC" }
+			end
+		end,
 		vectorextensions = {
 			AVX = "-mavx",
 			AVX2 = "-mavx2",
@@ -606,6 +620,30 @@
 			All = "-Wl,--fatal-warnings",
 		},
 		linktimeoptimization = gcc.shared.linktimeoptimization,
+		hardenaslr = function(cfg)
+			local prjcfg = config.normalize(cfg)
+			if prjcfg.system == p.WINDOWS then
+				if prjcfg.kind ~= p.STATICLIB then
+					return {
+						On = "-Wl,--dynamicbase",
+						Off = "-Wl,--disable-dynamicbase",
+					}
+				end
+				return nil
+			end
+			local shared = gcc.shared.hardenaslr(cfg)
+			if not shared then
+				return nil
+			end
+			if cfg.kind == p.CONSOLEAPP or cfg.kind == p.WINDOWEDAPP then
+				return {
+					On = { shared.On, "-pie" },
+					Off = { shared.Off, "-no-pie" },
+				}
+			elseif cfg.kind == p.SHAREDLIB then
+				return shared
+			end
+		end,
 		kind = {
 			SharedLib = function(cfg)
 				local r = { gcc.getsharedlibarg(cfg) }

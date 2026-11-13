@@ -830,6 +830,7 @@
 				m.treatLinkerWarningAsErrors,
 				m.ignoreDefaultLibraries,
 				m.largeAddressAware,
+				m.randomizedBaseAddress,
 				m.targetMachine,
 				m.additionalLinkOptions,
 				m.programDatabaseFile,
@@ -2067,6 +2068,15 @@
 	function m.largeAddressAware(cfg)
 		if (cfg.largeaddressaware == true) then
 			m.element("LargeAddressAware", nil, 'true')
+		end
+	end
+
+
+	function m.randomizedBaseAddress(cfg)
+		if cfg.hardenaslr == p.ON then
+			m.element("RandomizedBaseAddress", nil, "true")
+		elseif cfg.hardenaslr == p.OFF then
+			m.element("RandomizedBaseAddress", nil, "false")
 		end
 	end
 
