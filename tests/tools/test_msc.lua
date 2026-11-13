@@ -258,6 +258,41 @@
 
 
 --
+-- On defines the tombstone macro as 1 for C++ only.
+--
+
+	function suite.cxxflags_onStlTombstonesOn()
+		stltombstones "On"
+		prepare()
+		test.contains({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, msc.getcxxflags(cfg))
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, msc.getcflags(cfg))
+	end
+
+
+--
+-- Off defines the tombstone macro as 0 for C++ only.
+--
+
+	function suite.cxxflags_onStlTombstonesOff()
+		stltombstones "Off"
+		prepare()
+		test.contains({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcxxflags(cfg))
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcflags(cfg))
+	end
+
+
+--
+-- Default adds no tombstone macro.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault()
+		stltombstones "Default"
+		prepare()
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1", "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcxxflags(cfg))
+	end
+
+
+--
 -- Check handling of sanitize.
 --
 

@@ -246,7 +246,11 @@
 		},
 		rtti = {
 			Off = "/GR-"
-		}
+		},
+		stltombstones = {
+			Off = "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0",
+			On = "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1",
+		},
 	}
 
 	function msc.getcxxflags(cfg)

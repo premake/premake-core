@@ -2388,7 +2388,115 @@
 		if cfg.exceptionhandling == p.OFF then
 			defines = table.join(defines, "_HAS_EXCEPTIONS=0")
 		end
+		defines = table.join(defines, m.clCompileCxxDefines(cfg))
 		m.preprocessorDefinitions(cfg, defines, false, condition)
+	end
+
+
+	local function compileAsLanguage(value)
+		if p.languages.isc(value) then
+			return "C"
+		elseif p.languages.iscpp(value) or value == "Module" or value == "ModulePartition" or value == "HeaderUnit" then
+			return "C++"
+		end
+	end
+
+
+	local function compilesAsCpp(fcfg)
+		local language = compileAsLanguage(fcfg.compileas) or compileAsLanguage(fcfg.config.compileas)
+		if language then
+			return language == "C++"
+		end
+		return path.iscppfile(fcfg.name) and not path.iscfile(fcfg.name)
+	end
+
+
+	m.cxxDefines = {
+		stltombstones = {
+			Off = "_MSVC_STL_DESTRUCTOR_TOMBSTONES=0",
+			On = "_MSVC_STL_DESTRUCTOR_TOMBSTONES=1",
+		},
+	}
+
+
+	local function cxxDefineFields()
+		local fields = table.keys(m.cxxDefines)
+		table.sort(fields)
+		return fields
+	end
+
+
+	local function projectCxxDefines(cfg)
+		local defines = {}
+		for _, field in ipairs(cxxDefineFields()) do
+			table.insert(defines, m.cxxDefines[field][cfg[field]])
+		end
+		return defines
+	end
+
+
+	local function fileCxxDefines(fcfg, inherited)
+		local defines = {}
+		if compilesAsCpp(fcfg) then
+			for _, field in ipairs(cxxDefineFields()) do
+				local map = m.cxxDefines[field]
+				table.insert(defines, map[fcfg[field]] or map[fcfg.config[field]] or (inherited and map[inherited[field]]))
+			end
+		end
+		return defines
+	end
+
+
+	local function eachCompiledFile(prj, cfg, callback)
+		table.foreachi(prj._.files, function(file)
+			if m.categorizeFile(prj, file) == m.categories.ClCompile then
+				local fcfg = fileconfig.getconfig(file, cfg)
+				if fcfg and not fcfg.excludefrombuild then
+					callback(fcfg)
+				end
+			end
+		end)
+	end
+
+
+	function m.isCxxDefinesProjectWide(cfg)
+		if cfg._isCxxDefinesProjectWide == nil then
+			local defines = table.concat(projectCxxDefines(cfg), ";")
+			local projectWide = #defines > 0 and cfg.kind ~= p.SHAREDITEMS
+			local function check(fcfg)
+				if table.concat(fileCxxDefines(fcfg, cfg), ";") ~= defines then
+					projectWide = false
+				end
+			end
+			if projectWide then
+				eachCompiledFile(cfg.project, cfg, check)
+				for _, ref in ipairs(project.getdependencies(cfg.project, 'linkOnly')) do
+					local refcfg = project.getconfig(ref, cfg.buildcfg, cfg.platform)
+					if ref.kind == p.SHAREDITEMS and refcfg then
+						eachCompiledFile(ref, refcfg, check)
+					end
+				end
+			end
+			cfg._isCxxDefinesProjectWide = projectWide
+		end
+		return cfg._isCxxDefinesProjectWide
+	end
+
+
+	function m.clCompileCxxDefines(cfg)
+		local prjcfg, filecfg = p.config.normalize(cfg)
+		if prjcfg.system == p.LINUX or prjcfg.system == p.ANDROID then
+			return {}
+		end
+		local projectWide = m.isCxxDefinesProjectWide(prjcfg)
+		if not filecfg then
+			if projectWide then
+				return projectCxxDefines(prjcfg)
+			end
+		elseif not projectWide then
+			return fileCxxDefines(filecfg)
+		end
+		return {}
 	end
 
 
