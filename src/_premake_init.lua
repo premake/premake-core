@@ -1220,6 +1220,17 @@
 	}
 
 	api.register {
+		name = "stltombstones",
+		scope = "config",
+		kind = "string",
+		allowed = {
+			"Default",
+			"On",
+			"Off"
+		}
+	}
+
+	api.register {
 		name = "useimportlib",
 		scope = "config",
 		kind = "string",
