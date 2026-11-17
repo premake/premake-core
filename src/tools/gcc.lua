@@ -299,7 +299,18 @@
 		},
 		inlinesvisibility = {
 			Hidden = "-fvisibility-inlines-hidden"
-		}
+		},
+		stl = function(cfg)
+			local prjcfg = config.normalize(cfg)
+			if prjcfg.system ~= p.LINUX and prjcfg.system ~= p.WINDOWS then
+				return nil
+			end
+
+			return {
+				gnu = "-stdlib=libstdc++",
+				["libc++"] = "-stdlib=libc++",
+			}
+		end,
 	}
 
 	function gcc.getcxxflags(cfg)
@@ -649,6 +660,12 @@
 			Thread = "-fsanitize=thread",
 			UndefinedBehavior = "-fsanitize=undefined",
 		},
+		stl = function(cfg)
+			-- C projects link with the C driver.
+			if p.languages.iscpp(cfg.language) then
+				return gcc.cxxflags.stl(cfg)
+			end
+		end,
 		system = {
 			wii = "$(MACHDEP)",
 		},
