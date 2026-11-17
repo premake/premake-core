@@ -886,3 +886,88 @@
 </Link>
 	]]
 	end
+
+
+--
+-- On enables RandomizedBaseAddress.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrOn()
+		hardenaslr "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<RandomizedBaseAddress>true</RandomizedBaseAddress>
+</Link>
+		]]
+	end
+
+
+--
+-- ClangCL uses the native ASLR property.
+--
+
+	function suite.randomizedBaseAddress_onWindowsClangCl()
+		p.action.set("vs2019")
+		toolset "clang"
+		hardenaslr "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<RandomizedBaseAddress>true</RandomizedBaseAddress>
+</Link>
+		]]
+	end
+
+
+--
+-- Off disables RandomizedBaseAddress.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrOff()
+		hardenaslr "Off"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+	<RandomizedBaseAddress>false</RandomizedBaseAddress>
+</Link>
+		]]
+	end
+
+
+--
+-- Default emits no RandomizedBaseAddress element.
+--
+
+	function suite.randomizedBaseAddress_onHardenAslrDefault()
+		hardenaslr "Default"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+	<ImportLibrary>bin\Debug\MyProject.lib</ImportLibrary>
+</Link>
+		]]
+	end
+
+
+--
+-- Static libraries emit no RandomizedBaseAddress element.
+--
+
+	function suite.randomizedBaseAddress_onStaticLib()
+		kind "StaticLib"
+		hardenaslr "On"
+		prepare()
+		test.capture [[
+<Link>
+	<SubSystem>Windows</SubSystem>
+</Link>
+		]]
+	end
