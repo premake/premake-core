@@ -89,6 +89,25 @@
 			_p(2, '<Configurations>%s</Configurations>', table.implode(prj.configurations, "", "", ";"))
 		end
 	end
+
+--
+-- Write the available platforms to have correct arch mapping on vs2022 format and later.
+--
+	function dotnetbase.platforms(cfg)
+		if _ACTION >= "vs2022" then
+			local platforms = {}
+
+			for cfg in project.eachconfig(prj) do
+				local arch = dotnetbase.arch(cfg)
+
+				if not table.contains(platforms, arch) then
+					table.insert(platforms, arch)
+				end
+			end
+
+			_p(2, '<Platforms>%s</Platforms>', table.concat(platforms, ";"))
+		end
+	end
 --
 -- Write out the settings for the project configurations.
 --
@@ -899,6 +918,7 @@
 		return map["Default"]
 	end
 
+	
 	function dotnetbase.allowUnsafeBlocks(cfg)
 		if cfg.clr == "Unsafe" then
 			_p(2,'<AllowUnsafeBlocks>true</AllowUnsafeBlocks>')
