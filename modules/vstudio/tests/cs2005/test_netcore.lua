@@ -37,7 +37,9 @@ end
 local function projectConfigurationsPrepare()
 	dn2005.projectConfigurations(prj)
 end
-
+local function platformsPrepare()
+	dn2005.platforms(prj)
+end
 local function prepareNetcore()
 	dn2005.projectElement(prj)
 end
@@ -149,6 +151,7 @@ function suite.implicitUsings_on()
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<TargetFramework>net10.0</TargetFramework>
 		<Configurations>Debug;Release;Distribution</Configurations>
+		<Platforms>x86</Platforms>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<ImplicitUsings>true</ImplicitUsings>
 	</PropertyGroup>
@@ -166,6 +169,7 @@ function suite.implicitUsings_off()
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<TargetFramework>net10.0</TargetFramework>
 		<Configurations>Debug;Release;Distribution</Configurations>
+		<Platforms>x86</Platforms>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<ImplicitUsings>false</ImplicitUsings>
 	</PropertyGroup>
@@ -182,6 +186,7 @@ function suite.multiple_target_dotnet_frameworks()
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
 		<Configurations>Debug;Release;Distribution</Configurations>
+		<Platforms>x86</Platforms>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 	</PropertyGroup>
 	]]
@@ -198,6 +203,7 @@ function suite.set_appmanifest()
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<TargetFramework>net10.0</TargetFramework>
 		<Configurations>Debug;Release;Distribution</Configurations>
+		<Platforms>x86</Platforms>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
@@ -212,5 +218,15 @@ function suite.project_element_configurations()
 
 test.capture [[
 		<Configurations>Debug;Release;Distribution</Configurations>
+	]]
+end
+
+function suite.project_element_platforms()
+	p.action.set("vs2022")
+	dotnetframework "net10.0"
+
+	platformsPrepare()
+	test.capture [[
+		<Platforms>x86</Platforms>
 	]]
 end

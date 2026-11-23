@@ -53,6 +53,7 @@
 				dotnetbase.netcore.useWpf,
 				dotnetbase.csversion,
 				dotnetbase.projectConfigurations,
+				dotnetbase.platforms,
 				dotnetbase.netcore.enableDefaultCompileItems,
 				dotnetbase.netcore.enableImplicitUsings,
 				dotnetbase.netcore.appManifest,
