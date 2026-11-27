@@ -13,7 +13,7 @@ project "luashim-lib"
 		"*.lua"
 	}
 
-	filter "system:linux or bsd or hurd or aix or haiku"
+	filter "system:linux or bsd or hurd or aix or haiku or cygwin"
 		defines      { "LUA_USE_POSIX", "LUA_USE_DLOPEN" }
 
 	filter "system:macosx"
