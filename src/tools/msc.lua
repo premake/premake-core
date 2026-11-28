@@ -410,6 +410,10 @@
 		dynamicdebugging = {
 			On = "/dynamicdeopt",
 		},
+		hardenaslr = {
+			Off = "/DYNAMICBASE:NO",
+			On = "/DYNAMICBASE",
+		},
 	}
 
 	msc.librarianFlags = {

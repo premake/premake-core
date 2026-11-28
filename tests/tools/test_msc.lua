@@ -963,3 +963,68 @@ end
 		prepare()
 		test.excludes("/dynamicdeopt", msc.getldflags(cfg))
 	end
+
+
+--
+-- On emits /DYNAMICBASE for executables.
+--
+
+	function suite.ldflags_onHardenAslrOn_consoleApp()
+		system "Windows"
+		kind "ConsoleApp"
+		hardenaslr "On"
+		prepare()
+		test.contains("/DYNAMICBASE", msc.getldflags(cfg))
+	end
+
+
+--
+-- Off emits /DYNAMICBASE:NO for executables.
+--
+
+	function suite.ldflags_onHardenAslrOff_consoleApp()
+		system "Windows"
+		kind "ConsoleApp"
+		hardenaslr "Off"
+		prepare()
+		test.contains("/DYNAMICBASE:NO", msc.getldflags(cfg))
+	end
+
+
+--
+-- Default emits no ASLR linker flags.
+--
+
+	function suite.ldflags_onHardenAslrDefault_consoleApp()
+		system "Windows"
+		kind "ConsoleApp"
+		hardenaslr "Default"
+		prepare()
+		test.excludes({ "/DYNAMICBASE", "/DYNAMICBASE:NO" }, msc.getldflags(cfg))
+	end
+
+
+--
+-- On emits /DYNAMICBASE for shared libraries.
+--
+
+	function suite.ldflags_onHardenAslrOn_sharedLib()
+		system "Windows"
+		kind "SharedLib"
+		hardenaslr "On"
+		prepare()
+		test.contains("/DYNAMICBASE", msc.getldflags(cfg))
+	end
+
+
+--
+-- On emits no ASLR linker flags for static libraries.
+--
+
+	function suite.ldflags_onHardenAslrOn_staticLib()
+		system "Windows"
+		kind "StaticLib"
+		hardenaslr "On"
+		prepare()
+		test.excludes({ "/DYNAMICBASE", "/DYNAMICBASE:NO" }, msc.getldflags(cfg))
+	end
