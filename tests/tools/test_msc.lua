@@ -258,6 +258,106 @@
 
 
 --
+-- On defines the tombstone macro as 1 for C++ only.
+--
+
+	function suite.cxxflags_onStlTombstonesOn()
+		stltombstones "On"
+		prepare()
+		test.contains({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, msc.getcxxflags(cfg))
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, msc.getcflags(cfg))
+	end
+
+
+--
+-- Off defines the tombstone macro as 0 for C++ only.
+--
+
+	function suite.cxxflags_onStlTombstonesOff()
+		stltombstones "Off"
+		prepare()
+		test.contains({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcxxflags(cfg))
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcflags(cfg))
+	end
+
+
+--
+-- Default adds no tombstone macro.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault()
+		stltombstones "Default"
+		prepare()
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1", "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcxxflags(cfg))
+	end
+
+
+--
+-- A file value redefines the project macro without undefining it.
+--
+
+	function suite.cxxflags_onStlTombstonesOff_fileConfigOverridesProject()
+		stltombstones "On"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Off"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.contains({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0" }, msc.getcxxflags(filecfg))
+		test.excludes({ "/U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, msc.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file Default undefines the project macro.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault_fileConfigOverridesProject()
+		stltombstones "On"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Default"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.contains({ "/U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, msc.getcxxflags(filecfg))
+		test.excludes({ "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1" }, msc.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file Default also undefines a project macro defined as 0.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault_fileConfigOverridesProjectOff()
+		stltombstones "Off"
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Default"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.contains({ "/U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, msc.getcxxflags(filecfg))
+	end
+
+
+--
+-- A file Default adds no undefine when the project defines none.
+--
+
+	function suite.cxxflags_onStlTombstonesDefault_fileConfig()
+		files { "main.cpp" }
+		filter "files:main.cpp"
+			stltombstones "Default"
+		prepare()
+		local node = p.project.getsourcetree(cfg.project).children["main.cpp"]
+		local filecfg = p.fileconfig.getconfig(node, cfg)
+		test.excludes({ "/U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, msc.getcxxflags(filecfg))
+	end
+
+
+--
 -- Check handling of sanitize.
 --
 

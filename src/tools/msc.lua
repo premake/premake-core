@@ -246,7 +246,17 @@
 		},
 		rtti = {
 			Off = "/GR-"
-		}
+		},
+		stltombstones = function(cfg)
+			local prjcfg, filecfg = config.normalize(cfg)
+			local inherited = prjcfg.stltombstones
+			local overrides = filecfg and (inherited == p.ON or inherited == p.OFF) and filecfg.stltombstones ~= inherited
+			return {
+				Default = iif(overrides, { "/U_MSVC_STL_DESTRUCTOR_TOMBSTONES" }, {}),
+				Off = "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=0",
+				On = "/D_MSVC_STL_DESTRUCTOR_TOMBSTONES=1",
+			}
+		end,
 	}
 
 	function msc.getcxxflags(cfg)
